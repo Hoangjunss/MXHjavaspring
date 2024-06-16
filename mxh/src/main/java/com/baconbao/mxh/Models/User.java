@@ -29,13 +29,13 @@ public class User {
     @Column(name="IdUser")
     private Long Id;
     @Column(name="LastName")
-    private String LastName;
+    private String lastName;
     @Column(name="FirstName")
-    private String FirstName;
+    private String firstName;
     @Column(name="Password")
-    private String Password;
+    private String password;
     @Column(name="Email")
-    private String Email;
+    private String email;
     @Column(name="CreateAt")
     private Date CreateAt;
     @OneToMany

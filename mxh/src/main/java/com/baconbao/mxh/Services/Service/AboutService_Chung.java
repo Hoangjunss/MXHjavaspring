@@ -7,5 +7,5 @@ public interface AboutService_Chung {
     About getAbout(AboutDTO aboutDTO);
     AboutDTO geAboutDTO(About about);
     void save(About about);
-    
+
 }
