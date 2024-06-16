@@ -4,8 +4,7 @@ import com.baconbao.mxh.Models.User;
 
 public interface UserService_Kien {
     // tạo tài khoản
-    public User createUser(User user);
+    public void saveUser(User user);
+    public User findByEmail(String email);
     public boolean isEmailExist(String email);
-    public boolean isNameExist(String name);
-    
 }
