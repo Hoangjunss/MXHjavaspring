@@ -12,6 +12,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,10 +25,11 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class User {
-    @Id/* dùng để cho biết thằng nào là khóa chính */
-    @GeneratedValue(strategy = GenerationType.IDENTITY)/* cho phép id tăng tự động */
+     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq")
+    @SequenceGenerator(name = "user_seq", sequenceName = "user_sequence", allocationSize = 1)
     @Column(name="IdUser")
-    private Long Id;
+    private Long id;
     @Column(name="LastName")
     private String lastName;
     @Column(name="FirstName")
@@ -37,7 +39,7 @@ public class User {
     @Column(name="Email")
     private String email;
     @Column(name="CreateAt")
-    private Date CreateAt;
+    private Date createAt;
     @OneToMany
     @JoinTable(
         name = "users_about", // Tên bảng liên kết
