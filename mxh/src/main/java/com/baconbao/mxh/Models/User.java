@@ -1,12 +1,17 @@
 package com.baconbao.mxh.Models;
 
 import java.util.Date;
+import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -33,4 +38,11 @@ public class User {
     private String Email;
     @Column(name="CreateAt")
     private Date CreateAt;
+    @OneToMany
+    @JoinTable(
+        name = "users_about", // Tên bảng liên kết
+        joinColumns = @JoinColumn(name = "IdUser"), // Khóa ngoại của bảng User
+        inverseJoinColumns = @JoinColumn(name = "IdAbout") // Khóa ngoại của bảng Role
+    )
+    private List<About> about;
 }
