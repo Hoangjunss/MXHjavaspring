@@ -8,5 +8,5 @@ import com.baconbao.mxh.Models.User;
 @Repository
 
 public interface UserRepository extends JpaRepository<User,Long> {
-    
+    User findByEmail(String email);
 }
