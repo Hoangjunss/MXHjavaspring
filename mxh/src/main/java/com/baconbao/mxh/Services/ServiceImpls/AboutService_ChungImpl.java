@@ -1,5 +1,5 @@
 package com.baconbao.mxh.Services.ServiceImpls;
 
-public class UserService_ChungImpl {
+public class AboutService_ChungImpl {
     
 }
