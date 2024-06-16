@@ -1,5 +1,9 @@
 package com.baconbao.mxh.Repository;
 
-public class UserRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.baconbao.mxh.Models.User;
+
+public interface UserRepository extends JpaRepository<User,Long> {
     
 }
