@@ -6,10 +6,8 @@ import com.baconbao.mxh.DTO.AboutDTO;
 import com.baconbao.mxh.Models.About;
 import com.baconbao.mxh.Repository.AboutRepository;
 import com.baconbao.mxh.Services.Service.AboutService_Chung;
-<<<<<<< Updated upstream
+
 import com.baconbao.mxh.Services.Service.UserService_Kien;
-=======
->>>>>>> Stashed changes
 
 public class AboutService_ChungImpl implements AboutService_Chung {
    @Autowired
@@ -42,9 +40,5 @@ public class AboutService_ChungImpl implements AboutService_Chung {
     public void save(About about) {
          aboutRepository.save(about);
     }
-<<<<<<< Updated upstream
 
-=======
-    
->>>>>>> Stashed changes
 }
