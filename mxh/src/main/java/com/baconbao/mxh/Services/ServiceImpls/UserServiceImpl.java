@@ -23,16 +23,15 @@ public class UserServiceImpl implements UserService {
         return email.matches(EMAIL_PATTERN); // kiểm tra email
     }
 
-    //Luu user
+    // Luu user
     @Override
     public void saveUser(User username) {
         User user = new User();
-        long id=0;
-        if(username.getId() == null){
-            id= userRepository.countById()+1;
-        }else{
-            id=username.getId();
-        }
+        long id = 0;
+        if (username.getId() == null)
+            id = userRepository.countById() + 1;
+        else
+            id = username.getId();
         if (username.getEmail() != null || isEmailValid(username.getEmail()) || username.getPassword() != null) {
             user.setId(id); // set giá trị cho biến user
             user.setFirstName(username.getFirstName()); // set giá trị cho biến user
@@ -59,13 +58,13 @@ public class UserServiceImpl implements UserService {
             return false; // thông báo email chưa tồn tại
     }
 
-    //Tim user bang id
+    // Tim user bang id
     @Override
     public User findById(long userId) {
         return userRepository.findById(userId).get();
     }
 
-    //Chuyen userDTO ve user
+    // Chuyen userDTO ve user
     @Override
     public User getUser(UserDTO userDTO) {
         User user = new User();
@@ -78,13 +77,7 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
-    //Kiem tra email co ton tai
-    public boolean isEmailExists(String email) {
-        User user = userRepository.findByEmail(email);
-        return user != null;
-    }
-
-    //Chuyen user ve userDTO
+    // Chuyen user ve userDTO
     @Override
     public UserDTO getUserDTO(User user) {
         UserDTO userDTO = new UserDTO();
@@ -97,10 +90,15 @@ public class UserServiceImpl implements UserService {
         return userDTO;
     }
 
-    //Lay danh sach user
+    // Lay danh sach user
     @Override
     public List<User> fillAll() {
         return userRepository.findAll();
     }
 
+    // Kiem tra email co ton tai
+    public boolean isEmailExists(String email) {
+        User user = userRepository.findByEmail(email);
+        return user != null;
+    }
 }

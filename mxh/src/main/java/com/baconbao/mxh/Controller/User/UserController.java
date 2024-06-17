@@ -26,9 +26,9 @@ public class UserController {
     // Nhan trang chu dieu kien la "/"
     @GetMapping({"/", ""})
     public String showIndexPage() {
-       
         return "index";
     }
+
     @GetMapping("/mail")
     public String sendmail() {
         Mail mail=new Mail();
@@ -71,7 +71,6 @@ public class UserController {
         model.addAttribute("userDTO", userDTO);
         return "register";
     }
-
 
     @PostMapping("/register")
     public String register( @ModelAttribute("user") UserDTO userDTO, BindingResult result, Model model){
