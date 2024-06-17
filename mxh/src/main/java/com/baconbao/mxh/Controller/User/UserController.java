@@ -2,6 +2,10 @@ package com.baconbao.mxh.Controller.User;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -27,14 +31,14 @@ public class UserController {
     private MailService mailService;
 
     // Nhan trang chu dieu kien la "/"
-    @GetMapping({"/", ""})
+    @GetMapping({ "/", "" })
     public String showIndexPage() {
         return "index";
     }
 
     @GetMapping("/mail")
     public String sendmail() {
-        Mail mail=new Mail();
+        Mail mail = new Mail();
         String content = "gửi mail";
         mail.setMailFrom("mxhbaconbao@gmail.com");
         mail.setMailTo("vuhoangchung2020@gmail.com");
@@ -43,7 +47,6 @@ public class UserController {
         mailService.sendMail(mail);
         return "index";
     }
-    
 
     // Nhan trang edit dieu kien la "/editaccount"
     @GetMapping("/editaccount")
@@ -67,7 +70,7 @@ public class UserController {
         return "login";
     }
 
-    //Nhan duong dan va trang ve trang register.html trong templates
+    // Nhan duong dan va trang ve trang register.html trong templates
     @GetMapping("/register")
     public String showRegisterPage(Model model) {
         UserDTO userDTO = new UserDTO();
@@ -76,25 +79,35 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public String register( @ModelAttribute("user") UserDTO userDTO, BindingResult result, Model model){
+    public String register(@ModelAttribute("userDTO") UserDTO userDTO, BindingResult result, Model model) {
         // kiem tra email da ton tai hay chua
         if (userService.isEmailExist(userDTO.getEmail())) {
             // neu ton tai thi tra ve trang register va thong bao loi
             result.rejectValue("email", null, "Email already exists");
             return "register";
         }
-        // nếu email chưa tồn tại thì thêm user mới và thêm vào createUser thời gian hiện tại
+        // nếu email chưa tồn tại thì thêm user mới và thêm vào createUser thời gian
+        // hiện tại
         // Lấy thời gian hiện tại theo UTC
-        Instant nowUtc = Instant.now();
-        Timestamp timestampUtc = Timestamp.from(nowUtc);
-        userDTO.setCreateAt(timestampUtc);
+        /*
+         * Instant nowUtc = Instant.now();
+         * Timestamp timestampUtc = Timestamp.from(nowUtc);
+         * userDTO.setCreateAt(timestampUtc);
+         * userService.saveUser(userService.getUser(userDTO));
+         */
+        LocalDateTime localDateTime = LocalDateTime.now();
+        
+        // Chuyển đổi LocalDateTime sang Date
+        ZonedDateTime zonedDateTime = localDateTime.atZone(ZoneId.systemDefault());
+        Date date = Date.from(zonedDateTime.toInstant());
+        
+        userDTO.setCreateAt(date);
         userService.saveUser(userService.getUser(userDTO));
-
         // quay về trang login
-        return "redirect:/login";   
+        return "redirect:/login";
     }
 
-    @PostMapping("/ /{id}")
+    @PostMapping("/editaccount/{id}")
     // path varriablr la thong tin duoc lay sau dau / cua url
     public String editAccount(@PathVariable Long id, Model model, UserDTO userDTO, BindingResult result) {
         User user = userService.findById(id);
