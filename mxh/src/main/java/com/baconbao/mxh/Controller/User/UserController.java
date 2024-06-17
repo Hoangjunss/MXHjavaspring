@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,7 +20,7 @@ public class UserController {
     private UserService userService;
 
     // Nhan trang chu dieu kien la "/"
-    @GetMapping("/")
+    @GetMapping({"/", ""})
     public String showIndexPage() {
         return "index";
     }
@@ -37,6 +38,28 @@ public class UserController {
         model.addAttribute("userDTO", userDTO);
         // ten file html
         return "editaccount";
+    }
+
+    @GetMapping("/login")
+    public String showLoginPage(Model model) {
+        User user = new User();
+        model.addAttribute("user", user);
+        return "login";
+    }
+
+    //Nhan duong dan va trang ve trang register.html trong templates
+    @GetMapping("/register")
+    public String showRegisterPage(Model model) {
+        UserDTO userDTO = new UserDTO();
+        model.addAttribute("userDTO", userDTO);
+        return "register";
+    }
+
+
+    @PostMapping("/register")
+    public String register( @ModelAttribute("user") UserDTO userDTO, BindingResult result, Model model){
+        
+        return "redirect:/login";
     }
 
     @PostMapping("/editaccount/{id}")
