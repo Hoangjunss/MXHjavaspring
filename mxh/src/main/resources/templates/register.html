@@ -34,7 +34,7 @@
                   <label for="inputEmail4" class="form-label">Email</label>
                   <input type="email" placeholder="Email" class="form-control" id="inputEmail4" th:field="*{email}">
                   <div class="error" style="color:red;"></div>
-                  <div th:errors="*{email}" class="text-danger error"
+                  <div th:errors="*{email}" class="text-danger"
                            th:if="${#fields.hasErrors('email')}"></div>
                 </div>
                 <div class="col-md-12 input-control">
