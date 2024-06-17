@@ -75,11 +75,20 @@ public class UserController {
 
     @PostMapping("/register")
     public String register( @ModelAttribute("user") UserDTO userDTO, BindingResult result, Model model){
-        
-        return "redirect:/login";
+        // kiem tra email da ton tai hay chua
+        if (userService.isEmailExist(userDTO.getEmail())) {
+            // neu ton tai thi tra ve trang register va thong bao loi
+            result.rejectValue("email", null, "Email already exists");
+            return "register";
+        }
+        // nếu email chưa tồn tại thì thêm user mới và thêm vào createUser thời gian hiện tại
+        userService.saveUser(userService.getUser(userDTO));
+
+        // quay về trang login
+        return "redirect:/login";   
     }
 
-    @PostMapping("/editaccount/{id}")
+    @PostMapping("/ /{id}")
     // path varriablr la thong tin duoc lay sau dau / cua url
     public String editAccount(@PathVariable Long id, Model model, UserDTO userDTO, BindingResult result) {
         User user = userService.findById(id);
@@ -98,4 +107,6 @@ public class UserController {
         // quay ve trang chu
         return "redirect:/";
     }
+
+
 }

@@ -90,6 +90,10 @@ function check_rsgister_value(){
         setError(document.getElementById("inputEmail4"), "Email is not a valid email");
         errorValueEmail = true;
     }
+    else if(check_email_exist(email)){
+        setError(document.getElementById("inputEmail4"), "Email already exists");
+        errorValueEmail = true;
+    }
     else{
         setSuccess(document.getElementById("inputEmail4"));
         errorValueEmail = false;
@@ -120,6 +124,8 @@ function check_rsgister_value(){
     }else{
         return true;
     }
+
+    
 }
 function check_login_value(){
     var email = document.getElementById("inputEmail4").value;
@@ -149,6 +155,24 @@ function check_login_value(){
     
 }
 
+
+function check_email_exist(email) {
+    var check = false;
+    $.ajax({
+        type: "GET",
+        url: "/checkEmail",
+        data: {
+            email: email
+        },
+        async: false,
+        success: function (data) {
+            if (data === "true") {
+                check = true;
+            }
+        }
+    });
+    return check;
+}
 
 const setError = (element, message) =>{
     const inputControl = element.parentElement;
