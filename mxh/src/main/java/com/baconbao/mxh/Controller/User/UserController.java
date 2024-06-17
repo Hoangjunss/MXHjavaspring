@@ -1,5 +1,8 @@
 package com.baconbao.mxh.Controller.User;
 
+import java.sql.Timestamp;
+import java.time.Instant;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -81,6 +84,10 @@ public class UserController {
             return "register";
         }
         // nếu email chưa tồn tại thì thêm user mới và thêm vào createUser thời gian hiện tại
+        // Lấy thời gian hiện tại theo UTC
+        Instant nowUtc = Instant.now();
+        Timestamp timestampUtc = Timestamp.from(nowUtc);
+        userDTO.setCreateAt(timestampUtc);
         userService.saveUser(userService.getUser(userDTO));
 
         // quay về trang login
@@ -106,6 +113,4 @@ public class UserController {
         // quay ve trang chu
         return "redirect:/";
     }
-
-
 }
