@@ -9,15 +9,12 @@ import com.baconbao.mxh.Models.User;
 
 import jakarta.transaction.Transactional;
 
-import java.util.List;
-
-
 @Repository
+public interface UserRepository extends JpaRepository<User, Long> {
+  User findByEmail(String email);
 
-public interface UserRepository extends JpaRepository<User,Long> {
-    User  findByEmail(String email);
-      @Modifying
-    @Transactional
-    @Query(value="SELECT MAX(id_user) FROM user",nativeQuery=true)
-    Long countById();
+  @Modifying
+  @Transactional
+  @Query(value = "SELECT MAX(id_user) FROM user", nativeQuery = true)
+  Long countById();
 }
