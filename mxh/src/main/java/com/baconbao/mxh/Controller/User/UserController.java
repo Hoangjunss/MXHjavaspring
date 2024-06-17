@@ -11,19 +11,36 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.baconbao.mxh.DTO.UserDTO;
+import com.baconbao.mxh.Models.Mail;
 import com.baconbao.mxh.Models.User;
+import com.baconbao.mxh.Services.Service.MailService;
 import com.baconbao.mxh.Services.Service.UserService;
 
 @Controller
 public class UserController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private MailService mailService;
 
     // Nhan trang chu dieu kien la "/"
     @GetMapping({"/", ""})
     public String showIndexPage() {
+       
         return "index";
     }
+    @GetMapping("/mail")
+    public String sendmail() {
+        Mail mail=new Mail();
+        String content = "gửi mail";
+        mail.setMailFrom("mxhbaconbao@gmail.com");
+        mail.setMailTo("vuhoangchung2020@gmail.com");
+        mail.setMailSubject("Duyệt đơn");
+        mail.setMailContent(content);
+        mailService.sendMail(mail);
+        return "index";
+    }
+    
 
     // Nhan trang edit dieu kien la "/editaccount"
     @GetMapping("/editaccount")
