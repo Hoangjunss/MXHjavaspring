@@ -84,11 +84,6 @@ public class UserController {
         return "login";
     }
 
-    @GetMapping("/uploadpost")
-    public String showUploadPostPage(Model model) {
-        Post post = new Post();
-        return "uploadpost";
-    }
 
     // Nhan duong dan va trang ve trang register.html trong templates
     @GetMapping("/register")
@@ -182,14 +177,6 @@ public class UserController {
         return "index";
     }
 
-    @PostMapping("/uploadpost")
-    public String uploadPost(@ModelAttribute("post") Post post) {
-        LocalDateTime expiryTime = LocalDateTime.now();
-        post.setCreateAt(expiryTime);
-        post.setUpdateAt(expiryTime);
-        postService.save(post);
-        return "redirect:/index";
-    }
 
     @GetMapping("/upload")
     public String upload(Model model) {

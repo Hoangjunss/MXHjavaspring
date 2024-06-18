@@ -1,6 +1,7 @@
 package com.baconbao.mxh.Services.ServiceImpls;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,7 +11,7 @@ import com.baconbao.mxh.Repository.PostRepository;
 import com.baconbao.mxh.Services.Service.PostService;
 
 @Service
-public class PostServiceImpl implements PostService{
+public class PostServiceImpl implements PostService {
     @Autowired
     private PostRepository postRepository;
 
@@ -40,4 +41,9 @@ public class PostServiceImpl implements PostService{
         postRepository.delete(psot);
     }
 
+    @Override
+    public Long getGenerationId() {
+        UUID uuid = UUID.randomUUID();
+        return uuid.getMostSignificantBits() & Long.MAX_VALUE;
+    }
 }

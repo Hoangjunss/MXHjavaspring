@@ -12,4 +12,5 @@ public interface PostService {
     Post findById(long id);
     void save(Post post);
     void delete(long id);
+    Long getGenerationId();
 }

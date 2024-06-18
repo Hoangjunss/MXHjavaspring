@@ -49,4 +49,12 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "IdImage") // Khóa ngoại của bảng About
     )
     private Image image;
+
+    @OneToMany // Một user có thể có nhiều About
+    @JoinTable(name = "users_post", // Tên bảng liên kết
+            joinColumns = @JoinColumn(name = "IdUser"), // Khóa ngoại của bảng User
+            inverseJoinColumns = @JoinColumn(name = "IdPost") // Khóa ngoại của bảng About
+    )
+    private List<Post> post;
+
 }

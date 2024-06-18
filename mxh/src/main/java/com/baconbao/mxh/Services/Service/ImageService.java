@@ -7,6 +7,7 @@ import com.baconbao.mxh.Models.Image;
 
 @Service
 public interface ImageService {
+    Image findById(long id);
     void saveImage(Image image);
     Long getGenerationId();
 }
