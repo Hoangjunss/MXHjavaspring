@@ -1,5 +1,6 @@
 package com.baconbao.mxh.Models;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import jakarta.persistence.Column;
@@ -21,6 +22,6 @@ public class VerifycationToken {
     private String firstName;
     private String email;
     private String password;
-    private Date setExpiryDate;
+    private LocalDateTime setExpiryDate;
     
 }

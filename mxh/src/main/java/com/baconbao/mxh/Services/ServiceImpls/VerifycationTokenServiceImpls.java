@@ -2,10 +2,13 @@ package com.baconbao.mxh.Services.ServiceImpls;
 
 import java.sql.Date;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.baconbao.mxh.Models.Mail;
 import com.baconbao.mxh.Models.User;
@@ -63,6 +66,12 @@ public class VerifycationTokenServiceImpls implements VerifycationTokenService {
     @Override
     public VerifycationToken findById(Long id) {
        return verifycationTokenRepository.findById(id).get();
+    }
+    @Scheduled(fixedDelay = 300000) // Chạy mỗi 5 phút
+    @Transactional
+    public void cleanupExpiredTokens() {
+        LocalDateTime expiryTime = LocalDateTime.now().minusMinutes(5); // Xóa các token đã tạo từ 5 phút trước
+       List<VerifycationToken> tokens=verifycationTokenRepository.fid
     }
     
 }
