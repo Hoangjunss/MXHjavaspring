@@ -2,7 +2,6 @@ package com.baconbao.mxh.Services.ServiceImpls;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.baconbao.mxh.DTO.ImageDTO;
 import com.baconbao.mxh.Models.Image;
 import com.baconbao.mxh.Services.Service.ImageService;
 import com.baconbao.mxh.Repository.ImageRepository;
