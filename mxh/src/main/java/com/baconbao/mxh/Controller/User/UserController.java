@@ -1,11 +1,15 @@
 package com.baconbao.mxh.Controller.User;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Date;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -14,9 +18,18 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.StreamUtils;
+import org.springframework.web.client.RestTemplate;
 
 import com.baconbao.mxh.DTO.ImageDTO;
 import com.baconbao.mxh.DTO.UserDTO;
+import com.baconbao.mxh.Models.Image;
 import com.baconbao.mxh.Models.Post;
 import com.baconbao.mxh.Models.User;
 import com.baconbao.mxh.Models.VerifycationToken;
@@ -27,9 +40,10 @@ import com.baconbao.mxh.Services.Service.PostService;
 import com.baconbao.mxh.Services.Service.UserService;
 import com.baconbao.mxh.Services.Service.VerifycationTokenService;
 
+
 @Controller
 public class UserController {
-    @Autowired 
+    @Autowired
     private UserService userService;
     @Autowired
     private MailService mailService;
@@ -90,7 +104,8 @@ public class UserController {
         if (userService.isEmailExist(userDTO.getEmail())) {
             // neu ton tai thi tra ve trang register va thong bao loi
             // rejectValue la phuong thuc tra ve loi cho truong do
-            result.rejectValue("email", null, "Email already exists"); // email la ten cua truong, null la ten cua loi, Email already exists la noi dung loi
+            result.rejectValue("email", null, "Email already exists"); // email la ten cua truong, null la ten cua loi,
+                                                                       // Email already exists la noi dung loi
             return "register";
         }
         // nếu email chưa tồn tại thì thêm user mới và thêm vào createUser thời gian
@@ -118,12 +133,31 @@ public class UserController {
     @PostMapping("/editaccount/{id}")
     // path varriablr la thong tin duoc lay sau dau / cua url
     public String editAccount(@PathVariable Long id, Model model, UserDTO userDTO, BindingResult result) {
+        // k@gmail.com 1
+        // user id=1
         User user = userService.findById(id);
         // kiem tra email da ton tai hay chua
-        if (userService.isEmailExist(userDTO.getEmail()) ) {
+        /* if (userService.isEmailExist(userDTO.getEmail()) ) {} */
+
+        /*
+         * //tim user theo email : user id=?
+         * User userExited = userService.findByEmail(userDTO.getEmail());
+         * //kiem tra mail co thuoc ve user
+         * if(user.getId() != userExited.getId()){
+         * result.rejectValue("email", null, "Email already exists");
+         * return "editaccount";
+         * }
+         * // kiem tra email co phai cua user dang sua
+         * if(user.getEmail() == userExited.getEmail()){
+         * 
+         * }
+         */
+
+        if (userService.isEmailExist(userDTO.getEmail())) {
             // neu ton tai thi tra ve trang editaccount va thong bao loi
             // rejectValue la phuong thuc tra ve loi cho truong do
-            result.rejectValue("email", null, "Email already exists"); // email la ten cua truong, null la ten cua loi, Email already exists la noi dung loi
+            result.rejectValue("email", null, "Email already exists"); // email la ten cua truong, null la ten cua loi,
+                                                                       // Email already exists la noi dung loi
             return "editaccount";
         }
         // chuyen userDTO ve user
@@ -136,13 +170,14 @@ public class UserController {
         return "redirect:/";
     }
 
-    //Duong dan xac nhan 
+    // Duong dan xac nhan
     @GetMapping("/confirmUser")
     public String confirmUser(@RequestParam long token) {
         VerifycationToken verifycationToken = verifycationTokenService.findById(token);
-        //neu token het han thi khi an vo chuyen ve register
-        if(verifycationToken == null) return "register";
-        //else xac nhan token va chuyen ve index
+        // neu token het han thi khi an vo chuyen ve register
+        if (verifycationToken == null)
+            return "register";
+        // else xac nhan token va chuyen ve index
         verifycationTokenService.confirmUser(token);
         return "index";
     }
@@ -155,16 +190,43 @@ public class UserController {
         postService.save(post);
         return "redirect:/index";
     }
+
     @GetMapping("/upload")
-    public String upload(Model model){
-        ImageDTO imageDTO=new ImageDTO();
+    public String upload(Model model) {
+        ImageDTO imageDTO = new ImageDTO();
         model.addAttribute("imageDTO", imageDTO);
         return "insertImage";
     }
+
     @PostMapping("/upload")
-    public String uploadImage(@ModelAttribute("imageDTO") ImageDTO imageDTO) throws Exception{
-          cloudinaryService.upload(imageDTO.getFile());
-          return "index";
+    public String uploadImage(@ModelAttribute("imageDTO") ImageDTO imageDTO) throws Exception {
+        Image image = new Image();
+        Map result = cloudinaryService.upload(imageDTO.getFile());
+        String imageUrl = (String) result.get("url");
+        image.setUrlImage(imageUrl);
+        imageService.saveImage(image);
+        return "index";
+    }
+
+    //Lay duong dan anh de tai ve
+    @GetMapping("/download")
+    public ResponseEntity<Resource> downloadFile(@RequestParam("public_id") String publicId) throws IOException {
+        //Lay url tren duong dan anh de tai ve
+        String imageUrl = cloudinaryService.getImageUrl(publicId);
+        // doi duong link thanh bit
+        RestTemplate restTemplate = new RestTemplate();
+        byte[] imageBytes = restTemplate.getForObject(imageUrl, byte[].class);
+        // 
+        ByteArrayResource resource = new ByteArrayResource(imageBytes);
+        //
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=image.jpg");
+        headers.add(HttpHeaders.CONTENT_TYPE, "image/jpeg");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentLength(imageBytes.length)
+                .body(resource);
     }
 
 }

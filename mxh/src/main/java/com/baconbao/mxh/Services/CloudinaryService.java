@@ -54,4 +54,11 @@ public class CloudinaryService {
         return cloudinary.url().generate(publicId);
     }
 
+    public String getPublicId(String url) {
+        // URL mẫu: http://res.cloudinary.com/dgts7tmnb/image/upload/v1718723087/oax0ufrlkzdyjslbxv0c.png
+        String[] parts = url.split("/");
+        String publicIdWithExtension = parts[parts.length - 1];
+        String publicId = publicIdWithExtension.split("\\.")[0];
+        return publicId;
+    }
 }
