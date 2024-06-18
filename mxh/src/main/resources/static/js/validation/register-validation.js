@@ -15,9 +15,29 @@ $(document).ready(function() {
         }
     });
 
-    
+    function validateField(selector, validationFn, emptyMsg, invalidMsg, errorSelector) {
+        var value = $(selector).val().trim();
+        if (value === "") {
+            $(errorSelector).text(emptyMsg).show();
+            return true;
+        } else if (!validationFn(value)) {
+            $(errorSelector).text(invalidMsg).show();
+            return true;
+        } else {
+            $(errorSelector).hide();
+            return false;
+        }
+    }
 
-   
+    function isValidName(name) {
+        var regex = /^[A-Za-z\sàáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễđìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳỹỷỵÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴÈÉẸẺẼÊỀẾỆỂỄĐÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲỸỶỴ]+$/;
+        return regex.test(name);
+    }
+
+    function isValidEmail(email) {
+        var regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return regex.test(email.toLowerCase());
+    }
 
     function validatePassword(passwordSelector, confirmPasswordSelector, passwordErrorSelector, confirmPasswordErrorSelector) {
         var password = $(passwordSelector).val().trim();

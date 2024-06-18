@@ -28,10 +28,16 @@ public class UserServiceImpl implements UserService {
     public void saveUser(User username) {
         User user = new User();
         long id = 0;
-        if (username.getId() == null)
+        if (username.getId() == null){
+            if(userRepository.countById()==null){
+                id=1;
+            }else{
             id = userRepository.countById() + 1;
-        else
+        }
+    }
+        else{
             id = username.getId();
+        }
         if (username.getEmail() != null || isEmailValid(username.getEmail()) || username.getPassword() != null) {
             user.setId(id); // set giá trị cho biến user
             user.setFirstName(username.getFirstName()); // set giá trị cho biến user
