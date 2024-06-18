@@ -7,7 +7,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
             integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script type="text/javascript" th:src="@{/js/checkvalue.js}"></script>
+    <script type="text/javascript" th:src="@{/js/validation/editaccount-validation.js}"></script>
+    <link rel="stylesheet" th:href="@{/css/account.css}">
 </head>
 <body>
 <div class="container">
@@ -17,24 +18,24 @@
                 <h2 class="text-center">Edit Account</h2>
             </div>
             <div class="card-body">
-                <form method="post" id="formEditAccount" enctype="multipart/form-data" th:action="@{/editaccount/{id}(id=${userDTO.id})}" th:object="${userDTO}" th:onsubmit="return check_edit_value();">
+                <form method="post" id="formEditAccount" enctype="multipart/form-data" th:action="@{/editaccount/{id}(id=${userDTO.id})}" th:object="${userDTO}">
                     <input type="hidden" name="id" th:field="*{id}"/>
                     <div class="mb-3">
                         <label for="firstName" class="form-label">First Name</label>
                         <input type="text" class="form-control" id="firstName" name="firstName" th:field="*{firstName}">
-                        <p id="firstNameError" class="text-danger" style="color:red;"></p>
+                        <div class="error errorFirstName" style="color:red; display:none;"></div>
                     </div>
                     <div class="mb-3">
                         <label for="lastName" class="form-label">Last Name</label>
                         <input type="text" class="form-control" id="lastName" name="lastName" th:field="*{lastName}">
-                        <p id="lastNameError" class="text-danger"></p>
+                        <div class="error errorLastName" style="color:red; display:none;"></div>
                     </div>
                     <div class="mb-3">
                         <label for="email" class="form-label">Email</label>
                         <input type="email" class="form-control" id="email" name="email" th:field="*{email}">
-                        <p  th:errors="*{email}" class="text-danger"
-                           th:if="${#fields.hasErrors('email')}"></p>
-                           <p id="emailError" class="text-danger"></p>
+                        <div class="error errorEmail" style="color:red; display:none;"></div>
+                        <div th:errors="*{email}" class="text-danger error"
+                           th:if="${#fields.hasErrors('email')}"></div>
                     </div>
                     <div class="mb-3">
                         <button class="btn btn-primary" type="submit" id="editAccountForm">Confirm</button>
