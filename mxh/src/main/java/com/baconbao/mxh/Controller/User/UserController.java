@@ -26,7 +26,7 @@ import com.baconbao.mxh.Services.Service.VerifycationTokenService;
 
 @Controller
 public class UserController {
-    @Autowired
+    @Autowired 
     private UserService userService;
     @Autowired
     private MailService mailService;
@@ -43,7 +43,7 @@ public class UserController {
 
     // Nhan trang edit dieu kien la "/editaccount"
     @GetMapping("/editaccount")
-    // model la phan minh trar ve trang html
+    // model la phan minh tra ve trang html
     // request param la thong tin minh lay duoc sau dau ? cua url
     public String showEditAccountPage(Model model, @RequestParam long id) {
         // tim user theo id
@@ -51,7 +51,7 @@ public class UserController {
         // chuyen user ve userDTO
         UserDTO userDTO = userService.getUserDTO(user);
         // tra userdto ve html
-        model.addAttribute("userDTO", userDTO);
+        model.addAttribute("userDTO", userDTO); // userDTO la ten bien de html lay du lieu, userDTO la bien chua du lieu
         // ten file html
         return "editaccount";
     }

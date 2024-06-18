@@ -36,18 +36,10 @@ public class User {
     private String email;
     @Column(name = "CreateAt")
     private Date createAt;
-    @OneToMany
+    @OneToMany // Một user có thể có nhiều About
     @JoinTable(name = "users_about", // Tên bảng liên kết
             joinColumns = @JoinColumn(name = "IdUser"), // Khóa ngoại của bảng User
             inverseJoinColumns = @JoinColumn(name = "IdAbout") // Khóa ngoại của bảng About
     )
     private List<About> about;
-
-    @OneToMany
-    @JoinTable(name = "users_post", // Tên bảng liên kết
-            joinColumns = @JoinColumn(name = "IdUser"), // Khóa ngoại của bảng User
-            inverseJoinColumns = @JoinColumn(name = "IdPost") // Khóa ngoại của bảng Post
-    )
-    private List<Post> postListl;
-    
 }
