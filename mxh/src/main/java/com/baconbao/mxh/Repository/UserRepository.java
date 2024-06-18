@@ -13,7 +13,8 @@ import jakarta.transaction.Transactional;
 public interface UserRepository extends JpaRepository<User, Long> {
   User findByEmail(String email);
 
-  
+  @Modifying
+  @Transactional
   @Query(value = "SELECT MAX(id_user) FROM user", nativeQuery = true)
   Integer countById();
 }

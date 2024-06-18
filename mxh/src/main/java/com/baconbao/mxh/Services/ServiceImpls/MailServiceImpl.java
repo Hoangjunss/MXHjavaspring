@@ -30,6 +30,16 @@ public class MailServiceImpl implements MailService {
 			e.printStackTrace();
 		}
     }
+	@Override
+	public Mail getMail( String mailTo, String content, String subject) {
+		Mail mail = new Mail();
+        
+      
+        mail.setMailTo(mailTo);
+        mail.setMailSubject(subject);
+        mail.setMailContent(content);
+        return mail;
+	}
 
     
 }

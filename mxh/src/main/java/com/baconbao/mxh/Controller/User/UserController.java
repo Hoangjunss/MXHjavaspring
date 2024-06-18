@@ -22,6 +22,7 @@ import com.baconbao.mxh.Models.Mail;
 import com.baconbao.mxh.Models.User;
 import com.baconbao.mxh.Services.Service.MailService;
 import com.baconbao.mxh.Services.Service.UserService;
+import com.baconbao.mxh.Services.Service.VerifycationTokenService;
 
 @Controller
 public class UserController {
@@ -29,6 +30,8 @@ public class UserController {
     private UserService userService;
     @Autowired
     private MailService mailService;
+    @Autowired
+    private VerifycationTokenService verifycationTokenService;
 
     // Nhan trang chu dieu kien la "/"
     @GetMapping({ "/", "" })
@@ -126,4 +129,11 @@ public class UserController {
         // quay ve trang chu
         return "redirect:/";
     }
+    @GetMapping("/sendMail")
+    public String getMethodName() {
+        User user= new User((long)3,"chung","vũ","chung1212","vuhoangchung2020@gmail.com",null,null);
+        verifycationTokenService.registerUser(user);
+        return"index";
+    }
+    
 }
