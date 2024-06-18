@@ -1,7 +1,5 @@
 package com.baconbao.mxh.Controller.User;
 
-import java.sql.Timestamp;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -18,10 +16,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.baconbao.mxh.DTO.UserDTO;
-import com.baconbao.mxh.Models.Mail;
+import com.baconbao.mxh.Models.Post;
 import com.baconbao.mxh.Models.User;
 import com.baconbao.mxh.Models.VerifycationToken;
 import com.baconbao.mxh.Services.Service.MailService;
+import com.baconbao.mxh.Services.Service.PostService;
 import com.baconbao.mxh.Services.Service.UserService;
 import com.baconbao.mxh.Services.Service.VerifycationTokenService;
 
@@ -33,6 +32,8 @@ public class UserController {
     private MailService mailService;
     @Autowired
     private VerifycationTokenService verifycationTokenService;
+    @Autowired
+    private PostService postService;
 
     // Nhan trang chu dieu kien la "/"
     @GetMapping({ "/", "" })
@@ -60,6 +61,12 @@ public class UserController {
         User user = new User();
         model.addAttribute("user", user);
         return "login";
+    }
+
+    @GetMapping("/uploadpost")
+    public String showUploadPostPage(Model model) {
+        Post post = new Post();
+        return "uploadpost";
     }
 
     // Nhan duong dan va trang ve trang register.html trong templates
@@ -130,5 +137,15 @@ public class UserController {
         verifycationTokenService.confirmUser(token);
         return "index";
     }
+
+    @PostMapping("/uploadpost")
+    public String uploadPost(@ModelAttribute("post") Post post) {
+        LocalDateTime expiryTime = LocalDateTime.now();
+        post.setCreateAt(expiryTime);
+        post.setUpdateAt(expiryTime);
+        postService.save(post);
+        return "redirect:/index";
+    }
+
 
 }
