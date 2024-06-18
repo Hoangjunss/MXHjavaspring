@@ -15,10 +15,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.baconbao.mxh.DTO.ImageDTO;
 import com.baconbao.mxh.DTO.UserDTO;
 import com.baconbao.mxh.Models.Post;
 import com.baconbao.mxh.Models.User;
 import com.baconbao.mxh.Models.VerifycationToken;
+import com.baconbao.mxh.Services.CloudinaryService;
+import com.baconbao.mxh.Services.Service.ImageService;
 import com.baconbao.mxh.Services.Service.MailService;
 import com.baconbao.mxh.Services.Service.PostService;
 import com.baconbao.mxh.Services.Service.UserService;
@@ -34,6 +37,10 @@ public class UserController {
     private VerifycationTokenService verifycationTokenService;
     @Autowired
     private PostService postService;
+    @Autowired
+    private ImageService imageService;
+    @Autowired
+    private CloudinaryService cloudinaryService;
 
     // Nhan trang chu dieu kien la "/"
     @GetMapping({ "/", "" })
@@ -82,7 +89,8 @@ public class UserController {
         // kiem tra email da ton tai hay chua
         if (userService.isEmailExist(userDTO.getEmail())) {
             // neu ton tai thi tra ve trang register va thong bao loi
-            result.rejectValue("email", null, "Email already exists");
+            // rejectValue la phuong thuc tra ve loi cho truong do
+            result.rejectValue("email", null, "Email already exists"); // email la ten cua truong, null la ten cua loi, Email already exists la noi dung loi
             return "register";
         }
         // nếu email chưa tồn tại thì thêm user mới và thêm vào createUser thời gian
@@ -112,9 +120,10 @@ public class UserController {
     public String editAccount(@PathVariable Long id, Model model, UserDTO userDTO, BindingResult result) {
         User user = userService.findById(id);
         // kiem tra email da ton tai hay chua
-        if (userService.isEmailExist(userDTO.getEmail())) {
+        if (userService.isEmailExist(userDTO.getEmail()) ) {
             // neu ton tai thi tra ve trang editaccount va thong bao loi
-            result.rejectValue("email", null, "Email already exists");
+            // rejectValue la phuong thuc tra ve loi cho truong do
+            result.rejectValue("email", null, "Email already exists"); // email la ten cua truong, null la ten cua loi, Email already exists la noi dung loi
             return "editaccount";
         }
         // chuyen userDTO ve user
@@ -146,6 +155,16 @@ public class UserController {
         postService.save(post);
         return "redirect:/index";
     }
-
+    @GetMapping("/upload")
+    public String upload(Model model){
+        ImageDTO imageDTO=new ImageDTO();
+        model.addAttribute("imageDTO", imageDTO);
+        return "insertImage";
+    }
+    @PostMapping("/upload")
+    public String uploadImage(@ModelAttribute("imageDTO") ImageDTO imageDTO) throws Exception{
+          cloudinaryService.upload(imageDTO.getFile());
+          return "index";
+    }
 
 }
