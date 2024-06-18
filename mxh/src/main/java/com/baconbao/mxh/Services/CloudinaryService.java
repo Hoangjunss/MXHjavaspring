@@ -50,5 +50,8 @@ public class CloudinaryService {
         fo.close();
         return file;
     }
+    public String getImageUrl(String publicId) {
+        return cloudinary.url().generate(publicId);
+    }
 
 }
