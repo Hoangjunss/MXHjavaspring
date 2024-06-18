@@ -15,10 +15,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.baconbao.mxh.DTO.ImageDTO;
 import com.baconbao.mxh.DTO.UserDTO;
 import com.baconbao.mxh.Models.Post;
 import com.baconbao.mxh.Models.User;
 import com.baconbao.mxh.Models.VerifycationToken;
+import com.baconbao.mxh.Services.CloudinaryService;
+import com.baconbao.mxh.Services.Service.ImageService;
 import com.baconbao.mxh.Services.Service.MailService;
 import com.baconbao.mxh.Services.Service.PostService;
 import com.baconbao.mxh.Services.Service.UserService;
@@ -34,6 +37,10 @@ public class UserController {
     private VerifycationTokenService verifycationTokenService;
     @Autowired
     private PostService postService;
+    @Autowired
+    private ImageService imageService;
+    @Autowired
+    private CloudinaryService cloudinaryService;
 
     // Nhan trang chu dieu kien la "/"
     @GetMapping({ "/", "" })
@@ -148,6 +155,16 @@ public class UserController {
         postService.save(post);
         return "redirect:/index";
     }
-
+    @GetMapping("/upload")
+    public String upload(Model model){
+        ImageDTO imageDTO=new ImageDTO();
+        model.addAttribute("imageDTO", imageDTO);
+        return "insertImage";
+    }
+    @PostMapping("/upload")
+    public String uploadImage(@ModelAttribute("imageDTO") ImageDTO imageDTO) throws Exception{
+          cloudinaryService.upload(imageDTO.getFile());
+          return "index";
+    }
 
 }

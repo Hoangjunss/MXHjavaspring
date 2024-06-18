@@ -10,6 +10,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -42,4 +43,10 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "IdAbout") // Khóa ngoại của bảng About
     )
     private List<About> about;
+    @OneToOne
+    @JoinTable(name = "users_image", // Tên bảng liên kết
+            joinColumns = @JoinColumn(name = "IdUser"), // Khóa ngoại của bảng User
+            inverseJoinColumns = @JoinColumn(name = "IdImage") // Khóa ngoại của bảng About
+    )
+    private Image image;
 }
