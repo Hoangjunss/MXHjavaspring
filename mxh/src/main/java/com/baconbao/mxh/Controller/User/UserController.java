@@ -99,11 +99,11 @@ public class UserController {
          * userService.saveUser(userService.getUser(userDTO));
          */
         LocalDateTime localDateTime = LocalDateTime.now();
-        
+
         // Chuyển đổi LocalDateTime sang Date
         ZonedDateTime zonedDateTime = localDateTime.atZone(ZoneId.systemDefault());
         Date date = Date.from(zonedDateTime.toInstant());
-        
+
         userDTO.setCreateAt(date);
         userService.saveUser(userService.getUser(userDTO));
         // quay về trang login
@@ -129,16 +129,18 @@ public class UserController {
         // quay ve trang chu
         return "redirect:/";
     }
+
     @GetMapping("/sendMail")
     public String getMethodName() {
-        User user= new User((long)3,"chung","vũ","chung1212","vuhoangchung2020@gmail.com",null,null);
+        User user = new User((long) 3, "chung", "vũ", "chung1212", "kn26066@gmail.com", null, null);
         verifycationTokenService.registerUser(user);
-        return"index";
+        return "index";
     }
+
     @GetMapping("/confirmUser")
     public String confirmUser(@RequestParam long token) {
         verifycationTokenService.confirmUser(token);
         return "index";
     }
-    
+
 }
