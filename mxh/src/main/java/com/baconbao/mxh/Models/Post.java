@@ -24,11 +24,13 @@ public class Post {
     @Column(name = "IdPost")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @Column(name = "Content")
+    @Column(name = "Content", columnDefinition = "TEXT")
     private String content;
     @Column(name = "CreateAt")
     private LocalDateTime createAt;
     @Column(name = "UpdateAt")
     private LocalDateTime updateAt;
+    @Column(name = "Status")
+    private String status;
 
 }
