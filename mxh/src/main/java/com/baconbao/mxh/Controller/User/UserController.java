@@ -82,7 +82,8 @@ public class UserController {
         // kiem tra email da ton tai hay chua
         if (userService.isEmailExist(userDTO.getEmail())) {
             // neu ton tai thi tra ve trang register va thong bao loi
-            result.rejectValue("email", null, "Email already exists");
+            // rejectValue la phuong thuc tra ve loi cho truong do
+            result.rejectValue("email", null, "Email already exists"); // email la ten cua truong, null la ten cua loi, Email already exists la noi dung loi
             return "register";
         }
         // nếu email chưa tồn tại thì thêm user mới và thêm vào createUser thời gian
@@ -112,9 +113,10 @@ public class UserController {
     public String editAccount(@PathVariable Long id, Model model, UserDTO userDTO, BindingResult result) {
         User user = userService.findById(id);
         // kiem tra email da ton tai hay chua
-        if (userService.isEmailExist(userDTO.getEmail())) {
+        if (userService.isEmailExist(userDTO.getEmail()) ) {
             // neu ton tai thi tra ve trang editaccount va thong bao loi
-            result.rejectValue("email", null, "Email already exists");
+            // rejectValue la phuong thuc tra ve loi cho truong do
+            result.rejectValue("email", null, "Email already exists"); // email la ten cua truong, null la ten cua loi, Email already exists la noi dung loi
             return "editaccount";
         }
         // chuyen userDTO ve user

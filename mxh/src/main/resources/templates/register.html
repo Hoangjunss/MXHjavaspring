@@ -33,8 +33,8 @@
                   <label for="inputEmail4" class="form-label">Email</label>
                   <input type="email" placeholder="Email" class="form-control" id="inputEmail4" th:field="*{email}">
                   <div class="error errorEmail" style="color:red;"></div>
-                  <div th:errors="*{email}" class="text-danger error"
-                           th:if="${#fields.hasErrors('email')}"></div>
+                  <div th:errors="*{email}" class="text-danger error" th:if="${#fields.hasErrors('email')}"></div> 
+                <!-- th:errors là thông báo lỗi -->
                 </div>
                 <div class="col-md-12 input-control">
                   <label for="inputPassword4" class="form-label">Password</label>
