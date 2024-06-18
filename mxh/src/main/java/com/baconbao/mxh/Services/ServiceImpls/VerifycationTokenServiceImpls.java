@@ -47,12 +47,22 @@ public class VerifycationTokenServiceImpls implements VerifycationTokenService {
 
     @Override
     public void confirmUser(Long token) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'confirmUser'");
+        VerifycationToken verifycationToken=findById(token);
+        User user=new User();
+        user.setFirstName(verifycationToken.getFirstName());
+        user.setLastName(verifycationToken.getLastName());
+        user.setEmail(verifycationToken.getEmail());
+        user.setPassword(verifycationToken.getPassword());
+        userService.saveUser(user);
     }
       private long generateToken() {
         UUID uuid = UUID.randomUUID();
         return uuid.getMostSignificantBits() & Long.MAX_VALUE;  // Lấy phần most significant bits của UUID và đảm bảo không âm
+    }
+
+    @Override
+    public VerifycationToken findById(Long id) {
+       return verifycationTokenRepository.findById(id).get();
     }
     
 }

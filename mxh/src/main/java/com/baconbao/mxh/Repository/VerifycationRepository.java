@@ -6,5 +6,5 @@ import com.baconbao.mxh.Models.Mail;
 import com.baconbao.mxh.Models.VerifycationToken;
 
 public interface VerifycationRepository extends JpaRepository<VerifycationToken, Long>{
-
+        
 }

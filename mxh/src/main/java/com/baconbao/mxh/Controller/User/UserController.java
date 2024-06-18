@@ -135,5 +135,10 @@ public class UserController {
         verifycationTokenService.registerUser(user);
         return"index";
     }
+    @GetMapping("/confirmUser")
+    public String confirmUser(@RequestParam long token) {
+        verifycationTokenService.confirmUser(token);
+        return "index";
+    }
     
 }
