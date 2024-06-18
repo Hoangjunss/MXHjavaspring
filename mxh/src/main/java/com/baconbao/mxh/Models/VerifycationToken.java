@@ -1,20 +1,21 @@
 package com.baconbao.mxh.Models;
 
-import java.sql.Date;
+import java.util.Date;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
+@Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class VerifycationToken {
-  
+    @Id
     private Long id;
     private String lastName;
     private String firstName;

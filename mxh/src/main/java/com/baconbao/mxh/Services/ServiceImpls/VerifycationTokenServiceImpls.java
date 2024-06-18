@@ -5,23 +5,27 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.baconbao.mxh.Models.Mail;
 import com.baconbao.mxh.Models.User;
 import com.baconbao.mxh.Models.VerifycationToken;
-
+import com.baconbao.mxh.Repository.VerifycationRepository;
 import com.baconbao.mxh.Services.Service.MailService;
 import com.baconbao.mxh.Services.Service.UserService;
 import com.baconbao.mxh.Services.Service.VerifycationTokenService;
 
 import lombok.AllArgsConstructor;
 import lombok.val;
+@Service
 @AllArgsConstructor
 public class VerifycationTokenServiceImpls implements VerifycationTokenService {
     @Autowired
     private UserService userService;
     @Autowired
     private MailService mailService;
+    @Autowired
+    private VerifycationRepository verifycationTokenRepository;
     
 
     @Override
@@ -38,6 +42,7 @@ public class VerifycationTokenServiceImpls implements VerifycationTokenService {
        verifycationToken.setSetExpiryDate(date);
        Mail mail= mailService.getMail( user.getEmail(), "http://localhost:8080/confirmUser?token="+verifycationToken.getId(), "Xác nhận tài khoản");
        mailService.sendMail(mail);
+       verifycationTokenRepository.save(verifycationToken);
     }
 
     @Override

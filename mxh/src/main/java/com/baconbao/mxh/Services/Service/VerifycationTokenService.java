@@ -7,5 +7,4 @@ import com.baconbao.mxh.Models.User;
 public interface VerifycationTokenService {
     void registerUser(User user);
     void confirmUser(Long token);
-
 }
