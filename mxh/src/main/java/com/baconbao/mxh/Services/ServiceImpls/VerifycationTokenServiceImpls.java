@@ -20,6 +20,7 @@ import com.baconbao.mxh.Services.Service.VerifycationTokenService;
 
 import lombok.AllArgsConstructor;
 import lombok.val;
+
 @Service
 @AllArgsConstructor
 public class VerifycationTokenServiceImpls implements VerifycationTokenService {
@@ -29,49 +30,56 @@ public class VerifycationTokenServiceImpls implements VerifycationTokenService {
     private MailService mailService;
     @Autowired
     private VerifycationRepository verifycationTokenRepository;
-    
 
     @Override
     public void registerUser(User user) {
-       Long id=generateToken();
-       VerifycationToken verifycationToken=new VerifycationToken();
-       verifycationToken.setId(id);
-       verifycationToken.setEmail(user.getEmail());
-       verifycationToken.setFirstName(user.getFirstName());
-       verifycationToken.setLastName(user.getLastName());
-       verifycationToken.setPassword(user.getPassword());
-       LocalDateTime localDateTime=LocalDateTime.now().plusMinutes(5);
-       Date date= Date.valueOf(localDateTime.toLocalDate());
-       verifycationToken.setSetExpiryDate(date);
-       Mail mail= mailService.getMail( user.getEmail(), "http://localhost:8080/confirmUser?token="+verifycationToken.getId(), "Xác nhận tài khoản");
-       mailService.sendMail(mail);
-       verifycationTokenRepository.save(verifycationToken);
+        Long id = generateToken();
+        VerifycationToken verifycationToken = new VerifycationToken();
+        verifycationToken.setId(id);
+        verifycationToken.setEmail(user.getEmail());
+        verifycationToken.setFirstName(user.getFirstName());
+        verifycationToken.setLastName(user.getLastName());
+        verifycationToken.setPassword(user.getPassword());
+        LocalDateTime localDateTime = LocalDateTime.now().plusMinutes(5);
+        verifycationToken.setSetExpiryDate(localDateTime);
+        Mail mail = mailService.getMail(user.getEmail(),
+                "http://localhost:8080/confirmUser?token=" + verifycationToken.getId(), "Xác nhận tài khoản");
+        mailService.sendMail(mail);
+        verifycationTokenRepository.save(verifycationToken);
     }
 
     @Override
     public void confirmUser(Long token) {
-        VerifycationToken verifycationToken=findById(token);
-        User user=new User();
+        VerifycationToken verifycationToken = findById(token);
+        User user = new User();
         user.setFirstName(verifycationToken.getFirstName());
         user.setLastName(verifycationToken.getLastName());
         user.setEmail(verifycationToken.getEmail());
         user.setPassword(verifycationToken.getPassword());
         userService.saveUser(user);
     }
-      private long generateToken() {
+
+    private long generateToken() {
         UUID uuid = UUID.randomUUID();
-        return uuid.getMostSignificantBits() & Long.MAX_VALUE;  // Lấy phần most significant bits của UUID và đảm bảo không âm
+        return uuid.getMostSignificantBits() & Long.MAX_VALUE; // Lấy phần most significant bits của UUID và đảm bảo
+                                                               // không âm
     }
 
     @Override
     public VerifycationToken findById(Long id) {
-       return verifycationTokenRepository.findById(id).get();
+        return verifycationTokenRepository.findById(id).get();
     }
-    @Scheduled(fixedDelay = 300000) // Chạy mỗi 5 phút
+
+    @Scheduled(fixedDelay = 3000) // Chạy mỗi 5 phút
     @Transactional
+    @Override
     public void cleanupExpiredTokens() {
         LocalDateTime expiryTime = LocalDateTime.now().minusMinutes(5); // Xóa các token đã tạo từ 5 phút trước
-       List<VerifycationToken> tokens=verifycationTokenRepository.fid
+        System.out.println(expiryTime.toString());
+        List<VerifycationToken> tokens = verifycationTokenRepository.findExpiredVerificationTokens(expiryTime);
+        for (VerifycationToken token : tokens) {
+            verifycationTokenRepository.delete(token);
+        }
     }
-    
+
 }

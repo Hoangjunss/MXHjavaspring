@@ -9,4 +9,5 @@ public interface VerifycationTokenService {
     void registerUser(User user);
     void confirmUser(Long token);
     VerifycationToken findById(Long id);
+    void cleanupExpiredTokens();
 }

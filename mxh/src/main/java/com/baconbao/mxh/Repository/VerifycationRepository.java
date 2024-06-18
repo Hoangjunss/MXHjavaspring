@@ -1,10 +1,15 @@
 package com.baconbao.mxh.Repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import java.time.LocalDateTime;
+import java.util.List;
 
-import com.baconbao.mxh.Models.Mail;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
 import com.baconbao.mxh.Models.VerifycationToken;
 
 public interface VerifycationRepository extends JpaRepository<VerifycationToken, Long>{
-        
+    @Query(value = "SELECT * FROM verifycation_token WHERE set_expiry_date < :date", nativeQuery = true)
+    List<VerifycationToken> findExpiredVerificationTokens(LocalDateTime date);
 }
