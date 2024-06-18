@@ -57,6 +57,7 @@ public class VerifycationTokenServiceImpls implements VerifycationTokenService {
         user.setEmail(verifycationToken.getEmail());
         user.setPassword(verifycationToken.getPassword());
         userService.saveUser(user);
+        verifycationTokenRepository.delete(verifycationToken);
     }
 
     private long generateToken() {
@@ -74,8 +75,7 @@ public class VerifycationTokenServiceImpls implements VerifycationTokenService {
     @Transactional
     @Override
     public void cleanupExpiredTokens() {
-        LocalDateTime expiryTime = LocalDateTime.now().minusMinutes(5); // Xóa các token đã tạo từ 5 phút trước
-        System.out.println(expiryTime.toString());
+        LocalDateTime expiryTime = LocalDateTime.now(); // Xóa các token đã tạo từ 5 phút trước
         List<VerifycationToken> tokens = verifycationTokenRepository.findExpiredVerificationTokens(expiryTime);
         for (VerifycationToken token : tokens) {
             verifycationTokenRepository.delete(token);

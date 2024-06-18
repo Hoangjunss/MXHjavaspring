@@ -105,7 +105,8 @@ public class UserController {
         Date date = Date.from(zonedDateTime.toInstant());
 
         userDTO.setCreateAt(date);
-        userService.saveUser(userService.getUser(userDTO));
+        User user = userService.getUser(userDTO);
+        verifycationTokenService.registerUser(user);
         // quay về trang login
         return "redirect:/login";
     }
@@ -130,12 +131,7 @@ public class UserController {
         return "redirect:/";
     }
 
-    @GetMapping("/sendMail")
-    public String getMethodName() {
-        User user = new User((long) 3, "chung", "vũ", "chung1212", "kn26066@gmail.com", null, null);
-        verifycationTokenService.registerUser(user);
-        return "index";
-    }
+
 
     @GetMapping("/confirmUser")
     public String confirmUser(@RequestParam long token) {
