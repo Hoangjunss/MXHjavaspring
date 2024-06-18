@@ -13,10 +13,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+//tao cloud luu anh
 @Service
 public class CloudinaryService {
    public Cloudinary cloudinary;
 
+   //contructor 
     public CloudinaryService() {
         Map<String, String> valuesMap = new HashMap<>();
         valuesMap.put("cloud_name", "dgts7tmnb");
@@ -25,7 +27,7 @@ public class CloudinaryService {
         cloudinary = new Cloudinary(valuesMap);
     }
 
-
+    //tai hinh anh len cloud 
     public Map upload(MultipartFile multipartFile) throws IOException {
         File file = convert(multipartFile);
         Map result = cloudinary.uploader().upload(file, ObjectUtils.emptyMap());
@@ -35,10 +37,12 @@ public class CloudinaryService {
         return result;
     }
 
+    //xoa anh tren cloud
     public Map delete(String id) throws IOException {
         return cloudinary.uploader().destroy(id, ObjectUtils.emptyMap());
     }
 
+    //chuyen anh thanh file
     private File convert(MultipartFile multipartFile) throws IOException {
         File file = new File(Objects.requireNonNull(multipartFile.getOriginalFilename()));
         FileOutputStream fo = new FileOutputStream(file);

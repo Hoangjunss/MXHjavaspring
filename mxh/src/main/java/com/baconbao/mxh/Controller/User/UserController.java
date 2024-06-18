@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.baconbao.mxh.DTO.UserDTO;
 import com.baconbao.mxh.Models.Mail;
 import com.baconbao.mxh.Models.User;
+import com.baconbao.mxh.Models.VerifycationToken;
 import com.baconbao.mxh.Services.Service.MailService;
 import com.baconbao.mxh.Services.Service.UserService;
 import com.baconbao.mxh.Services.Service.VerifycationTokenService;
@@ -36,18 +37,6 @@ public class UserController {
     // Nhan trang chu dieu kien la "/"
     @GetMapping({ "/", "" })
     public String showIndexPage() {
-        return "index";
-    }
-
-    @GetMapping("/mail")
-    public String sendmail() {
-        Mail mail = new Mail();
-        String content = "gửi mail";
-        mail.setMailFrom("mxhbaconbao@gmail.com");
-        mail.setMailTo("vuhoangchung2020@gmail.com");
-        mail.setMailSubject("Duyệt đơn");
-        mail.setMailContent(content);
-        mailService.sendMail(mail);
         return "index";
     }
 
@@ -131,10 +120,13 @@ public class UserController {
         return "redirect:/";
     }
 
-
-
+    //Duong dan xac nhan 
     @GetMapping("/confirmUser")
     public String confirmUser(@RequestParam long token) {
+        VerifycationToken verifycationToken = verifycationTokenService.findById(token);
+        //neu token het han thi khi an vo chuyen ve register
+        if(verifycationToken == null) return "register";
+        //else xac nhan token va chuyen ve index
         verifycationTokenService.confirmUser(token);
         return "index";
     }

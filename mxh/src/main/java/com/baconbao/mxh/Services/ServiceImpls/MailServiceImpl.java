@@ -15,14 +15,16 @@ import jakarta.mail.internet.MimeMessage;
 public class MailServiceImpl implements MailService {
  @Autowired
 	private JavaMailSender javaMailSender;
+
+	//Dinh nghia phuong thuc goi mail
     @Override
     public void sendMail(Mail mail) {
-         	MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+         	MimeMessage mimeMessage = javaMailSender.createMimeMessage();//tao thu vien ho tro
 		try {
 			MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
-			mimeMessageHelper.setSubject(mail.getMailSubject());
-			mimeMessageHelper.setFrom(new InternetAddress(mail.getMailFrom()));
-			mimeMessageHelper.setTo(mail.getMailTo());
+			mimeMessageHelper.setSubject(mail.getMailSubject()); //tieu ve
+			mimeMessageHelper.setFrom(new InternetAddress(mail.getMailFrom())); // ai goi
+			mimeMessageHelper.setTo(mail.getMailTo()); //goi ai
 			mimeMessageHelper.setText(mail.getMailContent());
 			javaMailSender.send(mimeMessageHelper.getMimeMessage());
 		} 
@@ -30,16 +32,14 @@ public class MailServiceImpl implements MailService {
 			e.printStackTrace();
 		}
     }
+
+	//Tao doi tuong Mail
 	@Override
 	public Mail getMail( String mailTo, String content, String subject) {
 		Mail mail = new Mail();
-        
-      
         mail.setMailTo(mailTo);
         mail.setMailSubject(subject);
         mail.setMailContent(content);
         return mail;
 	}
-
-    
 }

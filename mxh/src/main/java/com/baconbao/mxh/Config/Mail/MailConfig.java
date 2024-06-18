@@ -9,12 +9,14 @@ import org.springframework.core.env.Environment;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
+//Cau hinh thu vien mail
 @Configuration
 public class MailConfig 
 {
 	@Autowired
 	private Environment environment;
 	
+	//Khoi tao mail sender
 	@Bean
 	public JavaMailSender getMailSender()
 	{
@@ -24,6 +26,7 @@ public class MailConfig
 		javaMailSender.setUsername(environment.getProperty("spring.mail.username"));
 		javaMailSender.setPassword(environment.getProperty("spring.mail.password"));
 		
+		//du lieu cau hinh cua application.properties
 		Properties javaMailProperties = new Properties();
 		javaMailProperties.put("mail.smtp.starttls.enable", "true");
 		javaMailProperties.put("mail.smtp.auth", "true");

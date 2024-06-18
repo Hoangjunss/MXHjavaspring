@@ -15,6 +15,6 @@ import jakarta.transaction.Transactional;
 public interface VerifycationRepository extends JpaRepository<VerifycationToken, Long>{
     @Modifying
     @Transactional
-    @Query(value = "SELECT * FROM verifycation_token WHERE set_expiry_date < :date", nativeQuery = true)
+    @Query(value = "SELECT * FROM verifycation_token WHERE set_expiry_date < :date", nativeQuery = true) // truy van tat ca token co thoi gian be hon 
     List<VerifycationToken> findExpiredVerificationTokens(@Param ("date") LocalDateTime date);
 }
