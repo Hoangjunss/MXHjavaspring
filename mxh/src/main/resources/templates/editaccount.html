@@ -18,7 +18,7 @@
                 <h2 class="text-center">Edit Account</h2>
             </div>
             <div class="card-body">
-                <form method="post" id="formEditAccount" enctype="multipart/form-data" th:action="@{/editaccount/{id}(id=${userDTO.id})}" th:object="${userDTO}">
+                <form method="post" id="formEditAccount" enctype="multipart/form-data" th:action="@{/editaccount}" th:object="${userDTO}">
                     <input type="hidden" name="id" th:field="*{id}"/>
                     <div class="mb-3">
                         <label for="firstName" class="form-label">First Name</label>

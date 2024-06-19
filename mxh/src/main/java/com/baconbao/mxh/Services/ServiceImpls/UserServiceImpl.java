@@ -31,26 +31,32 @@ public class UserServiceImpl implements UserService {
     public void saveUser(User username) {
         User user = new User();
         long id = 0;
-        if (username.getId() == null){
-            if(userRepository.countById()==null){
-                id=1;
-            }else{
-            id = userRepository.countById() + 1;
-        }
-    }
-        else{
+        if (username.getId() == null) {
+            if (userRepository.countById() == null) {
+                id = 1;
+            } else {
+                id = userRepository.countById() + 1;
+            }
+            if (username.getEmail() != null || isEmailValid(username.getEmail()) || username.getPassword() != null) {
+                user.setId(id); // set giá trị cho biến user
+                user.setFirstName(username.getFirstName()); // set giá trị cho biến user
+                user.setLastName(username.getLastName()); // set giá trị cho biến user
+                user.setEmail(username.getEmail()); // set giá trị cho biến user
+                user.setPassword(passwordEncoder.encode(username.getPassword()));// set giá trị cho biến user
+                user.setCreateAt(username.getCreateAt());
+                userRepository.save(user); // lưu user vào database
+            } else
+                System.out.println("Email hoặc mật khẩu không hợp lệ"); // thông báo email hoặc mật khẩu không hợp lệ
+        } else {
             id = username.getId();
-        }
-        if (username.getEmail() != null || isEmailValid(username.getEmail()) || username.getPassword() != null) {
             user.setId(id); // set giá trị cho biến user
             user.setFirstName(username.getFirstName()); // set giá trị cho biến user
             user.setLastName(username.getLastName()); // set giá trị cho biến user
             user.setEmail(username.getEmail()); // set giá trị cho biến user
-            user.setPassword(passwordEncoder.encode(username.getPassword()));// set giá trị cho biến user
+            user.setPassword(username.getPassword());// set giá trị cho biến user
             user.setCreateAt(username.getCreateAt());
             userRepository.save(user); // lưu user vào database
-        } else
-            System.out.println("Email hoặc mật khẩu không hợp lệ"); // thông báo email hoặc mật khẩu không hợp lệ
+        }
     }
 
     @Override

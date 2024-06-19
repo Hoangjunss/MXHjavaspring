@@ -1,6 +1,7 @@
 package com.baconbao.mxh.Controller.User;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -10,6 +11,8 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -34,7 +37,6 @@ import com.baconbao.mxh.Services.Service.PostService;
 import com.baconbao.mxh.Services.Service.UserService;
 import com.baconbao.mxh.Services.Service.VerifycationTokenService;
 
-
 @Controller
 public class UserController {
     @Autowired
@@ -49,6 +51,8 @@ public class UserController {
     private ImageService imageService;
     @Autowired
     private CloudinaryService cloudinaryService;
+    @Autowired
+    private UserDetailsService userDetailsService;
 
     // Nhan trang chu dieu kien la "/"
     @GetMapping({ "/", "" })
@@ -60,9 +64,10 @@ public class UserController {
     @GetMapping("/editaccount")
     // model la phan minh tra ve trang html
     // request param la thong tin minh lay duoc sau dau ? cua url
-    public String showEditAccountPage(Model model, @RequestParam long id) {
+    public String showEditAccountPage(Model model, Principal principal) {
         // tim user theo id
-        User user = userService.findById(id);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+        User user = userService.findByEmail(userDetails.getUsername());
         // chuyen user ve userDTO
         UserDTO userDTO = userService.getUserDTO(user);
         // tra userdto ve html
@@ -77,7 +82,6 @@ public class UserController {
         model.addAttribute("user", user);
         return "login";
     }
-
 
     // Nhan duong dan va trang ve trang register.html trong templates
     @GetMapping("/register")
@@ -119,44 +123,35 @@ public class UserController {
         return "redirect:/login";
     }
 
-    @PostMapping("/editaccount/{id}")
+    @PostMapping("/editaccount")
     // path varriablr la thong tin duoc lay sau dau / cua url
-    public String editAccount(@PathVariable Long id, Model model, UserDTO userDTO, BindingResult result) {
+    public String editAccount(Principal principal, Model model, UserDTO userDTO, BindingResult result) {
         // k@gmail.com 1
         // user id=1
-        User user = userService.findById(id);
-        // kiem tra email da ton tai hay chua
-        /* if (userService.isEmailExist(userDTO.getEmail()) ) {} */
-
-        /*
-         * //tim user theo email : user id=?
-         * User userExited = userService.findByEmail(userDTO.getEmail());
-         * //kiem tra mail co thuoc ve user
-         * if(user.getId() != userExited.getId()){
-         * result.rejectValue("email", null, "Email already exists");
-         * return "editaccount";
-         * }
-         * // kiem tra email co phai cua user dang sua
-         * if(user.getEmail() == userExited.getEmail()){
-         * 
-         * }
-         */
-
-        if (userService.isEmailExist(userDTO.getEmail())) {
-            // neu ton tai thi tra ve trang editaccount va thong bao loi
-            // rejectValue la phuong thuc tra ve loi cho truong do
-            result.rejectValue("email", null, "Email already exists"); // email la ten cua truong, null la ten cua loi,
-                                                                       // Email already exists la noi dung loi
-            return "editaccount";
+        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+        User user = userService.findByEmail(userDetails.getUsername());
+        //user tai khoan dang xet truoc thay doi email: kn26066. userDTO: th:field : kn26066.
+        if (user.getEmail().equals(userDTO.getEmail())) {
+            // chuyen userDTO ve user
+            user.setFirstName(userDTO.getFirstName());
+            user.setLastName(userDTO.getLastName());
+            // luu lai user
+            userService.saveUser(user);
+            // quay ve trang chu
+            return "redirect:/";
+        }else{
+            if(userService.isEmailExist(userDTO.getEmail())){
+                result.rejectValue("email", null, "Email already exists"); // email la ten cua truong, null la ten cua loi,
+                                                                               // Email already exists la noi dung loi
+                return "editaccount";
+            }else{
+                user.setFirstName(userDTO.getFirstName());
+                user.setLastName(userDTO.getLastName());
+                user.setEmail(userDTO.getEmail());
+                userService.saveUser(user);
+                return "redirect:/";
+            }
         }
-        // chuyen userDTO ve user
-        user.setFirstName(userDTO.getFirstName());
-        user.setLastName(userDTO.getLastName());
-        user.setEmail(userDTO.getEmail());
-        // luu lai user
-        userService.saveUser(user);
-        // quay ve trang chu
-        return "redirect:/";
     }
 
     // Duong dan xac nhan
@@ -170,7 +165,6 @@ public class UserController {
         verifycationTokenService.confirmUser(token);
         return "login";
     }
-
 
     @GetMapping("/upload")
     public String upload(Model model) {
@@ -189,15 +183,15 @@ public class UserController {
         return "index";
     }
 
-    //Lay duong dan anh de tai ve
+    // Lay duong dan anh de tai ve
     @GetMapping("/download")
     public ResponseEntity<Resource> downloadFile(@RequestParam("public_id") String publicId) throws IOException {
-        //Lay url tren duong dan anh de tai ve
+        // Lay url tren duong dan anh de tai ve
         String imageUrl = cloudinaryService.getImageUrl(publicId);
         // doi duong link thanh bit
         RestTemplate restTemplate = new RestTemplate();
         byte[] imageBytes = restTemplate.getForObject(imageUrl, byte[].class);
-        // 
+        //
         ByteArrayResource resource = new ByteArrayResource(imageBytes);
         //
         HttpHeaders headers = new HttpHeaders();
