@@ -21,7 +21,15 @@
                         <label for="inputFirstName" class="form-label">Content</label>
                         <input name="content" type="text" class="form-control" placeholder="First name" aria-label="First name" >
                         <label for="inputFirstName" class="form-label">Status</label>
-                        <input name="status" type="text" class="form-control" placeholder="First name" aria-label="First name" >
+                        <select class="form-control" id="StatusId" name="StatusId" required>
+                  
+                            <option th:value = "null">-SELECT-</option>
+                            <option th:each = "listStatus : ${status}"
+                                    th:value = "${listStatus.id}"
+                                    th:text = "${listStatus.name}">
+                            </option>
+                        
+                    </select>
                         <label for="inputFirstName" class="form-label">Image</label>
                         <input name="image" type="file" class="form-control" placeholder="First name" aria-label="First name" >
                     </div>

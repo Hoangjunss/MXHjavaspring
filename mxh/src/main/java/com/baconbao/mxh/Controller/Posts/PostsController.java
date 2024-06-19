@@ -50,7 +50,7 @@ public class PostsController {
    @PostMapping("/uploadpost")
 public String uploadPost(Model model,
                          @RequestParam("content") String content,
-                         @RequestParam("status") Status status,
+                         @RequestParam("StatusId") Long status,
                          @RequestParam("image") MultipartFile image,
                          RedirectAttributes redirectAttributes) {
     try {
