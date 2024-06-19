@@ -15,12 +15,15 @@
                 <h1 class="text-center">Register</h1>
             </div>
             <div class="card-body">
-                <form id="formRegister" class="row g-3" th:action="@{/upload}" th:object="${imageDTO}" method="post" enctype="multipart/form-data">
+                <form id="formRegister" class="row g-3" th:action="@{/uploadpost}" method="post" enctype="multipart/form-data">
                 <div class="row g-3">
                     <div class="col input-control">
-                        <label for="inputFirstName" class="form-label">First Name</label>
-                      <input id="inputFirstName" type="file" class="form-control" placeholder="First name" aria-label="First name" th:field="*{file}">
-                      <img th:src="@{http://res.cloudinary.com/dgts7tmnb/image/upload/v1718723087/oax0ufrlkzdyjslbxv0c.png}" alt="">
+                        <label for="inputFirstName" class="form-label">Content</label>
+                        <input name="content" type="text" class="form-control" placeholder="First name" aria-label="First name" >
+                        <label for="inputFirstName" class="form-label">Status</label>
+                        <input name="status" type="text" class="form-control" placeholder="First name" aria-label="First name" >
+                        <label for="inputFirstName" class="form-label">Image</label>
+                        <input name="image" type="file" class="form-control" placeholder="First name" aria-label="First name" >
                     </div>
                     </div>
                   <button type="submit" class="btn btn-primary">Upload</button>
