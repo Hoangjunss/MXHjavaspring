@@ -19,18 +19,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.util.StreamUtils;
-import org.springframework.web.client.RestTemplate;
 
 import com.baconbao.mxh.DTO.ImageDTO;
 import com.baconbao.mxh.DTO.UserDTO;
 import com.baconbao.mxh.Models.Image;
-import com.baconbao.mxh.Models.Post;
 import com.baconbao.mxh.Models.User;
 import com.baconbao.mxh.Models.VerifycationToken;
 import com.baconbao.mxh.Services.CloudinaryService;
