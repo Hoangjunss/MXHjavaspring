@@ -16,5 +16,4 @@ public class Status {
     @Id
     private Long id;
     private String name;
-    
 }
