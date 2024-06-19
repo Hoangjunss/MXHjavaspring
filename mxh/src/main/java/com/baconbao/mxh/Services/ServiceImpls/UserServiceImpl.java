@@ -3,6 +3,7 @@ package com.baconbao.mxh.Services.ServiceImpls;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.baconbao.mxh.DTO.UserDTO;
@@ -14,6 +15,8 @@ import com.baconbao.mxh.Services.Service.UserService;
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     // Định dạng email
     private static final String EMAIL_PATTERN = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
@@ -43,7 +46,7 @@ public class UserServiceImpl implements UserService {
             user.setFirstName(username.getFirstName()); // set giá trị cho biến user
             user.setLastName(username.getLastName()); // set giá trị cho biến user
             user.setEmail(username.getEmail()); // set giá trị cho biến user
-            user.setPassword(username.getPassword()); // set giá trị cho biến user
+            user.setPassword(passwordEncoder.encode(username.getPassword()));// set giá trị cho biến user
             user.setCreateAt(username.getCreateAt());
             userRepository.save(user); // lưu user vào database
         } else
