@@ -128,7 +128,7 @@ public class UserController {
     public String editAccount(Principal principal, Model model, UserDTO userDTO, BindingResult result) {
         // k@gmail.com 1
         // user id=1
-        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());//lấy ra cái email
         User user = userService.findByEmail(userDetails.getUsername());
         //user tai khoan dang xet truoc thay doi email: kn26066. userDTO: th:field : kn26066.
         if (user.getEmail().equals(userDTO.getEmail())) {

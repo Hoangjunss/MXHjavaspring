@@ -16,6 +16,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
+//config security
 
 public class WebConfig {
     @Autowired
@@ -24,7 +25,7 @@ public class WebConfig {
     public WebConfig(UserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
     }
-
+//mã hóa password
     @Bean
     public static PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -32,15 +33,22 @@ public class WebConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf((csrf) -> csrf.disable()).authorizeHttpRequests((authorize) -> authorize.requestMatchers("/register", "/js/validation/**", "/css/**", "/confirmUser").permitAll().anyRequest().authenticated())
+        //cho phep nhung duong dan khong can dang nhap
+        http.csrf((csrf) -> csrf.disable()).authorizeHttpRequests((authorize) -> authorize.requestMatchers("/register", "/js/validation/**", "/css/**", "/confirmUser").permitAll()
+        //cac duong dan con lai can phai dang nhap
+        .anyRequest().authenticated())
+        //phuong thuc login
                 .formLogin(login -> login.loginPage("/login").loginProcessingUrl("/login").defaultSuccessUrl("/", true)
-                        .permitAll()).logout( logout -> logout
+                        .permitAll())
+                        //phuong thuc logout
+                        .logout( logout -> logout
                         .logoutRequestMatcher(
                                         new AntPathRequestMatcher("/logout"))
                         .permitAll().deleteCookies("auth_code", "JSESSIONID")
                         .invalidateHttpSession(true));
                         return http.build();
     }
+    //luu thong tin dang nhap
          @Autowired
         public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
                 auth

@@ -27,7 +27,7 @@ public class WebSecurity implements UserDetailsService {
         if(user==null){
             throw new UsernameNotFoundException("Invalid username or password.");
         }else{
-            return new org.springframework.security.core.userdetails.User(user.getEmail(),
+            return new org.springframework.security.core.userdetails.User(user.getEmail(),//getUer
             user.getPassword(),
             getAuthorities());
         }
