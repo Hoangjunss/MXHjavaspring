@@ -168,7 +168,7 @@ public class UserController {
             return "register";
         // else xac nhan token va chuyen ve index
         verifycationTokenService.confirmUser(token);
-        return "index";
+        return "login";
     }
 
 

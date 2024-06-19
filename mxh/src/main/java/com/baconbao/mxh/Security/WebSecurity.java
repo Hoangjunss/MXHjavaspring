@@ -10,10 +10,12 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
 
 import com.baconbao.mxh.Models.User;
 import com.baconbao.mxh.Services.Service.UserService;
 
+@Service
 public class WebSecurity implements UserDetailsService {
     @Autowired
     private UserService userService;
@@ -21,6 +23,7 @@ public class WebSecurity implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user=userService.findByEmail(username);
+        System.out.println(user.getEmail());
         if(user==null){
             throw new UsernameNotFoundException("Invalid username or password.");
         }else{

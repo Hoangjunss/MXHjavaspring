@@ -17,15 +17,15 @@
                 <h1 class="text-center">Welcome Back</h1>
             </div>
             <div class="card-body">
-                <form id="formLogin" th:action="@{/login}" method="post" th:object="${user}">
+                <form id="formLogin" th:action="@{/login}" method="post">
                 <div class="col-md-12 input-control">
                   <label for="inputEmail4" class="form-label">Email</label>
-                  <input type="email" placeholder="Email" class="form-control" id="inputEmail4">
+                  <input type="email" name="username" placeholder="Email" class="form-control" id="inputEmail4">
                   <div class="error errorEmail" style="color:red; display:none;"></div>
                 </div>
                 <div class="col-md-12 input-control">
                   <label for="inputPassword4" class="form-label">Password</label>
-                  <input type="password" placeholder="Password" class="form-control" id="inputPassword4">
+                  <input type="password" name="password" placeholder="Password" class="form-control" id="inputPassword4">
                   <div class="error errorPassword" style="color:red;"></div>
                 </div>
                   <div class="mb-3">

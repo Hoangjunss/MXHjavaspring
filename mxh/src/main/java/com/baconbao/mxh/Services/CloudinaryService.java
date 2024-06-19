@@ -59,6 +59,7 @@ public class CloudinaryService {
         String[] parts = url.split("/");
         String publicIdWithExtension = parts[parts.length - 1];
         String publicId = publicIdWithExtension.split("\\.")[0];
+        // tra ve oax0ufrlkzdyjslbxv0c
         return publicId;
     }
 }

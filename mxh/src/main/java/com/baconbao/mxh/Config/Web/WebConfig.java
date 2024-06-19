@@ -16,10 +16,14 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
+
 public class WebConfig {
     @Autowired
     private UserDetailsService userDetailsService;
-    private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
+
+    public WebConfig(UserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
 
     @Bean
     public static PasswordEncoder passwordEncoder() {
@@ -28,7 +32,7 @@ public class WebConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf((csrf) -> csrf.disable()).authorizeHttpRequests((authorize) -> authorize.anyRequest().authenticated())
+        http.csrf((csrf) -> csrf.disable()).authorizeHttpRequests((authorize) -> authorize.requestMatchers("/register", "/js/validation/**", "/css/**", "/confirmUser").permitAll().anyRequest().authenticated())
                 .formLogin(login -> login.loginPage("/login").loginProcessingUrl("/login").defaultSuccessUrl("/", true)
                         .permitAll()).logout( logout -> logout
                         .logoutRequestMatcher(
@@ -42,6 +46,7 @@ public class WebConfig {
                 auth
                                 .userDetailsService(userDetailsService)
                                 .passwordEncoder(passwordEncoder());
+                                System.out.println(userDetailsService.toString()+" auth");
         }
 
 }
