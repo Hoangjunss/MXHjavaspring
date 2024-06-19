@@ -16,6 +16,6 @@ import jakarta.transaction.Transactional;
 public interface PostRepository  extends JpaRepository<Post, Long>{
     @Modifying
     @Transactional
-    @Query(value = "SELECT * FROM post WHERE status = :status", nativeQuery = true) // truy van tat ca token co thoi gian be hon 
-    List<Post> findByStatus(@Param ("status") String status);
+    @Query(value = "SELECT * FROM post WHERE IdPost in (SELECT * FROM post_status WHERE idStatus =:idStatus)", nativeQuery = true) // truy van tat ca token co thoi gian be hon 
+    List<Post> findByStatus(@Param ("idStatus") long idStatus);
 }

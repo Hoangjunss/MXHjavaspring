@@ -21,8 +21,8 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> findByStatus(String status) {
-        return postRepository.findByStatus(status);
+    public List<Post> findByStatus(long idStatus) {
+        return postRepository.findByStatus(idStatus);
     }
 
     @Override
