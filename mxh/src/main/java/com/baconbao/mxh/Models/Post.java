@@ -44,4 +44,10 @@ public class Post {
             inverseJoinColumns = @JoinColumn(name = "id") // Khóa ngoại của bảng About
     )
     private Image image;
+    @ManyToOne
+    @JoinTable(name = "post_user", // Tên bảng liên kết
+    joinColumns = @JoinColumn(name = "IdPost"), // Khóa ngoại của bảng User
+    inverseJoinColumns = @JoinColumn(name = "IdUser") // Khóa ngoại của bảng About
+)
+private User user;
 }

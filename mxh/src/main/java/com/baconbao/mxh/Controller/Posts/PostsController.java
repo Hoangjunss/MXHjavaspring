@@ -1,11 +1,14 @@
 package com.baconbao.mxh.Controller.Posts;
 
 import java.io.File;
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,10 +24,12 @@ import com.baconbao.mxh.DTO.PostDTO;
 import com.baconbao.mxh.Models.Image;
 import com.baconbao.mxh.Models.Post;
 import com.baconbao.mxh.Models.Status;
+import com.baconbao.mxh.Models.User;
 import com.baconbao.mxh.Services.CloudinaryService;
 import com.baconbao.mxh.Services.Service.ImageService;
 import com.baconbao.mxh.Services.Service.PostService;
 import com.baconbao.mxh.Services.Service.StatusService;
+import com.baconbao.mxh.Services.Service.UserService;
 
 import lombok.AllArgsConstructor;
 
@@ -39,6 +44,10 @@ public class PostsController {
     private CloudinaryService cloudinaryService;
     @Autowired
     private StatusService statusService;
+    @Autowired
+    private UserDetailsService userDetailsService;
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/uploadpost")
     public String showUploadPostPage(Model model) {
@@ -52,13 +61,17 @@ public String uploadPost(Model model,
                          @RequestParam("content") String content,
                          @RequestParam("StatusId") Long status,
                          @RequestParam("image") MultipartFile image,
-                         RedirectAttributes redirectAttributes) {
+                         RedirectAttributes redirectAttributes,
+                         Principal principal) {
     try {
         // Tạo đối tượng Post và thiết lập nội dung và trạng thái
         Post post = new Post();
         Status statusPost = statusService.findById(status);
         post.setContent(content);
         post.setStatus(statusPost);
+        UserDetails userDetails=userDetailsService.loadUserByUsername(principal.getName());
+        User user=userService.findByEmail(userDetails.getUsername());
+        post.setUser(user);
 
             // Kiểm tra xem tệp tin ảnh có rỗng không
             if (image.isEmpty()) {
