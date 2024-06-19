@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.baconbao.mxh.DTO.PostDTO;
 import com.baconbao.mxh.Models.Post;
+import com.baconbao.mxh.Models.Status;
 import com.baconbao.mxh.Repository.PostRepository;
 import com.baconbao.mxh.Services.Service.PostService;
 
@@ -21,7 +22,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> findByStatus(long idStatus) {
+    public List<Post> findByStatus(Status idStatus) {
         return postRepository.findByStatus(idStatus);
     }
 

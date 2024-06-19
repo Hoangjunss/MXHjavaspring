@@ -64,7 +64,7 @@ public class UserController {
     @GetMapping({ "/", "" })
     public String showIndexPage(Model model) {
         Status status = statusService.findById(2);
-        List<Post> post = postService.findByStatus(status.getId());
+        List<Post> post = postService.findByStatus(status);
         model.addAttribute("post", post);
         return "index";
     }

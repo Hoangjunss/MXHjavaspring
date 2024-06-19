@@ -9,13 +9,11 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.baconbao.mxh.Models.Post;
+import com.baconbao.mxh.Models.Status;
 
 import jakarta.transaction.Transactional;
 
 @Repository
-public interface PostRepository  extends JpaRepository<Post, Long>{
-    @Modifying
-    @Transactional
-    @Query(value = "SELECT * FROM post WHERE id_post IN (SELECT id_post FROM post_status WHERE id_status = :id_status)", nativeQuery = true)
-    List<Post> findByStatus(@Param("id_status") long id_status);
+public interface PostRepository extends JpaRepository<Post, Long> {
+    List<Post> findByStatus(Status status);
 }
