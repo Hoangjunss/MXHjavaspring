@@ -56,8 +56,9 @@ public String uploadPost(Model model,
     try {
         // Tạo đối tượng Post và thiết lập nội dung và trạng thái
         Post post = new Post();
+        Status statusPost = statusService.findById(status);
         post.setContent(content);
-        post.setStatus(status);
+        post.setStatus(statusPost);
 
             // Kiểm tra xem tệp tin ảnh có rỗng không
             if (image.isEmpty()) {
@@ -84,5 +85,7 @@ public String uploadPost(Model model,
         }
         return "redirect:/index";
     }
+
+    
 
 }

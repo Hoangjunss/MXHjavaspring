@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,12 +29,15 @@ import org.springframework.http.HttpHeaders;
 import com.baconbao.mxh.DTO.ImageDTO;
 import com.baconbao.mxh.DTO.UserDTO;
 import com.baconbao.mxh.Models.Image;
+import com.baconbao.mxh.Models.Post;
+import com.baconbao.mxh.Models.Status;
 import com.baconbao.mxh.Models.User;
 import com.baconbao.mxh.Models.VerifycationToken;
 import com.baconbao.mxh.Services.CloudinaryService;
 import com.baconbao.mxh.Services.Service.ImageService;
 import com.baconbao.mxh.Services.Service.MailService;
 import com.baconbao.mxh.Services.Service.PostService;
+import com.baconbao.mxh.Services.Service.StatusService;
 import com.baconbao.mxh.Services.Service.UserService;
 import com.baconbao.mxh.Services.Service.VerifycationTokenService;
 
@@ -53,10 +57,15 @@ public class UserController {
     private CloudinaryService cloudinaryService;
     @Autowired
     private UserDetailsService userDetailsService;
+    @Autowired
+    private StatusService statusService;
 
     // Nhan trang chu dieu kien la "/"
     @GetMapping({ "/", "" })
-    public String showIndexPage() {
+    public String showIndexPage(Model model) {
+        Status status = statusService.findById(2);
+        List<Post> post = postService.findByStatus(status.getId());
+        model.addAttribute("post", post);
         return "index";
     }
 
@@ -204,4 +213,5 @@ public class UserController {
                 .body(resource);
     }
 
+    
 }
