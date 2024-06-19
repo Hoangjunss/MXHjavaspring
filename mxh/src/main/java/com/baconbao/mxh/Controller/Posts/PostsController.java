@@ -2,6 +2,7 @@ package com.baconbao.mxh.Controller.Posts;
 
 import java.io.File;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +20,11 @@ import com.baconbao.mxh.DTO.ImageDTO;
 import com.baconbao.mxh.DTO.PostDTO;
 import com.baconbao.mxh.Models.Image;
 import com.baconbao.mxh.Models.Post;
+import com.baconbao.mxh.Models.Status;
 import com.baconbao.mxh.Services.CloudinaryService;
 import com.baconbao.mxh.Services.Service.ImageService;
 import com.baconbao.mxh.Services.Service.PostService;
+import com.baconbao.mxh.Services.Service.StatusService;
 
 import lombok.AllArgsConstructor;
 
@@ -34,23 +37,27 @@ public class PostsController {
     private ImageService imageService;
     @Autowired
     private CloudinaryService cloudinaryService;
+    @Autowired
+    private StatusService statusService;
 
     @GetMapping("/uploadpost")
-    public String showUploadPostPage() {
+    public String showUploadPostPage(Model model) {
+        List<Status>status=statusService.findAll();
+        model.addAttribute("status", status);
         return "insertimage";
     }
 
    @PostMapping("/uploadpost")
 public String uploadPost(Model model,
                          @RequestParam("content") String content,
-                         @RequestParam("status") String status,
+                         @RequestParam("status") Status status,
                          @RequestParam("image") MultipartFile image,
                          RedirectAttributes redirectAttributes) {
     try {
         // Tạo đối tượng Post và thiết lập nội dung và trạng thái
         Post post = new Post();
         post.setContent(content);
-      
+        post.setStatus(status);
 
         // Kiểm tra xem tệp tin ảnh có rỗng không
         if (image.isEmpty()) {
