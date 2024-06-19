@@ -40,4 +40,9 @@ public class ImageServiceImpls implements ImageService {
       return null;
    }
 
+   @Override
+   public Image findByImage(String url) {
+      return imageRepository.findByUrlImage(url);
+   }
+
 }

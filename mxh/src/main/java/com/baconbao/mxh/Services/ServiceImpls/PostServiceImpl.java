@@ -22,7 +22,6 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<Post> findByStatus(String status) {
-
         return postRepository.findByStatus(status);
     }
 
@@ -33,6 +32,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void save(Post post) {
+        post.setId(getGenerationId());
         postRepository.save(post);
     }
 
