@@ -31,8 +31,12 @@ public class Post {
     private LocalDateTime createAt;
     @Column(name = "UpdateAt")
     private LocalDateTime updateAt;
-    @Column(name = "Status")
-    private String status;
+    @ManyToOne
+    @JoinTable(name = "post_status", // Tên bảng liên kết
+            joinColumns = @JoinColumn(name = "IdPost"), // Khóa ngoại của bảng User
+            inverseJoinColumns = @JoinColumn(name = "idStatus") // Khóa ngoại của bảng About
+    )
+    private Status status;
 
     @OneToOne
     @JoinTable(name = "post_image", // Tên bảng liên kết

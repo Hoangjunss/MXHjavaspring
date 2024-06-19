@@ -50,7 +50,7 @@ public String uploadPost(Model model,
         // Tạo đối tượng Post và thiết lập nội dung và trạng thái
         Post post = new Post();
         post.setContent(content);
-        post.setStatus(status);
+      
 
         // Kiểm tra xem tệp tin ảnh có rỗng không
         if (image.isEmpty()) {
