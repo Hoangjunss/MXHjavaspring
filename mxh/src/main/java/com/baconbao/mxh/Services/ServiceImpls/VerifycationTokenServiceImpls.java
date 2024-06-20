@@ -66,8 +66,7 @@ public class VerifycationTokenServiceImpls implements VerifycationTokenService {
     //tao id token radom
     private long generateToken() {
         UUID uuid = UUID.randomUUID();
-        return uuid.getMostSignificantBits() & Long.MAX_VALUE; // Lấy phần most significant bits của UUID và đảm bảo
-                                                               // không âm
+        return uuid.getMostSignificantBits() & Long.MAX_VALUE; // Lấy phần most significant bits của UUID và đảm bảo không âm (most significant bit là bit đầu tiên của UUID)
     }
 
     //tim kiem token theo id
@@ -80,13 +79,13 @@ public class VerifycationTokenServiceImpls implements VerifycationTokenService {
             return null;
     }
 
-    @Scheduled(fixedDelay = 60000) // Chạy mỗi 5 phút
-    @Transactional 
+    @Scheduled(fixedDelay = 60000) // Chạy mỗi 1 phút
+    @Transactional
     @Override
-    public void cleanupExpiredTokens() {
+    public void cleanupExpiredTokens() { // Xóa các token đã hết hạn
         LocalDateTime expiryTime = LocalDateTime.now(); // Xóa các token đã tạo từ 5 phút trước
         List<VerifycationToken> tokens = verifycationTokenRepository.findExpiredVerificationTokens(expiryTime); //tim token da tao tu 5p truoc
-        for (VerifycationToken token : tokens) {
+        for (VerifycationToken token : tokens) { //duyet qua cac token
             verifycationTokenRepository.delete(token);//xoa token
         }
     }

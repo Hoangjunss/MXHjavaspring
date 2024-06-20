@@ -20,6 +20,6 @@ public class VerifycationToken {
     private String firstName;
     private String email;
     private String password;
-    private LocalDateTime setExpiryDate;
+    private LocalDateTime setExpiryDate; // thời gian hết hạn
     
 }

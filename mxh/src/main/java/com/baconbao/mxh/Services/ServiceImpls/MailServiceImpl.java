@@ -21,12 +21,12 @@ public class MailServiceImpl implements MailService {
     public void sendMail(Mail mail) {
          	MimeMessage mimeMessage = javaMailSender.createMimeMessage();//tao thu vien ho tro
 		try {
-			MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
-			mimeMessageHelper.setSubject(mail.getMailSubject()); //tieu ve
-			mimeMessageHelper.setFrom(new InternetAddress(mail.getMailFrom())); // ai goi
-			mimeMessageHelper.setTo(mail.getMailTo()); //goi ai
-			mimeMessageHelper.setText(mail.getMailContent());
-			javaMailSender.send(mimeMessageHelper.getMimeMessage());
+			MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true); 
+			mimeMessageHelper.setSubject(mail.getMailSubject()); //tiêu đề
+			mimeMessageHelper.setFrom(new InternetAddress(mail.getMailFrom())); // ai gửi
+			mimeMessageHelper.setTo(mail.getMailTo()); //gửi ai
+			mimeMessageHelper.setText(mail.getMailContent()); //nội dung
+			javaMailSender.send(mimeMessageHelper.getMimeMessage()); // thư viện hỗ trợ gửi mail
 		} 
 		catch (MessagingException e) {
 			e.printStackTrace();

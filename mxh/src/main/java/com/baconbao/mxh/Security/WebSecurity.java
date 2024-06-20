@@ -21,17 +21,19 @@ public class WebSecurity implements UserDetailsService {
     private UserService userService;
     
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user=userService.findByEmail(username);
-        System.out.println(user.getEmail());
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException { // throws UsernameNotFoundException là một exception được ném ra khi không tìm thấy người dùng với tên người dùng đã cung cấp.
+        User user = userService.findByEmail(username);
         if(user==null){
             throw new UsernameNotFoundException("Invalid username or password.");
         }else{
             return new org.springframework.security.core.userdetails.User(user.getEmail(),//getUer
             user.getPassword(),
-            getAuthorities());
+            getAuthorities()); // chức vụ tài khoản
         }
     }
+    
+    // Chữ "USER" là string nên phải chuyển thành collection
+    // tại sao phải chuyển thành collection? vì phương thức getAuthorities() trả về một collection của các quyền được cấp cho người dùng.
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singleton(new SimpleGrantedAuthority("USER"));
     }

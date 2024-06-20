@@ -16,5 +16,5 @@ public interface VerifycationRepository extends JpaRepository<VerifycationToken,
     @Modifying
     @Transactional
     @Query(value = "SELECT * FROM verifycation_token WHERE set_expiry_date < :date", nativeQuery = true) // truy van tat ca token co thoi gian be hon 
-    List<VerifycationToken> findExpiredVerificationTokens(@Param ("date") LocalDateTime date);
+    List<VerifycationToken> findExpiredVerificationTokens(@Param ("date") LocalDateTime date); // tim kiem token het han 
 }

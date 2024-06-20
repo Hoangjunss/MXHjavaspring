@@ -65,10 +65,10 @@ public class UserController {
     // Nhan trang edit dieu kien la "/editaccount"
     @GetMapping("/editaccount")
     // model la phan minh tra ve trang html
-    // request param la thong tin minh lay duoc sau dau ? cua url
+    // principal giông như session, chứa thông tin người dùng
     public String showEditAccountPage(Model model, Principal principal) {
         // tim user theo id
-        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());       
         User user = userService.findByEmail(userDetails.getUsername());
         // chuyen user ve userDTO
         UserDTO userDTO = userService.getUserDTO(user);
@@ -81,7 +81,7 @@ public class UserController {
     @GetMapping("/login")
     public String showLoginPage(Model model) {
         User user = new User();
-        model.addAttribute("user", user);
+        // model.addAttribute("user", user);
         return "login";
     }
 
@@ -95,12 +95,12 @@ public class UserController {
 
     @PostMapping("/register")
     public String register(@ModelAttribute("userDTO") UserDTO userDTO, BindingResult result, Model model) {
+        // BindingResult la doi tuong chua loi cua truong, neu co loi thi tra ve trang
         // kiem tra email da ton tai hay chua
         if (userService.isEmailExist(userDTO.getEmail())) {
             // neu ton tai thi tra ve trang register va thong bao loi
             // rejectValue la phuong thuc tra ve loi cho truong do
-            result.rejectValue("email", null, "Email already exists"); // email la ten cua truong, null la ten cua loi,
-                                                                       // Email already exists la noi dung loi
+            result.rejectValue("email", null, "Email already exists"); // email la ten cua truong, null la ten cua loi, Email already exists la noi dung loi
             return "register";
         }
         // nếu email chưa tồn tại thì thêm user mới và thêm vào createUser thời gian
@@ -112,7 +112,7 @@ public class UserController {
          * userDTO.setCreateAt(timestampUtc);
          * userService.saveUser(userService.getUser(userDTO));
          */
-        LocalDateTime localDateTime = LocalDateTime.now();
+        LocalDateTime localDateTime = LocalDateTime.now(); // Lấy thời gian hiện tại theo máy
 
         // Chuyển đổi LocalDateTime sang Date
         ZonedDateTime zonedDateTime = localDateTime.atZone(ZoneId.systemDefault());
@@ -120,7 +120,7 @@ public class UserController {
 
         userDTO.setCreateAt(date);
         User user = userService.getUser(userDTO);
-        verifycationTokenService.registerUser(user);
+        verifycationTokenService.registerUser(user); // gửi mail xác nhận
         // quay về trang login
         return "redirect:/login";
     }
@@ -144,12 +144,10 @@ public class UserController {
             return "redirect:/";
         } else {
             if (userService.isEmailExist(userDTO.getEmail())) {
-                result.rejectValue("email", null, "Email already exists"); // email la ten cua truong, null la ten cua
-                                                                           // loi,
-                                                                           // Email already exists la noi dung loi
+                result.rejectValue("email", null, "Email already exists"); // email la ten cua truong, null la ten cua loi, Email already exists la noi dung loi
                 return "editaccount";
             } else {
-                user.setFirstName(userDTO.getFirstName());
+                user.setFirstName(userDTO.getFirstName()); 
                 user.setLastName(userDTO.getLastName());
                 user.setEmail(userDTO.getEmail());
                 userService.saveUser(user);
@@ -160,7 +158,7 @@ public class UserController {
 
     // Duong dan xac nhan
     @GetMapping("/confirmUser")
-    public String confirmUser(@RequestParam long token) {
+    public String confirmUser(@RequestParam long token) { // @RequestParam lấy giá trị từ url (lấy giá trị của token từ url)
         VerifycationToken verifycationToken = verifycationTokenService.findById(token);
         // neu token het han thi khi an vo chuyen ve register
         if (verifycationToken == null)
