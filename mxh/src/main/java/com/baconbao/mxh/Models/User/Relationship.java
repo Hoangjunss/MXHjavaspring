@@ -1,5 +1,4 @@
-package com.baconbao.mxh.Models;
-
+package com.baconbao.mxh.Models.User;
 
 import jakarta.persistence.*;
 
@@ -56,6 +55,5 @@ public class Relationship {
     }
 
     // Getters và Setters
-    
-}
 
+}

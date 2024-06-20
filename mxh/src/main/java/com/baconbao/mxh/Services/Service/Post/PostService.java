@@ -1,12 +1,12 @@
-package com.baconbao.mxh.Services.Service;
+package com.baconbao.mxh.Services.Service.Post;
 
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
 import com.baconbao.mxh.DTO.PostDTO;
-import com.baconbao.mxh.Models.Post;
-import com.baconbao.mxh.Models.Status;
+import com.baconbao.mxh.Models.Post.Post;
+import com.baconbao.mxh.Models.Post.Status;
 
 @Service
 public interface PostService {

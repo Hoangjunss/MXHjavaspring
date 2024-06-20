@@ -34,6 +34,7 @@
                                 <button type="button" class="btn nav-link p-0"><img th:src="@{/images/icons/theme/post-image.png}" class="f-nav-icon" alt="Quick make post"></button>
                             </li>
                             <li class="nav-item w-100 py-2">
+                                <!-- Form serarch post/user -->
                                 <form class="d-inline form-inline w-100 px-4">
                                     <div class="input-group">
                                         <input type="text" class="form-control search-input" placeholder="Search for people, companies, events and more..." aria-label="Search" aria-describedby="search-addon">
@@ -42,6 +43,7 @@
                                         </div>
                                     </div>
                                 </form>
+                                <!-- end Form search post/user -->
                             </li>
                             <li class="nav-item">
                                 <a href="messages.html" class="nav-link nav-icon nav-links message-drop drop-w-tooltip" data-placement="bottom" data-title="Messages">
@@ -281,7 +283,7 @@
                         <ul class="list-unstyled" style="margin-bottom: 0;">
                             <li class="media post-form w-shadow">
                                 <div class="media-body">
-                                    <!-- Form uploadPost -->
+                                    <!-- Form UPLOADPOST -->
                                     <form th:action="@{/uploadpost}" method="post" enctype="multipart/form-data">
                                         <div class="form-group post-input">
                                             <textarea class="form-control" name="content" rows="2" placeholder="What's on your mind, Arthur?"></textarea>
@@ -312,20 +314,21 @@
 
                         <!-- Posts -->
                         <div class="posts-section mb-5" id="displaycontent">
-                            <ul class="list-unstyled" th:each="listpost : ${posts}">
-                            <div class="post border-bottom p-3 bg-white w-shadow" data-id="${listpost.id}"> 
+                            <!-- Vong lap for hien thi danh sach post -->
+                            <ul class="list-unstyled" th:each="listpost : ${posts}"> 
+                            <div class="post border-bottom p-3 bg-white w-shadow" data-id="${listpost.id}"> <!-- id ul cua post -->
                                 <div class="media text-muted pt-3">
                                     <!-- Avartar user -->
                                     <img th:src="${listpost.user.image.urlImage}" alt="Online user" class="mr-3 post-user-image">
                                     <div class="media-body pb-3 mb-0 small lh-125">
                                         <div class="d-flex justify-content-between align-items-center w-100">
-                                            <!-- Name user -->
+                                            <!--Hien thi Name user -->
                                             <a href="#" class="text-gray-dark post-user-name" th:text="${listpost.user.lastName} + ${listpost.user.firstName}"></a>
                                             <div class="dropdown">
                                                 <a href="#" class="post-more-settings" role="button" data-toggle="dropdown" id="postOptions" aria-haspopup="true" aria-expanded="false">
                                                     <i class='bx bx-dots-horizontal-rounded'></i>
                                                 </a>
-                                                <!--  More -->
+                                                <!-- More -->
                                                 <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-left post-dropdown-menu">
                                                     <a href="#" class="dropdown-item" aria-describedby="savePost">
                                                         <div class="row">
@@ -381,13 +384,14 @@
                                 </div>
                                 <div id="displaycontent">
                                         <!-- Content -->
-                                    <div class="mt-3 ">
+                                        <div class="mt-3 ">
                                         <p th:text="${listpost.content}"></p>
                                     <!--End Content -->
-                                    <!-- Image -->
+                                    <!-- Image cua post -->
                                     <div class="d-block mt-3">
                                         <img th:src="${listpost.image.urlImage}" class="post-content" alt="post image">
                                     </div>
+                                    <!-- End Image -->
                                     </div>
                                 </div>
                                 <!-- End time -->
@@ -517,7 +521,6 @@
                                                     </div>
                                                 </div>
                                             </div>
-
                                         </div>
                                     </div>
                                 </div>

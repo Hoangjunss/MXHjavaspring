@@ -1,4 +1,4 @@
-package com.baconbao.mxh.Services.ServiceImpls;
+package com.baconbao.mxh.Services.ServiceImpls.Post;
 
 import java.util.List;
 import java.util.UUID;
@@ -7,10 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.baconbao.mxh.DTO.PostDTO;
-import com.baconbao.mxh.Models.Post;
-import com.baconbao.mxh.Models.Status;
-import com.baconbao.mxh.Repository.PostRepository;
-import com.baconbao.mxh.Services.Service.PostService;
+import com.baconbao.mxh.Models.Post.Post;
+import com.baconbao.mxh.Models.Post.Status;
+import com.baconbao.mxh.Repository.Post.PostRepository;
+import com.baconbao.mxh.Services.Service.Post.PostService;
 
 @Service
 public class PostServiceImpl implements PostService {

@@ -1,12 +1,12 @@
-package com.baconbao.mxh.Services.ServiceImpls;
+package com.baconbao.mxh.Services.ServiceImpls.User;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.baconbao.mxh.Models.Relationship;
-import com.baconbao.mxh.Models.User;
-import com.baconbao.mxh.Repository.RelationshipRepository;
-import com.baconbao.mxh.Services.Service.RelationshipService;
+import com.baconbao.mxh.Models.User.Relationship;
+import com.baconbao.mxh.Models.User.User;
+import com.baconbao.mxh.Repository.User.RelationshipRepository;
+import com.baconbao.mxh.Services.Service.User.RelationshipService;
 
 @Service
 public class RelationshipServiceImpl implements RelationshipService{

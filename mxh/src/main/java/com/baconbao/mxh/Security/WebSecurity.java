@@ -12,8 +12,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.baconbao.mxh.Models.User;
-import com.baconbao.mxh.Services.Service.UserService;
+import com.baconbao.mxh.Models.User.User;
+import com.baconbao.mxh.Services.Service.User.UserService;
 
 @Service
 public class WebSecurity implements UserDetailsService {

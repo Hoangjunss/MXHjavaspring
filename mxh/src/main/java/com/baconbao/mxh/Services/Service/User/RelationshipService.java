@@ -1,8 +1,8 @@
-package com.baconbao.mxh.Services.Service;
+package com.baconbao.mxh.Services.Service.User;
 
 import org.springframework.stereotype.Service;
 
-import com.baconbao.mxh.Models.User;
+import com.baconbao.mxh.Models.User.User;
 
 @Service
 public interface RelationshipService {

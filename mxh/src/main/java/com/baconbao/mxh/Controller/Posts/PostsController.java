@@ -1,15 +1,10 @@
 package com.baconbao.mxh.Controller.Posts;
 
-import java.io.File;
 import java.security.Principal;
-import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
@@ -21,15 +16,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.baconbao.mxh.Models.Image;
-import com.baconbao.mxh.Models.Post;
-import com.baconbao.mxh.Models.Status;
-import com.baconbao.mxh.Models.User;
+import com.baconbao.mxh.Models.Post.Image;
+import com.baconbao.mxh.Models.Post.Post;
+import com.baconbao.mxh.Models.Post.Status;
+import com.baconbao.mxh.Models.User.User;
 import com.baconbao.mxh.Services.CloudinaryService;
-import com.baconbao.mxh.Services.Service.ImageService;
-import com.baconbao.mxh.Services.Service.PostService;
-import com.baconbao.mxh.Services.Service.StatusService;
-import com.baconbao.mxh.Services.Service.UserService;
+import com.baconbao.mxh.Services.Service.Post.ImageService;
+import com.baconbao.mxh.Services.Service.Post.PostService;
+import com.baconbao.mxh.Services.Service.Post.StatusService;
+import com.baconbao.mxh.Services.Service.User.UserService;
 
 import lombok.AllArgsConstructor;
 
@@ -58,7 +53,7 @@ public class PostsController {
 
     @GetMapping("/")
     public String getPosts(Model model) {
-        List<Status>status=statusService.findAll();
+        List<Status> status = statusService.findAll();
         model.addAttribute("status", status);
         Status status1 = statusService.findById(1);
         List<Post> posts = postService.findByStatus(status1);
@@ -68,11 +63,12 @@ public class PostsController {
 
     @PostMapping("/uploadpost")
     public String uploadPost(Model model,
-            @RequestParam("content") String content,
-            @RequestParam("StatusId") Long status,
-            @RequestParam("image") MultipartFile image,
+            @RequestParam("content") String content, // tra ve html co bien la content voi du lieu la content (String)
+                                                     // th:text="${content}"
+            @RequestParam("StatusId") Long status, // tra ve html co bien la StatusId
+            @RequestParam("image") MultipartFile image, // tra ve html co bien la Image
             RedirectAttributes redirectAttributes,
-            Principal principal) {
+            Principal principal) { // Giong voi session khi login se luu username(email) va password cua user
         try {
             // Tạo đối tượng Post và thiết lập nội dung và trạng thái
             Post post = new Post();

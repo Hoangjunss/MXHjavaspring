@@ -16,9 +16,9 @@ import java.util.Objects;
 //tao cloud luu anh
 @Service
 public class CloudinaryService {
-   public Cloudinary cloudinary;
+    public Cloudinary cloudinary;
 
-   //contructor 
+    // contructor
     public CloudinaryService() {
         Map<String, String> valuesMap = new HashMap<>();
         valuesMap.put("cloud_name", "dgts7tmnb");
@@ -27,7 +27,7 @@ public class CloudinaryService {
         cloudinary = new Cloudinary(valuesMap);
     }
 
-    //tai hinh anh len cloud 
+    // tai hinh anh len cloud
     public Map upload(MultipartFile multipartFile) throws IOException {
         File file = convert(multipartFile);
         Map result = cloudinary.uploader().upload(file, ObjectUtils.emptyMap());
@@ -37,12 +37,12 @@ public class CloudinaryService {
         return result;
     }
 
-    //xoa anh tren cloud
+    // xoa anh tren cloud
     public Map delete(String id) throws IOException {
         return cloudinary.uploader().destroy(id, ObjectUtils.emptyMap());
     }
 
-    //chuyen anh thanh file
+    // chuyen anh thanh file
     private File convert(MultipartFile multipartFile) throws IOException {
         File file = new File(Objects.requireNonNull(multipartFile.getOriginalFilename()));
         FileOutputStream fo = new FileOutputStream(file);
@@ -50,12 +50,14 @@ public class CloudinaryService {
         fo.close();
         return file;
     }
+
     public String getImageUrl(String publicId) {
         return cloudinary.url().generate(publicId);
     }
 
     public String getPublicId(String url) {
-        // URL mẫu: http://res.cloudinary.com/dgts7tmnb/image/upload/v1718723087/oax0ufrlkzdyjslbxv0c.png
+        // URL mẫu:
+        // http://res.cloudinary.com/dgts7tmnb/image/upload/v1718723087/oax0ufrlkzdyjslbxv0c.png
         String[] parts = url.split("/");
         String publicIdWithExtension = parts[parts.length - 1];
         String publicId = publicIdWithExtension.split("\\.")[0];

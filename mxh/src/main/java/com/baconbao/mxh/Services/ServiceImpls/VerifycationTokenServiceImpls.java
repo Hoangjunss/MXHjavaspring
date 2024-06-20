@@ -11,12 +11,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.baconbao.mxh.Models.Mail;
-import com.baconbao.mxh.Models.User;
 import com.baconbao.mxh.Models.VerifycationToken;
+import com.baconbao.mxh.Models.User.User;
 import com.baconbao.mxh.Repository.VerifycationRepository;
 import com.baconbao.mxh.Services.Service.MailService;
-import com.baconbao.mxh.Services.Service.UserService;
 import com.baconbao.mxh.Services.Service.VerifycationTokenService;
+import com.baconbao.mxh.Services.Service.User.UserService;
 
 import lombok.AllArgsConstructor;
 

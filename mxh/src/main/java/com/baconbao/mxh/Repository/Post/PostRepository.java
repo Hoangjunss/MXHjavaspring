@@ -1,4 +1,4 @@
-package com.baconbao.mxh.Repository;
+package com.baconbao.mxh.Repository.Post;
 
 import java.util.List;
 
@@ -6,8 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import org.springframework.stereotype.Repository;
 
-import com.baconbao.mxh.Models.Post;
-import com.baconbao.mxh.Models.Status;
+import com.baconbao.mxh.Models.Post.Post;
+import com.baconbao.mxh.Models.Post.Status;
 
 
 @Repository
