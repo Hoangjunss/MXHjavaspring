@@ -21,7 +21,6 @@
     <link th:href="@{/css/post/chat.css}" rel="stylesheet">
     <link href="https://vjs.zencdn.net/7.4.1/video-js.css" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script th:src="@{/js/post/loaddata.js}"></script>
 </head>
 
 <body class="newsfeed">
@@ -289,9 +288,10 @@
                                         </div>
                                         <div class="row post-form-group">
                                             <div class="col-md-9">
-                                                <input id="file-upload" type="file" class="custom-file-input" name="image">
+                                            
+                                                <input id="file-upload" type="file" class="custom-file-input" name="image" onchange="previewImage(event)">
                                                 <div id="image-preview-container">
-                                                    <img id="image-preview" class="image-preview" src="#" alt="Your image will appear here." style="display: none;">
+                                                        <img id="imagePreview" src="" alt="Image Preview" style="max-width: 300px; max-height: 300px;"/>
                                                 </div>
                                                 <select class="form-control" id="StatusId" name="StatusId" required>
                                                     <option th:each = "listStatus : ${status}"
@@ -311,15 +311,16 @@
                         </ul>
 
                         <!-- Posts -->
-                        <div class="posts-section mb-5">
-                            <div class="post border-bottom p-3 bg-white w-shadow">
+                        <div class="posts-section mb-5" id="displaycontent">
+                            <ul class="list-unstyled" th:each="listpost : ${posts}">
+                            <div class="post border-bottom p-3 bg-white w-shadow" data-id="${listpost.id}"> 
                                 <div class="media text-muted pt-3">
                                     <!-- Avartar user -->
-                                    <img th:src="@{/images/users/user-1.jpg}" alt="Online user" class="mr-3 post-user-image">
+                                    <img th:src="${listpost.user.image.urlImage}" alt="Online user" class="mr-3 post-user-image">
                                     <div class="media-body pb-3 mb-0 small lh-125">
                                         <div class="d-flex justify-content-between align-items-center w-100">
                                             <!-- Name user -->
-                                            <a href="#" class="text-gray-dark post-user-name">John Michael</a>
+                                            <a href="#" class="text-gray-dark post-user-name" th:text="${listpost.user.lastName} + ${listpost.user.firstName}"></a>
                                             <div class="dropdown">
                                                 <a href="#" class="post-more-settings" role="button" data-toggle="dropdown" id="postOptions" aria-haspopup="true" aria-expanded="false">
                                                     <i class='bx bx-dots-horizontal-rounded'></i>
@@ -379,9 +380,16 @@
                                     </div>
                                 </div>
                                 <div id="displaycontent">
-                                        
+                                        <!-- Content -->
+                                    <div class="mt-3 ">
+                                        <p th:text="${listpost.content}"></p>
+                                    <!--End Content -->
+                                    <!-- Image -->
+                                    <div class="d-block mt-3">
+                                        <img th:src="${listpost.image.urlImage}" class="post-content" alt="post image">
+                                    </div>
+                                    </div>
                                 </div>
-                                
                                 <!-- End time -->
                                 <div class="mb-3">
                                     <!-- Reactions -->
@@ -517,6 +525,7 @@
                             <!-- <div class="d-flex justify-content-center my-5 load-post">
                                 <button type="button" class="btn btn-quick-link join-group-btn border shadow" data-toggle="tooltip" data-placement="top" data-title="Load More Post"><i class='bx bx-dots-horizontal-rounded'></i></button>
                             </div> -->
+                            </ul>
                         </div>
                     </div>
                     <div class="col-md-3 third-section">
@@ -539,6 +548,19 @@
             e.preventDefault();
             $("#wrapper").toggleClass("toggled");
         });
+
+        function previewImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imagePreview = document.getElementById('imagePreview');
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            }
+        }
     </script>
     <script th:src="@{js/post/app.js}"></script>
     <script th:src="@{/js/post/components/components.js}"></script>

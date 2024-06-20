@@ -60,17 +60,6 @@ public class UserController {
     @Autowired
     private StatusService statusService;
 
-    // Nhan trang chu dieu kien la "/"
-    @GetMapping({ "/", "" })
-    public String showIndexPage(Model model) {
-        /* Status status = statusService.findById(2);
-        List<Post> post = postService.findByStatus(status);
-        model.addAttribute("post", post); */
-        List<Status>status=statusService.findAll();
-        model.addAttribute("status", status);
-        return "index";
-    }
-
     // Nhan trang edit dieu kien la "/editaccount"
     @GetMapping("/editaccount")
     // model la phan minh tra ve trang html

@@ -51,47 +51,42 @@ public class PostsController {
 
     @GetMapping("/uploadpost")
     public String showUploadPostPage(Model model) {
-        List<Status>status=statusService.findAll();
+        List<Status> status = statusService.findAll();
         model.addAttribute("status", status);
         return "insertimage";
     }
 
-    @GetMapping("/getPosts")
-    public ResponseEntity<List<Map<String, Object>>> getPosts() {
-        Status status = statusService.findById(2);
-        List<Post> posts = postService.findByStatus(status);
-
-        List<Map<String, Object>> response = posts.stream().map(post -> {
-            Map<String, Object> postMap = new HashMap<>();
-            postMap.put("id", post.getId());
-            postMap.put("content", post.getContent());
-            postMap.put("imageUrl", post.getImage().getUrlImage());
-            return postMap;
-        }).collect(Collectors.toList());
-        return ResponseEntity.ok(response);
+    @GetMapping("/")
+    public String getPosts(Model model) {
+        List<Status>status=statusService.findAll();
+        model.addAttribute("status", status);
+        Status status1 = statusService.findById(1);
+        List<Post> posts = postService.findByStatus(status1);
+        model.addAttribute("posts", posts);
+        return "index";
     }
 
-   @PostMapping("/uploadpost")
-public String uploadPost(Model model,
-                         @RequestParam("content") String content,
-                         @RequestParam("StatusId") Long status,
-                         @RequestParam("image") MultipartFile image,
-                         RedirectAttributes redirectAttributes,
-                         Principal principal) {
-    try {
-        // Tạo đối tượng Post và thiết lập nội dung và trạng thái
-        Post post = new Post();
-        Status statusPost = statusService.findById(status);
-        post.setContent(content);
-        post.setStatus(statusPost);
-        UserDetails userDetails=userDetailsService.loadUserByUsername(principal.getName());
-        User user=userService.findByEmail(userDetails.getUsername());
-        post.setUser(user);
+    @PostMapping("/uploadpost")
+    public String uploadPost(Model model,
+            @RequestParam("content") String content,
+            @RequestParam("StatusId") Long status,
+            @RequestParam("image") MultipartFile image,
+            RedirectAttributes redirectAttributes,
+            Principal principal) {
+        try {
+            // Tạo đối tượng Post và thiết lập nội dung và trạng thái
+            Post post = new Post();
+            Status statusPost = statusService.findById(status);
+            post.setContent(content);
+            post.setStatus(statusPost);
+            UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+            User user = userService.findByEmail(userDetails.getUsername());
+            post.setUser(user);
 
             // Kiểm tra xem tệp tin ảnh có rỗng không
             if (image.isEmpty()) {
                 redirectAttributes.addFlashAttribute("message", "Please select a file to upload.");
-                return "redirect:/uploadpost-form";
+                return "redirect:/";
             }
 
             // Tải ảnh lên Cloudinary
@@ -113,7 +108,5 @@ public String uploadPost(Model model,
         }
         return "redirect:/";
     }
-
-    
 
 }
