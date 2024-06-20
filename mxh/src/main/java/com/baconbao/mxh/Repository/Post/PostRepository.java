@@ -12,5 +12,5 @@ import com.baconbao.mxh.Models.Post.Status;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
-    List<Post> findByStatus(Status status);
+    List<Post> findByIsActiveAndStatus(boolean active, Status status);
 }

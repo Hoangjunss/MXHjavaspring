@@ -10,10 +10,10 @@ import com.baconbao.mxh.Models.Post.Status;
 
 @Service
 public interface PostService {
-    List<Post> findByStatus(Status status);
-    Post findById(long id);
+    List<Post> findByActiveAndStatus(boolean active, Status status); 
+    Post findById(Long id);
     void save(Post post);
-    void delete(long id);
+    void delete(Long id);
     Long getGenerationId();
     Post getPost(PostDTO postDTO);
     PostDTO getPostDTO(Post post);

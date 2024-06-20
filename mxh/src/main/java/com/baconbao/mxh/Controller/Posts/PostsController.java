@@ -1,6 +1,7 @@
 package com.baconbao.mxh.Controller.Posts;
 
 import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -51,12 +52,12 @@ public class PostsController {
         return "insertimage";
     }
 
-    @GetMapping("/")
+    @GetMapping({"/", " "})
     public String getPosts(Model model) {
         List<Status> status = statusService.findAll();
         model.addAttribute("status", status);
         Status status1 = statusService.findById(1);
-        List<Post> posts = postService.findByStatus(status1);
+        List<Post> posts = postService.findByActiveAndStatus(true, status1);
         model.addAttribute("posts", posts);
         return "index";
     }
@@ -75,6 +76,11 @@ public class PostsController {
             Status statusPost = statusService.findById(status);
             post.setContent(content);
             post.setStatus(statusPost);
+            post.setActive(true);
+            //dat ngay va gio tao post
+            LocalDateTime localDateTime = LocalDateTime.now();
+            post.setCreateAt(localDateTime);
+            post.setUpdateAt(localDateTime);
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
             User user = userService.findByEmail(userDetails.getUsername());
             post.setUser(user);
@@ -102,6 +108,19 @@ public class PostsController {
             e.printStackTrace();
             redirectAttributes.addFlashAttribute("message", "Upload failed: " + e.getMessage());
         }
+        return "redirect:/";
+    }
+
+    //An bai viet
+    @PostMapping("/hidepost")
+    public String hidePost(Model model, @RequestParam("id") long id) {
+        //RequestParam: lay thuoc tinh cua id duoc post trong the form
+        //Tim post theo id da post
+        Post post = postService.findById(id);
+        post.setActive(false); //set active
+        LocalDateTime localDateTime = LocalDateTime.now();
+        post.setUpdateAt(localDateTime);
+        postService.save(post);
         return "redirect:/";
     }
 

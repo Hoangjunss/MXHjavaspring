@@ -320,6 +320,11 @@
                                 <div class="media text-muted pt-3">
                                     <!-- Avartar user -->
                                     <img th:src="${listpost.user.image.urlImage}" alt="Online user" class="mr-3 post-user-image">
+                                    
+                                    <form th:action="@{/hidepost}" method="post">
+                                        <input type="hidden" name="id" th:value="${listpost.id}">
+                                        <button type="submit">Ẩn</button>
+                                    </form>
                                     <div class="media-body pb-3 mb-0 small lh-125">
                                         <div class="d-flex justify-content-between align-items-center w-100">
                                             <!--Hien thi Name user -->

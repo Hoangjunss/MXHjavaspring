@@ -22,23 +22,25 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> findByStatus(Status idStatus) {
-        return postRepository.findByStatus(idStatus);
+    public List<Post> findByActiveAndStatus(boolean active, Status idStatus) {
+        return postRepository.findByIsActiveAndStatus(active, idStatus);
     }
 
     @Override
-    public Post findById(long id) {
+    public Post findById(Long id) {
         return postRepository.findById(id).get();
     }
 
     @Override
     public void save(Post post) {
-        post.setId(getGenerationId());
+        if(post.getId() == null){
+            post.setId(getGenerationId());
+        }
         postRepository.save(post);
     }
 
     @Override
-    public void delete(long id) {
+    public void delete(Long id) {
         Post psot = findById(id);
         postRepository.delete(psot);
     }

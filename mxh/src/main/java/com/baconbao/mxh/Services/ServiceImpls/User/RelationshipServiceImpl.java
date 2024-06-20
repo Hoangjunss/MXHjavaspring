@@ -1,5 +1,7 @@
 package com.baconbao.mxh.Services.ServiceImpls.User;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +22,11 @@ public class RelationshipServiceImpl implements RelationshipService{
         relationship.setUserTwo(userTwo);
         relationship.setStatus("add");
         relationshipRepository.save(relationship);
+    }
+
+    @Override
+    public List<Relationship> findAllByUserOne(Long user1) {
+        return relationshipRepository.findAllByUserOneId(user1);
     }
 
 }

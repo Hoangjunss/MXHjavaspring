@@ -1,5 +1,6 @@
 package com.baconbao.mxh.Models.User;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -13,6 +14,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
+
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -37,11 +39,14 @@ public class User {
         private String email;
         @Column(name = "CreateAt")
         private Date createAt;
-
-        private List<Relationship> userOneRelationships;
-        private List<Relationship> userTwoRelationships;
-
         @OneToMany(mappedBy = "userOne", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+
+        private List<Relationship> userOneRelationships =new ArrayList<>();
+        @OneToMany(mappedBy = "userTwo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+
+        private List<Relationship> userTwoRelationships=new ArrayList<>();
+;
+
         public List<Relationship> getUserOneRelationships() {
                 return userOneRelationships;
         }

@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,9 @@ import com.baconbao.mxh.DTO.ImageDTO;
 import com.baconbao.mxh.DTO.UserDTO;
 import com.baconbao.mxh.Models.VerifycationToken;
 import com.baconbao.mxh.Models.Post.Image;
+import com.baconbao.mxh.Models.User.Relationship;
 import com.baconbao.mxh.Models.User.User;
+import com.baconbao.mxh.Repository.User.RelationshipRepository;
 import com.baconbao.mxh.Services.CloudinaryService;
 import com.baconbao.mxh.Services.Service.MailService;
 import com.baconbao.mxh.Services.Service.VerifycationTokenService;
@@ -57,7 +60,7 @@ public class UserController {
     @Autowired
     private StatusService statusService;
     @Autowired
-    private RelationshipService relationshipService;
+    private RelationshipService relationalService;
 
     // Nhan trang edit dieu kien la "/editaccount"
     @GetMapping("/editaccount")
@@ -127,9 +130,10 @@ public class UserController {
     public String editAccount(Principal principal, Model model, UserDTO userDTO, BindingResult result) {
         // k@gmail.com 1
         // user id=1
-        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());//lấy ra cái email
+        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());// lấy ra cái email
         User user = userService.findByEmail(userDetails.getUsername());
-        //user tai khoan dang xet truoc thay doi email: kn26066. userDTO: th:field : kn26066.
+        // user tai khoan dang xet truoc thay doi email: kn26066. userDTO: th:field :
+        // kn26066.
         if (user.getEmail().equals(userDTO.getEmail())) {
             // chuyen userDTO ve user
             user.setFirstName(userDTO.getFirstName());
@@ -138,12 +142,13 @@ public class UserController {
             userService.saveUser(user);
             // quay ve trang chu
             return "redirect:/";
-        }else{
-            if(userService.isEmailExist(userDTO.getEmail())){
-                result.rejectValue("email", null, "Email already exists"); // email la ten cua truong, null la ten cua loi,
-                                                                               // Email already exists la noi dung loi
+        } else {
+            if (userService.isEmailExist(userDTO.getEmail())) {
+                result.rejectValue("email", null, "Email already exists"); // email la ten cua truong, null la ten cua
+                                                                           // loi,
+                                                                           // Email already exists la noi dung loi
                 return "editaccount";
-            }else{
+            } else {
                 user.setFirstName(userDTO.getFirstName());
                 user.setLastName(userDTO.getLastName());
                 user.setEmail(userDTO.getEmail());
@@ -165,6 +170,7 @@ public class UserController {
         return "login";
     }
 
+    
     @GetMapping("/upload")
     public String upload(Model model) {
         ImageDTO imageDTO = new ImageDTO();
@@ -172,13 +178,28 @@ public class UserController {
         return "insertImage";
     }
 
+    //Tai anh len
     @PostMapping("/upload")
     public String uploadImage(@ModelAttribute("imageDTO") ImageDTO imageDTO) throws Exception {
         Image image = new Image();
+        //Tai image len cloud 
         Map result = cloudinaryService.upload(imageDTO.getFile());
+        //Lay url cua anh da tai len cloud
         String imageUrl = (String) result.get("url");
+        //luu url
         image.setUrlImage(imageUrl);
+        //luu doi tuong image
         imageService.saveImage(image);
+        return "index";
+    }
+
+    //Lay danh sach ban be 
+    @GetMapping("/friends")
+    public String getMethodNameString() {
+        List<Relationship> relationships = relationalService.findAllByUserOne((long)2);
+        for (Relationship relationship : relationships) {
+            System.out.println(relationship.toString());
+        }
         return "index";
     }
 
@@ -203,12 +224,4 @@ public class UserController {
                 .body(resource);
     }
 
-    @GetMapping("/adduser")
-    public String addUser(Model model) {
-        User userOne = userService.findById(1);
-        User userTwo = userService.findById(2);
-        relationshipService.addUser(userOne, userTwo);
-        return "index";
-    }
-    
 }

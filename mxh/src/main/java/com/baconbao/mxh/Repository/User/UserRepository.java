@@ -5,6 +5,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.baconbao.mxh.Models.User.User;
+import com.baconbao.mxh.Models.User.Relationship;
+import java.util.List;
+
 
 
 @Repository

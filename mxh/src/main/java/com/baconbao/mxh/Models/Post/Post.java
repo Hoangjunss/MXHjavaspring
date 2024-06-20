@@ -24,7 +24,7 @@ import lombok.Setter;
 public class Post {
         @Id
         @Column(name = "IdPost")
-        private long id;
+        private Long id;
         @Column(name = "Content", columnDefinition = "TEXT")
         private String content;
         @Column(name = "CreateAt")
@@ -50,4 +50,6 @@ public class Post {
                         inverseJoinColumns = @JoinColumn(name = "IdUser") // Khóa ngoại của bảng About
         )
         private User user;
+
+        private boolean isActive;
 }
