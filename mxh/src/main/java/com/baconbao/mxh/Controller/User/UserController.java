@@ -37,6 +37,7 @@ import com.baconbao.mxh.Services.CloudinaryService;
 import com.baconbao.mxh.Services.Service.ImageService;
 import com.baconbao.mxh.Services.Service.MailService;
 import com.baconbao.mxh.Services.Service.PostService;
+import com.baconbao.mxh.Services.Service.RelationshipService;
 import com.baconbao.mxh.Services.Service.StatusService;
 import com.baconbao.mxh.Services.Service.UserService;
 import com.baconbao.mxh.Services.Service.VerifycationTokenService;
@@ -59,6 +60,8 @@ public class UserController {
     private UserDetailsService userDetailsService;
     @Autowired
     private StatusService statusService;
+    @Autowired
+    private RelationshipService relationshipService;
 
     // Nhan trang edit dieu kien la "/editaccount"
     @GetMapping("/editaccount")
@@ -204,5 +207,12 @@ public class UserController {
                 .body(resource);
     }
 
+    @GetMapping("/adduser")
+    public String addUser(Model model) {
+        User userOne = userService.findById(1);
+        User userTwo = userService.findById(2);
+        relationshipService.addUser(userOne, userTwo);
+        return "index";
+    }
     
 }
