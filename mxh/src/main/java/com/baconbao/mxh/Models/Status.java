@@ -1,5 +1,6 @@
 package com.baconbao.mxh.Models;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
@@ -14,6 +15,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Status {
     @Id
+    @Column(name = "IdStatus")
     private Long id;
     private String name;
 }
