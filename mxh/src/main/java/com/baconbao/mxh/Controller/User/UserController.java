@@ -63,9 +63,11 @@ public class UserController {
     // Nhan trang chu dieu kien la "/"
     @GetMapping({ "/", "" })
     public String showIndexPage(Model model) {
-        Status status = statusService.findById(2);
+        /* Status status = statusService.findById(2);
         List<Post> post = postService.findByStatus(status);
-        model.addAttribute("post", post);
+        model.addAttribute("post", post); */
+        List<Status>status=statusService.findAll();
+        model.addAttribute("status", status);
         return "index";
     }
 

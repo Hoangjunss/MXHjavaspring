@@ -2,10 +2,13 @@ package com.baconbao.mxh.Controller.Posts;
 
 import java.io.File;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -47,6 +50,21 @@ public class PostsController {
         return "insertimage";
     }
 
+    @GetMapping("/getPosts")
+    public ResponseEntity<List<Map<String, Object>>> getPosts() {
+        Status status = statusService.findById(2);
+        List<Post> posts = postService.findByStatus(status);
+
+        List<Map<String, Object>> response = posts.stream().map(post -> {
+            Map<String, Object> postMap = new HashMap<>();
+            postMap.put("id", post.getId());
+            postMap.put("content", post.getContent());
+            postMap.put("imageUrl", post.getImage().getUrlImage());
+            return postMap;
+        }).collect(Collectors.toList());
+        return ResponseEntity.ok(response);
+    }
+
    @PostMapping("/uploadpost")
 public String uploadPost(Model model,
                          @RequestParam("content") String content,
@@ -83,7 +101,7 @@ public String uploadPost(Model model,
             e.printStackTrace();
             redirectAttributes.addFlashAttribute("message", "Upload failed: " + e.getMessage());
         }
-        return "redirect:/index";
+        return "redirect:/";
     }
 
     
