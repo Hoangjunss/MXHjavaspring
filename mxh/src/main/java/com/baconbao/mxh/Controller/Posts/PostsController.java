@@ -45,13 +45,6 @@ public class PostsController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/uploadpost")
-    public String showUploadPostPage(Model model) {
-        List<Status> status = statusService.findAll();
-        model.addAttribute("status", status);
-        return "insertimage";
-    }
-
     @GetMapping({"/", " "})
     public String getPosts(Model model) {
         List<Status> status = statusService.findAll();

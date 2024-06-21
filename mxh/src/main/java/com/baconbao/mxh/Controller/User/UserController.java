@@ -31,13 +31,9 @@ import com.baconbao.mxh.Models.VerifycationToken;
 import com.baconbao.mxh.Models.Post.Image;
 import com.baconbao.mxh.Models.User.Relationship;
 import com.baconbao.mxh.Models.User.User;
-import com.baconbao.mxh.Repository.User.RelationshipRepository;
 import com.baconbao.mxh.Services.CloudinaryService;
-import com.baconbao.mxh.Services.Service.MailService;
 import com.baconbao.mxh.Services.Service.VerifycationTokenService;
 import com.baconbao.mxh.Services.Service.Post.ImageService;
-import com.baconbao.mxh.Services.Service.Post.PostService;
-import com.baconbao.mxh.Services.Service.Post.StatusService;
 import com.baconbao.mxh.Services.Service.User.RelationshipService;
 import com.baconbao.mxh.Services.Service.User.UserService;
 
@@ -46,19 +42,13 @@ public class UserController {
     @Autowired
     private UserService userService;
     @Autowired
-    private MailService mailService;
-    @Autowired
     private VerifycationTokenService verifycationTokenService;
-    @Autowired
-    private PostService postService;
     @Autowired
     private ImageService imageService;
     @Autowired
     private CloudinaryService cloudinaryService;
     @Autowired
     private UserDetailsService userDetailsService;
-    @Autowired
-    private StatusService statusService;
     @Autowired
     private RelationshipService relationalService;
 
@@ -103,15 +93,6 @@ public class UserController {
             result.rejectValue("email", null, "Email already exists"); // email la ten cua truong, null la ten cua loi, Email already exists la noi dung loi
             return "register";
         }
-        // nếu email chưa tồn tại thì thêm user mới và thêm vào createUser thời gian
-        // hiện tại
-        // Lấy thời gian hiện tại theo UTC
-        /*
-         * Instant nowUtc = Instant.now();
-         * Timestamp timestampUtc = Timestamp.from(nowUtc);
-         * userDTO.setCreateAt(timestampUtc);
-         * userService.saveUser(userService.getUser(userDTO));
-         */
         LocalDateTime localDateTime = LocalDateTime.now(); // Lấy thời gian hiện tại theo máy
 
         // Chuyển đổi LocalDateTime sang Date
@@ -166,29 +147,6 @@ public class UserController {
         // else xac nhan token va chuyen ve index
         verifycationTokenService.confirmUser(token);
         return "login";
-    }
-
-    
-    @GetMapping("/upload")
-    public String upload(Model model) {
-        ImageDTO imageDTO = new ImageDTO();
-        model.addAttribute("imageDTO", imageDTO);
-        return "insertImage";
-    }
-
-    //Tai anh len
-    @PostMapping("/upload")
-    public String uploadImage(@ModelAttribute("imageDTO") ImageDTO imageDTO) throws Exception {
-        Image image = new Image();
-        //Tai image len cloud 
-        Map result = cloudinaryService.upload(imageDTO.getFile());
-        //Lay url cua anh da tai len cloud
-        String imageUrl = (String) result.get("url");
-        //luu url
-        image.setUrlImage(imageUrl);
-        //luu doi tuong image
-        imageService.saveImage(image);
-        return "index";
     }
 
     //Lay danh sach ban be 

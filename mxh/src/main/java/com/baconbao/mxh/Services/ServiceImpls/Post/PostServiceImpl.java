@@ -1,6 +1,7 @@
 package com.baconbao.mxh.Services.ServiceImpls.Post;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,11 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Post findById(Long id) {
-        return postRepository.findById(id).get();
+        Optional<Post> post=postRepository.findById(id);
+        if(post.isPresent()){
+            return post.get();
+        }
+        return null;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.baconbao.mxh.Services.ServiceImpls.Post;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,7 +20,11 @@ public class StatusServiceImpls implements StatusService{
     }
     @Override
     public Status findById(long id) {
-        return statusRepository.findById(id).get();
+        Optional<Status> status=statusRepository.findById(id);
+        if(status.isPresent()){
+            return status.get();
+        }
+        return null;
     }
     
 }

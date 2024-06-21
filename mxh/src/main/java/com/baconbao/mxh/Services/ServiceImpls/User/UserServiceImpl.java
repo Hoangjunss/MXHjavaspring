@@ -1,14 +1,14 @@
 package com.baconbao.mxh.Services.ServiceImpls.User;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.baconbao.mxh.DTO.UserDTO;
-import com.baconbao.mxh.Exceptions.AppException;
-import com.baconbao.mxh.Exceptions.ErrorCode;
+
 import com.baconbao.mxh.Models.User.User;
 import com.baconbao.mxh.Repository.User.UserRepository;
 import com.baconbao.mxh.Services.Service.User.UserService;
@@ -78,7 +78,11 @@ public class UserServiceImpl implements UserService {
     // Tim user bang id
     @Override
     public User findById(long userId) {
-        return userRepository.findById(userId).get();
+        Optional<User> user=userRepository.findById(userId); 
+        if(user.isPresent()){
+            return user.get();
+        }
+        return null;
     }
 
     // Chuyen userDTO ve user
