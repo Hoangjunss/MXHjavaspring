@@ -22,7 +22,6 @@ public class Relationship {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-
     
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "user_one_id", referencedColumnName = "IdUser")
@@ -32,12 +31,11 @@ public class Relationship {
     @JoinColumn(name = "user_two_id", referencedColumnName = "IdUser")
     private User userTwo;
 
-    @Column(name = "status")
-    private String status;
+    @ManyToOne
+    @JoinColumn(name = "idStatus")
+    private StatusRelationship status;
+
     @OneToMany(mappedBy = "relationship", targetEntity = Message.class, cascade = CascadeType.ALL)
     private List<Message> messages;
-
-
-    // Getters và Setters
 
 }

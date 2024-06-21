@@ -9,7 +9,8 @@ import com.baconbao.mxh.Models.User.User;
 
 @Service
 public interface RelationshipService {
-    List<Relationship> findAllByUserOne(Long user1);
-    void addUser(User userOne, User userTwo);
+    List<Relationship> findAllByUserOne(User user1);
+    void addUser(Relationship relationship);
     Relationship findById(Long id);
+    Relationship findRelationship(User userOne, User userTwo);
 }

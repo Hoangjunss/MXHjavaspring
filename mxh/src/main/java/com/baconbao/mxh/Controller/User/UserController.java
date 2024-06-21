@@ -7,7 +7,6 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -25,16 +24,16 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 
-import com.baconbao.mxh.DTO.ImageDTO;
 import com.baconbao.mxh.DTO.UserDTO;
 import com.baconbao.mxh.Models.VerifycationToken;
-import com.baconbao.mxh.Models.Post.Image;
 import com.baconbao.mxh.Models.User.Relationship;
+import com.baconbao.mxh.Models.User.StatusRelationship;
 import com.baconbao.mxh.Models.User.User;
 import com.baconbao.mxh.Services.CloudinaryService;
 import com.baconbao.mxh.Services.Service.VerifycationTokenService;
 import com.baconbao.mxh.Services.Service.Post.ImageService;
 import com.baconbao.mxh.Services.Service.User.RelationshipService;
+import com.baconbao.mxh.Services.Service.User.StatusRelationshipService;
 import com.baconbao.mxh.Services.Service.User.UserService;
 
 @Controller
@@ -51,6 +50,8 @@ public class UserController {
     private UserDetailsService userDetailsService;
     @Autowired
     private RelationshipService relationalService;
+    @Autowired
+    private StatusRelationshipService statusRelationshipService;
 
     // Nhan trang edit dieu kien la "/editaccount"
     @GetMapping("/editaccount")
@@ -58,7 +59,7 @@ public class UserController {
     // principal giông như session, chứa thông tin người dùng
     public String showEditAccountPage(Model model, Principal principal) {
         // tim user theo id
-        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());       
+        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
         User user = userService.findByEmail(userDetails.getUsername());
         // chuyen user ve userDTO
         UserDTO userDTO = userService.getUserDTO(user);
@@ -90,7 +91,8 @@ public class UserController {
         if (userService.isEmailExist(userDTO.getEmail())) {
             // neu ton tai thi tra ve trang register va thong bao loi
             // rejectValue la phuong thuc tra ve loi cho truong do
-            result.rejectValue("email", null, "Email already exists"); // email la ten cua truong, null la ten cua loi, Email already exists la noi dung loi
+            result.rejectValue("email", null, "Email already exists"); // email la ten cua truong, null la ten cua loi,
+                                                                       // Email already exists la noi dung loi
             return "register";
         }
         LocalDateTime localDateTime = LocalDateTime.now(); // Lấy thời gian hiện tại theo máy
@@ -125,10 +127,11 @@ public class UserController {
             return "redirect:/";
         } else {
             if (userService.isEmailExist(userDTO.getEmail())) {
-                result.rejectValue("email", null, "Email already exists"); // email la ten cua truong, null la ten cua loi, Email already exists la noi dung loi
+                result.rejectValue("email", null, "Email already exists"); // email la ten cua truong, null la ten cua
+                                                                           // loi, Email already exists la noi dung loi
                 return "editaccount";
             } else {
-                user.setFirstName(userDTO.getFirstName()); 
+                user.setFirstName(userDTO.getFirstName());
                 user.setLastName(userDTO.getLastName());
                 user.setEmail(userDTO.getEmail());
                 userService.saveUser(user);
@@ -139,7 +142,8 @@ public class UserController {
 
     // Duong dan xac nhan
     @GetMapping("/confirmUser")
-    public String confirmUser(@RequestParam long token) { // @RequestParam lấy giá trị từ url (lấy giá trị của token từ url)
+    public String confirmUser(@RequestParam long token) { // @RequestParam lấy giá trị từ url (lấy giá trị của token từ
+                                                          // url)
         VerifycationToken verifycationToken = verifycationTokenService.findById(token);
         // neu token het han thi khi an vo chuyen ve register
         if (verifycationToken == null)
@@ -147,16 +151,6 @@ public class UserController {
         // else xac nhan token va chuyen ve index
         verifycationTokenService.confirmUser(token);
         return "login";
-    }
-
-    //Lay danh sach ban be 
-    @GetMapping("/friends")
-    public String getMethodNameString() {
-        List<Relationship> relationships = relationalService.findAllByUserOne((long)2);
-        for (Relationship relationship : relationships) {
-            System.out.println(relationship.toString());
-        }
-        return "index";
     }
 
     // Lay duong dan anh de tai ve
@@ -180,4 +174,58 @@ public class UserController {
                 .body(resource);
     }
 
+    // Lay danh sach ban be
+    @GetMapping("/friends")
+    public String getMethodNameString(Principal principal, Model model) {
+        //tim danh sach cua user dang dang nhap 
+        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());// lấy ra cái email
+        User user = userService.findByEmail(userDetails.getUsername());
+        //tim danh sach ban be cua user
+        List<Relationship> relationships = relationalService.findAllByUserOne(user);
+        // tra ve html danh sach ban be
+        model.addAttribute("relationships", relationships);
+        return "index";
+    }
+
+    //dat trang thai cua 2 user
+    @PostMapping("/setfriend")
+    public String setFriend(Principal principal, @RequestParam long id) {
+        //tim user dang thao tac
+        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());// lấy ra cái email
+        User user = userService.findByEmail(userDetails.getUsername());
+        //lay user bang id duoc post len
+        User friend = userService.findById(id);
+
+        //tim kiem moi quan he giua 2 user
+        Relationship relationshipUser = relationalService.findRelationship(user, friend);
+        StatusRelationship status = new StatusRelationship();
+        //neu giua 2 user khong co moi quan he
+        if (relationshipUser == null) {
+            //lay status co moi quan he la 1 de gan cho user 
+            status = statusRelationshipService.findById(1L);
+        } 
+        else { //neu giua 2 user co quan he truoc do
+            //lay trang thai hien tai cua 2 user la gi
+            status = relationshipUser.getStatus();
+            //do la chi co 4 trang thai nen se set lai trang thai ban dau
+            if(status.getId()==4){
+                status = statusRelationshipService.findById(1L);
+            }
+            else{
+                //neu trang thai tu 1 den 3 thi nang len mot bac
+                status = statusRelationshipService.findById(status.getId()+1);
+            }
+        }
+        //luu moi quan he
+        relationshipUser.setStatus(status);
+        relationshipUser.setUserOne(user);
+        relationshipUser.setUserTwo(friend);
+        relationalService.addUser(relationshipUser);
+        return "redirect:/";
+    }
+
+    @GetMapping("/hello")
+    public String addFriendTest() {
+        return "addfriend";
+    }
 }

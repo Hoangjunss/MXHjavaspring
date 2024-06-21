@@ -2,6 +2,7 @@ package com.baconbao.mxh.Services.ServiceImpls.User;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,16 +18,15 @@ public class RelationshipServiceImpl implements RelationshipService{
     private RelationshipRepository relationshipRepository;
 
     @Override
-    public void addUser(User userOne, User userTwo) {
-        Relationship relationship = new Relationship();
-        relationship.setUserOne(userOne);
-        relationship.setUserTwo(userTwo);
-        relationship.setStatus("add");
+    public void addUser(Relationship relationship) {
+        if(relationship.getId()==null){
+            relationship.setId(getGenerationId());
+        }
         relationshipRepository.save(relationship);
     }
 
     @Override
-    public List<Relationship> findAllByUserOne(Long user1) {
+    public List<Relationship> findAllByUserOne(User user1) {
         return relationshipRepository.findAllByUserOneId(user1);
     }
 
@@ -39,6 +39,16 @@ public class RelationshipServiceImpl implements RelationshipService{
             return null;
         }
         
+    }
+
+    @Override
+    public Relationship findRelationship(User userOne, User userTwo) {
+        return relationshipRepository.findRelationship(userOne, userTwo);
+    }
+
+    public Long getGenerationId() {
+        UUID uuid = UUID.randomUUID();
+        return uuid.getMostSignificantBits() & Long.MAX_VALUE;
     }
 
 }
