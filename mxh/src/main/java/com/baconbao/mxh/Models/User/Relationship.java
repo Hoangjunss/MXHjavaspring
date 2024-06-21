@@ -3,6 +3,8 @@ package com.baconbao.mxh.Models.User;
 import java.util.List;
 
 import com.baconbao.mxh.Models.Message.Message;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -25,10 +27,12 @@ public class Relationship {
     
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "user_one_id", referencedColumnName = "IdUser")
+    @JsonBackReference
     private User userOne;
 
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "user_two_id", referencedColumnName = "IdUser")
+    @JsonBackReference
     private User userTwo;
 
     @ManyToOne
@@ -36,5 +40,6 @@ public class Relationship {
     private StatusRelationship status;
 
     @OneToMany(mappedBy = "relationship", targetEntity = Message.class, cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Message> messages;
 }

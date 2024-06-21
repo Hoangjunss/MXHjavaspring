@@ -7,6 +7,7 @@ import java.util.List;
 import com.baconbao.mxh.Models.Message.Message;
 import com.baconbao.mxh.Models.Post.Image;
 import com.baconbao.mxh.Models.Post.Post;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -45,10 +46,10 @@ public class User {
         @Column(name = "CreateAt")
         private Date createAt;
         @OneToMany(mappedBy = "userOne", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-
+        @JsonManagedReference
         private List<Relationship> userOneRelationships =new ArrayList<>();
         @OneToMany(mappedBy = "userTwo", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-
+        @JsonManagedReference
         private List<Relationship> userTwoRelationships=new ArrayList<>();
 
         @OneToMany // Một user có thể có nhiều About
@@ -71,7 +72,9 @@ public class User {
         )
         private List<Post> post;
         @OneToMany(mappedBy = "userFrom", cascade = CascadeType.ALL)
+        @JsonManagedReference
         private List<Message> fromUserMessagesList;
         @OneToMany(mappedBy = "userTo", cascade = CascadeType.ALL)
+        @JsonManagedReference
         private List<Message> toUserMessagesList;
 }
