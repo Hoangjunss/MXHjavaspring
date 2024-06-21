@@ -1,9 +1,19 @@
 package com.baconbao.mxh.Models.User;
 
+import java.util.List;
+
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
-@Table(name = "relationship") // Đặt tên bảng trong cơ sở dữ liệu
+@Table(name = "relationship")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor // Đặt tên bảng trong cơ sở dữ liệu
 public class Relationship {
 
     @Id
@@ -21,38 +31,9 @@ public class Relationship {
 
     @Column(name = "status")
     private String status;
+    @OneToMany(mappedBy = "relationship", targetEntity = Message.class, cascade = CascadeType.ALL)
+    private List<Message> messages;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public User getUserOne() {
-        return userOne;
-    }
-
-    public void setUserOne(User userOne) {
-        this.userOne = userOne;
-    }
-
-    public User getUserTwo() {
-        return userTwo;
-    }
-
-    public void setUserTwo(User userTwo) {
-        this.userTwo = userTwo;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
 
     // Getters và Setters
 

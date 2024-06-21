@@ -19,12 +19,16 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity /* thư viên dùng để tạo bảng sql */
 @Table(name = "User") /* annotion dùng để tạo tên bảng trong sql */
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 public class User {
         @Id
         @Column(name = "IdUser")
@@ -47,22 +51,7 @@ public class User {
         private List<Relationship> userTwoRelationships=new ArrayList<>();
 ;
 
-        public List<Relationship> getUserOneRelationships() {
-                return userOneRelationships;
-        }
-
-        public void setUserOneRelationships(List<Relationship> userOneRelationships) {
-                this.userOneRelationships = userOneRelationships;
-        }
-
-        @OneToMany(mappedBy = "userTwo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-        public List<Relationship> getUserTwoRelationships() {
-                return userTwoRelationships;
-        }
-
-        public void setUserTwoRelationships(List<Relationship> userTwoRelationships) {
-                this.userTwoRelationships = userTwoRelationships;
-        }
+    
 
         @OneToMany // Một user có thể có nhiều About
         @JoinTable(name = "users_about", // Tên bảng liên kết
@@ -83,78 +72,12 @@ public class User {
                         inverseJoinColumns = @JoinColumn(name = "IdPost") // Khóa ngoại của bảng About
         )
         private List<Post> post;
+        @OneToMany(mappedBy = "userFrom", cascade = CascadeType.ALL)
+        private List<Message> fromUserMessagesList;
+        @OneToMany(mappedBy = "userTo", cascade = CascadeType.ALL)
+        private List<Message> toUserMessagesList;
 
-        public Long getId() {
-                return id;
-        }
 
-        public void setId(Long id) {
-                this.id = id;
-        }
-
-        public String getLastName() {
-                return lastName;
-        }
-
-        public void setLastName(String lastName) {
-                this.lastName = lastName;
-        }
-
-        public String getFirstName() {
-                return firstName;
-        }
-
-        public void setFirstName(String firstName) {
-                this.firstName = firstName;
-        }
-
-        public String getPassword() {
-                return password;
-        }
-
-        public void setPassword(String password) {
-                this.password = password;
-        }
-
-        public String getEmail() {
-                return email;
-        }
-
-        public void setEmail(String email) {
-                this.email = email;
-        }
-
-        public Date getCreateAt() {
-                return createAt;
-        }
-
-        public void setCreateAt(Date createAt) {
-                this.createAt = createAt;
-        }
-
-        public List<About> getAbout() {
-                return about;
-        }
-
-        public void setAbout(List<About> about) {
-                this.about = about;
-        }
-
-        public Image getImage() {
-                return image;
-        }
-
-        public void setImage(Image image) {
-                this.image = image;
-        }
-
-        public List<Post> getPost() {
-                return post;
-        }
-
-        public void setPost(List<Post> post) {
-                this.post = post;
-        }
-
+       
 
 }
