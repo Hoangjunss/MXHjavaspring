@@ -48,7 +48,6 @@ public class SocketConfig implements WebSocketMessageBrokerConfigurer {
                         // Thực hiện xác thực bằng username (có thể kiểm tra trong cơ sở dữ liệu)
                         UserDetails userDetails = userDetail.loadUserByUsername(username);
                         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                        SecurityContextHolder.getContext().setAuthentication(authentication);
                         accessor.setUser(authentication);
                     }
                 }
