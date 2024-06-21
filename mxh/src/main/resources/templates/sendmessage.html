@@ -17,6 +17,10 @@
         <button type="button" onclick="sendMessage()">Gui</button>
     </form>
 
+    <div id="chatMessages">
+        
+    </div>
+
     <ul th:each="message : ${listmessage}">
     <p th:text="${message.content}"></p>
 </ul>

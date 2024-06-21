@@ -10,6 +10,8 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +25,8 @@ import com.baconbao.mxh.Models.User.User;
 import com.baconbao.mxh.Services.Service.Message.MessageService;
 import com.baconbao.mxh.Services.Service.User.RelationshipService;
 import com.baconbao.mxh.Services.Service.User.UserService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Controller
 public class MessageController {
@@ -32,6 +36,8 @@ public class MessageController {
     private UserService userService;
     @Autowired
     private RelationshipService relationshipService;
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
 
     @GetMapping("/send")
     public String getMessagePage(@RequestParam Long id, Model model, Principal principal) {
@@ -43,37 +49,38 @@ public class MessageController {
     }
 
     @MessageMapping("/chat.send")
-    public void sendMessage(@Payload Map<String, Object> message, Principal principal) {
+    @SendTo("/queue/messages")
+    public Message sendMessage(@Payload Map<String, Object> message, Principal principal) {
 
         Map<String, Object> innerMessage = (Map<String, Object>) message.get("message");
         String content = (String) innerMessage.get("content");
         String id = String.valueOf(innerMessage.get("id"));
 
-        Message message1 = new Message();
-        message1.setContent(content);
+        Message messages = new Message();
+        messages.setContent(content);
 
         // Chuyển đổi recipient thành Long
         User user = userService.findById(Long.parseLong(id));
         User userFrom = userService.findByEmail(principal.getName());
 
-        message1.setUserFrom(userFrom);
-        message1.setUserTo(user);
-        message1.setCreateAt(LocalDateTime.now());
-        // Bạn có thể tạo một ID thích hợp dựa trên logic ứng dụng của bạn
-        message1.setId(4L);
+        messages.setUserFrom(userFrom);
+        messages.setUserTo(user);
+        messages.setCreateAt(LocalDateTime.now());
 
         // Giả sử relationshipService.findById trả về một đối tượng Relationship
         Relationship relationship = relationshipService.findById(1L);
-        message1.setRelationship(relationship);
+        messages.setRelationship(relationship);
 
-        List<Message> messages = new ArrayList<>();
-        messages.add(message1);
+        List<Message> messagesList = new ArrayList<>();
+        messagesList.add(messages);
 
-        messageService.sendMessage(message1);
+        messageService.sendMessage(messages);
 
-        user.setToUserMessagesList(messages);
-        userFrom.setFromUserMessagesList(messages);
+        user.setToUserMessagesList(messagesList);
+        userFrom.setFromUserMessagesList(messagesList);
         userService.saveUser(user);
         userService.saveUser(userFrom);
+
+        return messages;
     }
 }

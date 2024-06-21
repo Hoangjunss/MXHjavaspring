@@ -27,7 +27,7 @@ public class Message {
     private Long id;
     @ManyToOne(optional = false, targetEntity = User.class)
     @JoinColumn(name = "from_user_id", referencedColumnName = "IdUser")
-@JsonBackReference
+    @JsonBackReference
     private User userFrom;
     @ManyToOne(optional = false, targetEntity = User.class)
     @JoinColumn(name = "to_user_id", referencedColumnName = "IdUser")
