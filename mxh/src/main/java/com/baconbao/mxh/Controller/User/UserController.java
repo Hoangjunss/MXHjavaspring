@@ -153,39 +153,6 @@ public class UserController {
         return "login";
     }
 
-    
-    @GetMapping("/upload")
-    public String upload(Model model) {
-        ImageDTO imageDTO = new ImageDTO();
-        model.addAttribute("imageDTO", imageDTO);
-        return "insertImage";
-    }
-
-    //Tai anh len
-    @PostMapping("/upload")
-    public String uploadImage(@ModelAttribute("imageDTO") ImageDTO imageDTO) throws Exception {
-        Image image = new Image();
-        //Tai image len cloud 
-        Map result = cloudinaryService.upload(imageDTO.getFile());
-        //Lay url cua anh da tai len cloud
-        String imageUrl = (String) result.get("url");
-        //luu url
-        image.setUrlImage(imageUrl);
-        //luu doi tuong image
-        imageService.saveImage(image);
-        return "index";
-    }
-
-    //Lay danh sach ban be 
-    @GetMapping("/friends")
-    public String getMethodNameString() {
-        List<Relationship> relationships = relationalService.findAllByUserOne((long)2);
-        for (Relationship relationship : relationships) {
-            System.out.println(relationship.toString());
-        }
-        return "index";
-    }
-
     // Lay duong dan anh de tai ve
     @GetMapping("/download")
     public ResponseEntity<Resource> downloadFile(@RequestParam("public_id") String publicId) throws IOException {
@@ -205,6 +172,61 @@ public class UserController {
                 .headers(headers)
                 .contentLength(imageBytes.length)
                 .body(resource);
+    }
+
+    // Lay danh sach ban be
+    @GetMapping("/friends")
+    public String getMethodNameString(Principal principal, Model model) {
+        //tim danh sach cua user dang dang nhap 
+        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());// lấy ra cái email
+        User user = userService.findByEmail(userDetails.getUsername());
+        //tim danh sach ban be cua user
+        List<Relationship> relationships = relationalService.findAllByUserOne(user);
+        // tra ve html danh sach ban be
+        model.addAttribute("relationships", relationships);
+        return "index";
+    }
+
+    //dat trang thai cua 2 user
+    @PostMapping("/setfriend")
+    public String setFriend(Principal principal, @RequestParam long id) {
+        //tim user dang thao tac
+        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());// lấy ra cái email
+        User user = userService.findByEmail(userDetails.getUsername());
+        //lay user bang id duoc post len
+        User friend = userService.findById(id);
+
+        //tim kiem moi quan he giua 2 user
+        Relationship relationshipUser = relationalService.findRelationship(user, friend);
+        StatusRelationship status = new StatusRelationship();
+        //neu giua 2 user khong co moi quan he
+        if (relationshipUser == null) {
+            //lay status co moi quan he la 1 de gan cho user 
+            status = statusRelationshipService.findById(1L);
+        } 
+        else { //neu giua 2 user co quan he truoc do
+            //lay trang thai hien tai cua 2 user la gi
+            status = relationshipUser.getStatus();
+            //do la chi co 4 trang thai nen se set lai trang thai ban dau
+            if(status.getId()==4){
+                status = statusRelationshipService.findById(1L);
+            }
+            else{
+                //neu trang thai tu 1 den 3 thi nang len mot bac
+                status = statusRelationshipService.findById(status.getId()+1);
+            }
+        }
+        //luu moi quan he
+        relationshipUser.setStatus(status);
+        relationshipUser.setUserOne(user);
+        relationshipUser.setUserTwo(friend);
+        relationalService.addUser(relationshipUser);
+        return "redirect:/";
+    }
+
+    @GetMapping("/hello")
+    public String addFriendTest() {
+        return "addfriend";
     }
 
 }

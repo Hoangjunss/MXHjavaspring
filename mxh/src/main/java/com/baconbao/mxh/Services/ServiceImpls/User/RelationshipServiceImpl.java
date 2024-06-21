@@ -42,17 +42,6 @@ public class RelationshipServiceImpl implements RelationshipService{
     }
 
     @Override
-    public void save(Relationship relationship) {
-        relationshipRepository.save(relationship);
-    }
-
-    @Override
-    public Relationship relationshipFromUser(User userOne, User userTwo) {
-        Optional<Relationship>
-        if()
-    }
-
-    @Override
     public Relationship findRelationship(User userOne, User userTwo) {
         return relationshipRepository.findRelationship(userOne, userTwo);
     }

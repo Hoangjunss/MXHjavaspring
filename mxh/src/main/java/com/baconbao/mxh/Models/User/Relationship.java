@@ -37,10 +37,4 @@ public class Relationship {
 
     @OneToMany(mappedBy = "relationship", targetEntity = Message.class, cascade = CascadeType.ALL)
     private List<Message> messages;
-
-<<<<<<< Updated upstream
-=======
-    // Getters và Setters
-
->>>>>>> Stashed changes
 }
