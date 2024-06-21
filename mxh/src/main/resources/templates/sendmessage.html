@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.4.0/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script th:src="@{/js/Socket.js}"></script>
+</head>
+<body>
+
+    <form method="post">
+        <input type="text" id="content" name="content" placeholder="Content">
+        <input type="number" id="id" name="id" placeholder="Number id">
+        <button type="button" onclick="sendMessage()">Gui</button>
+    </form>
+
+    <ul th:each="message : ${listmessage}">
+    <p th:text="${message.content}"></p>
+</ul>
+</body>
+</html>

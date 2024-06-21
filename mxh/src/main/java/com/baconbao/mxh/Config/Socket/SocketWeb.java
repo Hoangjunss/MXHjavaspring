@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
-import com.baconbao.mxh.Models.User.Message;
+import com.baconbao.mxh.Models.Message.Message;
 
 @Component
 public class SocketWeb {

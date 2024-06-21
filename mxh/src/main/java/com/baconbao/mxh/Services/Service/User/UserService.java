@@ -13,4 +13,5 @@ public interface UserService {
     User getUser(UserDTO userDTO);
     UserDTO getUserDTO(User user);
     boolean isEmailExist(String email);
+
 }

@@ -1,6 +1,7 @@
 package com.baconbao.mxh.Services.ServiceImpls.User;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,17 @@ public class RelationshipServiceImpl implements RelationshipService{
     @Override
     public List<Relationship> findAllByUserOne(Long user1) {
         return relationshipRepository.findAllByUserOneId(user1);
+    }
+
+    @Override
+    public Relationship findById(Long id) {
+        Optional<Relationship> relationship = relationshipRepository.findById(id);
+        if(relationship.isPresent()){
+            return relationship.get();
+        }else{
+            return null;
+        }
+        
     }
 
 }

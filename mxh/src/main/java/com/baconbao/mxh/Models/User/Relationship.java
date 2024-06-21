@@ -2,6 +2,8 @@ package com.baconbao.mxh.Models.User;
 
 import java.util.List;
 
+import com.baconbao.mxh.Models.Message.Message;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,11 +23,12 @@ public class Relationship {
     @Column(name = "id")
     private Long id;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "user_one_id", referencedColumnName = "IdUser")
     private User userOne;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "user_two_id", referencedColumnName = "IdUser")
     private User userTwo;
 

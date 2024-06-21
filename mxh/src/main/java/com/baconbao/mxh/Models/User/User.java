@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.baconbao.mxh.Models.Message.Message;
 import com.baconbao.mxh.Models.Post.Image;
 import com.baconbao.mxh.Models.Post.Post;
 
@@ -43,15 +44,12 @@ public class User {
         private String email;
         @Column(name = "CreateAt")
         private Date createAt;
-        @OneToMany(mappedBy = "userOne", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+        @OneToMany(mappedBy = "userOne", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 
         private List<Relationship> userOneRelationships =new ArrayList<>();
-        @OneToMany(mappedBy = "userTwo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+        @OneToMany(mappedBy = "userTwo", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 
         private List<Relationship> userTwoRelationships=new ArrayList<>();
-;
-
-    
 
         @OneToMany // Một user có thể có nhiều About
         @JoinTable(name = "users_about", // Tên bảng liên kết
@@ -76,8 +74,4 @@ public class User {
         private List<Message> fromUserMessagesList;
         @OneToMany(mappedBy = "userTo", cascade = CascadeType.ALL)
         private List<Message> toUserMessagesList;
-
-
-       
-
 }

@@ -10,9 +10,7 @@ import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
-import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
@@ -26,15 +24,18 @@ public class SocketConfig implements WebSocketMessageBrokerConfigurer {
     @Autowired
     private UserDetailsService userDetail;
     
+    
+    //configureMessageBroker: tao kho chua du lieu
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker( "/queue");
-        config.setApplicationDestinationPrefixes("/app");
+        config.enableSimpleBroker( "/queue"); // duong dan nhan kho chua
+        config.setApplicationDestinationPrefixes("/app"); //Duong dan goi len Gui len kho chua
     }
 
+    // registerStompEndpoints: dang ky su dung socket
     @Override
-    public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws").withSockJS();
+    public void registerStompEndpoints(StompEndpointRegistry registry) { //StompEndpointRegistry: doi tuong dang ky
+        registry.addEndpoint("/ws").withSockJS(); // import duong dan tren http. giong controll
     }
 
     public void configureClientInboundChannel(ChannelRegistration registration) {
