@@ -29,6 +29,7 @@ public class RelationshipServiceImpl implements RelationshipService{
     public List<Relationship> findAllByUserOne(User user1) {
         return relationshipRepository.findAllByUserOneId(user1);
     }
+    //hello
 
     @Override
     public Relationship findById(Long id) {
