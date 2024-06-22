@@ -5,13 +5,18 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.baconbao.mxh.DTO.PostDTO;
+import com.baconbao.mxh.Exceptions.CustomException;
+import com.baconbao.mxh.Exceptions.ErrorCode;
 import com.baconbao.mxh.Models.Post.Post;
 import com.baconbao.mxh.Models.Post.Status;
 import com.baconbao.mxh.Repository.Post.PostRepository;
 import com.baconbao.mxh.Services.Service.Post.PostService;
+
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class PostServiceImpl implements PostService {
@@ -24,7 +29,13 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<Post> findByActiveAndStatus(boolean active, Status idStatus) {
-        return postRepository.findByIsActiveAndStatusOrderByCreateAtDesc(active, idStatus);
+        try {
+            return postRepository.findByIsActiveAndStatusOrderByCreateAtDesc(active, idStatus);
+        } catch (EntityNotFoundException e) {
+            throw new CustomException(ErrorCode.POST_NOT_FOUND);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+        }
     }
 
     @Override
@@ -33,21 +44,33 @@ public class PostServiceImpl implements PostService {
         if (post.isPresent()) {
             return post.get();
         }
-        return null;
+        throw new CustomException(ErrorCode.POST_NOT_FOUND);
     }
 
     @Override
     public void save(Post post) {
-        if (post.getId() == null) {
-            post.setId(getGenerationId());
+        try {
+            if (post.getId() == null) {
+                post.setId(getGenerationId());
+            }
+            postRepository.save(post);
+        } catch (DataIntegrityViolationException e) {
+            throw new CustomException(ErrorCode.POST_NOT_SAVED);
+        } catch (Exception e){
+            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
-        postRepository.save(post);
     }
 
     @Override
     public void delete(Long id) {
-        Post psot = findById(id);
-        postRepository.delete(psot);
+        try {
+            Post psot = findById(id);
+            postRepository.delete(psot);
+        } catch (DataIntegrityViolationException e) {
+            throw new CustomException(ErrorCode.POST_NOT_SAVED);
+        } catch (Exception e){
+            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+        }
     }
 
     @Override

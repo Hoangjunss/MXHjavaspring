@@ -5,6 +5,8 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.baconbao.mxh.Exceptions.CustomException;
+import com.baconbao.mxh.Exceptions.ErrorCode;
 import com.baconbao.mxh.Models.User.StatusRelationship;
 import com.baconbao.mxh.Repository.User.StatusRelationshipRepository;
 import com.baconbao.mxh.Services.Service.User.StatusRelationshipService;
@@ -20,7 +22,7 @@ public class StatusRelationshipServiceImpl implements StatusRelationshipService{
         if(statusRelationship.isPresent()){
             return statusRelationship.get();
         }
-        return null;
+        throw new CustomException(ErrorCode.STATUS_NOT_FOUND);
     }
 
 }

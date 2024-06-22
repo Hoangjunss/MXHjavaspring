@@ -24,6 +24,11 @@
 </head>
 
 <body class="newsfeed">
+    
+    <form th:action="@{/logout}" method="post">
+        <button type="submit">Logout</button>
+    </form>
+
     <div class="container-fluid" id="wrapper">
         <div class="row newsfeed-size">
             <div class="col-md-12 newsfeed-right-side">

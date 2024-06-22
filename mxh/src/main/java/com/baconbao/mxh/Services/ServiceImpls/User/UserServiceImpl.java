@@ -2,19 +2,24 @@ package com.baconbao.mxh.Services.ServiceImpls.User;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.baconbao.mxh.Config.Socket.SocketWeb;
 import com.baconbao.mxh.DTO.UserDTO;
-
+import com.baconbao.mxh.Exceptions.CustomException;
+import com.baconbao.mxh.Exceptions.ErrorCode;
+import com.baconbao.mxh.Exceptions.UserNotFoundException;
 import com.baconbao.mxh.Models.User.User;
 import com.baconbao.mxh.Repository.User.UserRepository;
 import com.baconbao.mxh.Services.Service.User.UserService;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -36,40 +41,27 @@ public class UserServiceImpl implements UserService {
     // Luu user
     @Override
     public void saveUser(User username) {
-        User user = new User();
-        long id = 0;
         if (username.getId() == null) {
-            if (userRepository.countById() == null) {
-                id = 1;
-            } else {
-                id = userRepository.countById() + 1;
-            }
-            if (username.getEmail() != null || isEmailValid(username.getEmail()) || username.getPassword() != null) {
-                user.setId(id); // set giá trị cho biến user
-                user.setFirstName(username.getFirstName()); // set giá trị cho biến user
-                user.setLastName(username.getLastName()); // set giá trị cho biến user
-                user.setEmail(username.getEmail()); // set giá trị cho biến user
-                user.setPassword(passwordEncoder.encode(username.getPassword()));// set giá trị cho biến user
-                user.setCreateAt(username.getCreateAt());
-                userRepository.save(user); // lưu user vào database
-            } else
-                System.out.println("Email hoặc mật khẩu không hợp lệ"); // thông báo email hoặc mật khẩu không hợp lệ
-        } else {
-            id = username.getId();
-            user.setId(id); // set giá trị cho biến user
-            user.setFirstName(username.getFirstName()); // set giá trị cho biến user
-            user.setLastName(username.getLastName()); // set giá trị cho biến user
-            user.setEmail(username.getEmail()); // set giá trị cho biến user
-            user.setPassword(username.getPassword());// set giá trị cho biến user
-            user.setCreateAt(username.getCreateAt());
-            user.setImage(username.getImage());
-            userRepository.save(user); // lưu user vào database
+            username.setId(getGenerationId());
+            username.setPassword(passwordEncoder.encode(username.getPassword())); // mã hóa mật khẩu
+        }
+        try {
+            userRepository.save(username); // lưu user vào database
+        } catch (DataIntegrityViolationException e) {
+            throw new CustomException(ErrorCode.USER_NOT_SAVE);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
     }
 
     @Override
     public User findByEmail(String email) {
-        return userRepository.findByEmail(email); // tìm kiếm user theo email
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        } else {
+            return userRepository.findByEmail(email); // tìm kiếm user theo email
+        }
     }
 
     @Override
@@ -84,11 +76,11 @@ public class UserServiceImpl implements UserService {
     // Tim user bang id
     @Override
     public User findById(long userId) {
-        Optional<User> user=userRepository.findById(userId); 
-        if(user.isPresent()){
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isPresent()) {
             return user.get();
         }
-        return null;
+        throw new UserNotFoundException("User not found id: " + userId);
     }
 
     // Chuyen userDTO ve user
@@ -120,7 +112,14 @@ public class UserServiceImpl implements UserService {
     // Lay danh sach user
     @Override
     public List<User> fillAll() {
-        return userRepository.findAll();
+        try {
+            return userRepository.findAll();
+        } catch (EntityNotFoundException e) {
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+        }
+
     }
 
     // Kiem tra email co ton tai
@@ -131,21 +130,42 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void setIsOnline(User user) {
-        user.setIsActive(true);
-        userRepository.save(user);
-        socketWeb.setActive(user);
+        try {
+            user.setIsActive(true);
+            userRepository.save(user);
+            socketWeb.setActive(user);
+        } catch (Exception e) {
+
+            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+        }
     }
+
     @Override
-    public void setIsOffline(User user){
-        user.setIsActive(false);
-        userRepository.save(user);
-        socketWeb.setActive(user);
+    public void setIsOffline(User user) {
+        try {
+            user.setIsActive(false);
+            userRepository.save(user);
+            socketWeb.setActive(user);
+        } catch (Exception e) {
+            
+            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+        }
     }
 
     @PostConstruct
-    public void setActiveUserToFalse(){
-        if(userRepository.count()>0){
-            userRepository.updateActiveUserToFalse();
+    public void setActiveUserToFalse() {
+        try {
+            if (userRepository.count() > 0) {
+                userRepository.updateActiveUserToFalse();
+            }
+        } catch (Exception e) {
+            
+            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
+    }
+
+    public Long getGenerationId() {
+        UUID uuid = UUID.randomUUID();
+        return uuid.getMostSignificantBits() & Long.MAX_VALUE;
     }
 }

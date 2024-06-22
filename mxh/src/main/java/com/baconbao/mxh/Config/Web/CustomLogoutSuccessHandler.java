@@ -6,6 +6,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.stereotype.Component;
 
 import com.baconbao.mxh.Models.User.User;
 import com.baconbao.mxh.Services.Service.User.UserService;
@@ -14,6 +15,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+@Component
 public class CustomLogoutSuccessHandler  implements LogoutSuccessHandler{
     private final UserService userService;
     private final UserDetailsService userDetailsService;

@@ -14,6 +14,7 @@ import com.baconbao.mxh.Models.User.User;
 public class SocketWeb {
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
+    
     public void sendMessage(Message message) {
         MessageDTO messageDTO = new MessageDTO();
         UserMessageDTO userMessageDTO = new UserMessageDTO(message.getUserFrom());

@@ -6,6 +6,8 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.baconbao.mxh.Exceptions.CustomException;
+import com.baconbao.mxh.Exceptions.ErrorCode;
 import com.baconbao.mxh.Models.Post.Status;
 import com.baconbao.mxh.Repository.Post.StatusRepository;
 import com.baconbao.mxh.Services.Service.Post.StatusService;
@@ -24,7 +26,7 @@ public class StatusServiceImpls implements StatusService{
         if(status.isPresent()){
             return status.get();
         }
-        return null;
+        throw new CustomException(ErrorCode.STATUS_NOT_FOUND);
     }
     
 }
