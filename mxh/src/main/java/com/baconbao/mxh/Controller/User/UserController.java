@@ -7,10 +7,12 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.method.P;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
@@ -21,11 +23,13 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 
 import com.baconbao.mxh.DTO.UserDTO;
 import com.baconbao.mxh.Models.VerifycationToken;
+import com.baconbao.mxh.Models.Post.Image;
 import com.baconbao.mxh.Models.User.Relationship;
 import com.baconbao.mxh.Models.User.StatusRelationship;
 import com.baconbao.mxh.Models.User.User;
@@ -228,5 +232,7 @@ public class UserController {
     public String addFriendTest() {
         return "addfriend";
     }
+
+
 
 }
