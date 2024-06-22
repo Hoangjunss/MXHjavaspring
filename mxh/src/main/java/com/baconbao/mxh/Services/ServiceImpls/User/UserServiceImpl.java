@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.baconbao.mxh.Config.Socket.SocketWeb;
 import com.baconbao.mxh.DTO.UserDTO;
 
 import com.baconbao.mxh.Models.User.User;
@@ -21,6 +22,8 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private SocketWeb socketWeb;
 
     // Định dạng email
     private static final String EMAIL_PATTERN = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
@@ -130,11 +133,13 @@ public class UserServiceImpl implements UserService {
     public void setIsOnline(User user) {
         user.setIsActive(true);
         userRepository.save(user);
+        socketWeb.setActive(user);
     }
     @Override
     public void setIsOffline(User user){
         user.setIsActive(false);
         userRepository.save(user);
+        socketWeb.setActive(user);
     }
 
     @PostConstruct
