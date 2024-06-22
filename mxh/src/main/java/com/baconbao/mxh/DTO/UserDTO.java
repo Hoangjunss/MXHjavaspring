@@ -18,4 +18,5 @@ public class UserDTO {
     private String password;
     private String email;
     private Date createAt;
+    private Boolean isActive;
 }

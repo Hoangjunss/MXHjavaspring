@@ -11,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
@@ -20,11 +21,15 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class WebConfig {
     @Autowired
     private UserDetailsService userDetailsService;
+     private final AuthenticationSuccessHandler authenticationSuccessHandler;
 
-    public WebConfig(UserDetailsService userDetailsService) {
+    
+public WebConfig(UserDetailsService userDetailsService, AuthenticationSuccessHandler authenticationSuccessHandler) {
         this.userDetailsService = userDetailsService;
+        this.authenticationSuccessHandler = authenticationSuccessHandler;
     }
-//mã hóa password
+
+    //mã hóa password
     @Bean
     public static PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -37,7 +42,7 @@ public class WebConfig {
         //cac duong dan con lai can phai dang nhap
         .anyRequest().authenticated())
         //phuong thuc login
-                .formLogin(login -> login.loginPage("/login").loginProcessingUrl("/login").defaultSuccessUrl("/", true)
+                .formLogin(login -> login.loginPage("/login").loginProcessingUrl("/login").successHandler(authenticationSuccessHandler)
                         .permitAll())
                         //phuong thuc logout
                         .logout( logout -> logout

@@ -123,4 +123,10 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(email);
         return user != null;
     }
+
+    @Override
+    public void setIsOnline(User user) {
+        user.setIsActive(true);
+        userRepository.save(user);
+    }
 }

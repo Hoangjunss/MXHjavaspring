@@ -45,6 +45,7 @@ public class User {
         private String email;
         @Column(name = "CreateAt")
         private Date createAt;
+        private Boolean isActive;
         @OneToMany(mappedBy = "userOne", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
         @JsonIgnore
         private List<Relationship> userOneRelationships =new ArrayList<>();

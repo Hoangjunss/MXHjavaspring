@@ -5,8 +5,10 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
 import com.baconbao.mxh.DTO.MessageDTO;
+import com.baconbao.mxh.DTO.UserDTO;
 import com.baconbao.mxh.DTO.UserMessageDTO;
 import com.baconbao.mxh.Models.Message.Message;
+import com.baconbao.mxh.Models.User.User;
 
 @Component
 public class SocketWeb {
@@ -20,5 +22,11 @@ public class SocketWeb {
         messageDTO.setCreateAt(message.getCreateAt());
         messageDTO.setUserFrom(userMessageDTO);
         simpMessagingTemplate.convertAndSendToUser(message.getUserTo().getEmail(),"/queue/messages", messageDTO);
+    }
+    public void setActive(User user){
+        UserDTO userDTO=new UserDTO();
+        userDTO.setId(user.getId());
+        userDTO.setIsActive(true);
+        simpMessagingTemplate.convertAndSend("/queue/active",userDTO);
     }
 }
