@@ -25,10 +25,10 @@
 
 <body>
     <div class="container">
-        <form th:action="@{/upload_user_img}" method="post" enctype="multipart/form-data">
+        <form th:action="@{/uploaduserimg}" method="post" enctype="multipart/form-data">
             <div class="row post-form-group">
                 <div class="col-md-9">
-                    <input id="file-upload" type="file" class="custom-file-input" name="image" onchange="previewImage(event)">
+                    <input id="file-upload" type="file" class="custom-file-input" name="image">
                     <div id="image-preview-container">
                             <img id="imagePreview" src="" alt="Image Preview" style="max-width: 300px; max-height: 300px;"/>
                     </div>

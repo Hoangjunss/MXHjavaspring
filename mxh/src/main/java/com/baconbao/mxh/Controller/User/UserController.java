@@ -233,6 +233,32 @@ public class UserController {
         return "addfriend";
     }
 
+    @PostMapping("/uploaduserimg")
+    public String uploadUserImg(@RequestParam("image") MultipartFile image, Principal principal) {
+        try {
+            UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+            User user = userService.findByEmail(userDetails.getUsername());
+
+            Image img = new Image();
+            Map<String, Object> resultMap = cloudinaryService.upload(image);
+            String imageUrl = (String) resultMap.get("url");
+            img.setUrlImage(imageUrl);
+            imageService.saveImage(img);
+            Image tmpImg = imageService.findByImage(img.getUrlImage());
+            user.setImage(tmpImg);
+            userService.saveUser(user);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "redirect:/editaccount";
+    }
+
+    @GetMapping("/uploaduserimg")
+    public String uploadUserImgPage() {
+        return "test";
+    }
+
 
 
 }

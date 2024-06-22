@@ -57,6 +57,7 @@ public class UserServiceImpl implements UserService {
             user.setEmail(username.getEmail()); // set giá trị cho biến user
             user.setPassword(username.getPassword());// set giá trị cho biến user
             user.setCreateAt(username.getCreateAt());
+            user.setImage(username.getImage());
             userRepository.save(user); // lưu user vào database
         }
     }
