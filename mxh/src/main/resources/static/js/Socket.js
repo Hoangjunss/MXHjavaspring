@@ -7,7 +7,13 @@ stompClient.connect({}, function(frame) {//tao ket noi den web socket
     stompClient.subscribe('/user/queue/messages', function(message) { //lay du lieu tu kho chauqua duong dan
         var chatMessage = JSON.parse(message.body); 
         displayChatMessage(chatMessage);
-    });}
+    });
+    stompClient.subscribe('/user/queue/active', function(message) { //lay du lieu tu kho chauqua duong dan
+        var chatMessage = JSON.parse(message.body); 
+        displayChatMessage(chatMessage);
+    });
+}
+   
 );
 function sendMessage() {
     var content = document.getElementById('content').value;
