@@ -14,4 +14,5 @@ public interface UserService {
     UserDTO getUserDTO(User user);
     boolean isEmailExist(String email);
     void setIsOnline(User user);
+    void setIsOffline(User user);
 }

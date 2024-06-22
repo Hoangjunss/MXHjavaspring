@@ -131,6 +131,11 @@ public class UserServiceImpl implements UserService {
         user.setIsActive(true);
         userRepository.save(user);
     }
+    @Override
+    public void setIsOffline(User user){
+        user.setIsActive(false);
+        userRepository.save(user);
+    }
 
     @PostConstruct
     public void setActiveUserToFalse(){

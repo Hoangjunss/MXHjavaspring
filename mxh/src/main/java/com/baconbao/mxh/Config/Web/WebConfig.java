@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
@@ -22,11 +23,15 @@ public class WebConfig {
     @Autowired
     private UserDetailsService userDetailsService;
      private final AuthenticationSuccessHandler authenticationSuccessHandler;
+     private final LogoutSuccessHandler logoutSuccessHandler;
 
     
-public WebConfig(UserDetailsService userDetailsService, AuthenticationSuccessHandler authenticationSuccessHandler) {
+     
+    public WebConfig(UserDetailsService userDetailsService, AuthenticationSuccessHandler authenticationSuccessHandler,
+            LogoutSuccessHandler logoutSuccessHandler) {
         this.userDetailsService = userDetailsService;
         this.authenticationSuccessHandler = authenticationSuccessHandler;
+        this.logoutSuccessHandler = logoutSuccessHandler;
     }
 
     //mã hóa password
@@ -48,6 +53,7 @@ public WebConfig(UserDetailsService userDetailsService, AuthenticationSuccessHan
                         .logout( logout -> logout
                         .logoutRequestMatcher(
                                         new AntPathRequestMatcher("/logout"))
+                                        .logoutSuccessHandler(logoutSuccessHandler)
                         .permitAll().deleteCookies("auth_code", "JSESSIONID")
                         .invalidateHttpSession(true));
                         return http.build();
