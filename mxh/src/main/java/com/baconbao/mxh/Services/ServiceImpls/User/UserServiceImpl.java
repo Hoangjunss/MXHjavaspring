@@ -13,6 +13,8 @@ import com.baconbao.mxh.Models.User.User;
 import com.baconbao.mxh.Repository.User.UserRepository;
 import com.baconbao.mxh.Services.Service.User.UserService;
 
+import jakarta.annotation.PostConstruct;
+
 @Service
 public class UserServiceImpl implements UserService {
     @Autowired
@@ -128,5 +130,12 @@ public class UserServiceImpl implements UserService {
     public void setIsOnline(User user) {
         user.setIsActive(true);
         userRepository.save(user);
+    }
+
+    @PostConstruct
+    public void setActiveUserToFalse(){
+        if(userRepository.count()>0){
+            userRepository.updateActiveUserToFalse();
+        }
     }
 }
