@@ -7,7 +7,7 @@ import java.util.List;
 import com.baconbao.mxh.Models.Message.Message;
 import com.baconbao.mxh.Models.Post.Image;
 import com.baconbao.mxh.Models.Post.Post;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -46,19 +46,21 @@ public class User {
         @Column(name = "CreateAt")
         private Date createAt;
         @OneToMany(mappedBy = "userOne", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-        @JsonManagedReference
+        @JsonIgnore
         private List<Relationship> userOneRelationships =new ArrayList<>();
         @OneToMany(mappedBy = "userTwo", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-        @JsonManagedReference
+        @JsonIgnore
         private List<Relationship> userTwoRelationships=new ArrayList<>();
 
         @OneToMany // Một user có thể có nhiều About
+        @JsonIgnore
         @JoinTable(name = "users_about", // Tên bảng liên kết
                         joinColumns = @JoinColumn(name = "IdUser"), // Khóa ngoại của bảng User
                         inverseJoinColumns = @JoinColumn(name = "IdAbout") // Khóa ngoại của bảng About
         )
         private List<About> about;
         @OneToOne
+        @JsonIgnore
         @JoinTable(name = "users_image", // Tên bảng liên kết
                         joinColumns = @JoinColumn(name = "IdUser"), // Khóa ngoại của bảng User
                         inverseJoinColumns = @JoinColumn(name = "IdImage") // Khóa ngoại của bảng About
@@ -66,15 +68,16 @@ public class User {
         private Image image;
 
         @OneToMany // Một user có thể có nhiều About
+        @JsonIgnore
         @JoinTable(name = "users_post", // Tên bảng liên kết
                         joinColumns = @JoinColumn(name = "IdUser"), // Khóa ngoại của bảng User
                         inverseJoinColumns = @JoinColumn(name = "IdPost") // Khóa ngoại của bảng About
         )
         private List<Post> post;
         @OneToMany(mappedBy = "userFrom", cascade = CascadeType.ALL)
-        @JsonManagedReference
+        @JsonIgnore
         private List<Message> fromUserMessagesList;
         @OneToMany(mappedBy = "userTo", cascade = CascadeType.ALL)
-        @JsonManagedReference
+        @JsonIgnore
         private List<Message> toUserMessagesList;
 }

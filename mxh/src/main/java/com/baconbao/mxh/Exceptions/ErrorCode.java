@@ -20,7 +20,7 @@ public enum ErrorCode {
     POST_NOT_FOUND(4001, "Post not found", HttpStatus.NOT_FOUND),
     // Image-related errors
     IMAGE_NOT_FOUND(5001, "Image not found", HttpStatus.NOT_FOUND),
-    IMAGE_ALREADY_EXISTS(5002, "Image already exists", HttpStatus.BAD_REQUEST);
+    IMAGE_ALREADY_EXISTS(5002, "Image already exists", HttpStatus.BAD_REQUEST),
     ;
     
     ErrorCode(int code, String message, HttpStatusCode statusCode) {

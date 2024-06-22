@@ -319,8 +319,7 @@
                             <div class="post border-bottom p-3 bg-white w-shadow" data-id="${listpost.id}"> <!-- id ul cua post -->
                                 <div class="media text-muted pt-3">
                                     <!-- Avartar user -->
-                                    <img th:src="${listpost.user.image.urlImage}" alt="Online user" class="mr-3 post-user-image">
-                                    
+                                    <img th:if="${listpost.user.image}" th:src="${listpost.user.image.urlImage}" alt="Online user" class="mr-3 post-user-image">
                                     <form th:action="@{/hidepost}" method="post">
                                         <input type="hidden" name="id" th:value="${listpost.id}">
                                         <button type="submit">Ẩn</button>
@@ -394,7 +393,7 @@
                                     <!--End Content -->
                                     <!-- Image cua post -->
                                     <div class="d-block mt-3">
-                                        <img th:src="${listpost.image.urlImage}" class="post-content" alt="post image">
+                                        <img th:if="${listpost.image}"th:src="${listpost.image.urlImage}" class="post-content" alt="post image">
                                     </div>
                                     <!-- End Image -->
                                     </div>
