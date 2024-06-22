@@ -24,13 +24,13 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<Post> findByActiveAndStatus(boolean active, Status idStatus) {
-        return postRepository.findByIsActiveAndStatus(active, idStatus);
+        return postRepository.findByIsActiveAndStatusOrderByCreateAtDesc(active, idStatus);
     }
 
     @Override
     public Post findById(Long id) {
-        Optional<Post> post=postRepository.findById(id);
-        if(post.isPresent()){
+        Optional<Post> post = postRepository.findById(id);
+        if (post.isPresent()) {
             return post.get();
         }
         return null;
@@ -38,7 +38,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void save(Post post) {
-        if(post.getId() == null){
+        if (post.getId() == null) {
             post.setId(getGenerationId());
         }
         postRepository.save(post);

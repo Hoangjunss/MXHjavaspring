@@ -10,10 +10,10 @@ import com.baconbao.mxh.Models.Message.Message;
 import com.baconbao.mxh.Models.User.User;
 
 public interface MessageRepository extends JpaRepository<Message, Long> {
-    @Query("SELECT m FROM Message m " +
-            "WHERE (m.userFrom = :firstUser AND m.userTo = :secondUser) " +
-            "OR (m.userFrom = :secondUser AND m.userTo = :firstUser) " +
-            "ORDER BY m.createAt")
-    List<Message> findAllMessagesBetweenTwoUsers(@Param("firstUser") User firstUser,
-            @Param("secondUser") User secondUser);
+        @Query("SELECT m FROM Message m " +
+                        "WHERE (m.userFrom = :firstUser AND m.userTo = :secondUser) " +
+                        "OR (m.userFrom = :secondUser AND m.userTo = :firstUser) " +
+                        "ORDER BY m.createAt ASC")
+        List<Message> findAllMessagesBetweenTwoUsers(@Param("firstUser") User firstUser,
+                        @Param("secondUser") User secondUser);
 }

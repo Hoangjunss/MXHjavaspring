@@ -32,7 +32,7 @@ function sendMessage() {
 
     function displayChatMessage(message) {
      var chatContent = $('<div class="message">').text("Message");
-     var subject = $('<div class="subject">').text("Nguoi Nhan")
+     var subject = $('<div class="subject">').text("Nguoi Goi"+message.userFrom.name)
      var content=$('<p>').text("Nội dung: "+message.content);
      var name=$('<p>').text("Thời gian: "+message.createAt);
      subject.append(content);

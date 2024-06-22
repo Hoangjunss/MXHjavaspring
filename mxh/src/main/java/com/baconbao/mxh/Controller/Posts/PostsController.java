@@ -45,7 +45,7 @@ public class PostsController {
     @Autowired
     private UserService userService;
 
-    @GetMapping({"/", " "})
+    @GetMapping({ "/", " " })
     public String getPosts(Model model) {
         List<Status> status = statusService.findAll();
         model.addAttribute("status", status);
@@ -70,7 +70,7 @@ public class PostsController {
             post.setContent(content);
             post.setStatus(statusPost);
             post.setActive(true);
-            //dat ngay va gio tao post
+            // dat ngay va gio tao post
             LocalDateTime localDateTime = LocalDateTime.now();
             post.setCreateAt(localDateTime);
             post.setUpdateAt(localDateTime);
@@ -78,23 +78,17 @@ public class PostsController {
             User user = userService.findByEmail(userDetails.getUsername());
             post.setUser(user);
 
-            // Kiểm tra xem tệp tin ảnh có rỗng không
-            if (image.isEmpty()) {
-                redirectAttributes.addFlashAttribute("message", "Please select a file to upload.");
-                return "redirect:/";
-            }
-
-            // Tải ảnh lên Cloudinary
-            Map<String, Object> resultMap = cloudinaryService.upload(image);
-            String imageUrl = (String) resultMap.get("url");
-
             // Tạo đối tượng Image và lưu URL ảnh
-            Image img = new Image();
-            img.setUrlImage(imageUrl);
-            imageService.saveImage(img); // Lưu đối tượng Image
-            Image tmpImg = imageService.findByImage(img.getUrlImage());
-            // Thiết lập mối quan hệ giữa Post và Image
-            post.setImage(tmpImg);
+            // Kiểm tra xem tệp tin ảnh có rỗng không
+            if (!image.isEmpty()) {
+                Image img = new Image();
+                Map<String, Object> resultMap = cloudinaryService.upload(image);
+                String imageUrl = (String) resultMap.get("url");
+                img.setUrlImage(imageUrl);
+                imageService.saveImage(img); // Lưu đối tượng Image
+                Image tmpImg = imageService.findByImage(img.getUrlImage());
+                post.setImage(tmpImg);
+            }
             postService.save(post); // Lưu đối tượng Post
             redirectAttributes.addFlashAttribute("message", "Upload successful");
         } catch (Exception e) {
@@ -104,13 +98,13 @@ public class PostsController {
         return "redirect:/";
     }
 
-    //An bai viet
+    // An bai viet
     @PostMapping("/hidepost")
     public String hidePost(Model model, @RequestParam("id") long id) {
-        //RequestParam: lay thuoc tinh cua id duoc post trong the form
-        //Tim post theo id da post
+        // RequestParam: lay thuoc tinh cua id duoc post trong the form
+        // Tim post theo id da post
         Post post = postService.findById(id);
-        post.setActive(false); //set active
+        post.setActive(false); // set active
         LocalDateTime localDateTime = LocalDateTime.now();
         post.setUpdateAt(localDateTime);
         postService.save(post);
