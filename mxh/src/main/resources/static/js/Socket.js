@@ -46,3 +46,10 @@ function sendMessage() {
      chatContent.append(subject);
      $('#chatMessages').append(chatContent);
  }
+ $(window).on('beforeunload', function() {
+    $.ajax({
+        url: '/logout',
+        type: 'POST',
+        async: false 
+    });
+});
