@@ -2,7 +2,6 @@ package com.baconbao.mxh.Security;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -20,6 +19,11 @@ public class WebSecurity implements UserDetailsService {
     @Autowired
     private UserService userService;
     
+    
+    public WebSecurity(UserService userService) {
+        this.userService = userService;
+    }
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException { // throws UsernameNotFoundException là một exception được ném ra khi không tìm thấy người dùng với tên người dùng đã cung cấp.
         User user = userService.findByEmail(username);

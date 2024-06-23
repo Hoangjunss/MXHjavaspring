@@ -14,7 +14,6 @@ import com.baconbao.mxh.Models.User.User;
 public class SocketWeb {
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
-    
     public void sendMessage(Message message) {
         MessageDTO messageDTO = new MessageDTO();
         UserMessageDTO userMessageDTO = new UserMessageDTO(message.getUserFrom());
@@ -22,12 +21,13 @@ public class SocketWeb {
         messageDTO.setContent(message.getContent());
         messageDTO.setCreateAt(message.getCreateAt());
         messageDTO.setUserFrom(userMessageDTO);
-        simpMessagingTemplate.convertAndSendToUser(message.getUserTo().getEmail(),"/queue/messages", messageDTO);
+        simpMessagingTemplate.convertAndSendToUser(message.getUserTo().getEmail(), "/queue/messages", messageDTO);
     }
-    public void setActive(User user){
-        UserDTO userDTO=new UserDTO();
+
+    public void setActive(User user) {
+        UserDTO userDTO = new UserDTO();
         userDTO.setId(user.getId());
         userDTO.setIsActive(true);
-        simpMessagingTemplate.convertAndSend("/queue/active",userDTO);
+        simpMessagingTemplate.convertAndSend("/queue/active", userDTO);
     }
 }
