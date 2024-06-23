@@ -30,6 +30,10 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private SocketWeb socketWeb;
 
+    public UserServiceImpl(SocketWeb socketWeb) {
+        this.socketWeb = socketWeb;
+    }
+
     // Định dạng email
     private static final String EMAIL_PATTERN = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
 
@@ -41,11 +45,12 @@ public class UserServiceImpl implements UserService {
     // Luu user
     @Override
     public void saveUser(User username) {
-        if (username.getId() == null) {
-            username.setId(getGenerationId());
-            username.setPassword(passwordEncoder.encode(username.getPassword())); // mã hóa mật khẩu
-        }
+
         try {
+            if (username.getId() == null) {
+                username.setId(getGenerationId());
+                username.setPassword(passwordEncoder.encode(username.getPassword())); // mã hóa mật khẩu
+            }
             userRepository.save(username); // lưu user vào database
         } catch (DataIntegrityViolationException e) {
             throw new CustomException(ErrorCode.USER_NOT_SAVE);
@@ -147,7 +152,7 @@ public class UserServiceImpl implements UserService {
             userRepository.save(user);
             socketWeb.setActive(user);
         } catch (Exception e) {
-            
+
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
     }
@@ -159,7 +164,7 @@ public class UserServiceImpl implements UserService {
                 userRepository.updateActiveUserToFalse();
             }
         } catch (Exception e) {
-            
+
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
     }

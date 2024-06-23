@@ -12,7 +12,6 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.method.P;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
@@ -75,8 +74,6 @@ public class UserController {
 
     @GetMapping("/login")
     public String showLoginPage(Model model) {
-        User user = new User();
-        // model.addAttribute("user", user);
         return "login";
     }
 

@@ -8,9 +8,7 @@ stompClient.connect({}, function(frame) {//tao ket noi den web socket
         var chatMessage = JSON.parse(message.body); 
         displayChatMessage(chatMessage);
     });
-    stompClient.subscribe('/user/queue/active', function(message) { //lay du lieu tu kho chauqua duong dan
-        var chatMessage = JSON.parse(message.body); 
-        displayChatMessage(chatMessage);
+    stompClient.subscribe('/queue/active', function(message) { //lay du lieu tu kho chauqua duong dan
     });
 }
    
