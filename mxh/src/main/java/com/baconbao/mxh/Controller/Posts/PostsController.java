@@ -115,7 +115,7 @@ public class PostsController {
     @GetMapping("/editpost")
     public String editPost(Model model, @RequestParam long id) {
         Post post = postService.findById(id); // tìm post theo id
-        model.addAttribute("post", post);
+        model.addAttribute("post", post); //truyền dữ liệu post qua view (editpost.html)
         return "editpost";
     }
 
@@ -124,11 +124,11 @@ public class PostsController {
     public String savePost(Model model, @RequestParam("id") long id, @RequestParam("content") String content) {
         try {
             Post post = postService.findById(id); // tìm post theo id
-            post.setContent(content);
-            post.setActive(true);
+            post.setContent(content);// gán nội dung mới
+            post.setActive(true); // gán trạng thái active
             LocalDateTime localDateTime = LocalDateTime.now();
             post.setUpdateAt(localDateTime);
-            postService.save(post);
+            postService.save(post); // lưu post đã chỉnh sửa vào database
         } catch (Exception e) {
             e.printStackTrace();
         }
