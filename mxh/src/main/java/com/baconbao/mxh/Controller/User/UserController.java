@@ -256,6 +256,11 @@ public class UserController {
         return "test";
     }
 
+    @GetMapping("/testpost")
+    public String test() {
+        return "editpost";
+    }
 
+    
 
 }

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="icon" type="image/png" href="assets/images/logo-16x16.png" />
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Argon - Social Network</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Major+Mono+Display" rel="stylesheet">
+    <link th:href="@{/css/post/boxicons.min.css}" rel="stylesheet">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
+    <!-- Styles -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link th:href="@{/css/post/style.css}" rel="stylesheet">
+    <link th:href="@{/css/post/components.css}" rel="stylesheet">
+    <link th:href="@{/css/post/media.css}" rel="stylesheet">
+    <link th:href="@{/css/post/chat.css}" rel="stylesheet">
+    <link href="https://vjs.zencdn.net/7.4.1/video-js.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<body>
+    <form method="post" id="formEditAccount" enctype="multipart/form-data" th:action="@{/savepost}" th:object="${post}">
+    <input type="hidden" name="id" th:field="*{id}" />
+    <button type="submit">Sửa</button>
+    <div class="mb-3">
+        <label for="firstName" class="form-label">Văn bản</label>
+        <input type="text" class="form-control" id="firstName" name="content" th:field="*{content}">
+        <div class="error errorFirstName" style="color:red; display:none;"></div>
+        <img th:if="${post.image}" th:src="${post.image.urlImage}" class="post-content" alt="post image">
+    </div>
+    
+</form>
+</body>
+</html>
