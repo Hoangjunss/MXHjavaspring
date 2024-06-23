@@ -134,4 +134,9 @@ public class PostsController {
         }
         return "redirect:/";
     }
+
+    @GetMapping("/testpost")
+    public String test() {
+        return "editpost";
+    }
 }

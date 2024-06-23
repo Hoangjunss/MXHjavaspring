@@ -42,6 +42,10 @@ public enum ErrorCode {
     MESSAGE_NOT_FOUND(6001, "Message not found", HttpStatus.NOT_FOUND),
     MESSAGE_NOT_SAVED(6002, "Unable to save message", HttpStatus.INTERNAL_SERVER_ERROR),
     MESSAGE_NOT_UPDATE(6003, "Unable to update message", HttpStatus.INTERNAL_SERVER_ERROR),
+
+    //About-related errors
+    ABOUT_NOT_FOUND(7001, "About not found", HttpStatus.NOT_FOUND),
+    
     ;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {

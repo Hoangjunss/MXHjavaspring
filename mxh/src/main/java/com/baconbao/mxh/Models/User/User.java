@@ -48,18 +48,15 @@ public class User {
         private Boolean isActive;
         @OneToMany(mappedBy = "userOne", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
         @JsonIgnore
-        private List<Relationship> userOneRelationships =new ArrayList<>();
+        private List<Relationship> userOneRelationships = new ArrayList<>();
         @OneToMany(mappedBy = "userTwo", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
         @JsonIgnore
-        private List<Relationship> userTwoRelationships=new ArrayList<>();
+        private List<Relationship> userTwoRelationships = new ArrayList<>();
 
-        @OneToMany // Một user có thể có nhiều About
+        @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
         @JsonIgnore
-        @JoinTable(name = "users_about", // Tên bảng liên kết
-                        joinColumns = @JoinColumn(name = "IdUser"), // Khóa ngoại của bảng User
-                        inverseJoinColumns = @JoinColumn(name = "IdAbout") // Khóa ngoại của bảng About
-        )
-        private List<About> about;
+        private List<UserAbout> userAbouts = new ArrayList<>(); 
+
         @OneToOne
         @JsonIgnore
         @JoinTable(name = "users_image", // Tên bảng liên kết

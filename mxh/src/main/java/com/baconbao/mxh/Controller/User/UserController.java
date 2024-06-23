@@ -248,7 +248,7 @@ public class UserController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return "redirect:/editaccount";
+        return "redirect:/";
     }
 
     @GetMapping("/uploaduserimg")
@@ -256,11 +256,6 @@ public class UserController {
         return "test";
     }
 
-    @GetMapping("/testpost")
-    public String test() {
-        return "editpost";
-    }
 
-    
 
 }
