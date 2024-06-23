@@ -6,6 +6,17 @@
     <title>Document</title>
 </head>
 <body>
+    <form th:action="@{/editprofile}" method="post" th:object="${userAboutForm}">
+        <ul th:each="about, aboutStat : ${abouts}">
+            <li>
+                <input type="hidden" th:field="*{userAboutDTOs[__${aboutStat.index}__].aboutId}" th:value="${about.id}">
+                <p th:text="${about.name}"></p>
+                <input type="text" th:placeholder="${about.name}" th:field="*{userAboutDTOs[__${aboutStat.index}__].description}">
+            </li>
+        </ul>
+        <button type="submit">Edit</button>
+    </form>
     
+
 </body>
 </html>

@@ -46,6 +46,11 @@ public enum ErrorCode {
     //About-related errors
     ABOUT_NOT_FOUND(7001, "About not found", HttpStatus.NOT_FOUND),
     
+    //User about - related errors
+    USER_ABOUT_NOT_FOUND(8001, "User about not found", HttpStatus.NOT_FOUND),
+    USER_ABOUT_NOT_SAVED(8002, "Unable to save user about", HttpStatus.INTERNAL_SERVER_ERROR),
+    USER_ABOUT_NOT_UPDATE(8003, "Unable to update user about", HttpStatus.INTERNAL_SERVER_ERROR),
+    USER_ABOUT_ALREADY_EXISTS(8005, "User about already exists", HttpStatus.BAD_REQUEST),
     ;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {
