@@ -1,6 +1,5 @@
 package com.baconbao.mxh.Repository.User;
 
-import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -14,14 +13,17 @@ import jakarta.transaction.Transactional;
 public interface UserRepository extends JpaRepository<User, Long> {
   User findByEmail(String email);
 
-  /* @Modifying
-  @Transactional */
+  /*
+   * @Modifying
+   * 
+   * @Transactional
+   */
   @Query(value = "SELECT MAX(id_user) FROM user", nativeQuery = true)
   Integer countById();
 
   @Modifying
-    @Transactional
-    @Query("UPDATE User u SET u.isActive = false WHERE u.isActive = true")
-    void updateActiveUserToFalse();
+  @Transactional
+  @Query("UPDATE User u SET u.isActive = false WHERE u.isActive = true")
+  void updateActiveUserToFalse();
 
 }

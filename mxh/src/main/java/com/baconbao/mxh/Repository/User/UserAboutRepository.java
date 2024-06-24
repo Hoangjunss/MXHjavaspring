@@ -7,7 +7,6 @@ import com.baconbao.mxh.Models.User.User;
 import com.baconbao.mxh.Models.User.UserAbout;
 import java.util.List;
 
-
 public interface UserAboutRepository extends JpaRepository<UserAbout, Long>{
     UserAbout findByUserAndAbout(User user, About about);
     List<UserAbout> findByUser(User user);

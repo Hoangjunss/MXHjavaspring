@@ -5,12 +5,7 @@ import java.util.List;
 
 import com.baconbao.mxh.Models.User.User;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
 import jakarta.persistence.*;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -59,5 +54,12 @@ public class Post {
         )
         private User user;
 
+<<<<<<< HEAD
       
+=======
+        private boolean isActive;
+
+        @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+        private List<Interaction> interactions;
+>>>>>>> 6fc7c889a2773e9b631035b1e7e0282c4ff43181
 }
