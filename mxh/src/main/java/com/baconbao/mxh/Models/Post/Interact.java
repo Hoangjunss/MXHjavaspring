@@ -23,9 +23,9 @@ public class Interact {
     @Id
     @Column(name="idInteract")
     private Long id;
+    
     private String interactType;
 
     @OneToMany(mappedBy = "interactionType", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Interaction> interactions;
-
 }

@@ -22,13 +22,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.baconbao.mxh.DTO.ApiResponse;
 import com.baconbao.mxh.DTO.CommentDTO;
-<<<<<<< HEAD
 import com.baconbao.mxh.DTO.InteractionDTO;
 import com.baconbao.mxh.Exceptions.CustomException;
 import com.baconbao.mxh.Exceptions.ErrorCode;
-=======
 import com.baconbao.mxh.DTO.ReplyCommentDTO;
->>>>>>> b89e2c3d88d06b3be007534011ffb7d34cc1a26e
 import com.baconbao.mxh.Models.Post.Comment;
 import com.baconbao.mxh.Models.Post.Image;
 import com.baconbao.mxh.Models.Post.Interact;
@@ -70,13 +67,11 @@ public class PostsController {
     @Autowired
     private CommentService commentService;
     @Autowired
-<<<<<<< HEAD
     private InteractService interactService;
     @Autowired
     private InteractionService interactionService;
-=======
+    @Autowired
     private ReplyCommentService replyCommentService;
->>>>>>> b89e2c3d88d06b3be007534011ffb7d34cc1a26e
 
     @GetMapping({ "/", " " })
     public String getPosts(Model model) {
@@ -219,9 +214,9 @@ public class PostsController {
     }
     
     
-    @PostMapping("/interact")
+    /* @PostMapping("/interact")
     public ResponseEntity<?> handleInteraction(@RequestBody InteractionDTO interactionDTO, Principal principal) {
-        try {
+        /* try {
             System.out.println(interactionDTO.getIdPost()+" "+ interactionDTO.getIdInteraction());
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
             User user = userService.findByEmail(userDetails.getUsername());
@@ -240,7 +235,7 @@ public class PostsController {
             throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
         } catch (Exception e) {
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
-        }
-    }
+        } 
+    } */
     
 }

@@ -54,9 +54,8 @@ public class Post {
         )
         private User user;
 
-
-
-        @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+        @OneToMany
+        @JoinTable(name ="post_interaction")
         private List<Interaction> interactions;
 
 }

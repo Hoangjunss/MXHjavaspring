@@ -57,14 +57,14 @@ public class User {
 
         @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
         @JsonIgnore
-        private List<UserAbout> userAbouts = new ArrayList<>(); 
+        private List<UserAbout> userAbouts = new ArrayList<>();
         @OneToMany(mappedBy = "userFrom", cascade = CascadeType.ALL)
         @JsonIgnore
         private List<Message> fromUserMessagesList;
         @OneToMany(mappedBy = "userTo", cascade = CascadeType.ALL)
         @JsonIgnore
         private List<Message> toUserMessagesList;
-        @OneToMany(mappedBy ="userSend")
+        @OneToMany(mappedBy = "userSend")
         @JsonIgnore
         private List<Comment> comments;
 
@@ -84,5 +84,7 @@ public class User {
         )
         private List<Post> post;
 
-
+        @OneToMany(mappedBy = "user")
+        @JsonIgnore
+        private List<Interaction> interactions;
 }
