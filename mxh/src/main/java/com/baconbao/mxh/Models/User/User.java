@@ -9,6 +9,7 @@ import com.baconbao.mxh.Models.Post.Comment;
 import com.baconbao.mxh.Models.Post.Image;
 import com.baconbao.mxh.Models.Post.Interaction;
 import com.baconbao.mxh.Models.Post.Post;
+import com.baconbao.mxh.Models.Post.ReplyComment;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
@@ -84,7 +85,11 @@ public class User {
         )
         private List<Post> post;
 
-        @OneToMany(mappedBy = "user")
+        @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
         @JsonIgnore
-        private List<Interaction> interactions;
+        private List<Interaction> interactions = new ArrayList<>();
+
+        @OneToMany(mappedBy = "userSend")
+        @JsonIgnore
+        private List<ReplyComment> replyComments;
 }

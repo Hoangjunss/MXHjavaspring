@@ -20,20 +20,19 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Interaction {
     @Id
-    @Column(name = "idInteraction")
+    @Column(name="idInteraction")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_interact_id", referencedColumnName = "IdUser")
+    @JoinColumn(name="IdUser")
     private User user;
 
-    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="IdPost")
+    private Post post;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "IdInteract")
+    @JoinColumn(name="idInteract")
     private Interact interactionType;
-
-    // Các phương thức getter, setter
+    
 }
-
-

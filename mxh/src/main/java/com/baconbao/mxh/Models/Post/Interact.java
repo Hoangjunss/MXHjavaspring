@@ -1,5 +1,6 @@
 package com.baconbao.mxh.Models.Post;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -27,5 +28,6 @@ public class Interact {
     private String interactType;
 
     @OneToMany(mappedBy = "interactionType", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Interaction> interactions;
+    private List<Interaction> interactions=new ArrayList<>();
+
 }

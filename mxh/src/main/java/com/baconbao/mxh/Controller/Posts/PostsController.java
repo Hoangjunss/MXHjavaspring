@@ -2,6 +2,7 @@ package com.baconbao.mxh.Controller.Posts;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -13,7 +14,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -45,9 +46,6 @@ import com.baconbao.mxh.Services.Service.Post.StatusService;
 import com.baconbao.mxh.Services.Service.User.UserService;
 
 import lombok.AllArgsConstructor;
-
-
-
 
 @Controller
 @AllArgsConstructor
@@ -143,7 +141,7 @@ public class PostsController {
     @GetMapping("/editpost")
     public String editPost(Model model, @RequestParam long id) {
         Post post = postService.findById(id); // tìm post theo id
-        model.addAttribute("post", post); //truyền dữ liệu post qua view (editpost.html)
+        model.addAttribute("post", post); // truyền dữ liệu post qua view (editpost.html)
         return "editpost";
     }
 
@@ -167,26 +165,29 @@ public class PostsController {
     public String test() {
         return "editpost";
     }
+
     @GetMapping("/getComment")
-    public String getComment(@RequestParam("id") Long id,Model model) {
-        Post post=postService.findById(id);
-        List<Comment> comments=post.getComments();
-        CommentDTO commentDTO= new CommentDTO();
-        model.addAttribute("commentDTO", commentDTO);
-        model.addAttribute("comment", comments);
-        return "comment";
+    public String getComment(Model model) {
+        Post post = postService.findById(741974051669362051L);
+        CommentDTO commentDTO = new CommentDTO();
+
+        model.addAttribute("post", post);
+
+        return "commentpost";
     }
+
     @PostMapping("/postComment")
-    public String postComment(@RequestParam("commentDTO") CommentDTO commentDTO,Principal principal ) {
-        Post post =postService.findById(commentDTO.getId());
-        List<Comment> comments=post.getComments();
-        Comment comment=new Comment();
+    public String postComment(@RequestParam("id") Long id, @RequestParam("content") String content,
+            Principal principal) {
+        Post post = postService.findById(id);
+        List<Comment> comments = post.getComments();
+        Comment comment = new Comment();
         comment.setId(commentService.getGenerationId());
-        comment.setContent(commentDTO.getContent());
+        comment.setContent(content);
         UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
         User user = userService.findByEmail(userDetails.getUsername());
         comment.setUserSend(user);
-        LocalDateTime localDateTime=LocalDateTime.now();
+        LocalDateTime localDateTime = LocalDateTime.now();
         comment.setCreateAt(localDateTime);
         commentService.save(comment);
         comments.add(comment);
@@ -194,48 +195,72 @@ public class PostsController {
         postService.save(post);
         return "redirect:/getComment";
     }
+
     @PostMapping("/postReplyComment")
-    public String postReplyComment(@RequestParam("replyCommentDTO") ReplyCommentDTO replyCommentDTO ,Principal principal) {
-        Comment comment =commentService.findById(replyCommentDTO.getId());
-        ReplyComment replyComment=new ReplyComment();
+    public String postReplyComment(@RequestParam("id") Long id, @RequestParam("content") String content,
+            Principal principal) {
+        Comment comment = commentService.findById(id);
+        ReplyComment replyComment = new ReplyComment();
         replyComment.setId(replyCommentService.getGenerationId());
-        replyComment.setContent(replyCommentDTO.getContent());
-        LocalDateTime localDateTime=LocalDateTime.now();
+        replyComment.setContent(content);
+        LocalDateTime localDateTime = LocalDateTime.now();
         replyComment.setCreateAt(localDateTime);
         UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
         User user = userService.findByEmail(userDetails.getUsername());
         replyComment.setUserSend(user);
-        List<ReplyComment>replyComments=comment.getReplyComment();
+        List<ReplyComment> replyComments = comment.getReplyComment();
         replyComments.add(replyComment);
         replyCommentService.save(replyComment);
         comment.setReplyComment(replyComments);
         commentService.save(comment);
         return "redirect:/getComment";
     }
-    
-    
-    /* @PostMapping("/interact")
+
+    @PostMapping("/interact")
     public ResponseEntity<?> handleInteraction(@RequestBody InteractionDTO interactionDTO, Principal principal) {
-        /* try {
-            System.out.println(interactionDTO.getIdPost()+" "+ interactionDTO.getIdInteraction());
+        try {
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
             User user = userService.findByEmail(userDetails.getUsername());
-            Post post = postService.findById(interactionDTO.getIdPost());
-            Interact interactionType = interactService.findById(interactionDTO.getIdInteraction());
+            Post post = postService.findById(interactionDTO.getPostId());
+            Interact interact = interactService.findById(interactionDTO.getReactionId());
 
+            System.out.println(interactionDTO.getPostId() + " " + interactionDTO.getReactionId() + " INTERACTION");
             Interaction interaction = new Interaction();
-            interaction.setUser(user);
+            interaction.setInteractionType(interact);
             interaction.setPost(post);
-            interaction.setInteractionType(interactionType);
-
-            //interactionService.saveInteraction(interaction);
-
+            interaction.setUser(user);
+            interactionService.saveInteraction(interaction);
             return ResponseEntity.ok(new ApiResponse(true, "Reaction saved successfully"));
         } catch (DataIntegrityViolationException e) {
             throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
         } catch (Exception e) {
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
-        } 
-    } */
-    
+        }
+    }
+
+    @GetMapping("/searchuser")
+    public String searchUser() {
+        return "searchuser";
+    }
+
+    @PostMapping("/searchuser")
+    public ResponseEntity<?> searchuser(@RequestBody String name, Principal principal) {
+        try {
+            System.out.println(name +" Key search");
+            List<Long> id_users = userService.findAllByFirstNameOrLastName(name);
+            if(id_users.size() ==0){
+                System.out.println(" NULL");
+            }
+            for (Long user : id_users) {
+                System.out.println(user + " SEARCH USER");
+            }
+
+           return ResponseEntity.ok(id_users);
+        } catch (DataIntegrityViolationException e) {
+            throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+        }
+    }
+
 }

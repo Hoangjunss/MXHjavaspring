@@ -8,5 +8,4 @@ import com.baconbao.mxh.Models.Post.Interaction;
 public interface InteractionService {
     Interaction findById(Long id);
     void saveInteraction(Interaction interaction);
-    
 }

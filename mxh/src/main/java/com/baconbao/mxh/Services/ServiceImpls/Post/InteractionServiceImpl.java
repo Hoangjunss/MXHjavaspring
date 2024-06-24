@@ -1,6 +1,7 @@
 package com.baconbao.mxh.Services.ServiceImpls.Post;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -30,10 +31,19 @@ public class InteractionServiceImpl  implements InteractionService{
     @Override
     public void saveInteraction(Interaction interaction) {
         try {
+            if(interaction.getId() == null){
+                interaction.setId(getGenerationId());
+            }
             interactionRepository.save(interaction);
         } catch (DataIntegrityViolationException e) {
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
     }
+
+    public Long getGenerationId() {
+        UUID uuid = UUID.randomUUID();
+        return uuid.getMostSignificantBits() & Long.MAX_VALUE;
+    }
+
     
 }

@@ -1,41 +1,32 @@
 package com.baconbao.mxh.DTO;
 
 public class InteractionDTO {
-    private Long idInteraction;
-    private String interactType;
-    private Long idPost;
+    private Long reactionId;
+    private Long postId;
 
     public InteractionDTO() {
     }
 
-    public InteractionDTO(Long idInteraction, String interactType, Long idPost) {
-        this.idInteraction = idInteraction;
-        this.interactType = interactType;
-        this.idPost = idPost;
+    public InteractionDTO(Long reactionId, Long postId) {
+        this.reactionId = reactionId;
+        this.postId = postId;
     }
 
-    public Long getIdInteraction() {
-        return idInteraction;
+    public Long getReactionId() {
+        return reactionId;
     }
 
-    public void setIdInteraction(Long idInteraction) {
-        this.idInteraction = idInteraction;
+    public void setReactionId(Long reactionId) {
+        this.reactionId = reactionId;
     }
 
-    public String getInteractType() {
-        return interactType;
+    public Long getPostId() {
+        return postId;
     }
 
-    public void setInteractType(String interactType) {
-        this.interactType = interactType;
+    public void setPostId(Long postId) {
+        this.postId = postId;
     }
 
-    public Long getIdPost() {
-        return idPost;
-    }
-
-    public void setIdPost(Long idPost) {
-        this.idPost = idPost;
-    }
-
+    
 }

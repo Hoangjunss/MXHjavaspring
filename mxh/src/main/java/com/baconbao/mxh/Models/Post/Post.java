@@ -1,6 +1,7 @@
 package com.baconbao.mxh.Models.Post;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.baconbao.mxh.Models.User.User;
@@ -30,9 +31,9 @@ public class Post {
         private boolean isActive;
         @OneToMany
         @JoinTable(name = "post_comment", // Tên bảng liên kết
-        joinColumns = @JoinColumn(name = "IdPost"), // Khóa ngoại của bảng User
-        inverseJoinColumns = @JoinColumn(name = "idComment") // Khóa ngoại của bảng About
-)
+                        joinColumns = @JoinColumn(name = "IdPost"), // Khóa ngoại của bảng User
+                        inverseJoinColumns = @JoinColumn(name = "idComment") // Khóa ngoại của bảng About
+        )
         private List<Comment> comments;
         @ManyToOne
         @JoinTable(name = "post_status", // Tên bảng liên kết
@@ -54,8 +55,6 @@ public class Post {
         )
         private User user;
 
-        @OneToMany
-        @JoinTable(name ="post_interaction")
-        private List<Interaction> interactions;
-
+        @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+        private List<Interaction> interactions = new ArrayList<>();
 }

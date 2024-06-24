@@ -7,6 +7,8 @@ import com.baconbao.mxh.Models.User.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,7 +22,9 @@ public class ReplyComment {
     @Id
     @Column(name="IdReplyComment")
     private Long id;
-    private User UserSend;
+    @ManyToOne
+    @JoinColumn(name="user", referencedColumnName = "IdUser")
+    private User userSend;
     private String content;
     private LocalDateTime createAt;
 }
