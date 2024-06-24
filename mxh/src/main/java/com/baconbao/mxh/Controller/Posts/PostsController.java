@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
@@ -13,25 +15,33 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.baconbao.mxh.DTO.ApiResponse;
 import com.baconbao.mxh.DTO.CommentDTO;
+import com.baconbao.mxh.DTO.InteractionDTO;
+import com.baconbao.mxh.Exceptions.CustomException;
+import com.baconbao.mxh.Exceptions.ErrorCode;
 import com.baconbao.mxh.Models.Post.Comment;
 import com.baconbao.mxh.Models.Post.Image;
+import com.baconbao.mxh.Models.Post.Interact;
+import com.baconbao.mxh.Models.Post.Interaction;
 import com.baconbao.mxh.Models.Post.Post;
 import com.baconbao.mxh.Models.Post.Status;
 import com.baconbao.mxh.Models.User.User;
 import com.baconbao.mxh.Services.CloudinaryService;
 import com.baconbao.mxh.Services.Service.Post.CommentService;
 import com.baconbao.mxh.Services.Service.Post.ImageService;
+import com.baconbao.mxh.Services.Service.Post.InteractService;
+import com.baconbao.mxh.Services.Service.Post.InteractionService;
 import com.baconbao.mxh.Services.Service.Post.PostService;
 import com.baconbao.mxh.Services.Service.Post.StatusService;
 import com.baconbao.mxh.Services.Service.User.UserService;
 
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.RequestBody;
 
 
 @Controller
@@ -51,6 +61,10 @@ public class PostsController {
     private UserService userService;
     @Autowired
     private CommentService commentService;
+    @Autowired
+    private InteractService interactService;
+    @Autowired
+    private InteractionService interactionService;
 
     @GetMapping({ "/", " " })
     public String getPosts(Model model) {
@@ -172,5 +186,28 @@ public class PostsController {
         return "redirect:/getComment";
     }
     
+    @PostMapping("/interact")
+    public ResponseEntity<?> handleInteraction(@RequestBody InteractionDTO interactionDTO, Principal principal) {
+        try {
+            System.out.println(interactionDTO.getIdPost()+" "+ interactionDTO.getIdInteraction());
+            UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+            User user = userService.findByEmail(userDetails.getUsername());
+            Post post = postService.findById(interactionDTO.getIdPost());
+            Interact interactionType = interactService.findById(interactionDTO.getIdInteraction());
+
+            Interaction interaction = new Interaction();
+            interaction.setUser(user);
+            interaction.setPost(post);
+            interaction.setInteractionType(interactionType);
+
+            //interactionService.saveInteraction(interaction);
+
+            return ResponseEntity.ok(new ApiResponse(true, "Reaction saved successfully"));
+        } catch (DataIntegrityViolationException e) {
+            throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+        }
+    }
     
 }

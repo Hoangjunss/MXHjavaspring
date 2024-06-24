@@ -51,6 +51,9 @@ public enum ErrorCode {
     USER_ABOUT_NOT_SAVED(8002, "Unable to save user about", HttpStatus.INTERNAL_SERVER_ERROR),
     USER_ABOUT_NOT_UPDATE(8003, "Unable to update user about", HttpStatus.INTERNAL_SERVER_ERROR),
     USER_ABOUT_ALREADY_EXISTS(8005, "User about already exists", HttpStatus.BAD_REQUEST),
+
+    //Interact - error
+    INTERACT_NOT_FOUND(9001, "Interact not found", HttpStatus.NOT_FOUND),
     ;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {

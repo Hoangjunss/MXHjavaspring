@@ -3,11 +3,13 @@ package com.baconbao.mxh.Services.ServiceImpls.Post;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.baconbao.mxh.Models.Post.Comment;
 import com.baconbao.mxh.Repository.Post.CommentRepository;
 import com.baconbao.mxh.Services.Service.Post.CommentService;
 
+@Service
 public class CommentServiceImpl implements CommentService{
     @Autowired
     private CommentRepository commentRepository;
