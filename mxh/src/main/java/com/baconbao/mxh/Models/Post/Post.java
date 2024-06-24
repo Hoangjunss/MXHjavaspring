@@ -54,12 +54,9 @@ public class Post {
         )
         private User user;
 
-<<<<<<< HEAD
-      
-=======
-        private boolean isActive;
+
 
         @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
         private List<Interaction> interactions;
->>>>>>> 6fc7c889a2773e9b631035b1e7e0282c4ff43181
+
 }
