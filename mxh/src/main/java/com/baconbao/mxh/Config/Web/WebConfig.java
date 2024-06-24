@@ -52,7 +52,7 @@ public class WebConfig {
                         //phuong thuc logout
                         .logout( logout -> logout
                         .logoutRequestMatcher(
-                                        new AntPathRequestMatcher("/logout"))
+                                        new AntPathRequestMatcher("/logout","POST"))
                                         .logoutSuccessHandler(logoutSuccessHandler)
                         .permitAll().deleteCookies("auth_code", "JSESSIONID")
                         .invalidateHttpSession(true));

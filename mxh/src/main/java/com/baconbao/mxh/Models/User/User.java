@@ -5,8 +5,11 @@ import java.util.Date;
 import java.util.List;
 
 import com.baconbao.mxh.Models.Message.Message;
+import com.baconbao.mxh.Models.Post.Comment;
 import com.baconbao.mxh.Models.Post.Image;
+import com.baconbao.mxh.Models.Post.Interaction;
 import com.baconbao.mxh.Models.Post.Post;
+import com.baconbao.mxh.Models.Post.ReplyComment;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
@@ -55,7 +58,16 @@ public class User {
 
         @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
         @JsonIgnore
-        private List<UserAbout> userAbouts = new ArrayList<>(); 
+        private List<UserAbout> userAbouts = new ArrayList<>();
+        @OneToMany(mappedBy = "userFrom", cascade = CascadeType.ALL)
+        @JsonIgnore
+        private List<Message> fromUserMessagesList;
+        @OneToMany(mappedBy = "userTo", cascade = CascadeType.ALL)
+        @JsonIgnore
+        private List<Message> toUserMessagesList;
+        @OneToMany(mappedBy = "userSend")
+        @JsonIgnore
+        private List<Comment> comments;
 
         @OneToOne
         @JsonIgnore
@@ -72,10 +84,12 @@ public class User {
                         inverseJoinColumns = @JoinColumn(name = "IdPost") // Khóa ngoại của bảng About
         )
         private List<Post> post;
-        @OneToMany(mappedBy = "userFrom", cascade = CascadeType.ALL)
+
+        @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
         @JsonIgnore
-        private List<Message> fromUserMessagesList;
-        @OneToMany(mappedBy = "userTo", cascade = CascadeType.ALL)
+        private List<Interaction> interactions = new ArrayList<>();
+
+        @OneToMany(mappedBy = "userSend")
         @JsonIgnore
-        private List<Message> toUserMessagesList;
+        private List<ReplyComment> replyComments;
 }

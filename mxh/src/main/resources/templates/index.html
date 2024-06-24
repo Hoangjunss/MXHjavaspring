@@ -22,6 +22,7 @@
     <link th:href="@{/css/post/chat.css}" rel="stylesheet">
     <link href="https://vjs.zencdn.net/7.4.1/video-js.css" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script th:src="@{/js/interaction.js}"></script>
 </head>
 
 <body class="newsfeed">
@@ -407,19 +408,21 @@
                                 <!-- End time -->
                                 <div class="mb-3">
                                     <!-- Reactions -->
+                                     
                                     <div class="argon-reaction">
                                         <span class="like-btn">
-                                            <a href="#" class="post-card-buttons" id="reactions"><i class='bx bxs-like mr-2'></i> 67</a>
+                                            <a href="#" class="post-card-buttons" id="reactions"><i class='bx bxs-like mr-2'></i></a>
                                             <ul class="reactions-box dropdown-shadow">
-                                                <li class="reaction reaction-like" data-reaction="Like"></li>
-                                                <li class="reaction reaction-love" data-reaction="Love"></li>
-                                                <li class="reaction reaction-haha" data-reaction="HaHa"></li>
-                                                <li class="reaction reaction-wow" data-reaction="Wow"></li>
-                                                <li class="reaction reaction-sad" data-reaction="Sad"></li>
-                                                <li class="reaction reaction-angry" data-reaction="Angry"></li>
+                                                <li class="reaction reaction-like" data-reaction="Like"><button class="reaction-button" data-reaction-id="1" th:data-post-id="${listpost.id}"></button></li>
+                                                <li class="reaction reaction-love" data-reaction="Love"><button class="reaction-button" data-reaction-id="2" th:data-post-id="${listpost.id}"></button></li>
+                                                <li class="reaction reaction-haha" data-reaction="HaHa"><button class="reaction-button" data-reaction-id="3" th:data-post-id="${listpost.id}"></button></li>
+                                                <li class="reaction reaction-wow" data-reaction="Wow"><button class="reaction-button" data-reaction-id="4" th:data-post-id="${listpost.id}"></button></li>
+                                                <li class="reaction reaction-sad" data-reaction="Sad"><button class="reaction-button" data-reaction-id="5" th:data-post-id="${listpost.id}"></button></li>
+                                                <li class="reaction reaction-angry" data-reaction="Angry"><button class="reaction-button" data-reaction-id="6" th:data-post-id="${listpost.id}"></button></li>
                                             </ul>
                                         </span>
                                     </div>
+                                    
                                     <!-- End Reactions -->
                                     <a href="javascript:void(0)" class="post-card-buttons" id="show-comments"><i class='bx bx-message-rounded mr-2'></i> 5</a>
                                     <!-- Share -->

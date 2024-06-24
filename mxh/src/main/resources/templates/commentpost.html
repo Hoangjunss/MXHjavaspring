@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div>
+        <p th:text="${post.content}">Content</p>
+    </div>
+    <div th:each="comment : ${post.comments}">
+        <p th:text="${comment.content}">Content</p>
+        <form th:action="@{/postReplyComment}" method="post">
+            <input type="text" name="content"  placeholder="comment">
+            <input type="text" name="id" th:value="${comment.id}">
+            <button type="submit">Reply</button>
+        </form>
+    </div>
+    <form th:action="@{/postComment}" method="post">
+        <input type="text" name="content"  placeholder="comment">
+        <input type="text" name="id" th:value="${post.id}">
+        <button type="submit">Gui</button>
+    </form>
+
+    
+</body>
+</html>

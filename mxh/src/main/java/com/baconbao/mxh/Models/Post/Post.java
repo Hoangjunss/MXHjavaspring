@@ -1,15 +1,12 @@
 package com.baconbao.mxh.Models.Post;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.baconbao.mxh.Models.User.User;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
 import jakarta.persistence.*;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,6 +28,13 @@ public class Post {
         private LocalDateTime createAt;
         @Column(name = "UpdateAt")
         private LocalDateTime updateAt;
+        private boolean isActive;
+        @OneToMany
+        @JoinTable(name = "post_comment", // Tên bảng liên kết
+                        joinColumns = @JoinColumn(name = "IdPost"), // Khóa ngoại của bảng User
+                        inverseJoinColumns = @JoinColumn(name = "idComment") // Khóa ngoại của bảng About
+        )
+        private List<Comment> comments;
         @ManyToOne
         @JoinTable(name = "post_status", // Tên bảng liên kết
                         joinColumns = @JoinColumn(name = "IdPost"), // Khóa ngoại của bảng User
@@ -51,5 +55,6 @@ public class Post {
         )
         private User user;
 
-        private boolean isActive;
+        @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+        private List<Interaction> interactions = new ArrayList<>();
 }
