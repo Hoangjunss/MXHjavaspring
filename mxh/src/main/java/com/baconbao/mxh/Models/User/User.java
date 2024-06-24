@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.baconbao.mxh.Models.Message.Message;
 import com.baconbao.mxh.Models.Post.Image;
+import com.baconbao.mxh.Models.Post.Interaction;
 import com.baconbao.mxh.Models.Post.Post;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -55,7 +56,7 @@ public class User {
 
         @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
         @JsonIgnore
-        private List<UserAbout> userAbouts = new ArrayList<>(); 
+        private List<UserAbout> userAbouts = new ArrayList<>();
 
         @OneToOne
         @JsonIgnore
@@ -78,4 +79,8 @@ public class User {
         @OneToMany(mappedBy = "userTo", cascade = CascadeType.ALL)
         @JsonIgnore
         private List<Message> toUserMessagesList;
+
+        @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+        @JsonIgnore
+        private List<Interaction> interactions;
 }

@@ -1,15 +1,11 @@
 package com.baconbao.mxh.Models.Post;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.baconbao.mxh.Models.User.User;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
 import jakarta.persistence.*;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -52,4 +48,7 @@ public class Post {
         private User user;
 
         private boolean isActive;
+
+        @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+        private List<Interaction> interactions;
 }
