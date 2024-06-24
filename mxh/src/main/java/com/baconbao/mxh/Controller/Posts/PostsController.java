@@ -18,20 +18,25 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.baconbao.mxh.DTO.CommentDTO;
+import com.baconbao.mxh.DTO.ReplyCommentDTO;
 import com.baconbao.mxh.Models.Post.Comment;
 import com.baconbao.mxh.Models.Post.Image;
 import com.baconbao.mxh.Models.Post.Post;
+import com.baconbao.mxh.Models.Post.ReplyComment;
 import com.baconbao.mxh.Models.Post.Status;
 import com.baconbao.mxh.Models.User.User;
 import com.baconbao.mxh.Services.CloudinaryService;
 import com.baconbao.mxh.Services.Service.Post.CommentService;
 import com.baconbao.mxh.Services.Service.Post.ImageService;
 import com.baconbao.mxh.Services.Service.Post.PostService;
+import com.baconbao.mxh.Services.Service.Post.ReplyCommentService;
 import com.baconbao.mxh.Services.Service.Post.StatusService;
 import com.baconbao.mxh.Services.Service.User.UserService;
 
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.RequestBody;
+
+
 
 
 @Controller
@@ -51,6 +56,8 @@ public class PostsController {
     private UserService userService;
     @Autowired
     private CommentService commentService;
+    @Autowired
+    private ReplyCommentService replyCommentService;
 
     @GetMapping({ "/", " " })
     public String getPosts(Model model) {
@@ -165,12 +172,33 @@ public class PostsController {
         UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
         User user = userService.findByEmail(userDetails.getUsername());
         comment.setUserSend(user);
+        LocalDateTime localDateTime=LocalDateTime.now();
+        comment.setCreateAt(localDateTime);
         commentService.save(comment);
         comments.add(comment);
         post.setComments(comments);
         postService.save(post);
         return "redirect:/getComment";
     }
+    @PostMapping("/postReplyComment")
+    public String postReplyComment(@RequestParam("replyCommentDTO") ReplyCommentDTO replyCommentDTO ,Principal principal) {
+        Comment comment =commentService.findById(replyCommentDTO.getId());
+        ReplyComment replyComment=new ReplyComment();
+        replyComment.setId(replyCommentService.getGenerationId());
+        replyComment.setContent(replyCommentDTO.getContent());
+        LocalDateTime localDateTime=LocalDateTime.now();
+        replyComment.setCreateAt(localDateTime);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+        User user = userService.findByEmail(userDetails.getUsername());
+        replyComment.setUserSend(user);
+        List<ReplyComment>replyComments=comment.getReplyComment();
+        replyComments.add(replyComment);
+        replyCommentService.save(replyComment);
+        comment.setReplyComment(replyComments);
+        commentService.save(comment);
+        return "redirect:/getComment";
+    }
+    
     
     
 }
