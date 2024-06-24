@@ -17,17 +17,22 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.baconbao.mxh.DTO.CommentDTO;
+import com.baconbao.mxh.Models.Post.Comment;
 import com.baconbao.mxh.Models.Post.Image;
 import com.baconbao.mxh.Models.Post.Post;
 import com.baconbao.mxh.Models.Post.Status;
 import com.baconbao.mxh.Models.User.User;
 import com.baconbao.mxh.Services.CloudinaryService;
+import com.baconbao.mxh.Services.Service.Post.CommentService;
 import com.baconbao.mxh.Services.Service.Post.ImageService;
 import com.baconbao.mxh.Services.Service.Post.PostService;
 import com.baconbao.mxh.Services.Service.Post.StatusService;
 import com.baconbao.mxh.Services.Service.User.UserService;
 
 import lombok.AllArgsConstructor;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @Controller
 @AllArgsConstructor
@@ -44,6 +49,8 @@ public class PostsController {
     private UserDetailsService userDetailsService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private CommentService commentService;
 
     @GetMapping({ "/", " " })
     public String getPosts(Model model) {
@@ -139,4 +146,31 @@ public class PostsController {
     public String test() {
         return "editpost";
     }
+    @GetMapping("/getComment")
+    public String getComment(@RequestParam("id") Long id,Model model) {
+        Post post=postService.findById(id);
+        List<Comment> comments=post.getComments();
+        CommentDTO commentDTO= new CommentDTO();
+        model.addAttribute("commentDTO", commentDTO);
+        model.addAttribute("comment", comments);
+        return "comment";
+    }
+    @PostMapping("/postComment")
+    public String postComment(@RequestParam("commentDTO") CommentDTO commentDTO,Principal principal ) {
+        Post post =postService.findById(commentDTO.getId());
+        List<Comment> comments=post.getComments();
+        Comment comment=new Comment();
+        comment.setId(commentService.getGenerationId());
+        comment.setContent(commentDTO.getContent());
+        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+        User user = userService.findByEmail(userDetails.getUsername());
+        comment.setUserSend(user);
+        commentService.save(comment);
+        comments.add(comment);
+        post.setComments(comments);
+        postService.save(post);
+        return "redirect:/getComment";
+    }
+    
+    
 }
