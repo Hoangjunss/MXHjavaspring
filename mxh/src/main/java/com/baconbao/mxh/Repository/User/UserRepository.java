@@ -17,11 +17,6 @@ import jakarta.transaction.Transactional;
 public interface UserRepository extends JpaRepository<User, Long> {
   User findByEmail(String email);
 
-  /*
-   * @Modifying
-   * 
-   * @Transactional
-   */
   @Query(value = "SELECT MAX(id_user) FROM user", nativeQuery = true)
   Integer countById();
 
@@ -30,6 +25,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
   @Query("UPDATE User u SET u.isActive = false WHERE u.isActive = true")
   void updateActiveUserToFalse();
 
-  @Query(value = "SELECT u.id_user FROM User As u WHERE u.last_name LIKE " + "%:name% OR u.first_name LIKE %:name%", nativeQuery=true)
-    List<Long> findAllByFirstNameOrLastName(@Param("name") String name);
+  @Query("SELECT u FROM User u WHERE u.lastName LIKE CONCAT('%',:name,'%') OR u.firstName LIKE CONCAT('%',:name,'%')")
+  List<User> findAllByFirstNameOrLastName(@Param("name") String name);
 }

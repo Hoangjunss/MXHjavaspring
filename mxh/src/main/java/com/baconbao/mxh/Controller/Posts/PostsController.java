@@ -247,12 +247,12 @@ public class PostsController {
     public ResponseEntity<?> searchuser(@RequestBody String name, Principal principal) {
         try {
             System.out.println(name +" Key search");
-            List<Long> id_users = userService.findAllByFirstNameOrLastName(name);
+            List<User> id_users = userService.findAllByFirstNameOrLastName(name);
             if(id_users.size() ==0){
                 System.out.println(" NULL");
             }
-            for (Long user : id_users) {
-                System.out.println(user + " SEARCH USER");
+            for (User user : id_users) {
+                System.out.println(user.getLastName() + " SEARCH USER");
             }
 
            return ResponseEntity.ok(id_users);

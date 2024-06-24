@@ -175,9 +175,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<Long> findAllByFirstNameOrLastName(String name) {
+    public List<User> findAllByFirstNameOrLastName(String name) {
         try {
-            return userRepository.findAllByFirstNameOrLastName(name);
+            return userRepository.findAllByFirstNameOrLastName("%"+name+"%");
         } catch (Exception e) {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }

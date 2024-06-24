@@ -15,5 +15,5 @@ public interface UserService {
     boolean isEmailExist(String email);
     void setIsOnline(User user);
     void setIsOffline(User user);
-    List<Long> findAllByFirstNameOrLastName(String name);
+    List<User> findAllByFirstNameOrLastName(String name);
 }
