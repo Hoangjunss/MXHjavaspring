@@ -1,5 +1,6 @@
 package com.baconbao.mxh.Services.ServiceImpls.Post;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,16 @@ public class CommentServiceImpl implements CommentService{
         public Long getGenerationId() {
             UUID uuid = UUID.randomUUID();
             return uuid.getMostSignificantBits() & Long.MAX_VALUE;
+        }
+
+
+        @Override
+        public Comment findById(Long id) {
+            Optional<Comment> comment=commentRepository.findById(id);
+            if(comment.isPresent()){
+                return comment.get();
+            }
+            return null;
         }
     
     
