@@ -43,7 +43,7 @@ public class WebConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         //cho phep nhung duong dan khong can dang nhap
-        http.csrf((csrf) -> csrf.disable()).authorizeHttpRequests((authorize) -> authorize.requestMatchers("/register", "/js/User/**", "/js/**","/css/**", "/confirmUser").permitAll()
+        http.csrf((csrf) -> csrf.disable()).authorizeHttpRequests((authorize) -> authorize.requestMatchers("/register", "/js/validation/**", "/css/**", "/confirmUser").permitAll()
         //cac duong dan con lai can phai dang nhap
         .anyRequest().authenticated())
         //phuong thuc login
