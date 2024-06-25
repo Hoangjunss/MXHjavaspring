@@ -15,6 +15,8 @@ import com.baconbao.mxh.Models.User.User;
 import com.baconbao.mxh.Repository.Message.MessageRepository;
 import com.baconbao.mxh.Services.Service.Message.MessageService;
 
+import jakarta.persistence.EntityNotFoundException;
+
 @Service
 public class MessageServiceImpl implements MessageService{
     @Autowired
@@ -45,6 +47,19 @@ public class MessageServiceImpl implements MessageService{
     public Long getGenerationId() {
         UUID uuid = UUID.randomUUID();
         return uuid.getMostSignificantBits() & Long.MAX_VALUE;
+    }
+
+
+    //Lỗi truy vấn LIKE content
+    @Override
+    public List<Message> findByContent(String content) {
+        try {
+            return messageRepository.findByContentLike(content);
+        } catch (EntityNotFoundException e) {
+            throw new CustomException(ErrorCode.MESSAGE_NOT_FOUND);
+        } catch (Exception e){
+            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+        }
     }
 
 }

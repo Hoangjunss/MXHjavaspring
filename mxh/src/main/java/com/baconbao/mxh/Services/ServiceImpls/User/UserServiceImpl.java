@@ -174,10 +174,12 @@ public class UserServiceImpl implements UserService {
         return uuid.getMostSignificantBits() & Long.MAX_VALUE;
     }
 
+
+    //Lỗi truy vấn like
     @Override
     public List<User> findAllByFirstNameOrLastName(String name) {
         try {
-            return userRepository.findAllByFirstNameOrLastName("%"+name+"%");
+            return userRepository.findByLastNameOrFirstName(name, name);
         } catch (Exception e) {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }

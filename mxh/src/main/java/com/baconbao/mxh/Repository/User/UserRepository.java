@@ -25,6 +25,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
   @Query("UPDATE User u SET u.isActive = false WHERE u.isActive = true")
   void updateActiveUserToFalse();
 
-  @Query("SELECT u FROM User u WHERE u.lastName LIKE CONCAT('%',:name,'%') OR u.firstName LIKE CONCAT('%',:name,'%')")
+
+  //Lỗi truy vấn LIKE
+  @Query(value = "SELECT u FROM User u WHERE u.lastName LIKE %:name% OR u.firstName LIKE %:name%")
   List<User> findAllByFirstNameOrLastName(@Param("name") String name);
+
+  List<User> findByLastNameOrFirstName(String firstName, String lastName);
+  
 }
