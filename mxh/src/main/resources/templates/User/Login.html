@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en"  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <!-- Css -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css">
+    <link th:href="@{/css/User/Login.css}" rel="stylesheet">
+    <!-- JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.4.0/dist/sockjs.min.js"></script>
+    <script th:src="@{/js/Socket.js}"></script>
+    <script th:src="@{/js/User/Login.js}"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="offset-md-2 col-lg-5 col-md-7 offset-lg-4 offset-md-3">
+                <div class="panel border bg-white">
+                    <div class="panel-heading">
+                        <h3 class="pt-3 font-weight-bold">Login</h3>
+                    </div>
+                    <div class="panel-body p-3">
+                        <form th:action="@{/login}" method="POST" id="formLogin">
+                            <div class="form-group py-2">
+                                <div class="input-field"> <span class="far fa-user p-2"></span> <input name="username" id="inputEmail4" type="text" placeholder="Username or Email"> </div>
+                                <div class="error errorEmail" style="color:red; display:none;"></div>
+                            </div>
+                            <div class="form-group py-1 pb-2">
+                                <div class="input-field"> <span class="fas fa-lock px-2"></span> <input name="password" id="inputPassword4" type="password"  placeholder="Enter your Password"></div>
+                                <div class="error errorPassword" style="color:red;"></div>
+                            </div>
+                            <div class="form-inline"><a href="#" id="forgot" class="font-weight-bold">Forgot password?</a> </div>
+                            <button type="submit" class="btn btn-primary btn-block mt-3">Login</button>
+                            <div class="text-center pt-4 text-muted">Don't have an account? <a th:href="@{/register}">Sign up</a> </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

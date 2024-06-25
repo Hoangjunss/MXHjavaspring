@@ -89,7 +89,7 @@ public class UserController {
 
     @GetMapping("/login")
     public String showLoginPage(Model model) {
-        return "login";
+        return "/User/Login";
     }
 
     // Nhan duong dan va trang ve trang register.html trong templates
@@ -97,7 +97,7 @@ public class UserController {
     public String showRegisterPage(Model model) {
         UserDTO userDTO = new UserDTO();
         model.addAttribute("userDTO", userDTO);
-        return "register";
+        return "/User/Register";
     }
 
     @PostMapping("/register")
@@ -163,10 +163,10 @@ public class UserController {
         VerifycationToken verifycationToken = verifycationTokenService.findById(token);
         // neu token het han thi khi an vo chuyen ve register
         if (verifycationToken == null)
-            return "register";
+            return "User/Register";
         // else xac nhan token va chuyen ve index
         verifycationTokenService.confirmUser(token);
-        return "login";
+        return "User/Login";
     }
 
     // Lay duong dan anh de tai ve
