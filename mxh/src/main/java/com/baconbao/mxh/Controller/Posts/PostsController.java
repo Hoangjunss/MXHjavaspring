@@ -36,6 +36,7 @@ import com.baconbao.mxh.Models.Post.ReplyComment;
 import com.baconbao.mxh.Models.Post.Status;
 import com.baconbao.mxh.Models.User.User;
 import com.baconbao.mxh.Services.CloudinaryService;
+import com.baconbao.mxh.Services.Service.TestService;
 import com.baconbao.mxh.Services.Service.Post.CommentService;
 import com.baconbao.mxh.Services.Service.Post.ImageService;
 import com.baconbao.mxh.Services.Service.Post.InteractService;
@@ -70,6 +71,8 @@ public class PostsController {
     private InteractionService interactionService;
     @Autowired
     private ReplyCommentService replyCommentService;
+    @Autowired
+    private TestService testService;
 
     @GetMapping({ "/", " " })
     public String getPosts(Model model) {
@@ -216,6 +219,7 @@ public class PostsController {
         return "redirect:/getComment";
     }
 
+    //Lỗi truy vấn LIKE
     @PostMapping("/interact")
     public ResponseEntity<?> handleInteraction(@RequestBody InteractionDTO interactionDTO, Principal principal) {
         try {
@@ -244,14 +248,14 @@ public class PostsController {
     }
 
     @PostMapping("/searchuser")
-    public ResponseEntity<?> searchuser(@RequestBody String name, Principal principal) {
+    public ResponseEntity<?> searchuser(@RequestBody String name) {
         try {
             System.out.println(name +" Key search");
-            List<User> id_users = userService.findAllByFirstNameOrLastName(name);
+            List<com.baconbao.mxh.Models.test> id_users = testService.findByLastNameOrFirstName(name, name);
             if(id_users.size() ==0){
                 System.out.println(" NULL");
             }
-            for (User user : id_users) {
+            for (com.baconbao.mxh.Models.test user : id_users) {
                 System.out.println(user.getLastName() + " SEARCH USER");
             }
 
