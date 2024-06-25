@@ -12,5 +12,6 @@ public class MxhApplication {
 		SpringApplication.run(MxhApplication.class, args);
 		/* Hello World */
 		/* Mang xa hoi */
+		/* Bum */
 	}
 }
