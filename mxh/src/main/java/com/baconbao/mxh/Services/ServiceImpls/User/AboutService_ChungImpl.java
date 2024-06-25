@@ -22,7 +22,6 @@ public class AboutService_ChungImpl implements AboutService_Chung {
         About about= new About();
         about.setId(aboutDTO.getId());
         about.setName(aboutDTO.getName());
-        about.setDescribes(aboutDTO.getDescribe());
         return about;
     }
 
@@ -30,7 +29,6 @@ public class AboutService_ChungImpl implements AboutService_Chung {
     public AboutDTO geAboutDTO(About about) {
        AboutDTO aboutDTO=new AboutDTO();
        aboutDTO.setId(about.getId());
-       aboutDTO.setDescribe(about.getDescribes());
        aboutDTO.setName(about.getName());
        return aboutDTO;
 

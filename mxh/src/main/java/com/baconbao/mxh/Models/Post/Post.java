@@ -29,12 +29,6 @@ public class Post {
         @Column(name = "UpdateAt")
         private LocalDateTime updateAt;
         private boolean isActive;
-        @OneToMany
-        @JoinTable(name = "post_comment", // Tên bảng liên kết
-                        joinColumns = @JoinColumn(name = "IdPost"), // Khóa ngoại của bảng User
-                        inverseJoinColumns = @JoinColumn(name = "idComment") // Khóa ngoại của bảng About
-        )
-        private List<Comment> comments;
         @ManyToOne
         @JoinTable(name = "post_status", // Tên bảng liên kết
                         joinColumns = @JoinColumn(name = "IdPost"), // Khóa ngoại của bảng User
@@ -55,6 +49,13 @@ public class Post {
         )
         private User user;
 
+        @OneToMany
+        @JoinTable(name = "post_comment", // Tên bảng liên kết
+                        joinColumns = @JoinColumn(name = "IdPost"), // Khóa ngoại của bảng User
+                        inverseJoinColumns = @JoinColumn(name = "idComment") // Khóa ngoại của bảng About
+        )
+        private List<Comment> comments;
+
         @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-        private List<Interaction> interactions = new ArrayList<>();
+        private List<Interaction> interactions=new ArrayList<>();
 }

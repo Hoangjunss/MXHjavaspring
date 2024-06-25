@@ -21,12 +21,11 @@ public class Comment {
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "user_send_id", referencedColumnName = "IdUser")
     private User userSend;
+    
     @OneToMany
     @JoinTable(name = "comment_replyComment", // Tên bảng liên kết
     joinColumns = @JoinColumn(name = "IdComment"), // Khóa ngoại của bảng User
     inverseJoinColumns = @JoinColumn(name = "idReplyComment") )
     private List<ReplyComment> replyComment;
 
-
-    
 }

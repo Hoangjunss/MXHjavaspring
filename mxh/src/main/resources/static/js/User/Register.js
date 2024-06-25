@@ -3,7 +3,6 @@ $(document).ready(function() {
     $('#formRegister').on('submit', function(event){
         event.preventDefault();
         var isError = false;
-        alert('register')
 
         // Validate each field
         isError |= validateField('#inputFirstName', isValidName, 'Please enter your first name', 'The first name is not in the correct format', '.errorFirstName');
