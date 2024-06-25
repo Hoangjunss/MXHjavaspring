@@ -15,7 +15,7 @@ $(document).ready(function() {
         }
     });
 
-    console.log("Hello REGÍTẺ")
+    
 
     function validateField(selector, validationFn, emptyMsg, invalidMsg, errorSelector) {
         var value = $(selector).val().trim();

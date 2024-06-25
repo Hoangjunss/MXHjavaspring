@@ -7,7 +7,7 @@ $(document).ready(function() {
         // Validate each field
         isError |= validateField('#inputEmail4', 'Please enter your email','.errorEmail');
         isError |= validatePassword('#inputPassword4','.errorPassword');
-
+        /* hello */
         if (!isError) {
             this.submit();
         }
