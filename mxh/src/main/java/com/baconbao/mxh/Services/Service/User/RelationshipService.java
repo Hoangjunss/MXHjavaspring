@@ -13,4 +13,5 @@ public interface RelationshipService {
     void addUser(Relationship relationship);
     Relationship findById(Long id);
     Relationship findRelationship(User userOne, User userTwo);
+    List<Relationship> findAllByUserOneId(User user);
 }

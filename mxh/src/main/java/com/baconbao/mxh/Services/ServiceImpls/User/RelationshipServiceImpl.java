@@ -10,10 +10,15 @@ import org.springframework.stereotype.Service;
 
 import com.baconbao.mxh.Exceptions.CustomException;
 import com.baconbao.mxh.Exceptions.ErrorCode;
+import com.baconbao.mxh.Models.Post.Status;
 import com.baconbao.mxh.Models.User.Relationship;
+import com.baconbao.mxh.Models.User.StatusRelationship;
 import com.baconbao.mxh.Models.User.User;
+import com.baconbao.mxh.Repository.Post.StatusRepository;
 import com.baconbao.mxh.Repository.User.RelationshipRepository;
+import com.baconbao.mxh.Services.Service.Post.StatusService;
 import com.baconbao.mxh.Services.Service.User.RelationshipService;
+import com.baconbao.mxh.Services.Service.User.StatusRelationshipService;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -21,6 +26,8 @@ import jakarta.persistence.EntityNotFoundException;
 public class RelationshipServiceImpl implements RelationshipService {
     @Autowired
     private RelationshipRepository relationshipRepository;
+    @Autowired 
+    private StatusRelationshipService statusService;
 
     @Override
     public void addUser(Relationship relationship) {
@@ -71,6 +78,19 @@ public class RelationshipServiceImpl implements RelationshipService {
     public Long getGenerationId() {
         UUID uuid = UUID.randomUUID();
         return uuid.getMostSignificantBits() & Long.MAX_VALUE;
+    }
+
+    @Override
+    public List<Relationship> findAllByUserOneId(User user) {
+        try {
+            StatusRelationship status = statusService.findById(2L);
+            System.out.println(status.getStatus()+ "RELATIONSHIP SEARCH STATUS");
+            return relationshipRepository.findAllByUserOneId(user, status);
+        } catch (EntityNotFoundException e) {
+            throw new CustomException(ErrorCode.RELATIONSHIP_NOT_FOUND);
+        } catch(Exception e){
+            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+        }
     }
 
 }

@@ -62,4 +62,20 @@ public class MessageServiceImpl implements MessageService{
         }
     }
 
+    @Override
+    public Message findLatestMessage(User userFrom, User userTo) {
+        try {
+            List<Message> messages = messageRepository.findAllMessagesBetweenTwoUsers(userFrom, userTo);
+            Message message = messages.get(messages.size() - 1);
+
+        // Trả về tin nhắn gần nhất
+        return messages.isEmpty() ? null : message;
+        } catch (EntityNotFoundException e) {
+            throw new CustomException(ErrorCode.MESSAGE_NOT_FOUND);
+        } catch (Exception e){
+            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+        }
+    }
+
+
 }

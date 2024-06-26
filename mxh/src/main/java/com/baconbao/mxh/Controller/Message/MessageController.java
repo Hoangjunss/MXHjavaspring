@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.baconbao.mxh.DTO.RelationshipDTO;
 import com.baconbao.mxh.Exceptions.CustomException;
 import com.baconbao.mxh.Exceptions.ErrorCode;
 import com.baconbao.mxh.Models.Message.Message;
@@ -35,6 +38,8 @@ public class MessageController {
     @Autowired
     private UserService userService;
     @Autowired
+    private UserDetailsService userDetailsService;
+    @Autowired
     private RelationshipService relationshipService;
 
     @GetMapping("/send")
@@ -44,6 +49,39 @@ public class MessageController {
         List<Message> listMessage = messageService.messageFromUser(user1, user2);
         model.addAttribute("listmessage", listMessage);
         return "sendmessage";
+    }
+
+    @GetMapping("/messagermobile")
+    public String getMessagePageMobile( Model model, Principal principal) {
+        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+            User user = userService.findByEmail(userDetails.getUsername());
+            List<Relationship> relationships = relationshipService.findAllByUserOneId(user);
+            List<Relationship> relation = new ArrayList<>();
+            List<RelationshipDTO> relationshipDTOs = new ArrayList<>();
+            for (Relationship relationship : relationships) {
+                System.out.println(relationship.getId() +" RELATIONSHIP");
+                if(relationship.getMessages()!=null){
+                    System.out.println("MESSAGE != NULL");
+                    if(relationship.getUserOne().getId() == user.getId()){
+                        System.out.println(relationship.getUserOne().getLastName()+ " USER ONE");
+                        Message message = messageService.findLatestMessage(user, relationship.getUserTwo());
+                        System.out.println(message.getContent()+" CONTENT MESSAGE");
+                        RelationshipDTO dto = new RelationshipDTO(relationship.getId(), relationship.getUserTwo().getLastName()+" "+relationship.getUserTwo().getFirstName(), message.getContent());
+                        relationshipDTOs.add(dto);
+                    }else if (relationship.getUserTwo().getId() == user.getId()){
+                        System.out.println(relationship.getUserTwo().getLastName()+ " USER TWO");
+                        Message message = messageService.findLatestMessage(user, relationship.getUserOne());
+                        System.out.println(message.getContent()+" CONTENT MESSAGE");
+                        RelationshipDTO dto = new RelationshipDTO(relationship.getId(), relationship.getUserOne().getLastName()+" "+relationship.getUserOne().getFirstName(), message.getContent());
+                        relationshipDTOs.add(dto);
+                    }
+                    relation.add(relationship);
+                }else{
+                    System.out.println("MESSAGE IS NULL");
+                }
+            }
+            model.addAttribute("relationships", relationshipDTOs);
+        return "/User/Message/Mobile/Message";
     }
 
     @MessageMapping("/chat.send")

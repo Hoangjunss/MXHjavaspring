@@ -12,4 +12,6 @@ public interface MessageService {
     List<Message> messageFromUser(User userFrom,User userTo);
     void sendMessage(Message message);
     List<Message> findByContent(String content);
+    Message findLatestMessage(User userFrom,User userTo);
+
 }

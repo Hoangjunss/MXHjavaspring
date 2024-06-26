@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="icon" type="image/png" href="assets/images/logo-16x16.png" />
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Argon - Social Network</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Major+Mono+Display" rel="stylesheet">
+    <link href='https://cdn.jsdelivr.net/npm/boxicons@1.9.2/css/boxicons.min.css' rel='stylesheet'>
+
+    <!-- Styles -->
+    <link th:href="@{/css/User/Message/MessageMobile.css}" rel="stylesheet">
+</head>
+<body>
+    <div class="row message-right-side-content">
+        <div class="col-md-12">
+            <div id="message-frame">
+                <div class="message-sidepanel">
+                    <div class="message-search position-relative d-flex">
+                        <label for=""><i class='bx bx-search'></i></label>
+                        <input type="text" class="form-control search-input" placeholder="Search for conversations..." />
+                        <button type="button" class="btn btn-create-conversation" data-toggle="modal" data-target="#newConversation"><i class='bx bx-pencil'></i></button>
+                    </div>
+                    <div class="message-contacts">
+                        <ul class="conversations">
+                            <li th:each="relationship : ${relationships}" class="contact" >
+                                <div class="wrap">
+                                    <span class="contact-status online"></span>
+                                    <img th:src="@{/images/users/user-1.jpg}" alt="Conversation user" />
+                                    <span class="unread-messages">3</span>
+                                    <div class="meta">
+                                        <p class="name" th:text="${relationship.name}"></p>
+                                        <p class="preview" th:text="${relationship.content}"></p>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
