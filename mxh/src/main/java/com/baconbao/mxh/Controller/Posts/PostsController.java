@@ -2,7 +2,6 @@ package com.baconbao.mxh.Controller.Posts;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -14,7 +13,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,7 +24,6 @@ import com.baconbao.mxh.DTO.CommentDTO;
 import com.baconbao.mxh.DTO.InteractionDTO;
 import com.baconbao.mxh.Exceptions.CustomException;
 import com.baconbao.mxh.Exceptions.ErrorCode;
-import com.baconbao.mxh.DTO.ReplyCommentDTO;
 import com.baconbao.mxh.Models.Post.Comment;
 import com.baconbao.mxh.Models.Post.Image;
 import com.baconbao.mxh.Models.Post.Interact;
@@ -173,20 +170,22 @@ public class PostsController {
     public String getComment(Model model) {
         Post post = postService.findById(741974051669362051L);
         CommentDTO commentDTO = new CommentDTO();
-
         model.addAttribute("post", post);
 
         return "commentpost";
     }
 
+    //Đăng comment của post
     @PostMapping("/postComment")
     public String postComment(@RequestParam("id") Long id, @RequestParam("content") String content,
             Principal principal) {
+                //tim kiếm post hiện tại
         Post post = postService.findById(id);
         List<Comment> comments = post.getComments();
         Comment comment = new Comment();
         comment.setId(commentService.getGenerationId());
         comment.setContent(content);
+        //Tìm kiếm user hiện tại
         UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
         User user = userService.findByEmail(userDetails.getUsername());
         comment.setUserSend(user);
@@ -195,14 +194,18 @@ public class PostsController {
         commentService.save(comment);
         comments.add(comment);
         post.setComments(comments);
+        //Lưu comment của người dùng
         postService.save(post);
         return "redirect:/getComment";
     }
 
+    // Lấy phần trả lời bình luận theo id
     @PostMapping("/postReplyComment")
     public String postReplyComment(@RequestParam("id") Long id, @RequestParam("content") String content,
             Principal principal) {
+        //tìm comment được reply
         Comment comment = commentService.findById(id);
+        //Tạo đối tượng reply, lưu những thông tin cần thiết
         ReplyComment replyComment = new ReplyComment();
         replyComment.setId(replyCommentService.getGenerationId());
         replyComment.setContent(content);
@@ -211,6 +214,7 @@ public class PostsController {
         UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
         User user = userService.findByEmail(userDetails.getUsername());
         replyComment.setUserSend(user);
+        //Lưu thông tin
         List<ReplyComment> replyComments = comment.getReplyComment();
         replyComments.add(replyComment);
         replyCommentService.save(replyComment);
@@ -219,7 +223,7 @@ public class PostsController {
         return "redirect:/getComment";
     }
 
-    //Lỗi truy vấn LIKE
+    // Lỗi truy vấn LIKE
     @PostMapping("/interact")
     public ResponseEntity<?> handleInteraction(@RequestBody InteractionDTO interactionDTO, Principal principal) {
         try {
@@ -250,16 +254,16 @@ public class PostsController {
     @PostMapping("/searchuser")
     public ResponseEntity<?> searchuser(@RequestBody String name) {
         try {
-            System.out.println(name +" Key search");
+            System.out.println(name + " Key search");
             List<com.baconbao.mxh.Models.test> id_users = testService.findByLastNameOrFirstName(name, name);
-            if(id_users.size() ==0){
+            if (id_users.size() == 0) {
                 System.out.println(" NULL");
             }
             for (com.baconbao.mxh.Models.test user : id_users) {
                 System.out.println(user.getLastName() + " SEARCH USER");
             }
 
-           return ResponseEntity.ok(id_users);
+            return ResponseEntity.ok(id_users);
         } catch (DataIntegrityViolationException e) {
             throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
         } catch (Exception e) {

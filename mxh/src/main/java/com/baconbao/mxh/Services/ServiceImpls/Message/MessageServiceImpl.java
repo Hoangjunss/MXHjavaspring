@@ -18,7 +18,7 @@ import com.baconbao.mxh.Services.Service.Message.MessageService;
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
-public class MessageServiceImpl implements MessageService{
+public class MessageServiceImpl implements MessageService {
     @Autowired
     private MessageRepository messageRepository;
     @Autowired
@@ -26,20 +26,26 @@ public class MessageServiceImpl implements MessageService{
 
     @Override
     public List<Message> messageFromUser(User userFrom, User userTo) {
+        // Truy vấn và trả về tất cả tin nhắn giữa hai người dùng
         return messageRepository.findAllMessagesBetweenTwoUsers(userFrom, userTo);
     }
 
     @Override
     public void sendMessage(Message message) {
         try {
-            if(message.getId() == null){
+            // Nếu tin nhắn chưa có ID, tạo một ID mới
+            if (message.getId() == null) {
                 message.setId(getGenerationId());
             }
+            // Lưu tin nhắn vào repository
             messageRepository.save(message);
+            // Gửi tin nhắn qua websocket
             socketWeb.sendMessage(message);
         } catch (DataIntegrityViolationException e) {
+            // Xử lý ngoại lệ nếu không thể lưu tin nhắn
             throw new CustomException(ErrorCode.IMAGE_NOT_SAVED);
         } catch (Exception e) {
+            // Xử lý các ngoại lệ khác
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
     }
@@ -49,15 +55,17 @@ public class MessageServiceImpl implements MessageService{
         return uuid.getMostSignificantBits() & Long.MAX_VALUE;
     }
 
-
-    //Lỗi truy vấn LIKE content
+    // Tìm kiếm tin nhắn theo nội dung tương tự
+    // Lỗi truy vấn LIKE content
     @Override
     public List<Message> findByContent(String content) {
         try {
             return messageRepository.findByContentLike(content);
         } catch (EntityNotFoundException e) {
+            // Xử lý ngoại lệ nếu không tìm thấy tin nhắn
             throw new CustomException(ErrorCode.MESSAGE_NOT_FOUND);
-        } catch (Exception e){
+        } catch (Exception e) {
+            // Xử lý các ngoại lệ khác
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
     }
@@ -65,17 +73,18 @@ public class MessageServiceImpl implements MessageService{
     @Override
     public Message findLatestMessage(User userFrom, User userTo) {
         try {
+            // Lấy tất cả tin nhắn giữa hai người dùng
             List<Message> messages = messageRepository.findAllMessagesBetweenTwoUsers(userFrom, userTo);
+            // Lấy tin nhắn gần nhất
             Message message = messages.get(messages.size() - 1);
-
-        // Trả về tin nhắn gần nhất
-        return messages.isEmpty() ? null : message;
+            // Trả về tin nhắn gần nhất, hoặc null nếu không có tin nhắn
+            return messages.isEmpty() ? null : message;
         } catch (EntityNotFoundException e) {
+            // Xử lý ngoại lệ nếu không tìm thấy tin nhắn
             throw new CustomException(ErrorCode.MESSAGE_NOT_FOUND);
-        } catch (Exception e){
+        } catch (Exception e) {
+            // Xử lý các ngoại lệ khác
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
     }
-
-
 }

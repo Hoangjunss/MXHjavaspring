@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.baconbao.mxh.Models.User.Relationship;
 import com.baconbao.mxh.Models.User.User;
 
 import jakarta.transaction.Transactional;
