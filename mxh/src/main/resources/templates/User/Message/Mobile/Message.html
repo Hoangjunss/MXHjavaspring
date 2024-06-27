@@ -28,15 +28,16 @@
                     <div class="message-contacts">
                         <ul class="conversations">
                             <li th:each="relationship : ${relationships}" class="contact" >
-                                <div class="wrap">
-                                    <span class="contact-status online"></span>
-                                    <img th:src="@{/images/users/user-1.jpg}" alt="Conversation user" />
-                                    <span class="unread-messages">3</span>
-                                    <div class="meta">
-                                        <p class="name" th:text="${relationship.name}"></p>
-                                        <p class="preview" th:text="${relationship.content}"></p>
+                                <a th:href="@{/chatmobile(id=${relationship.id})}" style="text-decoration: none;">
+                                    <div class="wrap">
+                                        <span class="contact-status online"></span>
+                                        <img th:src="@{/images/users/user-1.jpg}" alt="Conversation user" />
+                                        <div class="meta">
+                                            <p th:if="${relationship.name}" class="name" th:text="${relationship.name}"></p>
+                                            <p th:if="${relationship.content}" class="preview" th:text="${relationship.content}"></p>
+                                        </div>
                                     </div>
-                                </div>
+                                </a>
                             </li>
                         </ul>
                     </div>

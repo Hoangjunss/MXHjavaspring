@@ -3,11 +3,13 @@ package com.baconbao.mxh.Controller.Message;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -53,35 +55,86 @@ public class MessageController {
 
     @GetMapping("/messagermobile")
     public String getMessagePageMobile( Model model, Principal principal) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+            UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
             User user = userService.findByEmail(userDetails.getUsername());
             List<Relationship> relationships = relationshipService.findAllByUserOneId(user);
             List<Relationship> relation = new ArrayList<>();
             List<RelationshipDTO> relationshipDTOs = new ArrayList<>();
             for (Relationship relationship : relationships) {
-                System.out.println(relationship.getId() +" RELATIONSHIP");
                 if(relationship.getMessages()!=null){
-                    System.out.println("MESSAGE != NULL");
                     if(relationship.getUserOne().getId() == user.getId()){
-                        System.out.println(relationship.getUserOne().getLastName()+ " USER ONE");
                         Message message = messageService.findLatestMessage(user, relationship.getUserTwo());
-                        System.out.println(message.getContent()+" CONTENT MESSAGE");
-                        RelationshipDTO dto = new RelationshipDTO(relationship.getId(), relationship.getUserTwo().getLastName()+" "+relationship.getUserTwo().getFirstName(), message.getContent());
+                        RelationshipDTO dto = new RelationshipDTO(relationship.getUserTwo().getId(), relationship.getUserTwo().getLastName()+" "+relationship.getUserTwo().getFirstName(), message.getContent());
                         relationshipDTOs.add(dto);
                     }else if (relationship.getUserTwo().getId() == user.getId()){
-                        System.out.println(relationship.getUserTwo().getLastName()+ " USER TWO");
                         Message message = messageService.findLatestMessage(user, relationship.getUserOne());
-                        System.out.println(message.getContent()+" CONTENT MESSAGE");
-                        RelationshipDTO dto = new RelationshipDTO(relationship.getId(), relationship.getUserOne().getLastName()+" "+relationship.getUserOne().getFirstName(), message.getContent());
+                        RelationshipDTO dto = new RelationshipDTO(relationship.getUserOne().getId(), relationship.getUserOne().getLastName()+" "+relationship.getUserOne().getFirstName(), message.getContent());
                         relationshipDTOs.add(dto);
                     }
                     relation.add(relationship);
-                }else{
-                    System.out.println("MESSAGE IS NULL");
                 }
             }
             model.addAttribute("relationships", relationshipDTOs);
         return "/User/Message/Mobile/Message";
+    }
+
+    @GetMapping("/messager")
+    public String getMessagePage( Model model, Principal principal) {
+            UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+            User user = userService.findByEmail(userDetails.getUsername());
+            List<Relationship> relationships = relationshipService.findAllByUserOneId(user);
+            List<Relationship> relation = new ArrayList<>();
+            List<RelationshipDTO> relationshipDTOs = new ArrayList<>();
+            for (Relationship relationship : relationships) {
+                if(relationship.getMessages()!=null){
+                    if(relationship.getUserOne().getId() == user.getId()){
+                        Message message = messageService.findLatestMessage(user, relationship.getUserTwo());
+                        RelationshipDTO dto = new RelationshipDTO(relationship.getUserTwo().getId(), relationship.getUserTwo().getLastName()+" "+relationship.getUserTwo().getFirstName(), message.getContent());
+                        relationshipDTOs.add(dto);
+                    }else if (relationship.getUserTwo().getId() == user.getId()){
+                        Message message = messageService.findLatestMessage(user, relationship.getUserOne());
+                        RelationshipDTO dto = new RelationshipDTO(relationship.getUserOne().getId(), relationship.getUserOne().getLastName()+" "+relationship.getUserOne().getFirstName(), message.getContent());
+                        relationshipDTOs.add(dto);
+                    }
+                    relation.add(relationship);
+                }
+            }
+            model.addAttribute("relationships", relationshipDTOs);
+        model.addAttribute("currentUser", user); // Add the current user to the model
+        return "/User/Message/Web/Messager";
+    }
+    @PostMapping("/chat")
+    public ResponseEntity<?> getChatMessages(@RequestParam("id") Long userId, Principal principal) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+            User currentUser = userService.findByEmail(userDetails.getUsername());
+            User chatUser = userService.findById(userId);
+            List<Message> messages = messageService.messageFromUser(currentUser, chatUser);
+
+            response.put("messages", messages);
+            response.put("currentUser", currentUser);
+            response.put("chatUser", chatUser);
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            response.put("error", "An error occurred: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+
+    @GetMapping("/chatmobile")
+    public String getChatPageMobile(@RequestParam Long id, Model model, Principal principal) {
+        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+        User userFrom = userService.findByEmail(userDetails.getUsername());
+        User userTo = userService.findById(id);
+        List<Message> listMessage = messageService.messageFromUser(userFrom, userTo);
+        model.addAttribute("messages", listMessage);
+        model.addAttribute("userTo", userTo);
+        model.addAttribute("currentUser", userFrom); // Add the current user to the model
+        return "/User/Message/Mobile/Chat";
     }
 
     @MessageMapping("/chat.send")

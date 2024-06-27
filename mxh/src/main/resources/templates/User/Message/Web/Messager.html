@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="no-js">
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -10,101 +11,266 @@
 
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Major+Mono+Display" rel="stylesheet">
-    <link href='https://cdn.jsdelivr.net/npm/boxicons@1.9.2/css/boxicons.min.css' rel='stylesheet'>
+    <link th:href="@{/css/post/boxicons.min.css}" rel="stylesheet">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
 
     <!-- Styles -->
-    <link href="assets/css/bootstrap/bootstrap.min.css" rel="stylesheet">
-    <link href="assets/css/style.css" rel="stylesheet">
-    <link href="assets/css/components.css" rel="stylesheet">
-    <link href="assets/css/templatechatmessage.css" rel="stylesheet">
-    <link href="assets/css/media.css" rel="stylesheet">
-    <script src="assets/js/load.js" type="text/javascript"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link th:href="@{/css/post/style.css}" rel="stylesheet">
+    <link th:href="@{/css/post/components.css}" rel="stylesheet">
+    <link th:href="@{/css/post/media.css}" rel="stylesheet">
+    <link th:href="@{/css/post/chat.css}" rel="stylesheet">
+    <link th:href="@{/css/post/messenger.css}" rel="stylesheet">
+    <link href="https://vjs.zencdn.net/7.4.1/video-js.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script th:src="@{/js/User/MessagerLoad.js}"></script>
 </head>
-<body>
-    <div class="row message-right-side-content">
-        <div class="col-md-12">
-            <div id="message-frame">
-                <div class="content">
-                    <div class="row">
-                        <div class="col-md-12 messenger-top-section">
-                            <div class="contact-profile d-flex align-items-center justify-content-between">
-                                <div class="messenger-top-luser df-aic">
-                                    <img src="assets/images/users/user-6.png" class="messenger-user" alt="Convarsation user image" />
-                                    <a href="#" class="message-profile-name">Susan P. Jarvis</a>
-                                </div>
-                                <div class="social-media messenger-top-ricon df-aic">
-                                    <img src="assets/images/icons/messenger/phone.png" data-toggle="modal" data-target="#callModal" class="msg-top-more-info" alt="Messenger icons">
-                                    <img src="assets/images/icons/messenger/videocam.png" class="msg-top-more-info" alt="Messenger icons">
-                                    <img src="assets/images/icons/messenger/info.png" class="msg-top-more-info" alt="Messenger icons">
-                                    <span class="dropdown">
-                                        <a href="#" role="button" id="message-options" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class='bx bx-dots-vertical-rounded'></i>
-                                        </a>
-                                        <div class="dropdown-menu dropdown-menu-right fs-9" aria-labelledby="message-options">
-                                            <a href="#" class="dropdown-item">Mute</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a href="#" class="dropdown-item">Delete</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a href="#" class="dropdown-item">Mark as Unread</a>
-                                            <a href="#" class="dropdown-item">Something's wrong</a>
-                                            <a href="#" class="dropdown-item">Ignore Messages</a>
-                                            <a href="#" class="dropdown-item">Block Messages</a>
+
+<body class="messenger">
+    <div class="container-fluid newsfeed d-flex" id="wrapper">
+        <div class="row newsfeed-size">
+            <div class="col-md-12 message-right-side">
+                <nav id="navbar-main" class="navbar navbar-expand-lg shadow-sm sticky-top">
+                    <div class="w-100 justify-content-md-center">
+                        <ul class="nav navbar-nav enable-mobile px-2">
+                            <li class="nav-item w-100 py-2">
+                                <!-- Form serarch post/user -->
+                                <form class="d-inline form-inline w-100 px-4">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control search-input" placeholder="Search for people, companies, events and more..." aria-label="Search" aria-describedby="search-addon">
+                                        <div class="input-group-append">
+                                            <button class="btn search-button" type="button"><i class='bx bx-search'></i></button>
                                         </div>
-                                    </span>
+                                    </div>
+                                </form>
+                                <!-- end Form search post/user -->
+                            </li>
+                        </ul>
+                        <ul class="navbar-nav mr-5 flex-row" id="main_menu">
+                            <a class="navbar-brand nav-item mr-lg-5" href="index.html"><img th:src="@{/images/logo-64x64.png}" width="40" height="40" class="mr-3" alt="Logo"></a>
+                            <!-- Collect the nav links, forms, and other content for toggling -->
+                            <form class="w-30 mx-2 my-auto d-inline form-inline mr-5 dropdown search-form">
+                                <div class="input-group" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="searchDropdown">
+                                    <input type="text" class="form-control search-input w-75" placeholder="Search for people, companies, events and more..." aria-label="Search" aria-describedby="search-addon">
+                                    <div class="input-group-append">
+                                        <button class="btn search-button" type="button"><i class='bx bx-search'></i></button>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="col-md-12" style="max-height: 532px;">
-                            <div class="messages">
-                                <ul class="messages-content">
-                                    <li class="message-receive">
-                                        <img src="assets/images/users/user-6.png" alt="Conversation user image" />
-                                        <p>Are you going to the party on Saturday?</p>
-                                    </li>
-                                    <li class="message-reply">
-                                        <p>I was thinking about it. Are you?</p>
-                                    </li>
-                                    <li class="message-receive">
-                                        <img src="assets/images/users/user-6.png" alt="Conversation user image" />
-                                        <p>Yeah, I heard it's going to be a lot of fun.</p>
-                                    </li>
-                                    <li class="message-reply">
-                                        <p>Really? Well, what time does it start?</p>
-                                    </li>
-                                    <li class="message-receive">
-                                        <img src="assets/images/users/user-6.png" alt="Conversation user image" />
-                                        <p>It starts at 8:00 pm, and I really think you should go.</p>
-                                    </li>
-                                    <li class="message-reply">
-                                        <p>Well, who else is going to be there?</p>
-                                    </li>
-                                    <li class="message-receive">
-                                        <img src="assets/images/users/user-6.png" alt="Conversation user image" />
-                                        <p>Everybody from school.</p>
-                                    </li>
-                                    <li class="message-reply">
-                                        <p>How do you know it's going to be so fun?</p>
-                                    </li>
-                                    <li class="message-receive">
-                                        <img src="assets/images/users/user-6.png" alt="Conversation user image" />
-                                        <p>This party is going to have a DJ, food, and drinks.</p>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="message-input">
-                                <div class="wrap">
-                                    <form class="d-inline form-inline">
-                                        <div class="d-flex align-items-center justify-content-between messenger-icons">
-                                            <div class="input-group messenger-input">
-                                                <input type="text" class="form-control search-input" placeholder="Type a message..." aria-label="Type a message..." aria-describedby="button-addon2">
+                                <ul class="dropdown-menu notify-drop nav-drop shadow-sm" aria-labelledby="searchDropdown">
+                                    <div class="notify-drop-title">
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6 col-xs-6 fs-8">Search Results <span class="badge badge-pill badge-primary ml-2">29</span></div>
+                                        </div>
+                                    </div>
+                                    <!-- end notify title -->
+                                    <!-- notify content -->
+                                    <div class="drop-content">
+                                        <h6 class="dropdown-header">Peoples</h6>
+                                        <li class="dropdown-item">
+                                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                                <div class="notify-img">
+                                                    <img th:src="@{/images/users/user-6.png}" alt="Search result">
+                                                </div>
                                             </div>
-                                            <button type="button" class="btn search-button" id="send-message">
-                                                <img src="assets/images/icons/messenger/m-send.png" alt="Messenger icons">
-                                            </button>
+                                            <div class="col-md-10 col-sm-10 col-xs-10">
+                                                <a href="#" class="notification-user">Susan P. Jarvis</a>
+                                                <a href="#" class="btn btn-quick-link join-group-btn border text-right float-right">
+                                                    Add Friend
+                                                </a>
+                                                <p class="time">6 Mutual friends</p>
+                                            </div>
+                                        </li>
+                                        <h6 class="dropdown-header">Groups</h6>
+                                        <li class="dropdown-item">
+                                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                                <div class="notify-img">
+                                                    <img th:src="@{/images/groups/group-2.jpg}" alt="Search result">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-10 col-sm-10 col-xs-10">
+                                                <a href="#" class="notification-user">Tourism</a>
+                                                <a href="#" class="btn btn-quick-link join-group-btn border text-right float-right">
+                                                    Join
+                                                </a>
+                                                <p class="time">2.5k Members 35+ post a week</p>
+                                            </div>
+                                        </li>
+                                    </div>
+                                    <div class="notify-drop-footer text-center">
+                                        <a href="#">See More</a>
+                                    </div>
+                                </ul>
+                            </form>
+                            <li class="nav-item s-nav dropdown message-drop-li">
+                                <a href="#" class="nav-link nav-links message-drop drop-w-tooltip" data-toggle="dropdown" data-placement="bottom" data-title="Messages" role="button" aria-haspopup="true" aria-expanded="false">
+                                    <img th:src="@{/images/icons/navbar/message.png}" class="message-dropdown" alt="navbar icon"> <span class="badge badge-pill badge-primary">1</span>
+                                </a>
+                                <ul class="dropdown-menu notify-drop dropdown-menu-right nav-drop shadow-sm">
+                                    <div class="notify-drop-title">
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6 col-xs-6 fs-8">Messages | <a href="#">Requests</a></div>
+                                            <div class="col-md-6 col-sm-6 col-xs-6 text-right">
+                                                <a href="#" class="notify-right-icon">
+                                                    Mark All as Read
+                                                </a>
+                                            </div>
                                         </div>
-                                    </form>
+                                    </div>
+                                    <!-- end notify title -->
+                                    <!-- notify content -->
+                                    <div class="drop-content">
+                                        <!-- Xo danh sach -->
+                                        <li>
+                                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                                <div class="notify-img">
+                                                    <img th:src="@{/images/users/user-6.png}" alt="notification user image">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-10 col-sm-10 col-xs-10">
+                                                <a href="#" class="notification-user">Susan P. Jarvis</a>
+                                                <a href="#" class="notify-right-icon">
+                                                    <i class='bx bx-radio-circle-marked'></i>
+                                                </a>
+                                                <p class="time">
+                                                    <i class='bx bx-check'></i> This party is going to have a DJ, food, and drinks.
+                                                </p>
+                                            </div>
+                                        </li>
+                                    </div>
+                                    <div class="notify-drop-footer text-center">
+                                        <a href="#">See More</a>
+                                    </div>
+                                </ul>
+                            </li>
+                            <li class="nav-item s-nav dropdown notification">
+                                <a href="#" class="nav-link nav-links rm-drop-mobile drop-w-tooltip" data-toggle="dropdown" data-placement="bottom" data-title="Notifications" role="button" aria-haspopup="true" aria-expanded="false">
+                                    <img th:src="@{/images/icons/navbar/notification.png}" class="notification-bell" alt="navbar icon"> <span class="badge badge-pill badge-primary">3</span>
+                                </a>
+                                <ul class="dropdown-menu notify-drop dropdown-menu-right nav-drop shadow-sm">
+                                    <div class="notify-drop-title">
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6 col-xs-6 fs-8">Notifications <span class="badge badge-pill badge-primary ml-2">3</span></div>
+                                            <div class="col-md-6 col-sm-6 col-xs-6 text-right">
+                                                <a href="#" class="notify-right-icon">
+                                                    Mark All as Read
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- end notify title -->
+                                    <!-- notify content -->
+                                    <div class="drop-content">
+                                        <!-- Start -->
+                                        <li>
+                                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                                <div class="notify-img">
+                                                    <img th:src="@{/images/users/user-10.png}" alt="notification user image">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-10 col-sm-10 col-xs-10">
+                                                <a href="#" class="notification-user">Sean</a> <span class="notification-type">replied to your comment on a post in </span><a href="#" class="notification-for">PHP</a>
+                                                <a href="#" class="notify-right-icon">
+                                                    <i class='bx bx-radio-circle-marked'></i>
+                                                </a>
+                                                <p class="time">
+                                                    <span class="badge badge-pill badge-primary"><i class='bx bxs-group'></i></span> 3h
+                                                </p>
+                                            </div>
+                                        </li>
+                                    </div>
+                                </ul>
+                            </li>
+                            <li class="nav-item s-nav">
+                                <a href="profile.html" class="nav-link nav-links">
+                                    <div class="menu-user-image">
+                                        <img th:src="@{/images/users/user-4.jpg}" class="menu-user-img ml-1" alt="Menu Image">
+                                    </div>
+                                </a>
+                            </li>
+                            <li class="nav-item s-nav nav-icon dropdown">
+                                <a href="settings.html" data-toggle="dropdown" data-placement="bottom" data-title="Settings" class="nav-link settings-link rm-drop-mobile drop-w-tooltip" id="settings-dropdown"><img th:src="@{/images/icons/navbar/settings.png}" class="nav-settings" alt="navbar icon"></a>
+                                <div class="dropdown-menu dropdown-menu-right settings-dropdown shadow-sm" aria-labelledby="settings-dropdown">
+                                    <a class="dropdown-item" href="#">
+                                        <img th:src="@{/images/icons/navbar/help.png}" alt="Navbar icon"> Help Center</a>
+                                    <a class="dropdown-item d-flex align-items-center dark-mode" onClick="event.stopPropagation();" href="#">
+                                        <img th:src="@{/images/icons/navbar/moon.png}" alt="Navbar icon"> Dark Mode
+                                        <button type="button" class="btn btn-lg btn-toggle ml-auto" data-toggle="button" aria-pressed="false" autocomplete="off">
+                                            <div class="handle"></div>
+                                        </button>
+                                    </a>
+                                    <a class="dropdown-item" href="#">
+                                        <img th:src="@{/images/icons/navbar/gear-1.png}" alt="Navbar icon"> Settings</a>
+                                    <a class="dropdown-item logout-btn" href="#">
+                                        <img th:src="@{/images/icons/navbar/logout.png}" alt="Navbar icon"> Log Out</a>
+                                </div>
+                            </li>
+                        </ul>
+
+                    </div>
+                </nav>
+                <div class="row message-right-side-content">
+                    <div class="col-md-12">
+                        <div id="message-frame">
+                            <div class="message-sidepanel">
+                                <div class="message-search position-relative d-flex">
+                                    <label for=""><i class='bx bx-search'></i></label>
+                                    <input type="text" class="form-control search-input" placeholder="Search for conversations..." />
+                                    <button type="button" class="btn btn-create-conversation" data-toggle="modal" data-target="#newConversation"><i class='bx bx-pencil'></i></button>
+                                </div>
+                                <div class="message-contacts">
+                                    <ul class="conversations">
+                                        <li th:each="relationship : ${relationships}" class="contact" th:data-user-id="${relationship.id}">
+                                            <div class="wrap">
+                                                <input type="hidden" th:value="${relationship.id}" class="user-id"/>
+                                                <span class="contact-status online"></span>
+                                                <img th:src="@{/images/users/user-1.jpg}" alt="Conversation user" />
+                                                <div class="meta">
+                                                    <p th:if="${relationship.name}" class="name" th:text="${relationship.name}"></p>
+                                                    <p th:if="${relationship.content}" class="preview" th:text="${relationship.content}"></p>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="content">
+                                <div class="row">
+                                    <div class="col-md-12 messenger-top-section">
+                                        <div class="contact-profile d-flex align-items-center justify-content-between">
+                                            <div class="messenger-top-luser df-aic" id="chatuser">
+                                                <img th:src="@{/images/users/user-2.jpg}" class="messenger-user" alt="Conversation user image" />
+                                                <a href="#" class="message-profile-name" th:text="${currentUser.firstName} + ' ' + ${currentUser.lastName}"></a>
+                                            </div>
+                                            <div class="social-media messenger-top-ricon df-aic">
+                                                <img th:src="@{/images/messenger/phone.png}" data-toggle="modal" data-target="#callModal" class="msg-top-more-info" alt="Messenger icons">
+                                                <img th:src="@{/images/messenger/videocam.png}" class="msg-top-more-info" alt="Messenger icons">
+                                                <img th:src="@{/images/messenger/info.png}" class="msg-top-more-info" alt="Messenger icons">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12" style="max-height: 532px;">
+                                        <div class="messages">
+                                            <ul id="messages-container" class="messages-content">
+                                                <!-- Tin nhắn sẽ được thêm vào đây bằng AJAX -->
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="message-input">
+                                            <div class="wrap">
+                                                <form class="d-inline form-inline">
+                                                    <div class="d-flex align-items-center justify-content-between messenger-icons">
+                                                        <div class="input-group messenger-input">
+                                                            <input type="text" class="form-control search-input" placeholder="Type a message..." aria-label="Type a message..." aria-describedby="button-addon2">
+                                                        </div>
+                                                        <button type="button" class="btn search-button" id="send-message">
+                                                            <img th:src="@{/images/messenger/m-send.png}" alt="Messenger icons">
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -114,4 +280,5 @@
         </div>
     </div>
 </body>
+
 </html>
