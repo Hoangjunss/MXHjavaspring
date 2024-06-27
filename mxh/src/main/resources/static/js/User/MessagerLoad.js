@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function() {
-    const messageList = document.getElementById("messages-container");
+    const messageList = document.getElementById("chatMessages");
     const chatusername = document.getElementById("chatuser");
     function loadMessages(userId) {
         fetch('/chat?id=' + userId, {
@@ -39,44 +39,6 @@ document.addEventListener("DOMContentLoaded", function() {
         loadMessages(userId);
     }
 
-    // Tải tin nhắn gần đây nhất khi trang được tải
-    fetch('/messager')
-        .then(response => response.json())
-        .then(data => {
-            // Cập nhật danh sách liên hệ
-            const contactList = document.querySelector('.conversations');
-            data.relationships.forEach(relationship => {
-                const contactElement = document.createElement('li');
-                contactElement.className = 'contact';
-                contactElement.dataset.userId = relationship.id;
-                contactElement.innerHTML = `
-                    <div class="wrap">
-                        <input type="hidden" value="${relationship.id}" class="user-id"/>
-                        <span class="contact-status online"></span>
-                        <img src="/images/users/user-1.jpg" alt="Conversation user" />
-                        <div class="meta">
-                            <p class="name">${relationship.name}</p>
-                            <p class="preview">${relationship.content}</p>
-                        </div>
-                    </div>
-                `;
-                contactList.appendChild(contactElement);
-
-                contactElement.addEventListener('click', function(event) {
-                    event.preventDefault();
-                    const userId = this.querySelector('.user-id').value;
-                    showChat(userId);
-                });
-            });
-
-            // Hiển thị tin nhắn gần đây nhất
-            if (data.latestMessage) {
-                loadMessages(data.latestMessage.userFrom.id);
-            }
-        })
-        .catch(error => {
-            console.error("Error:", error);
-        });
 
     // Gọi hàm showChat khi người dùng nhấn vào từng liên hệ
     const contacts = document.querySelectorAll('.contact');

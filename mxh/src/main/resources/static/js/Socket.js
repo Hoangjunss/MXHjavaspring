@@ -7,6 +7,7 @@ stompClient.connect({}, function(frame) {//tao ket noi den web socket
     stompClient.subscribe('/user/queue/messages', function(message) { //lay du lieu tu kho chauqua duong dan
         var chatMessage = JSON.parse(message.body); 
         displayChatMessage(chatMessage);
+        displayChatMessageFrame(chatMessage);
     });
     stompClient.subscribe('/queue/active', function(message) { //lay du lieu tu kho chauqua duong dan
     });
@@ -21,29 +22,37 @@ function sendMessage() {
         id: id
     };
     console.log(JSON.stringify(message));
-
-    var chatContent = $('<div class="message">').text("Message");
-     var subject = $('<div class="subject">').text("Nguoi goi")
-     var content=$('<p>').text("Nội dung: "+message.content);
-     var name=$('<p>').text("Id: "+message.id);
-     subject.append(content);
-     subject.append(name);
-     chatContent.append(subject);
+    
+    var chatContent = $('<li class="contentmessage message-reply">');
+     var content=$('<p>').text(message.content);
+     chatContent.append(content);
      $('#chatMessages').append(chatContent);
-
     stompClient.send("/app/chat.send", {}, JSON.stringify({ message })); //dua len app
 }
 
     function displayChatMessage(message) {
-     var chatContent = $('<div class="message">').text("Message");
-     var subject = $('<div class="subject">').text("Nguoi Goi"+message.userFrom.name)
-     var content=$('<p>').text("Nội dung: "+message.content);
-     var name=$('<p>').text("Thời gian: "+message.createAt);
-     subject.append(content);
-     subject.append(name);
-     chatContent.append(subject);
-     $('#chatMessages').append(chatContent);
+        var chatContent = $('<li class="contentmessage message-receive">');
+        var image = $(`<img src="images/users/user-1.jpg" alt="Conversation user image" />`)
+        var content=$('<p>').text(message.content);
+        chatContent.append(image);
+        chatContent.append(content);
+        $('#chatMessages').append(chatContent);
  }
+
+function displayChatMessageFrame(message) {
+    // Tìm thẻ li chứa data-user-id
+    var contact = $('li.contact[data-user-id="' + message.id + '"]');
+ 
+    if (contact.length > 0) {
+        // Xóa thẻ li và thêm nó lên đầu danh sách
+        contact.remove();
+        contact.find('p.preview').text(message.content);
+       
+        $('ul.conversations').prepend(contact);
+    }
+}
+
+
  $(window).on('beforeunload', function() {
     $.ajax({
         url: '/logout',

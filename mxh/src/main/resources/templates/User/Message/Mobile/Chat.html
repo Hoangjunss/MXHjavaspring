@@ -13,7 +13,11 @@
     <link href='https://cdn.jsdelivr.net/npm/boxicons@1.9.2/css/boxicons.min.css' rel='stylesheet'>
 
     <!-- Styles -->
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.4.0/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <link th:href="@{/css/User/Message/MessageMobile.css}" rel="stylesheet">
+    <script th:src="@{/js/Socket.js}"></script>
 </head>
 <body>
     <div class="row message-right-side-content">
@@ -35,9 +39,10 @@
                             </div>
                         </div>
                         <div class="col-md-12" style="max-height: 532px;">
+                            <input type="hidden" th:value="${userTo.id}" id="id">
                             <div class="messages">
-                                <ul class="messages-content">
-                                    <li th:each="message : ${messages}" 
+                                <ul class="messages-content" id="chatMessages">
+                                    <li class="contentmessage" th:each="message : ${messages}" 
                                         th:class="${message.userFrom.id} == ${currentUser.id} ? 'message-reply' : 'message-receive'">
                                         <img th:if="${message.userFrom.id} != ${currentUser.id}" 
                                         th:src="@{/images/users/user-1.jpg}" alt="Conversation user image" />
@@ -52,9 +57,9 @@
                                     <form class="d-inline form-inline">
                                         <div class="d-flex align-items-center justify-content-between messenger-icons">
                                             <div class="input-group messenger-input">
-                                                <input type="text" class="form-control search-input" placeholder="Type a message..." aria-label="Type a message..." aria-describedby="button-addon2">
+                                                <input id="content" type="text" class="form-control search-input" placeholder="Type a message..." aria-label="Type a message..." aria-describedby="button-addon2">
                                             </div>
-                                            <button type="button" class="btn search-button" id="send-message">
+                                            <button onclick="sendMessage()" type="button" class="btn search-button" id="send-message">
                                                 <img th:src="@{/images/messenger/m-send.png}" alt="Messenger icons">
                                             </button>
                                         </div>

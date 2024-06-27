@@ -24,6 +24,9 @@
     <link href="https://vjs.zencdn.net/7.4.1/video-js.css" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script th:src="@{/js/User/MessagerLoad.js}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.4.0/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+    <script th:src="@{/js/Socket.js}"></script>
 </head>
 
 <body class="messenger">
@@ -250,7 +253,7 @@
                                     </div>
                                     <div class="col-md-12" style="max-height: 532px;">
                                         <div class="messages">
-                                            <ul id="messages-container" class="messages-content">
+                                            <ul id="chatMessages" class="messages-content">
                                                 <!-- Tin nhắn sẽ được thêm vào đây bằng AJAX -->
                                                 <li th:each="message : ${listmessage}" 
                                                     th:class="${message.userFrom.id} == ${currentUser.id} ? 'message-reply' : 'message-receive'">

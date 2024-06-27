@@ -8,16 +8,21 @@ import com.baconbao.mxh.DTO.MessageDTO;
 import com.baconbao.mxh.DTO.UserDTO;
 import com.baconbao.mxh.DTO.UserMessageDTO;
 import com.baconbao.mxh.Models.Message.Message;
+import com.baconbao.mxh.Models.User.Relationship;
 import com.baconbao.mxh.Models.User.User;
+import com.baconbao.mxh.Services.Service.User.RelationshipService;
 
 @Component
 public class SocketWeb {
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
+    @Autowired
+    private RelationshipService relationshipService;
     public void sendMessage(Message message) {
         MessageDTO messageDTO = new MessageDTO();
         UserMessageDTO userMessageDTO = new UserMessageDTO(message.getUserFrom());
-        messageDTO.setId(message.getId());
+        Relationship relationship = relationshipService.findRelationship(message.getUserFrom(), message.getUserTo());
+        messageDTO.setId(relationship.getId());
         messageDTO.setContent(message.getContent());
         messageDTO.setCreateAt(message.getCreateAt());
         messageDTO.setUserFrom(userMessageDTO);
