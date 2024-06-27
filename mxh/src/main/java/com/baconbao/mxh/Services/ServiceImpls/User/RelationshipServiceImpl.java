@@ -1,5 +1,6 @@
 package com.baconbao.mxh.Services.ServiceImpls.User;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import com.baconbao.mxh.DTO.RelationshipDTO;
 import com.baconbao.mxh.Exceptions.CustomException;
 import com.baconbao.mxh.Exceptions.ErrorCode;
 import com.baconbao.mxh.Models.Post.Status;
@@ -89,6 +91,16 @@ public class RelationshipServiceImpl implements RelationshipService {
         } catch (EntityNotFoundException e) {
             throw new CustomException(ErrorCode.RELATIONSHIP_NOT_FOUND);
         } catch(Exception e){
+            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+        }
+    }
+
+    @Override
+    public List<RelationshipDTO> orderByCreateAt(List<RelationshipDTO> relationships) {
+        try {
+            relationships.sort(Comparator.comparing(RelationshipDTO::getCreateAt).reversed());
+            return relationships;
+        } catch (Exception e) {
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
     }

@@ -22,4 +22,6 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
                 @Query("SELECT m FROM Message m WHERE m.content LIKE %?1 ")
         List<Message> findByContentLike(String content);
 
+        
+
 }

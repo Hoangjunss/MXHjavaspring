@@ -54,55 +54,78 @@ public class MessageController {
     }
 
     @GetMapping("/messagermobile")
-    public String getMessagePageMobile( Model model, Principal principal) {
-            UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
-            User user = userService.findByEmail(userDetails.getUsername());
-            List<Relationship> relationships = relationshipService.findAllByUserOneId(user);
-            List<Relationship> relation = new ArrayList<>();
-            List<RelationshipDTO> relationshipDTOs = new ArrayList<>();
-            for (Relationship relationship : relationships) {
-                if(relationship.getMessages()!=null){
-                    if(relationship.getUserOne().getId() == user.getId()){
-                        Message message = messageService.findLatestMessage(user, relationship.getUserTwo());
-                        RelationshipDTO dto = new RelationshipDTO(relationship.getUserTwo().getId(), relationship.getUserTwo().getLastName()+" "+relationship.getUserTwo().getFirstName(), message.getContent());
-                        relationshipDTOs.add(dto);
-                    }else if (relationship.getUserTwo().getId() == user.getId()){
-                        Message message = messageService.findLatestMessage(user, relationship.getUserOne());
-                        RelationshipDTO dto = new RelationshipDTO(relationship.getUserOne().getId(), relationship.getUserOne().getLastName()+" "+relationship.getUserOne().getFirstName(), message.getContent());
-                        relationshipDTOs.add(dto);
-                    }
-                    relation.add(relationship);
+    public String getMessagePageMobile(Model model, Principal principal) {
+        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+        User user = userService.findByEmail(userDetails.getUsername());
+        List<Relationship> relationships = relationshipService.findAllByUserOneId(user);
+        List<Relationship> relation = new ArrayList<>();
+        List<RelationshipDTO> relationshipDTOs = new ArrayList<>();
+        for (Relationship relationship : relationships) {
+            if (relationship.getMessages() != null) {
+                if (relationship.getUserOne().getId() == user.getId()) {
+                    Message message = messageService.findLatestMessage(user, relationship.getUserTwo());
+                    RelationshipDTO dto = new RelationshipDTO(relationship.getId(), relationship.getUserTwo().getId(),
+                            relationship.getUserTwo().getLastName() + " " + relationship.getUserTwo().getFirstName(),
+                            message.getContent(), message.getCreateAt());
+                    relationshipDTOs.add(dto);
+                } else if (relationship.getUserTwo().getId() == user.getId()) {
+                    Message message = messageService.findLatestMessage(user, relationship.getUserOne());
+                    RelationshipDTO dto = new RelationshipDTO(relationship.getId(), relationship.getUserOne().getId(),
+                            relationship.getUserOne().getLastName() + " " + relationship.getUserOne().getFirstName(),
+                            message.getContent(), message.getCreateAt());
+                    relationshipDTOs.add(dto);
                 }
+                relation.add(relationship);
             }
-            model.addAttribute("relationships", relationshipDTOs);
+        }
+        relationshipDTOs = relationshipService.orderByCreateAt(relationshipDTOs);
+        model.addAttribute("relationships", relationshipDTOs);
         return "/User/Message/Mobile/Message";
     }
 
     @GetMapping("/messager")
-    public String getMessagePage( Model model, Principal principal) {
-            UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
-            User user = userService.findByEmail(userDetails.getUsername());
-            List<Relationship> relationships = relationshipService.findAllByUserOneId(user);
-            List<Relationship> relation = new ArrayList<>();
-            List<RelationshipDTO> relationshipDTOs = new ArrayList<>();
-            for (Relationship relationship : relationships) {
-                if(relationship.getMessages()!=null){
-                    if(relationship.getUserOne().getId() == user.getId()){
-                        Message message = messageService.findLatestMessage(user, relationship.getUserTwo());
-                        RelationshipDTO dto = new RelationshipDTO(relationship.getUserTwo().getId(), relationship.getUserTwo().getLastName()+" "+relationship.getUserTwo().getFirstName(), message.getContent());
-                        relationshipDTOs.add(dto);
-                    }else if (relationship.getUserTwo().getId() == user.getId()){
-                        Message message = messageService.findLatestMessage(user, relationship.getUserOne());
-                        RelationshipDTO dto = new RelationshipDTO(relationship.getUserOne().getId(), relationship.getUserOne().getLastName()+" "+relationship.getUserOne().getFirstName(), message.getContent());
-                        relationshipDTOs.add(dto);
-                    }
-                    relation.add(relationship);
+    public String getMessagePage(Model model, Principal principal) {
+        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+        User user = userService.findByEmail(userDetails.getUsername());
+        List<Relationship> relationships = relationshipService.findAllByUserOneId(user);
+        List<Relationship> relation = new ArrayList<>();
+        List<RelationshipDTO> relationshipDTOs = new ArrayList<>();
+        for (Relationship relationship : relationships) {
+            if (relationship.getMessages() != null) {
+                if (relationship.getUserOne().getId() == user.getId()) {
+                    Message message = messageService.findLatestMessage(user, relationship.getUserTwo());
+                    RelationshipDTO dto = new RelationshipDTO(relationship.getId(), relationship.getUserTwo().getId(),
+                            relationship.getUserTwo().getLastName() + " " + relationship.getUserTwo().getFirstName(),
+                            message.getContent(), message.getCreateAt());
+                    relationshipDTOs.add(dto);
+                } else if (relationship.getUserTwo().getId() == user.getId()) {
+                    Message message = messageService.findLatestMessage(user, relationship.getUserOne());
+                    RelationshipDTO dto = new RelationshipDTO(relationship.getId(), relationship.getUserOne().getId(),
+                            relationship.getUserOne().getLastName() + " " + relationship.getUserOne().getFirstName(),
+                            message.getContent(), message.getCreateAt());
+                    relationshipDTOs.add(dto);
                 }
+                relation.add(relationship);
             }
-            model.addAttribute("relationships", relationshipDTOs);
+        }
+        relationshipDTOs = relationshipService.orderByCreateAt(relationshipDTOs);
+        for (RelationshipDTO relationshipdto : relationshipDTOs) {
+            System.out.println(relationshipdto.getName() + relationshipdto.getCreateAt() + " ");
+        }
+        Relationship relationship = relationshipService.findById(relationshipDTOs.get(0).getId());
+        List<Message> listMessage = messageService.messageFromUser(relationship.getUserOne(),
+                relationship.getUserTwo());
+        model.addAttribute("listmessage", listMessage);
+        model.addAttribute("relationships", relationshipDTOs);
+        if (user.getId() == relationship.getUserOne().getId()) {
+            model.addAttribute("userTo", relationship.getUserTwo());
+        } else {
+            model.addAttribute("userTo", relationship.getUserOne());
+        }
         model.addAttribute("currentUser", user); // Add the current user to the model
         return "/User/Message/Web/Messager";
     }
+
     @PostMapping("/chat")
     public ResponseEntity<?> getChatMessages(@RequestParam("id") Long userId, Principal principal) {
         Map<String, Object> response = new HashMap<>();
@@ -123,7 +146,6 @@ public class MessageController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
-
 
     @GetMapping("/chatmobile")
     public String getChatPageMobile(@RequestParam Long id, Model model, Principal principal) {

@@ -25,7 +25,7 @@
                             <div class="contact-profile d-flex align-items-center justify-content-between">
                                 <div class="messenger-top-luser df-aic">
                                     <img th:src="@{/images/users/user-2.jpg}" class="messenger-user" alt="Convarsation user image" />
-                                    <a href="#" class="message-profile-name" th:text="${userTo.firstName} + ${userTo.lastName}"></a>
+                                    <a href="#" class="message-profile-name" th:text=" ${userTo.lastName}+' '+${userTo.firstName}"></a>
                                 </div>
                                 <div class="social-media messenger-top-ricon df-aic">
                                     <img th:src="@{/images/messenger/phone.png}" data-toggle="modal" data-target="#callModal" class="msg-top-more-info" alt="Messenger icons">

@@ -221,7 +221,7 @@
                                     <ul class="conversations">
                                         <li th:each="relationship : ${relationships}" class="contact" th:data-user-id="${relationship.id}">
                                             <div class="wrap">
-                                                <input type="hidden" th:value="${relationship.id}" class="user-id"/>
+                                                <input type="hidden" th:value="${relationship.idUser}" class="user-id"/>
                                                 <span class="contact-status online"></span>
                                                 <img th:src="@{/images/users/user-1.jpg}" alt="Conversation user" />
                                                 <div class="meta">
@@ -239,7 +239,7 @@
                                         <div class="contact-profile d-flex align-items-center justify-content-between">
                                             <div class="messenger-top-luser df-aic" id="chatuser">
                                                 <img th:src="@{/images/users/user-2.jpg}" class="messenger-user" alt="Conversation user image" />
-                                                <a href="#" class="message-profile-name" th:text="${currentUser.firstName} + ' ' + ${currentUser.lastName}"></a>
+                                                <a href="#" class="message-profile-name" th:text="${userTo.lastName}+' '+${userTo.firstName}"></a>
                                             </div>
                                             <div class="social-media messenger-top-ricon df-aic">
                                                 <img th:src="@{/images/messenger/phone.png}" data-toggle="modal" data-target="#callModal" class="msg-top-more-info" alt="Messenger icons">
@@ -252,6 +252,12 @@
                                         <div class="messages">
                                             <ul id="messages-container" class="messages-content">
                                                 <!-- Tin nhắn sẽ được thêm vào đây bằng AJAX -->
+                                                <li th:each="message : ${listmessage}" 
+                                                    th:class="${message.userFrom.id} == ${currentUser.id} ? 'message-reply' : 'message-receive'">
+                                                    <img th:if="${message.userFrom.id} != ${currentUser.id}" 
+                                                    th:src="@{/images/users/user-1.jpg}" alt="Conversation user image" />
+                                                    <p th:text="${message.content}"></p>
+                                                </li>
                                             </ul>
                                         </div>
                                     </div>

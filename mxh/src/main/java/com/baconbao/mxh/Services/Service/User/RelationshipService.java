@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.baconbao.mxh.DTO.RelationshipDTO;
 import com.baconbao.mxh.Models.User.Relationship;
 import com.baconbao.mxh.Models.User.User;
 
@@ -14,4 +15,5 @@ public interface RelationshipService {
     Relationship findById(Long id);
     Relationship findRelationship(User userOne, User userTwo);
     List<Relationship> findAllByUserOneId(User user);
+    List<RelationshipDTO> orderByCreateAt(List<RelationshipDTO> relationships);
 }

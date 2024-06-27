@@ -28,7 +28,7 @@
                     <div class="message-contacts">
                         <ul class="conversations">
                             <li th:each="relationship : ${relationships}" class="contact" >
-                                <a th:href="@{/chatmobile(id=${relationship.id})}" style="text-decoration: none;">
+                                <a th:href="@{/chatmobile(id=${relationship.idUser})}" style="text-decoration: none;">
                                     <div class="wrap">
                                         <span class="contact-status online"></span>
                                         <img th:src="@{/images/users/user-1.jpg}" alt="Conversation user" />
