@@ -39,12 +39,17 @@ function sendMessage() {
 
 // Hiển thị tin nhắn nhận được trong khung chat
 function displayChatMessage(message) {
-    var chatContent = $('<li class="contentmessage message-receive">');
+    var inputElement = $('input[type="hidden"][data-messages-user="' + message.userFrom.id + '"]');
+    if(inputElement.length){
+        var chatContent = $('<li class="contentmessage message-receive">');
     var image = $('<img src="images/users/user-1.jpg" alt="Conversation user image" />');
     var content = $('<p>').text(message.content);
     chatContent.append(image);
     chatContent.append(content);
     $('#chatMessages').append(chatContent);
+    }
+
+  
 }
 
 // Cập nhật liên hệ trong danh sách liên hệ khi có tin nhắn mới

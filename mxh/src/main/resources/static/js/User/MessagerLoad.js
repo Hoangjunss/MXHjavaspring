@@ -18,6 +18,13 @@ document.addEventListener("DOMContentLoaded", function() {
                 <img src="/images/users/user-1.jpg" class="messenger-user" alt="Conversation user image" />
                 <a href="#" class="message-profile-name">${chatUser.firstName} ${chatUser.lastName}</a>
             `;
+            var inputElement = $('#id');
+
+            // Thay đổi giá trị (value)
+            inputElement.val(chatUser.id);
+
+            // Thay đổi thuộc tính data-messages-user
+            inputElement.attr('data-messages-user', chatUser.id);
             // Cập nhật tiêu đề chat với nội dung mới
             chatusername.innerHTML = chatheader;
             // Kiểm tra nếu không có tin nhắn

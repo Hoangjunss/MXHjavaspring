@@ -252,6 +252,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-12" style="max-height: 532px;">
+                                        <input type="hidden" th:value="${userTo.id}" id="id" th:data-messages-user="${userTo.id}">
                                         <div class="messages">
                                             <ul id="chatMessages" class="messages-content">
                                                 <!-- Tin nhắn sẽ được thêm vào đây bằng AJAX -->
@@ -270,9 +271,9 @@
                                                 <form class="d-inline form-inline">
                                                     <div class="d-flex align-items-center justify-content-between messenger-icons">
                                                         <div class="input-group messenger-input">
-                                                            <input type="text" class="form-control search-input" placeholder="Type a message..." aria-label="Type a message..." aria-describedby="button-addon2">
+                                                            <input id="content" type="text" class="form-control search-input" placeholder="Type a message..." aria-label="Type a message..." aria-describedby="button-addon2">
                                                         </div>
-                                                        <button type="button" class="btn search-button" id="send-message">
+                                                        <button onclick="sendMessage()" type="button" class="btn search-button" id="send-message">
                                                             <img th:src="@{/images/messenger/m-send.png}" alt="Messenger icons">
                                                         </button>
                                                     </div>
