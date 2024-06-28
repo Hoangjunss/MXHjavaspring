@@ -50,7 +50,7 @@ function sendMessage() {
 // Hiển thị tin nhắn nhận được trong khung chat
 function displayChatMessage(message) {
     var inputElement = $('input[type="hidden"][data-messages-user="' + message.userFrom.id + '"]');
-    if(inputElement.length){
+    if(inputElement.length>0){
         seenMessage();
         var chatContent = $('<li class="contentmessage message-receive">');
     var image = $('<img src="images/users/user-1.jpg" alt="Conversation user image" />');
