@@ -102,7 +102,7 @@ public class MessageServiceImpl implements MessageService {
     @Transactional
     public void seenMessage(Relationship relationships, User user) {
         for (Message message : relationships.getMessages()) {
-            if (message.isSeen() == false && message.getUserTo() == user) {
+            if (message.isSeen() == false && message.getUserTo().getId() == user.getId()) {
                 message.setSeen(true);
                 messageRepository.save(message);
             }

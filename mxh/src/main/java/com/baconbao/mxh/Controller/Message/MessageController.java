@@ -261,7 +261,6 @@ public class MessageController {
         // Tìm người dùng hiện tại từ email của họ
         User currentUser = userService.findByEmail(userDetails.getUsername());
         Relationship relationship = relationshipService.findById(Long.parseLong(id));
-        System.out.println(relationship.getId()+" SEVER chat.seen");
         messageService.seenMessage(relationship, currentUser);
     }
 

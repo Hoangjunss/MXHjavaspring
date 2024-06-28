@@ -1,8 +1,19 @@
 var socket = new SockJS('/ws'); // Thay đổi '/ws' thành đường dẫn WebSocket của bạn
 var stompClient = Stomp.over(socket);
+var isConnect;
+document.addEventListener("DOMContentLoaded", function(){
+    isConnect=true;
+});
 
 // Kết nối tới WebSocket server
 stompClient.connect({}, function(frame) {
+    if(isConnect){
+        var input=$('#id');
+        if(input.length>0){
+            alert(input.val());
+            seenMessage(input.val());
+        }
+    }
     console.log('Connected: ' + frame);
 
     // Đăng ký để nhận tin nhắn mới từ hàng đợi `/user/queue/messages`
@@ -55,6 +66,7 @@ function sendMessage() {
 function displayChatMessage(message) {
     var inputElement = $('input[type="hidden"][data-messages-user="' + message.userFrom.id + '"]');
     if(inputElement.length>0){
+        seenMessage(message.id);
         var chatContent = $('<li class="contentmessage message-receive">');
     var image = $('<img src="images/users/user-1.jpg" alt="Conversation user image" />');
     var content = $('<p>').text(message.content);

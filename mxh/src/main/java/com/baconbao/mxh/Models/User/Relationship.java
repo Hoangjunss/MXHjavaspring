@@ -38,7 +38,7 @@ public class Relationship {
     @JoinColumn(name = "idStatus")
     private StatusRelationship status;
 
-    @OneToMany(mappedBy = "relationship", targetEntity = Message.class, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "relationship",fetch = FetchType.EAGER, targetEntity = Message.class, cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Message> messages;
 }
