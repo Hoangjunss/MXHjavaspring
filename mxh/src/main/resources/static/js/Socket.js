@@ -21,10 +21,10 @@ stompClient.connect({}, function(frame) {
     })
 });
 function seenMessage(message){
-    var id= message.id;
+    
     var message = {
         message: {
-            id: id
+            id: message
         }
     };
     stompClient.send("/app/chat.seen",{},JSON.stringify(message))

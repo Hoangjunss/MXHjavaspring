@@ -22,6 +22,7 @@ import com.baconbao.mxh.Services.Service.Message.MessageService;
 import com.baconbao.mxh.Services.Service.User.RelationshipService;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 
 @Service
 public class MessageServiceImpl implements MessageService {
@@ -98,6 +99,7 @@ public class MessageServiceImpl implements MessageService {
 
     //Loi khong xac dinh
     @Override
+    @Transactional
     public void seenMessage(Relationship relationships, User user) {
         for (Message message : relationships.getMessages()) {
             if (message.isSeen() == false && message.getUserTo() == user) {

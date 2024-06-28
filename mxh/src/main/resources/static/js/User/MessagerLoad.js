@@ -3,6 +3,10 @@ document.addEventListener("DOMContentLoaded", function() {
     // Lấy phần tử HTML để hiển thị tin nhắn và tên người dùng chat
     const messageList = document.getElementById("chatMessages");
     const chatusername = document.getElementById("chatuser");
+    var input=$('#id');
+    if(input.length>0){
+        seenMessage(input.val());
+    }
     // Hàm tải tin nhắn từ server
     function loadMessages(userId) {
         fetch('/chat?id=' + userId, {
@@ -46,12 +50,13 @@ document.addEventListener("DOMContentLoaded", function() {
                     messageList.appendChild(messageElement);
                 });
             }
-            seenMessage(data.relationship);
+            seenMessage(data.relationship.id);
         })
         .catch(error => {
             console.error("Error:", error); // In lỗi ra console nếu có
         });
     }
+
 
     // Hàm hiển thị chat cho người dùng với ID cụ thể
     function showChat(userId) {
