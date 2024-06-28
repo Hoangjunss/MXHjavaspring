@@ -1,6 +1,7 @@
 package com.baconbao.mxh.Services.ServiceImpls.Message;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,5 +87,26 @@ public class MessageServiceImpl implements MessageService {
             // Xử lý các ngoại lệ khác
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
+    }
+
+    @Override
+    public void seenMessage(Message message) {
+       message.setSeen(true);
+       messageRepository.save(message);
+       socketWeb.setSeen(message);
+    }
+
+    @Override
+    public int CountMessageBetweenTwoUserIsSeen(User user, User user2) {
+      return messageRepository.CountMessageBetweenTwoUserIsSeen(user, user2);
+    }
+
+    @Override
+    public Message findById(Long id) {
+        Optional<Message> messageOptional=messageRepository.findById(id);
+        if(messageOptional.isPresent()){
+            return messageOptional.get();
+        }
+        return null;
     }
 }

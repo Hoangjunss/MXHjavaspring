@@ -237,6 +237,16 @@ public class MessageController {
         return messages;
     }
 
+    @MessageMapping("/chat.seen")
+    @SendTo("/queue/seen")
+    public Message sendSeen(@Payload Map<String, Object> message, Principal principal){
+        Map<String, Object> innerMessage = (Map<String, Object>) message.get("message");
+        String id = String.valueOf(innerMessage.get("id"));
+        Message message2= messageService.findById(Long.parseLong(id));
+        messageService.seenMessage(message2);
+        return message2;
+
+    }
     @PostMapping("/searchmessage")
     public ResponseEntity<?> searchMessage(@RequestBody String name) {
         try {

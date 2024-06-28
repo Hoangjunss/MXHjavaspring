@@ -16,7 +16,17 @@ stompClient.connect({}, function(frame) {
     stompClient.subscribe('/queue/active', function(message) {
         // Xử lý thông báo từ hàng đợi active nếu có
     });
+    stompClient.subscribe('/user/queue/seen',function(message){
+
+    })
 });
+function seenMessage(message){
+    var id= message.id;
+     var message={
+        id:id
+     }
+     stompClient.send("/app/chat.seen",{},JSON.stringify(message))
+}
 
 // Gửi tin nhắn tới WebSocket server
 function sendMessage() {
@@ -41,6 +51,7 @@ function sendMessage() {
 function displayChatMessage(message) {
     var inputElement = $('input[type="hidden"][data-messages-user="' + message.userFrom.id + '"]');
     if(inputElement.length){
+        seenMessage();
         var chatContent = $('<li class="contentmessage message-receive">');
     var image = $('<img src="images/users/user-1.jpg" alt="Conversation user image" />');
     var content = $('<p>').text(message.content);

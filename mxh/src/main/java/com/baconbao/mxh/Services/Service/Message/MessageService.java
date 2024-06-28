@@ -13,5 +13,7 @@ public interface MessageService {
     void sendMessage(Message message);
     List<Message> findByContent(String content);
     Message findLatestMessage(User userFrom,User userTo);
-
+    void seenMessage(Message message);
+    int CountMessageBetweenTwoUserIsSeen(User user,User user2);
+    Message findById(Long id);
 }

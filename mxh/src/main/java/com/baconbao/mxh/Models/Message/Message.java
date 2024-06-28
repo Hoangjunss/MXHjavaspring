@@ -36,4 +36,5 @@ public class Message {
     @JoinColumn(name = "relationship_id", referencedColumnName = "id")
     @JsonIgnore
     private Relationship relationship;
+    private boolean isSeen;
 }

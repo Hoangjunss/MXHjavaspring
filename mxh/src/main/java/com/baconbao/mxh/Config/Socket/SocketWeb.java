@@ -35,4 +35,14 @@ public class SocketWeb {
         userDTO.setIsActive(true);
         simpMessagingTemplate.convertAndSend("/queue/active", userDTO);
     }
+    public void setSeen(Message message) {
+        MessageDTO messageDTO = new MessageDTO();
+        UserMessageDTO userMessageDTO = new UserMessageDTO(message.getUserFrom());
+        Relationship relationship = relationshipService.findRelationship(message.getUserFrom(), message.getUserTo());
+        messageDTO.setId(relationship.getId());
+        messageDTO.setContent(message.getContent());
+        messageDTO.setCreateAt(message.getCreateAt());
+        messageDTO.setUserFrom(userMessageDTO);
+        simpMessagingTemplate.convertAndSendToUser(message.getUserTo().getEmail(),"/queue/seen", messageDTO);
+    }
 }
