@@ -22,10 +22,12 @@ stompClient.connect({}, function(frame) {
 });
 function seenMessage(message){
     var id= message.id;
-     var message={
-        id:id
-     }
-     stompClient.send("/app/chat.seen",{},JSON.stringify(message))
+    var message = {
+        message: {
+            id: id
+        }
+    };
+    stompClient.send("/app/chat.seen",{},JSON.stringify(message))
 }
 
 // Gửi tin nhắn tới WebSocket server
@@ -33,13 +35,15 @@ function sendMessage() {
     var content = document.getElementById('content').value;
     var id = document.getElementById('id').value;
     var message = {
-        content: content,
-        id: id
+        message: {
+            content: content,
+            id: id
+        }
     };
 
     // Hiển thị tin nhắn gửi trong khung chat trước khi gửi
     var chatContent = $('<li class="contentmessage message-reply">');
-    var messageText = $('<p>').text(message.content);
+    var messageText = $('<p>').text(message.message.content);
     chatContent.append(messageText);
     $('#chatMessages').append(chatContent);
 
@@ -51,16 +55,13 @@ function sendMessage() {
 function displayChatMessage(message) {
     var inputElement = $('input[type="hidden"][data-messages-user="' + message.userFrom.id + '"]');
     if(inputElement.length>0){
-        seenMessage();
         var chatContent = $('<li class="contentmessage message-receive">');
     var image = $('<img src="images/users/user-1.jpg" alt="Conversation user image" />');
     var content = $('<p>').text(message.content);
     chatContent.append(image);
     chatContent.append(content);
     $('#chatMessages').append(chatContent);
-    }
-
-  
+    }  
 }
 
 // Cập nhật liên hệ trong danh sách liên hệ khi có tin nhắn mới

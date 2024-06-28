@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import javax.management.relation.RelationService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -12,9 +14,12 @@ import com.baconbao.mxh.Config.Socket.SocketWeb;
 import com.baconbao.mxh.Exceptions.CustomException;
 import com.baconbao.mxh.Exceptions.ErrorCode;
 import com.baconbao.mxh.Models.Message.Message;
+import com.baconbao.mxh.Models.User.Relationship;
 import com.baconbao.mxh.Models.User.User;
 import com.baconbao.mxh.Repository.Message.MessageRepository;
+import com.baconbao.mxh.Repository.User.RelationshipRepository;
 import com.baconbao.mxh.Services.Service.Message.MessageService;
+import com.baconbao.mxh.Services.Service.User.RelationshipService;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -22,6 +27,8 @@ import jakarta.persistence.EntityNotFoundException;
 public class MessageServiceImpl implements MessageService {
     @Autowired
     private MessageRepository messageRepository;
+    @Autowired
+    private RelationshipService sRelationService;
     @Autowired
     private SocketWeb socketWeb;
 
@@ -89,22 +96,27 @@ public class MessageServiceImpl implements MessageService {
         }
     }
 
+    //Loi khong xac dinh
     @Override
-    public void seenMessage(Message message) {
-       message.setSeen(true);
-       messageRepository.save(message);
-       socketWeb.setSeen(message);
+    public void seenMessage(Relationship relationships, User user) {
+        for (Message message : relationships.getMessages()) {
+            if (message.isSeen() == false && message.getUserTo() == user) {
+                message.setSeen(true);
+                messageRepository.save(message);
+            }
+        }
+        socketWeb.setSeen(relationships, user);
     }
 
     @Override
     public int CountMessageBetweenTwoUserIsSeen(User user, User user2) {
-      return messageRepository.CountMessageBetweenTwoUserIsSeen(user, user2);
+        return messageRepository.CountMessageBetweenTwoUserIsSeen(user, user2);
     }
 
     @Override
     public Message findById(Long id) {
-        Optional<Message> messageOptional=messageRepository.findById(id);
-        if(messageOptional.isPresent()){
+        Optional<Message> messageOptional = messageRepository.findById(id);
+        if (messageOptional.isPresent()) {
             return messageOptional.get();
         }
         return null;

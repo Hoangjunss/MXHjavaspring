@@ -188,9 +188,11 @@ public class MessageController {
             // Lấy danh sách tin nhắn giữa người dùng hiện tại và người dùng chat
             List<Message> messages = messageService.messageFromUser(currentUser, chatUser);
             // Đặt danh sách tin nhắn, người dùng hiện tại và người dùng chat vào phản hồi
+            Relationship relationship = relationshipService.findRelationship(chatUser, currentUser);
             response.put("messages", messages);
             response.put("currentUser", currentUser);
             response.put("chatUser", chatUser);
+            response.put("relationship", relationship);
             // Trả về phản hồi HTTP 200 với dữ liệu JSON
             return ResponseEntity.ok(response);
         } catch (Exception e) {
@@ -206,8 +208,20 @@ public class MessageController {
     public Message sendMessage(@Payload Map<String, Object> message, Principal principal) {
 
         Map<String, Object> innerMessage = (Map<String, Object>) message.get("message");
-        String content = (String) innerMessage.get("content");
-        String id = String.valueOf(innerMessage.get("id"));
+        if (innerMessage == null) {
+            // Log lỗi và/hoặc ném ngoại lệ
+            System.err.println("innerMessage is null");
+        }
+        String content = "";
+        String id = "";
+        if (innerMessage.get("content") != null) {
+            content = (String) innerMessage.get("content");
+            System.out.println(content+" CHAT.SEND.content");
+        }
+        if (innerMessage.get("id") != null) {
+            id = String.valueOf(innerMessage.get("id"));
+            System.err.println(id+" CHAT.SEND.id");
+        }
 
         Message messages = new Message();
         messages.setContent(content);
@@ -239,14 +253,18 @@ public class MessageController {
 
     @MessageMapping("/chat.seen")
     @SendTo("/queue/seen")
-    public Message sendSeen(@Payload Map<String, Object> message, Principal principal){
+    public void sendSeen(@Payload Map<String, Object> message, Principal principal) {
         Map<String, Object> innerMessage = (Map<String, Object>) message.get("message");
         String id = String.valueOf(innerMessage.get("id"));
-        Message message2= messageService.findById(Long.parseLong(id));
-        messageService.seenMessage(message2);
-        return message2;
-
+        // Lấy thông tin chi tiết của người dùng hiện tại từ principal
+        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+        // Tìm người dùng hiện tại từ email của họ
+        User currentUser = userService.findByEmail(userDetails.getUsername());
+        Relationship relationship = relationshipService.findById(Long.parseLong(id));
+        System.out.println(relationship.getId()+" SEVER chat.seen");
+        messageService.seenMessage(relationship, currentUser);
     }
+
     @PostMapping("/searchmessage")
     public ResponseEntity<?> searchMessage(@RequestBody String name) {
         try {

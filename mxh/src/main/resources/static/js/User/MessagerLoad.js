@@ -1,3 +1,4 @@
+
 document.addEventListener("DOMContentLoaded", function() {
     // Lấy phần tử HTML để hiển thị tin nhắn và tên người dùng chat
     const messageList = document.getElementById("chatMessages");
@@ -45,6 +46,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     messageList.appendChild(messageElement);
                 });
             }
+            seenMessage(data.relationship);
         })
         .catch(error => {
             console.error("Error:", error); // In lỗi ra console nếu có

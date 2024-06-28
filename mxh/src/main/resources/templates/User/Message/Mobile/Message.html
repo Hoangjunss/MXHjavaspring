@@ -14,6 +14,11 @@
 
     <!-- Styles -->
     <link th:href="@{/css/User/Message/MessageMobile.css}" rel="stylesheet">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.4.0/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+    <script th:src="@{/js/Socket.js}"></script>
 </head>
 <body>
     <div class="row message-right-side-content">
@@ -27,7 +32,7 @@
                     </div>
                     <div class="message-contacts">
                         <ul class="conversations">
-                            <li th:each="relationship : ${relationships}" class="contact" >
+                            <li th:each="relationship : ${relationships}" th:data-user-id="${relationship.id}" class="contact" >
                                 <a th:href="@{/chatmobile(id=${relationship.idUser})}" style="text-decoration: none;">
                                     <div class="wrap">
                                         <span class="contact-status online"></span>

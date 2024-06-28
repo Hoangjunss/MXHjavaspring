@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.baconbao.mxh.DTO.RelationshipDTO;
 import com.baconbao.mxh.Exceptions.CustomException;
 import com.baconbao.mxh.Exceptions.ErrorCode;
+import com.baconbao.mxh.Models.Message.Message;
 import com.baconbao.mxh.Models.User.Relationship;
 import com.baconbao.mxh.Models.User.StatusRelationship;
 import com.baconbao.mxh.Models.User.User;
@@ -97,6 +98,18 @@ public class RelationshipServiceImpl implements RelationshipService {
         try {
             relationships.sort(Comparator.comparing(RelationshipDTO::getCreateAt).reversed());
             return relationships;
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+        }
+    }
+
+    @Override
+    public Relationship findByMessage(List<Message> messages) {
+        try {
+            return relationshipRepository.findByMessages(messages);
+        } catch (EntityNotFoundException e) {
+
+            throw new CustomException(ErrorCode.RELATIONSHIP_NOT_FOUND);
         } catch (Exception e) {
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }

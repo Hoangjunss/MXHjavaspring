@@ -18,6 +18,7 @@ public class SocketWeb {
     private SimpMessagingTemplate simpMessagingTemplate;
     @Autowired
     private RelationshipService relationshipService;
+
     public void sendMessage(Message message) {
         MessageDTO messageDTO = new MessageDTO();
         UserMessageDTO userMessageDTO = new UserMessageDTO(message.getUserFrom());
@@ -35,14 +36,9 @@ public class SocketWeb {
         userDTO.setIsActive(true);
         simpMessagingTemplate.convertAndSend("/queue/active", userDTO);
     }
-    public void setSeen(Message message) {
-        MessageDTO messageDTO = new MessageDTO();
-        UserMessageDTO userMessageDTO = new UserMessageDTO(message.getUserFrom());
-        Relationship relationship = relationshipService.findRelationship(message.getUserFrom(), message.getUserTo());
-        messageDTO.setId(relationship.getId());
-        messageDTO.setContent(message.getContent());
-        messageDTO.setCreateAt(message.getCreateAt());
-        messageDTO.setUserFrom(userMessageDTO);
-        simpMessagingTemplate.convertAndSendToUser(message.getUserTo().getEmail(),"/queue/seen", messageDTO);
+
+    public void setSeen(Relationship relationship, User user) {
+
+        simpMessagingTemplate.convertAndSendToUser(user.getEmail(), "/queue/seen", relationship.getId());
     }
 }
