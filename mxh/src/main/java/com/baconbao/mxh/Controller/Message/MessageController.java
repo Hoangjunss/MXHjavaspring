@@ -73,7 +73,8 @@ public class MessageController {
             // Kiểm tra nếu có tin nhắn trong mối quan hệ thì lấy tin nhắn cuối cùng của mối
             // quan hệ
             if (relationship.getMessages() != null) {
-                int count = messageService.CountMessageBetweenTwoUserIsSeen(relationship.getUserOne(),relationship.getUserTwo());
+                int count = messageService.CountMessageBetweenTwoUserIsSeen(relationship.getUserOne(),
+                        relationship.getUserTwo());
                 // Nếu user đang login nằm ở userONE
                 if (relationship.getUserOne().getId() == user.getId()) {
                     // lấy tin nhắn gần với hiện tại nhất của mối quan hệ
@@ -82,7 +83,7 @@ public class MessageController {
                     // thứ 2, tên user thứ 2, nội dung tin nhắn, ngày nhắn.
                     RelationshipDTO dto = new RelationshipDTO(relationship.getId(), relationship.getUserTwo().getId(),
                             relationship.getUserTwo().getLastName() + " " + relationship.getUserTwo().getFirstName(),
-                            message.getContent(), count,message.getCreateAt());
+                            message.getContent(), count, message.getCreateAt());
                     // lưu vào danh sách DTO
                     relationshipDTOs.add(dto);
                 }
@@ -91,7 +92,19 @@ public class MessageController {
                     Message message = messageService.findLatestMessage(user, relationship.getUserOne());
                     RelationshipDTO dto = new RelationshipDTO(relationship.getId(), relationship.getUserOne().getId(),
                             relationship.getUserOne().getLastName() + " " + relationship.getUserOne().getFirstName(),
-                            message.getContent(), count,message.getCreateAt());
+                            message.getContent(), count, message.getCreateAt());
+                    relationshipDTOs.add(dto);
+                }
+            } else {
+                if (relationship.getUserOne().getId() == user.getId()) {
+                    RelationshipDTO dto = new RelationshipDTO(relationship.getId(), relationship.getUserTwo().getId(),
+                            relationship.getUserTwo().getLastName() + " " + relationship.getUserTwo().getFirstName(),
+                            "", 0, null);
+                    relationshipDTOs.add(dto);
+                } else if (relationship.getUserTwo().getId() == user.getId()) {
+                    RelationshipDTO dto = new RelationshipDTO(relationship.getId(), relationship.getUserOne().getId(),
+                            relationship.getUserOne().getLastName() + " " + relationship.getUserOne().getFirstName(),
+                            "", 0, null);
                     relationshipDTOs.add(dto);
                 }
             }
@@ -139,14 +152,15 @@ public class MessageController {
             // Kiểm tra nếu có tin nhắn trong mối quan hệ thì lấy tin nhắn cuối cùng của mối
             // quan hệ
             if (relationship.getMessages() != null) {
-                int count = messageService.CountMessageBetweenTwoUserIsSeen(relationship.getUserOne(),relationship.getUserTwo());
+                int count = messageService.CountMessageBetweenTwoUserIsSeen(relationship.getUserOne(),
+                        relationship.getUserTwo());
                 // Nếu user đang login nằm ở userONE của mối quan hệ thì lấy tin nhắn gần với
                 // hiện tại nhất của mối quan hệ
                 if (relationship.getUserOne().getId() == user.getId()) {
                     Message message = messageService.findLatestMessage(user, relationship.getUserTwo());
                     RelationshipDTO dto = new RelationshipDTO(relationship.getId(), relationship.getUserTwo().getId(),
                             relationship.getUserTwo().getLastName() + " " + relationship.getUserTwo().getFirstName(),
-                            message.getContent(), count,message.getCreateAt());
+                            message.getContent(), count, message.getCreateAt());
                     relationshipDTOs.add(dto);
                 }
                 // Tương tự userTwo
@@ -154,7 +168,7 @@ public class MessageController {
                     Message message = messageService.findLatestMessage(user, relationship.getUserOne());
                     RelationshipDTO dto = new RelationshipDTO(relationship.getId(), relationship.getUserOne().getId(),
                             relationship.getUserOne().getLastName() + " " + relationship.getUserOne().getFirstName(),
-                            message.getContent(), count,message.getCreateAt());
+                            message.getContent(), count, message.getCreateAt());
                     relationshipDTOs.add(dto);
                 }
             }
@@ -172,8 +186,10 @@ public class MessageController {
         // Kiểm tra trong mối quan hệ userlogin ở vị trí one hay two để hiển thị thông
         // tin của người đối diện đang chat
         if (user.getId() == relationship.getUserOne().getId()) {
+            System.out.println(relationship.getUserTwo().getId());
             model.addAttribute("userTo", relationship.getUserTwo());
         } else {
+            System.out.println(relationship.getUserOne().getId());
             model.addAttribute("userTo", relationship.getUserOne());
         }
         model.addAttribute("relation", relationship);
@@ -223,11 +239,11 @@ public class MessageController {
         String id = "";
         if (innerMessage.get("content") != null) {
             content = (String) innerMessage.get("content");
-            System.out.println(content+" CHAT.SEND.content");
+            System.out.println(content + " CHAT.SEND.content");
         }
         if (innerMessage.get("id") != null) {
             id = String.valueOf(innerMessage.get("id"));
-            System.err.println(id+" CHAT.SEND.id");
+            System.err.println(id + " CHAT.SEND.id");
         }
 
         Message messages = new Message();
@@ -242,14 +258,14 @@ public class MessageController {
         messages.setCreateAt(LocalDateTime.now());
 
         // Giả sử relationshipService.findById trả về một đối tượng Relationship
-        Relationship relationship = relationshipService.findById(1L);
+        Relationship relationship = relationshipService.findRelationship(user, userFrom);
         messages.setRelationship(relationship);
 
         List<Message> messagesList = new ArrayList<>();
         messagesList.add(messages);
 
         messageService.sendMessage(messages);
-        
+
         user.setToUserMessagesList(messagesList);
         userFrom.setFromUserMessagesList(messagesList);
         userService.saveUser(user);

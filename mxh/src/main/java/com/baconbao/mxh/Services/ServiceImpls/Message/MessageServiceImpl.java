@@ -4,23 +4,18 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import javax.management.relation.RelationService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.baconbao.mxh.Config.Socket.SocketWeb;
-import com.baconbao.mxh.DTO.RelationshipDTO;
 import com.baconbao.mxh.Exceptions.CustomException;
 import com.baconbao.mxh.Exceptions.ErrorCode;
 import com.baconbao.mxh.Models.Message.Message;
 import com.baconbao.mxh.Models.User.Relationship;
 import com.baconbao.mxh.Models.User.User;
 import com.baconbao.mxh.Repository.Message.MessageRepository;
-import com.baconbao.mxh.Repository.User.RelationshipRepository;
 import com.baconbao.mxh.Services.Service.Message.MessageService;
-import com.baconbao.mxh.Services.Service.User.RelationshipService;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -29,8 +24,6 @@ import jakarta.transaction.Transactional;
 public class MessageServiceImpl implements MessageService {
     @Autowired
     private MessageRepository messageRepository;
-    @Autowired
-    private RelationshipService sRelationService;
     @Autowired
     private SocketWeb socketWeb;
 
