@@ -839,8 +839,21 @@
     padding: 30px 5px 5px
 }
 
-
-
+.unread-messages {
+    position: absolute;
+    left: 2rem !important;
+    top: 1.6rem;
+    margin: -2px 0 0 -2px;
+    width: 18px !important;
+    height: 18px !important;
+    border-radius: 50%;
+    border: 1.5px solid #fff;
+    color: #fff;
+    font-weight: 700;
+    text-align: center;
+    background-color: #007bff !important;
+    font-size: .6rem
+}
 
 .df-aic {
     display: flex;

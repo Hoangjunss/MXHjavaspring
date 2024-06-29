@@ -7,16 +7,19 @@ public class RelationshipDTO {
     private Long idUser;
     private String name;
     private String content;
+    private int countMessageNotSeen;
     private LocalDateTime createAt;
     
     public RelationshipDTO() {
     }
-    
-    public RelationshipDTO(Long id, Long idUser, String name, String content, LocalDateTime createAt) {
+
+    public RelationshipDTO(Long id, Long idUser, String name, String content, int countMessageNotSeen,
+            LocalDateTime createAt) {
         this.id = id;
         this.idUser = idUser;
         this.name = name;
         this.content = content;
+        this.countMessageNotSeen = countMessageNotSeen;
         this.createAt = createAt;
     }
 
@@ -45,6 +48,14 @@ public class RelationshipDTO {
 
     public void setCreateAt(LocalDateTime createAt) {
         this.createAt = createAt;
+    }
+
+    public int getCountMessageNotSeen() {
+        return countMessageNotSeen;
+    }
+
+    public void setCountMessageNotSeen(int countMessageNotSeen) {
+        this.countMessageNotSeen = countMessageNotSeen;
     }
 
     public Long getIdUser() {

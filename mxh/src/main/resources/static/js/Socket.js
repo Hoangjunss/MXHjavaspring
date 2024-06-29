@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function(){
 // Kết nối tới WebSocket server
 stompClient.connect({}, function(frame) {
     if(isConnect){
-        var input=$('#id');
+        var input=$('#idRelationship');
         if(input.length>0){
             alert(input.val());
             seenMessage(input.val());
@@ -31,14 +31,19 @@ stompClient.connect({}, function(frame) {
 
     })
 });
-function seenMessage(message){
+function seenMessage(messages){
     
     var message = {
         message: {
-            id: message
+            id: messages
         }
     };
+    alert(messages);
     stompClient.send("/app/chat.seen",{},JSON.stringify(message))
+    const countMessageNotSeen = $('span.unread-messages[data-id="' + messages + '"]');
+    if(countMessageNotSeen.length>0){
+        countMessageNotSeen.remove();
+    }
 }
 
 // Gửi tin nhắn tới WebSocket server
@@ -64,6 +69,7 @@ function sendMessage() {
 
 // Hiển thị tin nhắn nhận được trong khung chat
 function displayChatMessage(message) {
+
     var inputElement = $('input[type="hidden"][data-messages-user="' + message.userFrom.id + '"]');
     if(inputElement.length>0){
         seenMessage(message.id);
@@ -79,8 +85,27 @@ function displayChatMessage(message) {
 // Cập nhật liên hệ trong danh sách liên hệ khi có tin nhắn mới
 function displayChatMessageFrame(message) {
     // Tìm thẻ li có data-user-id tương ứng
+    const countMessageNotSeen = $('span.unread-messages[data-id="' + message.id + '"]');
+    if(countMessageNotSeen){
+        // Retrieve the current text content and try to parse it as an integer
+        let messageCount = parseInt(countMessageNotSeen.text(), 10);
+
+        // Debugging: Log the initial value and the result of parseInt
+        // Check if the parsing resulted in NaN
+        if (isNaN(messageCount)) {
+            // Set the message count to 0 if parsing failed
+            messageCount = 0;
+        }
+        // Increment the message count
+        messageCount += 1;
+        countMessageNotSeen.text(messageCount);
+    }else{
+        console.log('Element not found for message.id:', message.id);
+        var contact = $('<li class="contact" data-user-id="' + message.id + '">');
+        contact.append('<span class="unread-messages">'+message.countMessageNotSeen+'</span>');
+    }
+
     var contact = $('li.contact[data-user-id="' + message.id + '"]');
- 
     if (contact.length > 0) {
         // Xóa thẻ li hiện tại và thêm vào đầu danh sách
         contact.remove();

@@ -228,6 +228,7 @@
                                                 <input type="hidden" th:value="${relationship.idUser}" class="user-id"/>
                                                 <span class="contact-status online"></span>
                                                 <img th:src="@{/images/users/user-1.jpg}" alt="Conversation user" />
+                                                <span th:if="${relationship.countMessageNotSeen}>0" class="unread-messages" th:text="${relationship.countMessageNotSeen}"></span>
                                                 <div class="meta">
                                                     <p th:if="${relationship.name}" class="name" th:text="${relationship.name}"></p>
                                                     <p th:if="${relationship.content}" class="preview" th:text="${relationship.content}"></p>
@@ -254,6 +255,7 @@
                                     </div>
                                     <div class="col-md-12" style="max-height: 532px;">
                                         <input type="hidden" th:value="${userTo.id}" id="id" th:data-messages-user="${userTo.id}">
+                                        <input type="hidden" id="idRelationship" th:value="${relation.id}" >
                                         <div class="messages">
                                             <ul id="chatMessages" class="messages-content">
                                                 <!-- Tin nhắn sẽ được thêm vào đây bằng AJAX -->

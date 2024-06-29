@@ -38,7 +38,7 @@ public class SocketWeb {
     }
 
     public void setSeen(Relationship relationship, User user) {
-
+        
         simpMessagingTemplate.convertAndSendToUser(user.getEmail(), "/queue/seen", relationship.getId());
     }
 }

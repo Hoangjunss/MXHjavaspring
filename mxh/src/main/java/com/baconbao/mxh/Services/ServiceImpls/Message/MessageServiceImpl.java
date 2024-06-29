@@ -11,6 +11,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.baconbao.mxh.Config.Socket.SocketWeb;
+import com.baconbao.mxh.DTO.RelationshipDTO;
 import com.baconbao.mxh.Exceptions.CustomException;
 import com.baconbao.mxh.Exceptions.ErrorCode;
 import com.baconbao.mxh.Models.Message.Message;
@@ -101,13 +102,14 @@ public class MessageServiceImpl implements MessageService {
     @Override
     @Transactional
     public void seenMessage(Relationship relationships, User user) {
-        for (Message message : relationships.getMessages()) {
-            if (message.isSeen() == false && message.getUserTo().getId() == user.getId()) {
-                message.setSeen(true);
-                messageRepository.save(message);
-            }
+        try {
+            messageRepository.seenMessage(relationships, user);
+            socketWeb.setSeen(relationships, user);
+        } catch (DataIntegrityViolationException e) {
+            throw new CustomException(ErrorCode.MESSAGE_NOT_UPDATE);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
-        socketWeb.setSeen(relationships, user);
     }
 
     @Override

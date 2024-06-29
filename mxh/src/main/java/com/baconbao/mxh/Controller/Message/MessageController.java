@@ -67,11 +67,13 @@ public class MessageController {
         List<Relationship> relationships = relationshipService.findAllByUserOneId(user);
         // Tạo đối tượng DTO để lưu những thông tin cần.
         List<RelationshipDTO> relationshipDTOs = new ArrayList<>();
+        // Tạo mảng danh sách tin nhắn
         // Duyệt qua tất cả mối quan hệ
         for (Relationship relationship : relationships) {
             // Kiểm tra nếu có tin nhắn trong mối quan hệ thì lấy tin nhắn cuối cùng của mối
             // quan hệ
             if (relationship.getMessages() != null) {
+                int count = messageService.CountMessageBetweenTwoUserIsSeen(relationship.getUserOne(),relationship.getUserTwo());
                 // Nếu user đang login nằm ở userONE
                 if (relationship.getUserOne().getId() == user.getId()) {
                     // lấy tin nhắn gần với hiện tại nhất của mối quan hệ
@@ -80,7 +82,7 @@ public class MessageController {
                     // thứ 2, tên user thứ 2, nội dung tin nhắn, ngày nhắn.
                     RelationshipDTO dto = new RelationshipDTO(relationship.getId(), relationship.getUserTwo().getId(),
                             relationship.getUserTwo().getLastName() + " " + relationship.getUserTwo().getFirstName(),
-                            message.getContent(), message.getCreateAt());
+                            message.getContent(), count,message.getCreateAt());
                     // lưu vào danh sách DTO
                     relationshipDTOs.add(dto);
                 }
@@ -89,7 +91,7 @@ public class MessageController {
                     Message message = messageService.findLatestMessage(user, relationship.getUserOne());
                     RelationshipDTO dto = new RelationshipDTO(relationship.getId(), relationship.getUserOne().getId(),
                             relationship.getUserOne().getLastName() + " " + relationship.getUserOne().getFirstName(),
-                            message.getContent(), message.getCreateAt());
+                            message.getContent(), count,message.getCreateAt());
                     relationshipDTOs.add(dto);
                 }
             }
@@ -111,8 +113,11 @@ public class MessageController {
         User userTo = userService.findById(id);
         // Lấy Danh sách tin nhắn của 2 bên
         List<Message> listMessage = messageService.messageFromUser(userFrom, userTo);
+        Relationship relationship = relationshipService.findRelationship(userFrom, userTo);
+        messageService.seenMessage(relationship, userFrom);
         // Trả về html những thôngtin cần thiết để hiển thị
         model.addAttribute("messages", listMessage);
+        model.addAttribute("relation", relationship);
         model.addAttribute("userTo", userTo);
         model.addAttribute("currentUser", userFrom); // Add the current user to the model
         return "/User/Message/Mobile/Chat";
@@ -134,13 +139,14 @@ public class MessageController {
             // Kiểm tra nếu có tin nhắn trong mối quan hệ thì lấy tin nhắn cuối cùng của mối
             // quan hệ
             if (relationship.getMessages() != null) {
+                int count = messageService.CountMessageBetweenTwoUserIsSeen(relationship.getUserOne(),relationship.getUserTwo());
                 // Nếu user đang login nằm ở userONE của mối quan hệ thì lấy tin nhắn gần với
                 // hiện tại nhất của mối quan hệ
                 if (relationship.getUserOne().getId() == user.getId()) {
                     Message message = messageService.findLatestMessage(user, relationship.getUserTwo());
                     RelationshipDTO dto = new RelationshipDTO(relationship.getId(), relationship.getUserTwo().getId(),
                             relationship.getUserTwo().getLastName() + " " + relationship.getUserTwo().getFirstName(),
-                            message.getContent(), message.getCreateAt());
+                            message.getContent(), count,message.getCreateAt());
                     relationshipDTOs.add(dto);
                 }
                 // Tương tự userTwo
@@ -148,7 +154,7 @@ public class MessageController {
                     Message message = messageService.findLatestMessage(user, relationship.getUserOne());
                     RelationshipDTO dto = new RelationshipDTO(relationship.getId(), relationship.getUserOne().getId(),
                             relationship.getUserOne().getLastName() + " " + relationship.getUserOne().getFirstName(),
-                            message.getContent(), message.getCreateAt());
+                            message.getContent(), count,message.getCreateAt());
                     relationshipDTOs.add(dto);
                 }
             }
@@ -170,6 +176,7 @@ public class MessageController {
         } else {
             model.addAttribute("userTo", relationship.getUserOne());
         }
+        model.addAttribute("relation", relationship);
         model.addAttribute("currentUser", user); // Add the current user to the model
         return "/User/Message/Web/Messager";
     }
@@ -242,7 +249,7 @@ public class MessageController {
         messagesList.add(messages);
 
         messageService.sendMessage(messages);
-
+        
         user.setToUserMessagesList(messagesList);
         userFrom.setFromUserMessagesList(messagesList);
         userService.saveUser(user);
@@ -256,6 +263,7 @@ public class MessageController {
     public void sendSeen(@Payload Map<String, Object> message, Principal principal) {
         Map<String, Object> innerMessage = (Map<String, Object>) message.get("message");
         String id = String.valueOf(innerMessage.get("id"));
+        System.out.println(id);
         // Lấy thông tin chi tiết của người dùng hiện tại từ principal
         UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
         // Tìm người dùng hiện tại từ email của họ

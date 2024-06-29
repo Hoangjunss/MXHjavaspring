@@ -40,6 +40,7 @@
                         </div>
                         <div class="col-md-12" style="max-height: 532px;">
                             <input type="hidden" th:value="${userTo.id}" id="id" th:data-messages-user="${userTo.id}">
+                            <input type="hidden" id="idRelationship" th:value="${relation.id}" >
                             <div class="messages">
                                 <ul class="messages-content" id="chatMessages">
                                     <li class="contentmessage" th:each="message : ${messages}" 
