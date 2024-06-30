@@ -357,11 +357,13 @@ public String searchUser(@RequestParam("username") String username, Model model,
     UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
     User user = userService.findByEmail(userDetails.getUsername());
     List<User> users = userService.searchUser(username);
-    System.out.println("USER : "+users);
     List<User> friends = new ArrayList<>();
     List<User> notFriends = new ArrayList<>();
 
     for (User u : users) {
+        if (u.getId() == user.getId()) {
+            continue; // Bỏ qua user hiện tại
+        }
         Relationship relationship = relationalService.findRelationship(user, u);
         if (relationship != null) {
             if (relationship.getStatus().getId() == 4) {

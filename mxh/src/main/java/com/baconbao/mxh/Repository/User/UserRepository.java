@@ -31,7 +31,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
   List<User> findByLastNameOrFirstName(String firstName, String lastName);
 
-  @Query("SELECT u FROM User u WHERE u.lastName LIKE CONCAT('%', :name, '%') ESCAPE '|'")
+  @Query("SELECT u FROM User u WHERE u.lastName LIKE CONCAT('%', :name, '%') ESCAPE '|' OR u.firstName LIKE CONCAT('%', :name, '%') ESCAPE '|'")
   List<User> searchUser(String name);
 
 }

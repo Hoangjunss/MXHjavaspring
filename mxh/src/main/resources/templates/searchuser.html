@@ -18,23 +18,15 @@
         <table border="1">
             <thead>
                 <tr>
-                    <th>Tên Đăng Nhập</th>
                     <th>Họ Tên</th>
-                    <th>Email</th>
-                    <th>Số Điện Thoại</th>
-                    <th>Địa Chỉ</th>
-                    <th>Hành Động</th>
+                    <th>Hành động</th>
                 </tr>
             </thead>
             <tbody>
                 <tr th:each="friend : ${friends}">
-                    <td th:text="${friend.username}">Tên Đăng Nhập</td>
-                    <td th:text="${friend.fullname}">Họ Tên</td>
-                    <td th:text="${friend.email}">Email</td>
-                    <td th:text="${friend.phone}">Số Điện Thoại</td>
-                    <td th:text="${friend.address}">Địa Chỉ</td>
+                    <td th:text="${friend.firstName} + ' ' + ${friend.lastName}">Họ Tên</td>
                     <td>
-                        <button>Thêm Bạn</button>
+                        <button>Thêm Bạn</button> <!-- Replace with appropriate action -->
                     </td>
                 </tr>
             </tbody>
@@ -46,23 +38,15 @@
         <table border="1">
             <thead>
                 <tr>
-                    <th>Tên Đăng Nhập</th>
                     <th>Họ Tên</th>
-                    <th>Email</th>
-                    <th>Số Điện Thoại</th>
-                    <th>Địa Chỉ</th>
-                    <th>Hành Động</th>
+                    <th>Hành động</th>
                 </tr>
             </thead>
             <tbody>
                 <tr th:each="notFriend : ${notFriends}">
-                    <td th:text="${notFriend.username}">Tên Đăng Nhập</td>
-                    <td th:text="${notFriend.fullname}">Họ Tên</td>
-                    <td th:text="${notFriend.email}">Email</td>
-                    <td th:text="${notFriend.phone}">Số Điện Thoại</td>
-                    <td th:text="${notFriend.address}">Địa Chỉ</td>
+                    <td th:text="${notFriend.firstName} + ' ' + ${notFriend.lastName}">Họ Tên</td>
                     <td>
-                        <button>Thêm Bạn</button>
+                        <button>Thêm Bạn</button> <!-- Replace with appropriate action -->
                     </td>
                 </tr>
             </tbody>
