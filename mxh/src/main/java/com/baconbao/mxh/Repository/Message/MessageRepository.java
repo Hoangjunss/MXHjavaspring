@@ -27,8 +27,7 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
 
         @Query("SELECT count(m.id) FROM Message m " +
                         "WHERE ((m.userFrom = :firstUser AND m.userTo = :secondUser) " +
-                        "OR (m.userFrom = :secondUser AND m.userTo = :firstUser))"+
-                        "AND m.isSeen=false ")
+                        "AND m.isSeen=false )")
         int CountMessageBetweenTwoUserIsSeen(@Param("firstUser") User firstUser,
                         @Param("secondUser") User secondUser);
 

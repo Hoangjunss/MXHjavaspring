@@ -18,9 +18,18 @@ stompClient.connect({}, function(frame) {
 
     // Đăng ký để nhận tin nhắn mới từ hàng đợi `/user/queue/messages`
     stompClient.subscribe('/user/queue/messages', function(message) {
-        var chatMessage = JSON.parse(message.body); // Parse dữ liệu JSON từ tin nhắn
+        try{
+        console.log("Received message: ", message.body); // In toàn bộ thông điệp nhận được
+    var chatMessage = JSON.parse(message.body);
+    console.log("Parsed message userFrom id: ", chatMessage.userFrom.id);
+  
+        
+        console.log("Message userFrom id: ", chatMessage.userFrom.id);// Parse dữ liệu JSON từ tin nhắn
         displayChatMessage(chatMessage); // Hiển thị tin nhắn trong khung chat
-        displayChatMessageFrame(chatMessage); // Cập nhật liên hệ trong danh sách liên hệ
+        displayChatMessageFrame(chatMessage); 
+    } catch (e) {
+        console.error("Error parsing message body: ", e);
+    }// Cập nhật liên hệ trong danh sách liên hệ
     });
 
     // Đăng ký để nhận thông báo từ hàng đợi `/queue/active` (nếu cần)
@@ -71,7 +80,13 @@ function sendMessage() {
 function displayChatMessage(message) {
 
     var inputElement = $('input[type="hidden"][data-messages-user="' + message.userFrom.id + '"]');
-    if(inputElement.length>0){
+    $('input[type="hidden"]').each(function() {
+        console.log("Existing input element with data-messages-user: ", $(this).attr('data-messages-user'));
+    });
+    console.log("Message userFrom id: ", message.userFrom.id);
+    console.log(inputElement);
+    if(inputElement.length){
+        console.log("11");
         seenMessage(message.id);
         var chatContent = $('<li class="contentmessage message-receive">');
     var image = $('<img src="images/users/user-1.jpg" alt="Conversation user image" />');
@@ -86,10 +101,10 @@ function displayChatMessage(message) {
 function displayChatMessageFrame(message) {
     // Tìm thẻ li có data-user-id tương ứng
     const countMessageNotSeen = $('span.unread-messages[data-id="' + message.id + '"]');
-    if(countMessageNotSeen){
+    if(countMessageNotSeen.length>0){
         // Retrieve the current text content and try to parse it as an integer
         let messageCount = parseInt(countMessageNotSeen.text(), 10);
-
+        console.log('hello');
         // Debugging: Log the initial value and the result of parseInt
         // Check if the parsing resulted in NaN
         if (isNaN(messageCount)) {
@@ -100,9 +115,18 @@ function displayChatMessageFrame(message) {
         messageCount += 1;
         countMessageNotSeen.text(messageCount);
     }else{
-        console.log('Element not found for message.id:', message.id);
-        var contact = $('<li class="contact" data-user-id="' + message.id + '">');
-        contact.append('<span class="unread-messages">'+message.countMessageNotSeen+'</span>');
+        var inputElement = $('input[type="hidden"][data-messages-user="' + message.userFrom.id + '"]');
+        if(inputElement.length==0){
+            console.log('Element not found for message.id:', message.id);
+            var contact = $('li.contact[data-user-id="' + message.id + '"]').find('.wrap');
+            console.log(contact);
+            var unreadMessageSpan = $('<span class="unread-messages" data-id="' + message.id + '">1</span>');
+    
+            // Thêm span vào trong li.contact
+            contact.append(unreadMessageSpan);
+            console.log(contact);
+        }
+       
     }
 
     var contact = $('li.contact[data-user-id="' + message.id + '"]');
