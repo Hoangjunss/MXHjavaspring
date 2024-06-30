@@ -20,7 +20,7 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
                         "OR (m.userFrom = :secondUser AND m.userTo = :firstUser) " +
                         "ORDER BY m.createAt ASC")
         List<Message> findAllMessagesBetweenTwoUsers(@Param("firstUser") User firstUser,
-                        @Param("secondUser") User secondUser);
+                        @Param("secondUser") User secondUser); 
 
                 @Query("SELECT m FROM Message m WHERE m.content LIKE %?1 ")
         List<Message> findByContentLike(String content);

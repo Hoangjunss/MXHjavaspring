@@ -44,10 +44,10 @@ public class MessageController {
     @Autowired
     private RelationshipService relationshipService;
 
-    // Lấy đoạn tin nhắn của 2 user
+    // Lấy đoạn tin nhắn của 2 user 
     @GetMapping("/send")
-    public String getMessagePage(@RequestParam Long id, Model model, Principal principal) {
-        // Lất user đang login
+    public String getMessagePage(@RequestParam Long id, Model model, Principal principal) { // id là id của user cần nhắn tin với user đang login hiện tại 
+        // Lấy user đang login
         UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
         User user1 = userService.findByEmail(userDetails.getUsername());
         // Tìm user theo id
@@ -174,6 +174,7 @@ public class MessageController {
                     relationshipDTOs.add(dto);
                 }
             }
+            
         }
         // Sắp xếp danh sách theo ngày nhắn gần nhất
         relationshipDTOs = relationshipService.orderByCreateAt(relationshipDTOs);

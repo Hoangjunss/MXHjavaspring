@@ -28,7 +28,7 @@ public class MessageServiceImpl implements MessageService {
     private SocketWeb socketWeb;
 
     @Override
-    public List<Message> messageFromUser(User userFrom, User userTo) {
+    public List<Message> messageFromUser(User userFrom, User userTo) { 
         // Truy vấn và trả về tất cả tin nhắn giữa hai người dùng
         return messageRepository.findAllMessagesBetweenTwoUsers(userFrom, userTo);
     }
@@ -80,9 +80,21 @@ public class MessageServiceImpl implements MessageService {
             List<Message> messages = messageRepository.findAllMessagesBetweenTwoUsers(userFrom, userTo);
             // Lấy tin nhắn gần nhất
             Message message = messages.get(messages.size() - 1);
+<<<<<<< HEAD
             // Trả về tin nhắn gần nhất, hoặc null nếu không có tin nhắn
             return messages.isEmpty() ? null : message;
         
+=======
+            // Trả về tin nhắn gần nhất hoặc null nếu không có tin nhắn nào
+            return messages.isEmpty() ? null : message; // Nếu messages.isEmpty() == true thì trả về null, ngược lại trả về message
+        } catch (EntityNotFoundException e) {
+            // Xử lý ngoại lệ nếu không tìm thấy tin nhắn
+            throw new CustomException(ErrorCode.MESSAGE_NOT_FOUND);
+        } catch (Exception e) {
+            // Xử lý các ngoại lệ khác
+            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+        }
+>>>>>>> 7f4ad6663775304a7a7f11d2581c5b13a1c382ef
     }
 
     //Loi khong xac dinh
@@ -100,12 +112,18 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
+<<<<<<< HEAD
     public int CountMessageBetweenTwoUserIsSeen(User user, User user2) {
        if(  messageRepository.CountMessageBetweenTwoUserIsSeen(user, user2)>0){
         return messageRepository.CountMessageBetweenTwoUserIsSeen(user, user2);
        }else{
         return 0;
        }
+=======
+    public int CountMessageBetweenTwoUserIsSeen(User user, User user2) { // Đếm số tin nhắn chưa đọc giữa hai người dùng
+        // Truy vấn và trả về số tin nhắn chưa đọc giữa hai người dùng
+        return messageRepository.CountMessageBetweenTwoUserIsSeen(user, user2); 
+>>>>>>> 7f4ad6663775304a7a7f11d2581c5b13a1c382ef
     }
 
     @Override

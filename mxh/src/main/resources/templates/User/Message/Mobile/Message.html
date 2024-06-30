@@ -31,13 +31,13 @@
                         <button type="button" class="btn btn-create-conversation" data-toggle="modal" data-target="#newConversation"><i class='bx bx-pencil'></i></button>
                     </div>
                     <div class="message-contacts">
-                        <ul class="conversations">
+                        <ul class="conversations" id="contact-list">
                             <li th:each="relationship : ${relationships}" th:data-user-id="${relationship.id}" class="contact" >
                                 <a th:href="@{/chatmobile(id=${relationship.idUser})}" style="text-decoration: none;">
                                     <div class="wrap">
                                         <span class="contact-status online"></span>
                                         <img th:src="@{/images/users/user-1.jpg}" alt="Conversation user" />
-                                        <span th:if="${relationship.countMessageNotSeen}>0" class="unread-messages" th:data-id="${relationship.id}"  th:text="${relationship.countMessageNotSeen}"></span>
+                                        <span th:if="${relationship.countMessageNotSeen > 0}" class="unread-messages" th:data-id="${relationship.id}" th:text="${relationship.countMessageNotSeen}"></span>
                                         <div class="meta">
                                             <p th:if="${relationship.name}" class="name" th:text="${relationship.name}"></p>
                                             <p th:if="${relationship.content}" class="preview" th:text="${relationship.content}"></p>
