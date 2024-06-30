@@ -44,7 +44,7 @@ public class RelationshipServiceImpl implements RelationshipService {
     }
 
     @Override
-    public List<Relationship> findAllByUserOne(User user1) {
+    public List<Relationship> findAllByUserOne(User user1) { // Truy vấn và trả về tất cả mối quan hệ mà user1 tham gia
         try {
             return relationshipRepository.findAllByUserOneId(user1);
         } catch (EntityNotFoundException e) { //EntityNotFoundException xảy ra khi không tìm thấy một thực thể (entity) cụ thể trong cơ sở dữ liệu.
@@ -56,9 +56,9 @@ public class RelationshipServiceImpl implements RelationshipService {
     }
 
     @Override
-    public Relationship findById(Long id) {
+    public Relationship findById(Long id) { // Truy vấn và trả về mối quan hệ với id tương ứng
         Optional<Relationship> relationship = relationshipRepository.findById(id);
-        if (relationship.isPresent()) {
+        if (relationship.isPresent()) { 
             return relationship.get();
         } else {
             throw new CustomException(ErrorCode.RELATIONSHIP_NOT_FOUND);
@@ -66,7 +66,7 @@ public class RelationshipServiceImpl implements RelationshipService {
     }
 
     @Override
-    public Relationship findRelationship(User userOne, User userTwo) {
+    public Relationship findRelationship(User userOne, User userTwo) { // Truy vấn và trả về mối quan hệ giữa hai user
         Relationship relationship = relationshipRepository.findRelationship(userOne, userTwo);
         if (relationship != null) {
             return relationship;
@@ -81,9 +81,9 @@ public class RelationshipServiceImpl implements RelationshipService {
     }
 
     @Override
-    public List<Relationship> findAllByUserOneId(User user) {
+    public List<Relationship> findAllByUserOneId(User user) { // Truy vấn và trả về tất cả mối quan hệ mà user tham gia
         try {
-            StatusRelationship status = statusService.findById(2L);
+            StatusRelationship status = statusService.findById(2L); 
             System.out.println(status.getStatus()+ "RELATIONSHIP SEARCH STATUS");
             return relationshipRepository.findAllByUserOneId(user, status);
         } catch (EntityNotFoundException e) {
@@ -96,7 +96,7 @@ public class RelationshipServiceImpl implements RelationshipService {
     @Override
     public List<RelationshipDTO> orderByCreateAt(List<RelationshipDTO> relationships) {
         try {
-            relationships.sort(Comparator.comparing(RelationshipDTO::getCreateAt).reversed());
+            relationships.sort(Comparator.comparing(RelationshipDTO::getCreateAt).reversed()); // comparator.comparing(RelationshipDTO::getCreateAt).reversed() tạo ra một bộ so sánh các đối tượng RelationshipDTO dựa trên thời gian tạo và sắp xếp theo thời gian tạo giảm dần
             return relationships;
         } catch (Exception e) {
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);

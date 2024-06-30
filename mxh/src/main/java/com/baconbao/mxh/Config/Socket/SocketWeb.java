@@ -27,18 +27,19 @@ public class SocketWeb {
         messageDTO.setContent(message.getContent());
         messageDTO.setCreateAt(message.getCreateAt());
         messageDTO.setUserFrom(userMessageDTO);
-        simpMessagingTemplate.convertAndSendToUser(message.getUserTo().getEmail(), "/queue/messages", messageDTO);
+        simpMessagingTemplate.convertAndSendToUser(message.getUserTo().getEmail(), "/queue/messages", messageDTO);//Gửi tin nhắn đến userTo
+
     }
 
     public void setActive(User user) {
         UserDTO userDTO = new UserDTO();
         userDTO.setId(user.getId());
         userDTO.setIsActive(true);
-        simpMessagingTemplate.convertAndSend("/queue/active", userDTO);
+        simpMessagingTemplate.convertAndSend("/queue/active", userDTO); //Gửi thông báo active đến tất cả user
     }
 
     public void setSeen(Relationship relationship, User user) {
         
-        simpMessagingTemplate.convertAndSendToUser(user.getEmail(), "/queue/seen", relationship.getId());
+        simpMessagingTemplate.convertAndSendToUser(user.getEmail(), "/queue/seen", relationship.getId()); //Gửi thông báo seen đến user
     }
 }

@@ -84,32 +84,21 @@ function displayChatMessage(message) {
 
 // Cập nhật liên hệ trong danh sách liên hệ khi có tin nhắn mới
 function displayChatMessageFrame(message) {
-    // Tìm thẻ li có data-user-id tương ứng
     const countMessageNotSeen = $('span.unread-messages[data-id="' + message.id + '"]');
-    if(countMessageNotSeen){
-        // Retrieve the current text content and try to parse it as an integer
-        let messageCount = parseInt(countMessageNotSeen.text(), 10);
-
-        // Debugging: Log the initial value and the result of parseInt
-        // Check if the parsing resulted in NaN
-        if (isNaN(messageCount)) {
-            // Set the message count to 0 if parsing failed
-            messageCount = 0;
+    if (countMessageNotSeen.length > 0) {
+        var unreadBadge = countMessageNotSeen.find('.unread-messages');
+        if (unreadBadge.length > 0) {
+            var currentCount = parseInt(unreadBadge.text(), 10);
+            unreadBadge.text(currentCount + 1);
+        } else {
+            countMessageNotSeen.append('<span class="unread-messages">1</span>');
         }
-        // Increment the message count
-        messageCount += 1;
-        countMessageNotSeen.text(messageCount);
-    }else{
-        console.log('Element not found for message.id:', message.id);
-        var contact = $('<li class="contact" data-user-id="' + message.id + '">');
-        contact.append('<span class="unread-messages">'+message.countMessageNotSeen+'</span>');
     }
 
     var contact = $('li.contact[data-user-id="' + message.id + '"]');
     if (contact.length > 0) {
-        // Xóa thẻ li hiện tại và thêm vào đầu danh sách
         contact.remove();
-        contact.find('p.preview').text(message.content); // Cập nhật nội dung preview (nếu có)
+        contact.find('p.preview').text(message.content);
         $('ul.conversations').prepend(contact);
     }
 }
@@ -122,3 +111,4 @@ $(window).on('beforeunload', function() {
         async: false // Đồng bộ hóa yêu cầu
     });
 });
+
