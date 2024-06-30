@@ -100,7 +100,7 @@ function displayChatMessage(message) {
 // Cập nhật liên hệ trong danh sách liên hệ khi có tin nhắn mới
 function displayChatMessageFrame(message) {
     const countMessageNotSeen = $('span.unread-messages[data-id="' + message.id + '"]');
-<<<<<<< HEAD
+
     if(countMessageNotSeen.length>0){
         // Retrieve the current text content and try to parse it as an integer
         let messageCount = parseInt(countMessageNotSeen.text(), 10);
@@ -127,16 +127,7 @@ function displayChatMessageFrame(message) {
             console.log(contact);
         }
        
-=======
-    if (countMessageNotSeen.length > 0) {
-        var unreadBadge = countMessageNotSeen.find('.unread-messages');
-        if (unreadBadge.length > 0) {
-            var currentCount = parseInt(unreadBadge.text(), 10);
-            unreadBadge.text(currentCount + 1);
-        } else {
-            countMessageNotSeen.append('<span class="unread-messages">1</span>');
-        }
->>>>>>> 7f4ad6663775304a7a7f11d2581c5b13a1c382ef
+
     }
 
     var contact = $('li.contact[data-user-id="' + message.id + '"]');
