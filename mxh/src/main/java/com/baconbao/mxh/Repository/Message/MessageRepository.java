@@ -20,15 +20,14 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
                         "OR (m.userFrom = :secondUser AND m.userTo = :firstUser) " +
                         "ORDER BY m.createAt ASC")
         List<Message> findAllMessagesBetweenTwoUsers(@Param("firstUser") User firstUser,
-                        @Param("secondUser") User secondUser);
+                        @Param("secondUser") User secondUser); 
 
                 @Query("SELECT m FROM Message m WHERE m.content LIKE %?1 ")
         List<Message> findByContentLike(String content);
 
         @Query("SELECT count(m.id) FROM Message m " +
                         "WHERE ((m.userFrom = :firstUser AND m.userTo = :secondUser) " +
-                        "OR (m.userFrom = :secondUser AND m.userTo = :firstUser))"+
-                        "AND m.isSeen=false ")
+                        "AND m.isSeen=false )")
         int CountMessageBetweenTwoUserIsSeen(@Param("firstUser") User firstUser,
                         @Param("secondUser") User secondUser);
 

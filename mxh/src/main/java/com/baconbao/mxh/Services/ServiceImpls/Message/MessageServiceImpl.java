@@ -28,7 +28,7 @@ public class MessageServiceImpl implements MessageService {
     private SocketWeb socketWeb;
 
     @Override
-    public List<Message> messageFromUser(User userFrom, User userTo) {
+    public List<Message> messageFromUser(User userFrom, User userTo) { 
         // Truy vấn và trả về tất cả tin nhắn giữa hai người dùng
         return messageRepository.findAllMessagesBetweenTwoUsers(userFrom, userTo);
     }
@@ -75,20 +75,16 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public Message findLatestMessage(User userFrom, User userTo) {
-        try {
+        
             // Lấy tất cả tin nhắn giữa hai người dùng
             List<Message> messages = messageRepository.findAllMessagesBetweenTwoUsers(userFrom, userTo);
             // Lấy tin nhắn gần nhất
             Message message = messages.get(messages.size() - 1);
+
             // Trả về tin nhắn gần nhất, hoặc null nếu không có tin nhắn
             return messages.isEmpty() ? null : message;
-        } catch (EntityNotFoundException e) {
-            // Xử lý ngoại lệ nếu không tìm thấy tin nhắn
-            throw new CustomException(ErrorCode.MESSAGE_NOT_FOUND);
-        } catch (Exception e) {
-            // Xử lý các ngoại lệ khác
-            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
-        }
+        
+
     }
 
     //Loi khong xac dinh
@@ -106,8 +102,14 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
+
     public int CountMessageBetweenTwoUserIsSeen(User user, User user2) {
+       if(  messageRepository.CountMessageBetweenTwoUserIsSeen(user, user2)>0){
         return messageRepository.CountMessageBetweenTwoUserIsSeen(user, user2);
+       }else{
+        return 0;
+       }
+
     }
 
     @Override

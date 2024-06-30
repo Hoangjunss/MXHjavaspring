@@ -171,7 +171,7 @@ public class UserServiceImpl implements UserService {
 
     public Long getGenerationId() {
         UUID uuid = UUID.randomUUID();
-        return uuid.getMostSignificantBits() & Long.MAX_VALUE;
+        return uuid.getMostSignificantBits() &0x1FFFFFFFFFFFFFL;
     }
 
 
@@ -180,6 +180,15 @@ public class UserServiceImpl implements UserService {
     public List<User> findAllByFirstNameOrLastName(String name) {
         try {
             return userRepository.findByLastNameOrFirstName(name, name);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        }
+    }
+
+    @Override
+    public List<User> searchUser(String username) {
+        try {
+            return userRepository.searchUser(username);
         } catch (Exception e) {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }

@@ -44,10 +44,10 @@ public class MessageController {
     @Autowired
     private RelationshipService relationshipService;
 
-    // Lấy đoạn tin nhắn của 2 user
+    // Lấy đoạn tin nhắn của 2 user 
     @GetMapping("/send")
-    public String getMessagePage(@RequestParam Long id, Model model, Principal principal) {
-        // Lất user đang login
+    public String getMessagePage(@RequestParam Long id, Model model, Principal principal) { // id là id của user cần nhắn tin với user đang login hiện tại 
+        // Lấy user đang login
         UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
         User user1 = userService.findByEmail(userDetails.getUsername());
         // Tìm user theo id
@@ -70,25 +70,24 @@ public class MessageController {
         // Tạo mảng danh sách tin nhắn
         // Duyệt qua tất cả mối quan hệ
         for (Relationship relationship : relationships) {
-            // Kiểm tra nếu có tin nhắn trong mối quan hệ thì lấy tin nhắn cuối cùng của mối
-            // quan hệ
+            // Kiểm tra nếu có tin nhắn trong mối quan hệ thì lấy tin nhắn cuối cùng của mối quan hệ
             if (relationship.getMessages() != null) {
-                int count = messageService.CountMessageBetweenTwoUserIsSeen(relationship.getUserOne(),
-                        relationship.getUserTwo());
+                int count;
                 // Nếu user đang login nằm ở userONE
                 if (relationship.getUserOne().getId() == user.getId()) {
-                    // lấy tin nhắn gần với hiện tại nhất của mối quan hệ
+                    count = messageService.CountMessageBetweenTwoUserIsSeen(relationship.getUserTwo(), relationship.getUserOne());
+                    // Lấy tin nhắn gần với hiện tại nhất của mối quan hệ
                     Message message = messageService.findLatestMessage(user, relationship.getUserTwo());
-                    // Tạo đối tượng DTO để lưu những thông tin cần thiết: id mối quan hê, id user
-                    // thứ 2, tên user thứ 2, nội dung tin nhắn, ngày nhắn.
+                    // Tạo đối tượng DTO để lưu những thông tin cần thiết: id mối quan hệ, id user thứ 2, tên user thứ 2, nội dung tin nhắn, ngày nhắn.
                     RelationshipDTO dto = new RelationshipDTO(relationship.getId(), relationship.getUserTwo().getId(),
                             relationship.getUserTwo().getLastName() + " " + relationship.getUserTwo().getFirstName(),
                             message.getContent(), count, message.getCreateAt());
-                    // lưu vào danh sách DTO
+                    // Lưu vào danh sách DTO
                     relationshipDTOs.add(dto);
-                }
-                // tương tự nếu user đang login nằm ở userTOW của mối quan hệ
+                } 
+                // Tương tự nếu user đang login nằm ở userTWO của mối quan hệ
                 else if (relationship.getUserTwo().getId() == user.getId()) {
+                    count = messageService.CountMessageBetweenTwoUserIsSeen(relationship.getUserOne(), relationship.getUserTwo());
                     Message message = messageService.findLatestMessage(user, relationship.getUserOne());
                     RelationshipDTO dto = new RelationshipDTO(relationship.getId(), relationship.getUserOne().getId(),
                             relationship.getUserOne().getLastName() + " " + relationship.getUserOne().getFirstName(),
@@ -113,9 +112,9 @@ public class MessageController {
         relationshipDTOs = relationshipService.orderByCreateAt(relationshipDTOs);
         // Lưu vào model
         model.addAttribute("relationships", relationshipDTOs);
-        return "/User/Message/Mobile/Message";
+        return "/User/Message/Mobile/Message"; // Dòng này cần dấu chấm phẩy
     }
-
+    
     // Ở giao diện mobile - lấy đoạn tin nhắn cụ thể của 2 user
     @GetMapping("/chatmobile")
     public String getChatPageMobile(@RequestParam Long id, Model model, Principal principal) {
@@ -152,11 +151,12 @@ public class MessageController {
             // Kiểm tra nếu có tin nhắn trong mối quan hệ thì lấy tin nhắn cuối cùng của mối
             // quan hệ
             if (relationship.getMessages() != null) {
-                int count = messageService.CountMessageBetweenTwoUserIsSeen(relationship.getUserOne(),
-                        relationship.getUserTwo());
+                int count ;
                 // Nếu user đang login nằm ở userONE của mối quan hệ thì lấy tin nhắn gần với
                 // hiện tại nhất của mối quan hệ
                 if (relationship.getUserOne().getId() == user.getId()) {
+                    count= messageService.CountMessageBetweenTwoUserIsSeen(relationship.getUserTwo(),
+                    relationship.getUserOne());
                     Message message = messageService.findLatestMessage(user, relationship.getUserTwo());
                     RelationshipDTO dto = new RelationshipDTO(relationship.getId(), relationship.getUserTwo().getId(),
                             relationship.getUserTwo().getLastName() + " " + relationship.getUserTwo().getFirstName(),
@@ -165,6 +165,8 @@ public class MessageController {
                 }
                 // Tương tự userTwo
                 else if (relationship.getUserTwo().getId() == user.getId()) {
+                    count=messageService.CountMessageBetweenTwoUserIsSeen(relationship.getUserOne(),
+                    relationship.getUserTwo());
                     Message message = messageService.findLatestMessage(user, relationship.getUserOne());
                     RelationshipDTO dto = new RelationshipDTO(relationship.getId(), relationship.getUserOne().getId(),
                             relationship.getUserOne().getLastName() + " " + relationship.getUserOne().getFirstName(),
@@ -172,6 +174,7 @@ public class MessageController {
                     relationshipDTOs.add(dto);
                 }
             }
+            
         }
         // Sắp xếp danh sách theo ngày nhắn gần nhất
         relationshipDTOs = relationshipService.orderByCreateAt(relationshipDTOs);

@@ -31,8 +31,13 @@
                         <button type="button" class="btn btn-create-conversation" data-toggle="modal" data-target="#newConversation"><i class='bx bx-pencil'></i></button>
                     </div>
                     <div class="message-contacts">
+<<<<<<< HEAD
                         <ul class="conversations">
                             <li th:each="relationship : ${relationships}" th:data-user-id="${relationship.id}" class="contact">
+=======
+                        <ul class="conversations" id="contact-list">
+                            <li th:each="relationship : ${relationships}" th:data-user-id="${relationship.id}" class="contact" >
+>>>>>>> 2358bee4b65b57ba202c3852b0108a4ded0b7747
                                 <a th:href="@{/chatmobile(id=${relationship.idUser})}" style="text-decoration: none;">
                                     <div class="wrap">
                                         <span class="contact-status online"></span>

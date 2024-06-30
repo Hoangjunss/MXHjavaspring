@@ -30,5 +30,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
   List<User> findAllByFirstNameOrLastName(@Param("name") String name);
 
   List<User> findByLastNameOrFirstName(String firstName, String lastName);
-  
+
+  @Query("SELECT u FROM User u WHERE u.lastName LIKE CONCAT('%', :name, '%') ESCAPE '|'")
+  List<User> searchUser(String name);
+
 }

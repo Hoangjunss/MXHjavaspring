@@ -16,4 +16,5 @@ public interface UserService {
     void setIsOnline(User user);
     void setIsOffline(User user);
     List<User> findAllByFirstNameOrLastName(String name);
+    List<User> searchUser(String name);
 }

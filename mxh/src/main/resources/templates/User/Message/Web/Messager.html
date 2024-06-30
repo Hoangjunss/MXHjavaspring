@@ -228,7 +228,10 @@
                                                 <input type="hidden" th:value="${relationship.idUser}" class="user-id"/>
                                                 <span class="contact-status online"></span>
                                                 <img th:src="@{/images/users/user-1.jpg}" alt="Conversation user" />
-                                                <span th:if="${relationship.countMessageNotSeen}>0" class="unread-messages" th:text="${relationship.countMessageNotSeen}"></span>
+
+                                                <span th:if="${relationship.countMessageNotSeen}>0" class="unread-messages" th:data-id="${relationship.id}"  th:text="${relationship.countMessageNotSeen}"></span>
+
+                                                
                                                 <div class="meta">
                                                     <p th:if="${relationship.name}" class="name" th:text="${relationship.name}"></p>
                                                     <p th:if="${relationship.content}" class="preview" th:text="${relationship.content}"></p>
@@ -237,6 +240,7 @@
                                         </li>
                                     </ul>
                                 </div>
+                                
                             </div>
                             <div class="content">
                                 <div class="row">

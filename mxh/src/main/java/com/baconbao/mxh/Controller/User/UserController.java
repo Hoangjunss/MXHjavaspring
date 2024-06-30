@@ -197,15 +197,27 @@ public class UserController {
     // Lay danh sach ban be
     @GetMapping("/friends")
     public String getMethodNameString(Principal principal, Model model) {
-        // tim danh sach cua user dang dang nhap
-        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());// lấy ra cái email
+        // Lấy ra email của người dùng đang đăng nhập
+        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
         User user = userService.findByEmail(userDetails.getUsername());
-        // tim danh sach ban be cua user
+        // Tìm danh sách bạn bè của user
         List<Relationship> relationships = relationalService.findAllByUserOne(user);
-        // tra ve html danh sach ban be
-        model.addAttribute("relationships", relationships);
-        return "index";
+
+        // Tạo danh sách bạn bè từ relationships
+        List<User> friends = new ArrayList<>();
+        for (Relationship relationship : relationships) {
+            if (relationship.getUserOne().equals(user)) { // Nếu userOne là user hiện tại đang đăng nhập thì userTwo là bạn bè
+                friends.add(relationship.getUserTwo()); // Thêm userTwo vào danh sách bạn bè
+            } else {
+                friends.add(relationship.getUserOne()); // Ngược lại thì userOne là bạn bè
+            }
+        }
+        // Trả về HTML danh sách bạn bè
+        model.addAttribute("listfriend", friends);
+        return "seefriend";
     }
+
+
 
     // dat trang thai cua 2 user
     @PostMapping("/setfriend")
@@ -334,4 +346,39 @@ public class UserController {
         }
     }
 
+    @GetMapping("/hellosearch")
+    public String searchUserPage() {
+        return "searchuser";
+    }
+
+    // tìm kiếm bạn bè theo tên và hiển thị ra danh sách bạn bè
+    @GetMapping("/usersearch")
+public String searchUser(@RequestParam("username") String username, Model model, Principal principal) {
+    UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+    User user = userService.findByEmail(userDetails.getUsername());
+    List<User> users = userService.searchUser(username);
+    System.out.println("USER : "+users);
+    List<User> friends = new ArrayList<>();
+    List<User> notFriends = new ArrayList<>();
+
+    for (User u : users) {
+        Relationship relationship = relationalService.findRelationship(user, u);
+        if (relationship != null) {
+            if (relationship.getStatus().getId() == 4) {
+                notFriends.add(u);
+            } else {
+                friends.add(u);
+            }
+        } else {
+            notFriends.add(u);
+        }
+    }
+    model.addAttribute("friends", friends);
+    model.addAttribute("notFriends", notFriends);
+    return "searchuser";
+}
+
+
+
+    
 }

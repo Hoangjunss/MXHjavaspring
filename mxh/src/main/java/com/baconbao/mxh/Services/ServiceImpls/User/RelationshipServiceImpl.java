@@ -31,66 +31,54 @@ public class RelationshipServiceImpl implements RelationshipService {
 
     @Override
     public void addUser(Relationship relationship) {
-        try {
+        
             if (relationship.getId() == null) {
                 relationship.setId(getGenerationId());
             }
             relationshipRepository.save(relationship);
-        } catch (DataIntegrityViolationException e) { //DataIntegrityViolationException xảy ra khi cố gắng thực hiện một thao tác làm suy yếu tính toàn vẹn dữ liệu.
-            throw new CustomException(ErrorCode.RELATIONSHIP_NOT_SAVED);
-        } catch (Exception e) {
-            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
-        }
+       
     }
 
     @Override
+
     public List<Relationship> findAllByUserOne(User user1) {
-        try {
+      
+
             return relationshipRepository.findAllByUserOneId(user1);
-        } catch (EntityNotFoundException e) { //EntityNotFoundException xảy ra khi không tìm thấy một thực thể (entity) cụ thể trong cơ sở dữ liệu.
-
-            throw new CustomException(ErrorCode.RELATIONSHIP_NOT_FOUND);
-        } catch (Exception e) {
-            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
-        }
+       
     }
 
     @Override
-    public Relationship findById(Long id) {
+    public Relationship findById(Long id) { // Truy vấn và trả về mối quan hệ với id tương ứng
         Optional<Relationship> relationship = relationshipRepository.findById(id);
-        if (relationship.isPresent()) {
+        if (relationship.isPresent()) { 
             return relationship.get();
-        } else {
-            throw new CustomException(ErrorCode.RELATIONSHIP_NOT_FOUND);
-        }
+        } return null;
     }
 
     @Override
-    public Relationship findRelationship(User userOne, User userTwo) {
+    public Relationship findRelationship(User userOne, User userTwo) { // Truy vấn và trả về mối quan hệ giữa hai user
         Relationship relationship = relationshipRepository.findRelationship(userOne, userTwo);
         if (relationship != null) {
             return relationship;
-        } else {
-            throw new CustomException(ErrorCode.RELATIONSHIP_NOT_FOUND);
         }
+        return null;
     }
 
     public Long getGenerationId() {
         UUID uuid = UUID.randomUUID();
-        return uuid.getMostSignificantBits() & Long.MAX_VALUE;
+        return uuid.getMostSignificantBits() &0x1FFFFFFFFFFFFFL;
     }
 
     @Override
+
     public List<Relationship> findAllByUserOneId(User user) {
-        try {
-            StatusRelationship status = statusService.findById(2L);
+       
+            StatusRelationship status = statusService.findById(1L);
+
             System.out.println(status.getStatus()+ "RELATIONSHIP SEARCH STATUS");
             return relationshipRepository.findAllByUserOneId(user, status);
-        } catch (EntityNotFoundException e) {
-            throw new CustomException(ErrorCode.RELATIONSHIP_NOT_FOUND);
-        } catch(Exception e){
-            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
-        }
+      
     }
 
     @Override
@@ -102,17 +90,11 @@ public class RelationshipServiceImpl implements RelationshipService {
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
     }
-
     @Override
     public Relationship findByMessage(List<Message> messages) {
-        try {
+       
             return relationshipRepository.findByMessages(messages);
-        } catch (EntityNotFoundException e) {
-
-            throw new CustomException(ErrorCode.RELATIONSHIP_NOT_FOUND);
-        } catch (Exception e) {
-            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
-        }
+       
     }
 
 }
