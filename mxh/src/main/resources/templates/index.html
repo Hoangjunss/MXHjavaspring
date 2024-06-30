@@ -144,12 +144,13 @@
                             </li>
                             <li class="nav-item s-nav dropdown notification">
                                 <a href="#" class="nav-link nav-links rm-drop-mobile drop-w-tooltip" data-toggle="dropdown" data-placement="bottom" data-title="Notifications" role="button" aria-haspopup="true" aria-expanded="false">
-                                    <img th:src="@{/images/icons/navbar/notification.png}" class="notification-bell" alt="navbar icon"> <span class="badge badge-pill badge-primary">3</span>
+                                    <img th:src="@{/images/icons/navbar/notification.png}" class="notification-bell" alt="navbar icon">
+                                    <span th:if="${unreadCount > 0}" class="badge-pill badge-primary unread-messages" th:text="${unreadCount}"></span>
                                 </a>
                                 <ul class="dropdown-menu notify-drop dropdown-menu-right nav-drop shadow-sm">
                                     <div class="notify-drop-title">
                                         <div class="row">
-                                            <div class="col-md-6 col-sm-6 col-xs-6 fs-8">Notifications <span class="badge badge-pill badge-primary ml-2">3</span></div>
+                                            <div class="col-md-6 col-sm-6 col-xs-6 fs-8">Notifications <span th:if="${unreadCount > 0}" class="badge-pill badge-primary unread-messages" th:text="${unreadCount}"></span></div>
                                             <div class="col-md-6 col-sm-6 col-xs-6 text-right">
                                                 <a href="#" class="notify-right-icon">
                                                     Mark All as Read
@@ -161,25 +162,32 @@
                                     <!-- notify content -->
                                     <div class="drop-content">
                                         <!-- Start -->
-                                        <li>
+                                        <li th:each="notification : ${notifications}">
                                             <div class="col-md-2 col-sm-2 col-xs-2">
                                                 <div class="notify-img">
                                                     <img th:src="@{/images/users/user-10.png}" alt="notification user image">
                                                 </div>
                                             </div>
                                             <div class="col-md-10 col-sm-10 col-xs-10">
-                                                <a href="#" class="notification-user">Sean</a> <span class="notification-type">replied to your comment on a post in </span><a href="#" class="notification-for">PHP</a>
+                                                <a th:href="@{${notification.url}}" class="notification-user" th:text="${notification.user.firstName}"></a> 
+                                                <span class="notification-type" th:text="${notification.message}"></span>
                                                 <a href="#" class="notify-right-icon">
                                                     <i class='bx bx-radio-circle-marked'></i>
                                                 </a>
                                                 <p class="time">
-                                                    <span class="badge badge-pill badge-primary"><i class='bx bxs-group'></i></span> 3h
+                                                    <span class="badge badge-pill badge-primary"><i class='bx bxs-group'></i></span> 
+                                                    <!-- You can calculate and display time here -->
                                                 </p>
                                             </div>
                                         </li>
                                     </div>
+                                    <div class="notify-drop-footer text-center">
+                                        <a href="#">See More</a>
+                                    </div>
                                 </ul>
                             </li>
+                            
+                            
                             <li class="nav-item s-nav">
                                 <a href="profile.html" class="nav-link nav-links">
                                     <div class="menu-user-image">

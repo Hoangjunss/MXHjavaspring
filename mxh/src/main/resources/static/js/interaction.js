@@ -36,4 +36,35 @@ document.addEventListener("DOMContentLoaded", function() {
             });
         });
     });
+    const notificationItem = document.querySelector('.nav-item.s-nav.dropdown.notification');
+    const dropdownMenu = notificationItem.querySelector('.dropdown-menu');
+
+    notificationItem.addEventListener('click', (e) => {
+        e.preventDefault(); // Prevent default link behavior
+        markNotificationsAsRead();
+        dropdownMenu.classList.toggle('show');
+    });
+
+    // Close the dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!notificationItem.contains(e.target)) {
+            dropdownMenu.classList.remove('show');
+        }
+    });
 });
+
+function markNotificationsAsRead() {
+    fetch('/notificationsischecked', {
+        method: 'POST'
+    })
+    .then(response => {
+        if (response.ok) {
+            // Remove the unread messages count badge
+            const unreadMessagesBadge = document.querySelectorAll('.unread-messages');
+            unreadMessagesBadge.forEach(badge => badge.remove());
+        } else {
+            console.error('Failed to mark notifications as read.');
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}

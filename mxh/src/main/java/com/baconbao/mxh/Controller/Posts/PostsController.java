@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -31,6 +32,7 @@ import com.baconbao.mxh.Models.Post.Interaction;
 import com.baconbao.mxh.Models.Post.Post;
 import com.baconbao.mxh.Models.Post.ReplyComment;
 import com.baconbao.mxh.Models.Post.Status;
+import com.baconbao.mxh.Models.User.Notification;
 import com.baconbao.mxh.Models.User.User;
 import com.baconbao.mxh.Services.CloudinaryService;
 import com.baconbao.mxh.Services.Service.TestService;
@@ -41,6 +43,7 @@ import com.baconbao.mxh.Services.Service.Post.InteractionService;
 import com.baconbao.mxh.Services.Service.Post.PostService;
 import com.baconbao.mxh.Services.Service.Post.ReplyCommentService;
 import com.baconbao.mxh.Services.Service.Post.StatusService;
+import com.baconbao.mxh.Services.Service.User.NotificationService;
 import com.baconbao.mxh.Services.Service.User.UserService;
 
 import lombok.AllArgsConstructor;
@@ -70,15 +73,37 @@ public class PostsController {
     private ReplyCommentService replyCommentService;
     @Autowired
     private TestService testService;
+    @Autowired
+    private NotificationService notificationService;
 
     @GetMapping({ "/", " " })
-    public String getPosts(Model model) {
+    public String getPosts(Model model, Principal principal) {
+        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+        User user = userService.findByEmail(userDetails.getUsername());
+        List<Notification> notifications = notificationService.findByUser(user);
+        model.addAttribute("notifications", notifications);
+        int unreadCount = notificationService.countUncheckedNotifications(user);
+        model.addAttribute("unreadCount", unreadCount);
         List<Status> status = statusService.findAll();
         model.addAttribute("status", status);
         Status status1 = statusService.findById(1);
         List<Post> posts = postService.findByActiveAndStatus(true, status1);
         model.addAttribute("posts", posts);
         return "index";
+    }
+
+    @PostMapping("/notificationsischecked")
+    public ResponseEntity<?> markNotificationsAsRead(Principal principal) {
+        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+        User user = userService.findByEmail(userDetails.getUsername());
+        List<Notification> notifications = notificationService.findByUser(user);
+        for (Notification notification : notifications) {
+            if(!notification.isChecked()){
+                notification.setChecked(true);
+            notificationService.saveNotification(notification);
+            }
+        }
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/uploadpost")
@@ -175,17 +200,17 @@ public class PostsController {
         return "commentpost";
     }
 
-    //Đăng comment của post
+    // Đăng comment của post
     @PostMapping("/postComment")
     public String postComment(@RequestParam("id") Long id, @RequestParam("content") String content,
             Principal principal) {
-                //tim kiếm post hiện tại
+        // tim kiếm post hiện tại
         Post post = postService.findById(id);
         List<Comment> comments = post.getComments();
         Comment comment = new Comment();
         comment.setId(commentService.getGenerationId());
         comment.setContent(content);
-        //Tìm kiếm user hiện tại
+        // Tìm kiếm user hiện tại
         UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
         User user = userService.findByEmail(userDetails.getUsername());
         comment.setUserSend(user);
@@ -194,7 +219,7 @@ public class PostsController {
         commentService.save(comment);
         comments.add(comment);
         post.setComments(comments);
-        //Lưu comment của người dùng
+        // Lưu comment của người dùng
         postService.save(post);
         return "redirect:/getComment";
     }
@@ -203,9 +228,9 @@ public class PostsController {
     @PostMapping("/postReplyComment")
     public String postReplyComment(@RequestParam("id") Long id, @RequestParam("content") String content,
             Principal principal) {
-        //tìm comment được reply
+        // tìm comment được reply
         Comment comment = commentService.findById(id);
-        //Tạo đối tượng reply, lưu những thông tin cần thiết
+        // Tạo đối tượng reply, lưu những thông tin cần thiết
         ReplyComment replyComment = new ReplyComment();
         replyComment.setId(replyCommentService.getGenerationId());
         replyComment.setContent(content);
@@ -214,7 +239,7 @@ public class PostsController {
         UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
         User user = userService.findByEmail(userDetails.getUsername());
         replyComment.setUserSend(user);
-        //Lưu thông tin
+        // Lưu thông tin
         List<ReplyComment> replyComments = comment.getReplyComment();
         replyComments.add(replyComment);
         replyCommentService.save(replyComment);

@@ -37,6 +37,7 @@ import com.baconbao.mxh.Exceptions.ErrorCode;
 import com.baconbao.mxh.Models.VerifycationToken;
 import com.baconbao.mxh.Models.Post.Image;
 import com.baconbao.mxh.Models.User.About;
+import com.baconbao.mxh.Models.User.Notification;
 import com.baconbao.mxh.Models.User.Relationship;
 import com.baconbao.mxh.Models.User.StatusRelationship;
 import com.baconbao.mxh.Models.User.User;
@@ -45,6 +46,7 @@ import com.baconbao.mxh.Services.CloudinaryService;
 import com.baconbao.mxh.Services.Service.VerifycationTokenService;
 import com.baconbao.mxh.Services.Service.Post.ImageService;
 import com.baconbao.mxh.Services.Service.User.AboutService;
+import com.baconbao.mxh.Services.Service.User.NotificationService;
 import com.baconbao.mxh.Services.Service.User.RelationshipService;
 import com.baconbao.mxh.Services.Service.User.StatusRelationshipService;
 import com.baconbao.mxh.Services.Service.User.UserAboutService;
@@ -70,6 +72,8 @@ public class UserController {
     private AboutService aboutService;
     @Autowired
     private UserAboutService userAboutService;
+    @Autowired
+    private NotificationService notificationService;
 
     // Nhan trang edit dieu kien la "/editaccount"
     @GetMapping("/editaccount")
@@ -235,6 +239,12 @@ public class UserController {
         relationshipUser.setUserOne(user);
         relationshipUser.setUserTwo(friend);
         relationalService.addUser(relationshipUser);
+        Notification notification = new Notification();
+        notification.setMessage("You have a friend request from " + user.getFirstName() + " " + user.getLastName());
+        notification.setUser(friend);
+        notification.setChecked(false);
+        notification.setUrl("/friends");
+        notificationService.saveNotification(notification);
         return "redirect:/";
     }
 

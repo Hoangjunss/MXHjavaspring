@@ -48,6 +48,31 @@
     width: 30px;
 }
 
+.unread-messages {
+    position: absolute;
+    left: 2rem !important;
+    top: 1.6rem;
+    margin: -2px 0 0 -2px;
+    width: 18px !important;
+    height: 18px !important;
+    border-radius: 50%;
+    border: 1.5px solid #fff;
+    color: #fff;
+    font-weight: 700;
+    text-align: center;
+    background-color: red !important;
+    font-size: .5rem
+}
+
+.dropdown-menu {
+    display: none; /* Initially hide the dropdown menu */
+}
+
+.dropdown-menu.show {
+    display: block; /* Show the dropdown menu when the 'show' class is added */
+}
+
+
 .messages {
     padding: 5px 10px;
     border-radius: 20px;

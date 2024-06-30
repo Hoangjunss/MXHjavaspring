@@ -92,4 +92,8 @@ public class User {
         @OneToMany(mappedBy = "userSend")
         @JsonIgnore
         private List<ReplyComment> replyComments;
+
+        @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+        @JsonIgnore
+        private List<Notification> notifications;
 }

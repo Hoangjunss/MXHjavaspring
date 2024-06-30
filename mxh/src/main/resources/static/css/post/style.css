@@ -154,7 +154,7 @@ button:focus {
 }
 
 .search-input {
-    padding: .75rem 1rem;
+    padding: .50rem 1rem;
     border-width: 0;
     border-radius: 0;
     font-size: .8em;

@@ -263,14 +263,11 @@ public class MessageController {
 
         List<Message> messagesList = new ArrayList<>();
         messagesList.add(messages);
-
         messageService.sendMessage(messages);
-
         user.setToUserMessagesList(messagesList);
         userFrom.setFromUserMessagesList(messagesList);
         userService.saveUser(user);
         userService.saveUser(userFrom);
-
         return messages;
     }
 

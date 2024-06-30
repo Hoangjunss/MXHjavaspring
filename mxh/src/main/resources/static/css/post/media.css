@@ -356,7 +356,9 @@
 
     #navbar-main .dropdown-menu {
         position: absolute;
-        margin-left: -90px;
+        margin-left: -330px;
+        margin-top: 400px;
+        border-radius: 10% 0 10% 10%;
     }
 
     #navbar-main .navbar-brand {
