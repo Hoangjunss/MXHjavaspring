@@ -1,14 +1,72 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Tìm Kiếm Người Dùng</title>
     <script th:src="@{/js/searchuser.js}"></script>
 </head>
 <body>
-    <input type="text" id="searchInput" placeholder="Enter name to search">
-    <button id="searchButton">Search</button>
-    <div id="resultContainer"></div>
+    <h1>Tìm Kiếm Người Dùng</h1>
+    <form th:action="@{/usersearch}" method="get">
+        <input type="text" name="username" id="username" placeholder="Nhập tên người dùng">
+        <button type="submit">Tìm kiếm</button>
+    </form>
+    
+    <div id="list-friends">
+        <h2>Danh Sách Bạn Bè</h2>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Tên Đăng Nhập</th>
+                    <th>Họ Tên</th>
+                    <th>Email</th>
+                    <th>Số Điện Thoại</th>
+                    <th>Địa Chỉ</th>
+                    <th>Hành Động</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="friend : ${friends}">
+                    <td th:text="${friend.username}">Tên Đăng Nhập</td>
+                    <td th:text="${friend.fullname}">Họ Tên</td>
+                    <td th:text="${friend.email}">Email</td>
+                    <td th:text="${friend.phone}">Số Điện Thoại</td>
+                    <td th:text="${friend.address}">Địa Chỉ</td>
+                    <td>
+                        <button>Thêm Bạn</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <div id="list-not-friends">
+        <h2>Người Dùng Không Phải Bạn Bè</h2>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Tên Đăng Nhập</th>
+                    <th>Họ Tên</th>
+                    <th>Email</th>
+                    <th>Số Điện Thoại</th>
+                    <th>Địa Chỉ</th>
+                    <th>Hành Động</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="notFriend : ${notFriends}">
+                    <td th:text="${notFriend.username}">Tên Đăng Nhập</td>
+                    <td th:text="${notFriend.fullname}">Họ Tên</td>
+                    <td th:text="${notFriend.email}">Email</td>
+                    <td th:text="${notFriend.phone}">Số Điện Thoại</td>
+                    <td th:text="${notFriend.address}">Địa Chỉ</td>
+                    <td>
+                        <button>Thêm Bạn</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </body>
 </html>

@@ -184,4 +184,13 @@ public class UserServiceImpl implements UserService {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
     }
+
+    @Override
+    public List<User> searchUser(String username) {
+        try {
+            return userRepository.searchUser(username);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        }
+    }
 }
