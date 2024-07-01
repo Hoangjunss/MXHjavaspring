@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.core.io.Resource;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
@@ -235,6 +236,7 @@ public class UserController {
         if (relationshipUser == null) {
             // lay status co moi quan he la 1 de gan cho user
             status = statusRelationshipService.findById(1L);
+            relationshipUser = new Relationship();
         } else { // neu giua 2 user co quan he truoc do
                  // lay trang thai hien tai cua 2 user la gi
             status = relationshipUser.getStatus();
@@ -352,8 +354,8 @@ public class UserController {
     }
 
     // tìm kiếm bạn bè theo tên và hiển thị ra danh sách bạn bè
-    @GetMapping("/usersearch")
-public String searchUser(@RequestParam("username") String username, Model model, Principal principal) {
+    @PostMapping("/usersearch")
+public String searchUser(@RequestParam("username") String username, RedirectAttributes redirectAttributes, Model model, Principal principal) {
     UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
     User user = userService.findByEmail(userDetails.getUsername());
     List<User> users = userService.searchUser(username);
@@ -375,8 +377,13 @@ public String searchUser(@RequestParam("username") String username, Model model,
             notFriends.add(u);
         }
     }
-    model.addAttribute("friends", friends);
-    model.addAttribute("notFriends", notFriends);
+    redirectAttributes.addFlashAttribute("friends", friends);
+        redirectAttributes.addFlashAttribute("notFriends", notFriends);
+        return "redirect:/search";
+}
+@GetMapping("/search")
+public String showSearchResults(Model model) {
+    // Model sẽ chứa các thuộc tính từ RedirectAttributes trong phương thức POST
     return "searchuser";
 }
 
