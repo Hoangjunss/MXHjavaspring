@@ -51,6 +51,24 @@ document.addEventListener("DOMContentLoaded", function() {
             dropdownMenu.classList.remove('show');
         }
     });
+    const showCommentsButtons = document.querySelectorAll('.show-comments');
+
+    showCommentsButtons.forEach(button => {
+        button.addEventListener('click', function(event) {
+            event.preventDefault();
+
+            const postId = this.getAttribute('data-id'); // Lấy giá trị data-id từ button
+            const commentsSection = document.querySelector('.hide-comments[data-id="' + postId + '"]');
+
+            if (commentsSection.style.display === 'none' || commentsSection.style.display === '') {
+                commentsSection.style.display = 'block';
+                commentsSection.style.maxHeight = commentsSection.scrollHeight + 'px';
+            } else {
+                commentsSection.style.maxHeight = 0;
+                setTimeout(() => commentsSection.style.display = 'none', 300);
+            }
+        });
+    });
 });
 
 function markNotificationsAsRead() {

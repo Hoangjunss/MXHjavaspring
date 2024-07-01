@@ -17,13 +17,15 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public void save(Comment comment) {
+        if(comment.getId()==null){
+            comment.setId(getGenerationId());
+        }
         commentRepository.save(comment);
     }
 
-    @Override
     public Long getGenerationId() {
         UUID uuid = UUID.randomUUID();
-        return uuid.getMostSignificantBits() & Long.MAX_VALUE;
+        return uuid.getMostSignificantBits() &0x1FFFFFFFFFFFFFL;
     }
 
     @Override

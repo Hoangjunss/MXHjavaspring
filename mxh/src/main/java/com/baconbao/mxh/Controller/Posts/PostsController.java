@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -86,7 +85,7 @@ public class PostsController {
         model.addAttribute("unreadCount", unreadCount);
         List<Status> status = statusService.findAll();
         model.addAttribute("status", status);
-        Status status1 = statusService.findById(1);
+        Status status1 = statusService.findById(1); //LUU Y TIM STATUS
         List<Post> posts = postService.findByActiveAndStatus(true, status1);
         model.addAttribute("posts", posts);
         return "index";
@@ -191,37 +190,25 @@ public class PostsController {
         return "editpost";
     }
 
-    @GetMapping("/getComment")
-    public String getComment(Model model) {
-        Post post = postService.findById(741974051669362051L);
-        CommentDTO commentDTO = new CommentDTO();
-        model.addAttribute("post", post);
-
-        return "commentpost";
-    }
-
     // Đăng comment của post
-    @PostMapping("/postComment")
-    public String postComment(@RequestParam("id") Long id, @RequestParam("content") String content,
-            Principal principal) {
-        // tim kiếm post hiện tại
-        Post post = postService.findById(id);
-        List<Comment> comments = post.getComments();
-        Comment comment = new Comment();
-        comment.setId(commentService.getGenerationId());
-        comment.setContent(content);
-        // Tìm kiếm user hiện tại
+    @PostMapping("/commenter")
+    public String postComment(@RequestParam("content") String content, @RequestParam("postId") Long idPost, Principal principal) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
         User user = userService.findByEmail(userDetails.getUsername());
+        System.out.println(content+" comment" +" idPOST"+ idPost);
+
+        Post post = postService.findById(idPost);
+        Comment comment = new Comment();
+        comment.setContent(content);
         comment.setUserSend(user);
-        LocalDateTime localDateTime = LocalDateTime.now();
-        comment.setCreateAt(localDateTime);
-        commentService.save(comment);
+        comment.setCreateAt(LocalDateTime.now());
+
+        List<Comment> comments = post.getComments();
         comments.add(comment);
+        commentService.save(comment);
         post.setComments(comments);
-        // Lưu comment của người dùng
         postService.save(post);
-        return "redirect:/getComment";
+        return "redirect:/";
     }
 
     // Lấy phần trả lời bình luận theo id
