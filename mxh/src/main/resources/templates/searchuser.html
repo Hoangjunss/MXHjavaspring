@@ -8,7 +8,7 @@
 </head>
 <body>
     <h1>Tìm Kiếm Người Dùng</h1>
-    <form th:action="@{/usersearch}" method="get">
+    <form th:action="@{/usersearch}" method="post">
         <input type="text" name="username" id="username" placeholder="Nhập tên người dùng">
         <button type="submit">Tìm kiếm</button>
     </form>
@@ -46,7 +46,10 @@
                 <tr th:each="notFriend : ${notFriends}">
                     <td th:text="${notFriend.firstName} + ' ' + ${notFriend.lastName}">Họ Tên</td>
                     <td>
-                        <button>Thêm Bạn</button> <!-- Replace with appropriate action -->
+                        <form th:action="@{/setfriend}" method="post">
+                            <input type="hidden" name="id" th:value="${notFriend.id}">
+                            <button type="submit">Thêm Bạn</button></form>
+                        <!-- Replace with appropriate action -->
                     </td>
                 </tr>
             </tbody>
