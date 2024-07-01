@@ -22,6 +22,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
@@ -54,6 +55,7 @@ import com.baconbao.mxh.Services.Service.User.UserAboutService;
 import com.baconbao.mxh.Services.Service.User.UserService;
 
 @Controller
+@RequestMapping("/")
 public class UserController {
     @Autowired
     private UserService userService;
@@ -195,6 +197,41 @@ public class UserController {
                 .body(resource);
     }
 
+    // Lấy số lượng lời mời kết bạn
+    public int getFriendCount(User user) {
+        List<Relationship> relationships = relationalService.findAllByUserOne(user);
+        List<User> friends = new ArrayList<>();
+        for (Relationship relationship : relationships) {
+            if (relationship.getStatus().getId() == 2) { 
+                if (relationship.getUserOne().equals(user)) {
+                    friends.add(relationship.getUserTwo());
+                } else {
+                    friends.add(relationship.getUserOne());
+                }
+            }
+        }
+        return friends.size();
+    }
+
+    @GetMapping("/resources/templates/index.html")
+    public String getAnotherPage(Principal principal, Model model, RedirectAttributes redirectAttributes) {
+    
+    UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+    User user = userService.findByEmail(userDetails.getUsername());
+
+    // Đếm số lượng bạn bè
+    int count = getFriendCount(user);
+
+    // Truyền dữ liệu sang html
+    model.addAttribute("count", count);
+
+    System.out.println("Count: " + count);
+
+    return "index";
+}
+
+    
+
     // Lay danh sach ban be
     @GetMapping("/friends")
     public String getMethodNameString(Principal principal, Model model) {
@@ -204,8 +241,23 @@ public class UserController {
         // Tìm danh sách bạn bè của user
         List<Relationship> relationships = relationalService.findAllByUserOne(user);
 
+        List<User> notFriends = new ArrayList<>(); // Danh sách không phải bạn bè
+        // Tìm ra những người không phải bạn bè
+        for(Relationship relationship : relationships) {
+            if (relationship != null) {
+                if (relationship.getStatus().getId() == 4 || relationship.getStatus().getId() == 1 ){
+                    if (relationship.getUserOne().equals(user)) {
+                        notFriends.add(relationship.getUserTwo());
+                    } else {
+                        notFriends.add(relationship.getUserOne());
+                    }
+                }
+            }
+        }
+
+
         // Tạo danh sách bạn bè từ relationships
-        List<User> friends = new ArrayList<>();
+        List<User> friends = new ArrayList<>(); // Danh sách bạn bè
         for (Relationship relationship : relationships) {
             if (relationship.getUserOne().equals(user)) { // Nếu userOne là user hiện tại đang đăng nhập thì userTwo là bạn bè
                 friends.add(relationship.getUserTwo()); // Thêm userTwo vào danh sách bạn bè
@@ -213,8 +265,18 @@ public class UserController {
                 friends.add(relationship.getUserOne()); // Ngược lại thì userOne là bạn bè
             }
         }
+
+        // Số lượng bạn bè
+        int count = getFriendCount(user);
+        // Trả về HTML danh sách bạn bè
+        model.addAttribute("count", count);
+
         // Trả về HTML danh sách bạn bè
         model.addAttribute("listfriend", friends);
+        // Trả về HTML danh sách không phải bạn bè
+        model.addAttribute("listnotFriends", notFriends);
+
+        System.out.println("Not Friends: " + notFriends);
         return "seefriend";
     }
 

@@ -15,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -49,6 +50,7 @@ import lombok.AllArgsConstructor;
 
 @Controller
 @AllArgsConstructor
+@RequestMapping("/")
 public class PostsController {
     @Autowired
     private PostService postService;
@@ -77,7 +79,7 @@ public class PostsController {
 
     @GetMapping({ "/", " " })
     public String getPosts(Model model, Principal principal) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());// Lấy ra email của người dùng đang đăng nhập
         User user = userService.findByEmail(userDetails.getUsername());
         List<Notification> notifications = notificationService.findByUser(user);
         model.addAttribute("notifications", notifications);
