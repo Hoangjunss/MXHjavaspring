@@ -53,6 +53,7 @@ public class PostServiceImpl implements PostService {
             if (post.getId() == null) {
                 post.setId(getGenerationId());
             }
+            System.out.println("POST SAVE SERVICE");
             postRepository.save(post);
         } catch (DataIntegrityViolationException e) {
             throw new CustomException(ErrorCode.POST_NOT_SAVED);

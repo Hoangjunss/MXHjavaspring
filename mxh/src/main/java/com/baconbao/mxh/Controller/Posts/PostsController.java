@@ -80,7 +80,8 @@ public class PostsController {
 
     @GetMapping({ "/", " " })
     public String getPosts(Model model, Principal principal) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());// Lấy ra email của người dùng đang đăng nhập
+        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());// Lấy ra email của người
+                                                                                             // dùng đang đăng nhập
         User user = userService.findByEmail(userDetails.getUsername());
         List<Notification> notifications = notificationService.findByUser(user);
         model.addAttribute("notifications", notifications);
@@ -200,6 +201,7 @@ public class PostsController {
         try {
             String content = (String) payload.get("content");
             Long idPost = Long.valueOf((String) payload.get("postId"));
+            System.out.println(content + " " + idPost);
 
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
             User user = userService.findByEmail(userDetails.getUsername());
@@ -208,8 +210,8 @@ public class PostsController {
             if (post == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Post not found");
             }
-            System.out.println(post.getId()+" IDPOST");
-            System.out.println(content+" CONTENT");
+            System.out.println(post.getId() + " IDPOST");
+            System.out.println(content + " CONTENT");
             Comment comment = new Comment();
             comment.setContent(content);
             comment.setUserSend(user);
@@ -221,15 +223,24 @@ public class PostsController {
 
             post.setComments(comments);
             postService.save(post);
-
-            response.put("content", comment);
-
+            if (user.getId() != post.getUser().getId()) {
+                Notification notification = new Notification();
+                notification.setChecked(false);
+                notification.setMessage(user.getFirstName() + " " + user.getLastName() + " commented on your post");
+                notification.setUser(post.getUser());
+                notification.setUrl("/postdetails");
+                notificationService.saveNotification(notification);
+            }
+            response.put("success", true);
+            response.put("comment", comment);
             return ResponseEntity.ok(response);
         } catch (NumberFormatException | NullPointerException e) {
             e.printStackTrace();
+            response.put("success", false);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid request");
         } catch (Exception e) {
             e.printStackTrace();
+            response.put("success", false);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Server error");
         }
     }

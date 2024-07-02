@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.baconbao.mxh.Config.Socket.SocketWeb;
 import com.baconbao.mxh.Models.User.Notification;
 import com.baconbao.mxh.Models.User.User;
 import com.baconbao.mxh.Repository.User.NotificationReponsitory;
@@ -16,6 +17,8 @@ import com.baconbao.mxh.Services.Service.User.NotificationService;
 public class NotificationServiceImpl implements NotificationService{
     @Autowired
     private NotificationReponsitory notificationRepository;
+    @Autowired
+    private SocketWeb socketWeb;
 
     @Override
     public Notification findById(Long id) {
@@ -41,8 +44,11 @@ public class NotificationServiceImpl implements NotificationService{
     public void saveNotification(Notification notification) {
         if (notification.getId()==null) {
             notification.setId(getGenerationId());
+            notificationRepository.save(notification);
+            socketWeb.sendFriendRequestNotification(notification);
+        }else{
+            notificationRepository.save(notification);
         }
-        notificationRepository.save(notification);
     }
 
     public Long getGenerationId() {

@@ -9,6 +9,7 @@ import com.baconbao.mxh.Models.Post.Post;
 import com.baconbao.mxh.Models.Post.Status;
 
 
+
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findByIsActiveAndStatusOrderByCreateAtDesc(boolean active, Status status);

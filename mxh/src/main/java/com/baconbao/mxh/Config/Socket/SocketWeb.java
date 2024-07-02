@@ -8,6 +8,7 @@ import com.baconbao.mxh.DTO.MessageDTO;
 import com.baconbao.mxh.DTO.UserDTO;
 import com.baconbao.mxh.DTO.UserMessageDTO;
 import com.baconbao.mxh.Models.Message.Message;
+import com.baconbao.mxh.Models.User.Notification;
 import com.baconbao.mxh.Models.User.Relationship;
 import com.baconbao.mxh.Models.User.User;
 import com.baconbao.mxh.Services.Service.User.RelationshipService;
@@ -28,7 +29,6 @@ public class SocketWeb {
         messageDTO.setCreateAt(message.getCreateAt());
         messageDTO.setUserFrom(userMessageDTO);
         simpMessagingTemplate.convertAndSendToUser(message.getUserTo().getEmail(), "/queue/messages", messageDTO);//Gửi tin nhắn đến userTo
-
     }
 
     public void setActive(User user) {
@@ -43,12 +43,8 @@ public class SocketWeb {
         simpMessagingTemplate.convertAndSendToUser(user.getEmail(), "/queue/seen", relationship.getId()); //Gửi thông báo seen đến user
     }
 
-    public void sendFriendRequestNotification(User fromUser, User toUser) {
-        NotificationDTO notificationDTO = new NotificationDTO();
-        notificationDTO.setFromUser(fromUser);
-        notificationDTO.setToUser(toUser);
-        notificationDTO.setMessage("You have a new friend request from " + fromUser.getFirstName());
-        notificationDTO.setUrl("/friend-requests"); // URL to the friend requests page
-        simpMessagingTemplate.convertAndSendToUser(toUser.getEmail(), "/queue/friend-requests", notificationDTO);
+    public void sendFriendRequestNotification(Notification notification) {
+        System.out.println(" SOCKETWEB NOTIFICATION");
+        simpMessagingTemplate.convertAndSendToUser(notification.getUser().getEmail(), "/queue/addfriend", notification);
     }
 }

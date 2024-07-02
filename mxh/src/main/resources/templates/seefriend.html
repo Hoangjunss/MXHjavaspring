@@ -131,6 +131,10 @@ h3 {
 }
 
     </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.4.0/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+    <script th:src="@{/js/Socket.js}"></script>
 </head>
 <body>
     <div class="container">
@@ -163,8 +167,11 @@ h3 {
                     <div class="friend-info">
                         <p class="name" th:text="${notFriend.firstName} + ' ' + ${notFriend.lastName}"></p>
                         <p class="mutual-friends">4 bạn chung</p>
-                        <button class="btn confirm">Xác nhận</button>
-                        <button class="btn delete">Xóa</button>
+                        <form>
+                            <input type="hidden" id="idUser" name="id" th:value="${notFriend.id}">
+                            <button class="btn confirm" type="button" onclick="sendAddFriend()">Chấp Nhận</button>
+                        </form>
+                        <button class="btn delete">Ẩn</button>
                     </div>
                 </div>
             </li>

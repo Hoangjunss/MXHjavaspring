@@ -100,7 +100,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 <strong class="text-gray-dark"><a href="#" class="fs-8">${data.comment.userSend.firstName} ${data.comment.userSend.lastName}</a></strong>
                                 <a href="#"><i class='bx bx-dots-horizontal-rounded'></i></a>
                             </div>
-                            <span class="d-block comment-created-time">${data.comment.createdTime}</span>
+                            <span class="d-block comment-created-time">30min ago</span>
                             <p class="fs-8 pt-2">${data.comment.content}</p>
                             <div class="commentLR">
                                 <button type="button" class="btn btn-link fs-8">Like</button>
@@ -108,7 +108,6 @@ document.addEventListener("DOMContentLoaded", function() {
                             </div>
                         </div>
                     `;
-    
                     // Thêm comment mới vào danh sách các comment
                     const commentsList = form.closest('.media').nextElementSibling;
                     commentsList.insertBefore(newComment, commentsList.firstChild);

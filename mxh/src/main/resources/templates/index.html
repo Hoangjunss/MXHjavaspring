@@ -156,8 +156,8 @@
                             <li class="nav-item s-nav dropdown notification">
                                 <a href="#" class="nav-link nav-links rm-drop-mobile drop-w-tooltip" data-toggle="dropdown" data-placement="bottom" data-title="Notifications" role="button" aria-haspopup="true" aria-expanded="false">
                                     <img th:src="@{/images/icons/navbar/notification.png}" class="notification-bell" alt="navbar icon">
-                                    <span th:if="${unreadCount > 0}" class="badge-pill badge-primary unread-messages" th:text="${unreadCount}"></span>
-                                </a>
+                                    <span th:if="${unreadCount > 0}" id="quantityNotification" class="badge-pill badge-primary unread-messages" th:text="${unreadCount}"></span>
+                                </a>                                
                                 <ul class="dropdown-menu notify-drop dropdown-menu-right nav-drop shadow-sm">
                                     <div class="notify-drop-title">
                                         <div class="row">
@@ -197,8 +197,6 @@
                                     </div>
                                 </ul>
                             </li>
-                            
-                            
                             <li class="nav-item s-nav">
                                 <a href="profile.html" class="nav-link nav-links">
                                     <div class="menu-user-image">

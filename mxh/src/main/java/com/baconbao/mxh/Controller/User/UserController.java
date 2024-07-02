@@ -14,6 +14,9 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
@@ -202,7 +205,7 @@ public class UserController {
         List<Relationship> relationships = relationalService.findAllByUserOne(user);
         List<User> friends = new ArrayList<>();
         for (Relationship relationship : relationships) {
-            if (relationship.getStatus().getId() == 2) { 
+            if (relationship.getStatus().getId() == 2) {
                 if (relationship.getUserOne().equals(user)) {
                     friends.add(relationship.getUserTwo());
                 } else {
@@ -215,22 +218,20 @@ public class UserController {
 
     @GetMapping("/resources/templates/index.html")
     public String getAnotherPage(Principal principal, Model model, RedirectAttributes redirectAttributes) {
-    
-    UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
-    User user = userService.findByEmail(userDetails.getUsername());
 
-    // Đếm số lượng bạn bè
-    int count = getFriendCount(user);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+        User user = userService.findByEmail(userDetails.getUsername());
 
-    // Truyền dữ liệu sang html
-    model.addAttribute("count", count);
+        // Đếm số lượng bạn bè
+        int count = getFriendCount(user);
 
-    System.out.println("Count: " + count);
+        // Truyền dữ liệu sang html
+        model.addAttribute("count", count);
 
-    return "index";
-}
+        System.out.println("Count: " + count);
 
-    
+        return "index";
+    }
 
     // Lay danh sach ban be
     @GetMapping("/friends")
@@ -243,9 +244,9 @@ public class UserController {
 
         List<User> notFriends = new ArrayList<>(); // Danh sách không phải bạn bè
         // Tìm ra những người không phải bạn bè
-        for(Relationship relationship : relationships) {
+        for (Relationship relationship : relationships) {
             if (relationship != null) {
-                if (relationship.getStatus().getId() == 4 || relationship.getStatus().getId() == 1 ){
+                if (relationship.getStatus().getId() == 4 || relationship.getStatus().getId() == 1) {
                     if (relationship.getUserOne().equals(user)) {
                         notFriends.add(relationship.getUserTwo());
                     } else {
@@ -255,11 +256,11 @@ public class UserController {
             }
         }
 
-
         // Tạo danh sách bạn bè từ relationships
         List<User> friends = new ArrayList<>(); // Danh sách bạn bè
         for (Relationship relationship : relationships) {
-            if (relationship.getUserOne().equals(user)) { // Nếu userOne là user hiện tại đang đăng nhập thì userTwo là bạn bè
+            if (relationship.getUserOne().equals(user)) { // Nếu userOne là user hiện tại đang đăng nhập thì userTwo là
+                                                          // bạn bè
                 friends.add(relationship.getUserTwo()); // Thêm userTwo vào danh sách bạn bè
             } else {
                 friends.add(relationship.getUserOne()); // Ngược lại thì userOne là bạn bè
@@ -280,8 +281,6 @@ public class UserController {
         return "seefriend";
     }
 
-
-
     // dat trang thai cua 2 user
     @PostMapping("/setfriend")
     public String setFriend(Principal principal, @RequestParam long id) {
@@ -295,7 +294,7 @@ public class UserController {
         Relationship relationshipUser = relationalService.findRelationship(user, friend);
         StatusRelationship status = new StatusRelationship();
         // neu giua 2 user khong co moi quan he
-        if (relationshipUser == null) {
+        if (relationshipUser.getStatus() == null) {
             // lay status co moi quan he la 1 de gan cho user
             status = statusRelationshipService.findById(1L);
             relationshipUser = new Relationship();
@@ -322,6 +321,45 @@ public class UserController {
         notification.setUrl("/friends");
         notificationService.saveNotification(notification);
         return "redirect:/";
+    }
+
+    @MessageMapping("/friend.add")
+    @SendTo("/queue/addfriend")
+    public Notification notificationAddFriend(@Payload Map<String, String> idUserMap, Principal principal) {
+        String idUser = idUserMap.get("idUser");
+        Long userId = Long.valueOf(idUser);
+
+        System.out.println(idUser+" IDUSERTWO");
+
+        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+        User user = userService.findByEmail(userDetails.getUsername());
+        User userTwo = userService.findById(userId);
+
+        Relationship relationshipUser = relationalService.findRelationship(user, userTwo);
+        StatusRelationship status = new StatusRelationship();
+
+        if (relationshipUser.getStatus() == null) {
+            status = statusRelationshipService.findById(1L);
+            relationshipUser = new Relationship();
+        } else {
+            status = relationshipUser.getStatus();
+            if (status.getId() == 4) {
+                status = statusRelationshipService.findById(1L);
+            } else {
+                status = statusRelationshipService.findById(status.getId() + 1);
+            }
+        }
+        relationshipUser.setStatus(status);
+        relationshipUser.setUserOne(user);
+        relationshipUser.setUserTwo(userTwo);
+        relationalService.addUser(relationshipUser);
+        Notification notification = new Notification();
+        notification.setMessage("You have a friend request from " + user.getFirstName() + " " + user.getLastName());
+        notification.setUser(userTwo);
+        notification.setChecked(false);
+        notification.setUrl("/friends");
+        notificationService.saveNotification(notification);
+        return notification;
     }
 
     @GetMapping("/hello")
@@ -417,39 +455,38 @@ public class UserController {
 
     // tìm kiếm bạn bè theo tên và hiển thị ra danh sách bạn bè
     @PostMapping("/usersearch")
-public String searchUser(@RequestParam("username") String username, RedirectAttributes redirectAttributes, Model model, Principal principal) {
-    UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
-    User user = userService.findByEmail(userDetails.getUsername());
-    List<User> users = userService.searchUser(username);
-    List<User> friends = new ArrayList<>();
-    List<User> notFriends = new ArrayList<>();
+    public String searchUser(@RequestParam("username") String username, RedirectAttributes redirectAttributes,
+            Model model, Principal principal) {
+        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+        User user = userService.findByEmail(userDetails.getUsername());
+        List<User> users = userService.searchUser(username);
+        List<User> friends = new ArrayList<>();
+        List<User> notFriends = new ArrayList<>();
 
-    for (User u : users) {
-        if (u.getId() == user.getId()) {
-            continue; // Bỏ qua user hiện tại
-        }
-        Relationship relationship = relationalService.findRelationship(user, u);
-        if (relationship != null) {
-            if (relationship.getStatus().getId() == 4) {
-                notFriends.add(u);
-            } else {
-                friends.add(u);
+        for (User u : users) {
+            if (u.getId() == user.getId()) {
+                continue; // Bỏ qua user hiện tại
             }
-        } else {
-            notFriends.add(u);
+            Relationship relationship = relationalService.findRelationship(user, u);
+            if (relationship != null) {
+                if (relationship.getStatus().getId() == 4) {
+                    notFriends.add(u);
+                } else {
+                    friends.add(u);
+                }
+            } else {
+                notFriends.add(u);
+            }
         }
-    }
-    redirectAttributes.addFlashAttribute("friends", friends);
+        redirectAttributes.addFlashAttribute("friends", friends);
         redirectAttributes.addFlashAttribute("notFriends", notFriends);
         return "redirect:/search";
-}
-@GetMapping("/search")
-public String showSearchResults(Model model) {
-    // Model sẽ chứa các thuộc tính từ RedirectAttributes trong phương thức POST
-    return "searchuser";
-}
+    }
 
+    @GetMapping("/search")
+    public String showSearchResults(Model model) {
+        // Model sẽ chứa các thuộc tính từ RedirectAttributes trong phương thức POST
+        return "searchuser";
+    }
 
-
-    
 }

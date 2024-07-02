@@ -34,6 +34,11 @@ stompClient.connect({}, function (frame) {
     });
     stompClient.subscribe('/user/queue/seen', function (message) {
     })
+    stompClient.subscribe('/user/queue/addfriend', function(notification) {
+        var addFriendNotification = JSON.parse(notification.body);
+        console.log("Parsed notification: ", addFriendNotification); // Log the parsed JSON object
+        displayAddFriendNotification(addFriendNotification); // Call your display function with the parsed notification
+    });
 });
 function seenMessage(messages) {
     var message = {
@@ -68,6 +73,60 @@ function sendMessage() {
     stompClient.send("/app/chat.send", {}, JSON.stringify(message));
 }
 
+function sendAddFriend(){
+    var idUserValue = document.getElementById('idUser').value;
+    var isUser = {
+        idUser: idUserValue
+    };
+    stompClient.send("/app/friend.add", {}, JSON.stringify(isUser));
+}
+
+function displayAddFriendNotification(addFriendNotification){
+    const quantityNotification = $('span#quantityNotification');
+    if(quantityNotification.length>0){
+        let messageCount = parseInt(quantityNotification.text(), 10);
+        if (isNaN(messageCount)) {
+            // Set the message count to 0 if parsing failed
+            messageCount = 0;
+        }
+        // Increment the message count
+        messageCount += 1;
+        quantityNotification.text(messageCount);
+    }else {
+        // Create the badge element and append it to the parent element
+        const badge = $('<span>', {
+            id: 'quantityNotification',
+            class: 'badge-pill badge-primary unread-messages',
+            text: 1
+        });
+        // Find the parent element and append the badge to it
+        const parentElement = $('a[data-title="Notifications"]');
+        parentElement.append(badge);
+    }
+    // Create the new notification element
+    const newNotification = `
+        <li>
+            <div class="col-md-2 col-sm-2 col-xs-2">
+                <div class="notify-img">
+                    <img src="/images/users/user-10.png" alt="notification user image">
+                </div>
+            </div>
+            <div class="col-md-10 col-sm-10 col-xs-10">
+                <a href="${addFriendNotification.url}" class="notification-user"></a>
+                <span class="notification-type">${addFriendNotification.message}</span>
+                <a href="#" class="notify-right-icon">
+                    <i class='bx bx-radio-circle-marked'></i>
+                </a>
+                <p class="time">
+                    <span class="badge badge-pill badge-primary"><i class='bx bxs-group'></i></span> 
+                </p>
+            </div>
+        </li>
+    `;
+
+    // Prepend the new notification to the notification list
+    $('.drop-content').prepend(newNotification);
+}
 
 
 // Hiển thị tin nhắn nhận được trong khung chat
