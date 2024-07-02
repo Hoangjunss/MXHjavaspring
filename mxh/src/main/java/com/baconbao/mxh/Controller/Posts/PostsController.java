@@ -81,7 +81,7 @@ public class PostsController {
     @GetMapping({ "/", " " })
     public String getPosts(Model model, Principal principal) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());// Lấy ra email của người
-                                                                                             // dùng đang đăng nhập
+                                                                                            // dùng đang đăng nhập
         User user = userService.findByEmail(userDetails.getUsername());
         List<Notification> notifications = notificationService.findByUser(user);
         model.addAttribute("notifications", notifications);

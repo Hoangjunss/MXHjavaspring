@@ -13,6 +13,7 @@ import com.baconbao.mxh.Exceptions.CustomException;
 import com.baconbao.mxh.Exceptions.ErrorCode;
 import com.baconbao.mxh.Models.Post.Post;
 import com.baconbao.mxh.Models.Post.Status;
+import com.baconbao.mxh.Models.User.User;
 import com.baconbao.mxh.Repository.Post.PostRepository;
 import com.baconbao.mxh.Services.Service.Post.PostService;
 
@@ -99,5 +100,14 @@ public class PostServiceImpl implements PostService {
         postDTO.setUpdateAt(post.getUpdateAt());
         postDTO.setStatus(post.getStatus());
         return postDTO;
+    }
+
+    @Override
+    public List<Post> findByUserPosts(User user) {
+        try {
+            return postRepository.findByUser(user);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+        }
     }
 }

@@ -40,7 +40,9 @@ import com.baconbao.mxh.DTO.UserDTO;
 import com.baconbao.mxh.Exceptions.CustomException;
 import com.baconbao.mxh.Exceptions.ErrorCode;
 import com.baconbao.mxh.Models.VerifycationToken;
+import com.baconbao.mxh.Models.Post.Comment;
 import com.baconbao.mxh.Models.Post.Image;
+import com.baconbao.mxh.Models.Post.Post;
 import com.baconbao.mxh.Models.User.About;
 import com.baconbao.mxh.Models.User.Notification;
 import com.baconbao.mxh.Models.User.Relationship;
@@ -49,7 +51,9 @@ import com.baconbao.mxh.Models.User.User;
 import com.baconbao.mxh.Models.User.UserAbout;
 import com.baconbao.mxh.Services.CloudinaryService;
 import com.baconbao.mxh.Services.Service.VerifycationTokenService;
+import com.baconbao.mxh.Services.Service.Post.CommentService;
 import com.baconbao.mxh.Services.Service.Post.ImageService;
+import com.baconbao.mxh.Services.Service.Post.PostService;
 import com.baconbao.mxh.Services.Service.User.AboutService;
 import com.baconbao.mxh.Services.Service.User.NotificationService;
 import com.baconbao.mxh.Services.Service.User.RelationshipService;
@@ -79,7 +83,11 @@ public class UserController {
     @Autowired
     private UserAboutService userAboutService;
     @Autowired
+    private PostService postService;
+    @Autowired
     private NotificationService notificationService;
+    @Autowired
+    private CommentService commentService;
 
     // Nhan trang edit dieu kien la "/editaccount"
     @GetMapping("/editaccount")
@@ -424,12 +432,13 @@ public class UserController {
         userAboutForm.setUserAboutDTOs(userAboutDTOs);
         model.addAttribute("abouts", abouts);
         model.addAttribute("userAboutForm", userAboutForm);
-        return "profile";
+        return "profileeditaboutdemo";
     }
 
     @PostMapping("/editprofile")
     public String editProfile(@ModelAttribute("userAboutForm") UserAboutForm userAboutForm, Principal principal) {
         try {
+            System.out.println(" EDIT PROFILR DETAILS");
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
             User user = userService.findByEmail(userDetails.getUsername());
             for (UserAboutDTO userAboutDTO : userAboutForm.getUserAboutDTOs()) {
@@ -440,7 +449,7 @@ public class UserController {
                 userAbout.setDescription(userAboutDTO.getDescription());
                 userAboutService.save(userAbout);
             }
-            return "redirect:/editprofile";
+            return "redirect:/profile";
         } catch (DataIntegrityViolationException e) {
             throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
         } catch (Exception e) {
@@ -487,6 +496,45 @@ public class UserController {
     public String showSearchResults(Model model) {
         // Model sẽ chứa các thuộc tính từ RedirectAttributes trong phương thức POST
         return "searchuser";
+    }
+
+    @GetMapping("/profile")
+    public String showPageProfile(Model model, Principal principal){
+        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+        User user = userService.findByEmail(userDetails.getUsername());
+        List<Post> posts = postService.findByUserPosts(user);
+        List<About> abouts = aboutService.fillAll();
+        UserAboutForm userAboutForm = new UserAboutForm();
+        List<UserAboutDTO> userAboutDTOs = new ArrayList<>();
+
+        // Lấy danh sách mô tả trước đó của người dùng
+        List<UserAbout> userAbouts = userAboutService.findByUser(user);
+
+        // Tạo một map để dễ dàng tra cứu mô tả theo idAbout
+        Map<Long, String> userAboutMap = new HashMap<>();
+        for (UserAbout userAbout : userAbouts) {
+            userAboutMap.put(userAbout.getAbout().getId(), userAbout.getDescription());
+        }
+        for (About about : abouts) {
+            UserAboutDTO dto = new UserAboutDTO();
+            dto.setAboutId(about.getId());
+
+            // Kiểm tra xem có mô tả trước đó hay không, nếu có thì gán vào DTO
+            if (userAboutMap.containsKey(about.getId())) {
+                dto.setDescription(userAboutMap.get(about.getId()));
+            }
+            userAboutDTOs.add(dto);
+        }
+        List<Notification> notifications = notificationService.findByUser(user);
+        model.addAttribute("notifications", notifications);
+        int unreadCount = notificationService.countUncheckedNotifications(user);
+        model.addAttribute("unreadCount", unreadCount);
+        userAboutForm.setUserAboutDTOs(userAboutDTOs);
+        model.addAttribute("abouts", abouts);
+        model.addAttribute("userAboutForm", userAboutForm);
+        model.addAttribute("posts", posts);
+        model.addAttribute("userprofile", user);
+        return "User/profile";
     }
 
 }

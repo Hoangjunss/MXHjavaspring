@@ -7,10 +7,12 @@ import org.springframework.stereotype.Service;
 import com.baconbao.mxh.DTO.PostDTO;
 import com.baconbao.mxh.Models.Post.Post;
 import com.baconbao.mxh.Models.Post.Status;
+import com.baconbao.mxh.Models.User.User;
 
 @Service
 public interface PostService {
     List<Post> findByActiveAndStatus(boolean active, Status status); 
+    List<Post> findByUserPosts(User user);
     Post findById(Long id);
     void save(Post post);
     void delete(Long id);

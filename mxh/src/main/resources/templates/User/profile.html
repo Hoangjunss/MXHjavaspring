@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="icon" type="image/png" href="assets/images/logo-16x16.png" />
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Argon - Social Network</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Major+Mono+Display" rel="stylesheet">
+    <link th:href="@{/css/post/boxicons.min.css}" rel="stylesheet">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
+    <!-- Styles -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link th:href="@{/css/post/style.css}" rel="stylesheet">
+    <link th:href="@{/css/post/components.css}" rel="stylesheet">
+    <link th:href="@{/css/User/profile.css}" rel="stylesheet">
+    <link th:href="@{/css/post/chat.css}" rel="stylesheet">
+    <link href="https://vjs.zencdn.net/7.4.1/video-js.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.4.0/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+    <script th:src="@{/js/Socket.js}"></script>
+    <script th:src="@{/js/User/components.js}"></script>
+    <script th:src="@{/js/interaction.js}"></script>
+
+</head>
+
+<body class="newsfeed">
+    <div class="container-fluid" id="wrapper">
+        <div class="row newsfeed-size">
+            <div class="col-md-12 newsfeed-right-side">
+                <nav id="navbar-main" class="navbar navbar-expand-lg shadow-sm sticky-top">
+                    <div class="w-100 justify-content-md-center">
+                        <ul class="navbar-nav mr-5 flex-row" id="main_menu">
+                            <a class="navbar-brand nav-item mr-lg-5" href="index.html"><img th:src="@{/images/logo-64x64.png}" width="40" height="40" class="mr-3" alt="Logo"></a>
+                            <!-- Collect the nav links, forms, and other content for toggling -->
+                            <form class="w-30 mx-2 my-auto d-inline form-inline mr-5 dropdown search-form">
+                                <div class="input-group" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="searchDropdown">
+                                    <input type="text" class="form-control search-input w-75" placeholder="Search for people, companies, events and more..." aria-label="Search" aria-describedby="search-addon">
+                                    <div class="input-group-append">
+                                        <button class="btn search-button" type="button"><i class='bx bx-search'></i></button>
+                                    </div>
+                                </div>
+                                <ul class="dropdown-menu notify-drop nav-drop shadow-sm" aria-labelledby="searchDropdown">
+                                    <div class="notify-drop-title">
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6 col-xs-6 fs-8">Search Results <span class="badge badge-pill badge-primary ml-2">29</span></div>
+                                        </div>
+                                    </div>
+                                    <!-- end notify title -->
+                                    <!-- notify content -->
+                                    <div class="drop-content">
+                                        <h6 class="dropdown-header">Peoples</h6>
+                                        <li class="dropdown-item">
+                                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                                <div class="notify-img">
+                                                    <img th:src="@{/images/users/user-6.png}" alt="Search result">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-10 col-sm-10 col-xs-10">
+                                                <a href="#" class="notification-user">Susan P. Jarvis</a>
+                                                <a href="#" class="btn btn-quick-link join-group-btn border text-right float-right">
+                                                    Add Friend
+                                                </a>
+                                                <p class="time">6 Mutual friends</p>
+                                            </div>
+                                        </li>
+                                        <h6 class="dropdown-header">Groups</h6>
+                                        <li class="dropdown-item">
+                                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                                <div class="notify-img">
+                                                    <img th:src="@{/images/groups/group-2.jpg}" alt="Search result">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-10 col-sm-10 col-xs-10">
+                                                <a href="#" class="notification-user">Tourism</a>
+                                                <a href="#" class="btn btn-quick-link join-group-btn border text-right float-right">
+                                                    Join
+                                                </a>
+                                                <p class="time">2.5k Members 35+ post a week</p>
+                                            </div>
+                                        </li>
+                                    </div>
+                                    <div class="notify-drop-footer text-center">
+                                        <a href="#">See More</a>
+                                    </div>
+                                </ul>
+                            </form>
+                            <!-- Nhắn tin -->
+                            <li class="nav-item s-nav dropdown message-drop-li">
+                                <a href="#" class="nav-link nav-links message-drop drop-w-tooltip" data-toggle="dropdown" data-placement="bottom" data-title="Messages" role="button" aria-haspopup="true" aria-expanded="false">
+                                    <img th:src="@{/images/icons/navbar/message.png}" class="message-dropdown" alt="navbar icon"> <span class="badge badge-pill badge-primary">1</span>
+                                </a>
+                                <ul class="dropdown-menu notify-drop dropdown-menu-right nav-drop shadow-sm">
+                                    <div class="notify-drop-title">
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6 col-xs-6 fs-8">Messages | <a href="#">Requests</a></div>
+                                            <div class="col-md-6 col-sm-6 col-xs-6 text-right">
+                                                <a href="#" class="notify-right-icon">
+                                                    Mark All as Read
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- end notify title -->
+                                    <!-- notify content -->
+                                    <div class="drop-content">
+                                        <!-- Xo danh sach -->
+                                        <li>
+                                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                                <div class="notify-img">
+                                                    <img th:src="@{/images/users/user-6.png}" alt="notification user image">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-10 col-sm-10 col-xs-10">
+                                                <a href="#" class="notification-user">Susan P. Jarvis</a>
+                                                <a href="#" class="notify-right-icon">
+                                                    <i class='bx bx-radio-circle-marked'></i>
+                                                </a>
+                                                <p class="time">
+                                                    <i class='bx bx-check'></i> This party is going to have a DJ, food, and drinks.
+                                                </p>
+                                            </div>
+                                        </li>
+                                    </div>
+                                    <div class="notify-drop-footer text-center">
+                                        <a href="#">See More</a>
+                                    </div>
+                                </ul>
+                            </li>
+                            <!-- Thêm bạn bè -->
+                            <li class="nav-item s-nav dropdown friend-request">
+                                <a th:href="@{/friends}" class="nav-link nav-links rm-drop-mobile drop-w-tooltip" data-toggle="dropdown" data-placement="bottom" data-title="Friend Requests" role="button" aria-haspopup="true" aria-expanded="false">
+                                    <img th:src="@{images/icons/navbar/group.png}" class="friend-request" alt="navbar icon"> <span class="badge-pill badge-primary"><p th:text="'Lời mời kết bạn (' + ${count} +')'"></p></span>
+                                </a>
+                            </li>
+                            <!-- Thông báo -->
+                            <li class="nav-item s-nav dropdown notification">
+                                <a href="#" class="nav-link nav-links rm-drop-mobile drop-w-tooltip" data-toggle="dropdown" data-placement="bottom" data-title="Notifications" role="button" aria-haspopup="true" aria-expanded="false">
+                                    <img th:src="@{/images/icons/navbar/notification.png}" class="notification-bell" alt="navbar icon">
+                                    <span th:if="${unreadCount > 0}" id="quantityNotification" class="badge-pill badge-primary unread-messages" th:text="${unreadCount}"></span>
+                                </a>                                
+                                <ul class="dropdown-menu notify-drop dropdown-menu-right nav-drop shadow-sm">
+                                    <div class="notify-drop-title">
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6 col-xs-6 fs-8">Notifications <span th:if="${unreadCount > 0}" class="badge-pill badge-primary unread-messages" th:text="${unreadCount}"></span></div>
+                                            <div class="col-md-6 col-sm-6 col-xs-6 text-right">
+                                                <a href="#" class="notify-right-icon">
+                                                    Mark All as Read
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- end notify title -->
+                                    <!-- notify content -->
+                                    <div class="drop-content">
+                                        <!-- Start -->
+                                        <li th:each="notification : ${notifications}">
+                                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                                <div class="notify-img">
+                                                    <img th:src="@{/images/users/user-10.png}" alt="notification user image">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-10 col-sm-10 col-xs-10">
+                                                <a th:href="@{${notification.url}}" class="notification-user" th:text="${notification.user.firstName}"></a> 
+                                                <span class="notification-type" th:text="${notification.message}"></span>
+                                                <a href="#" class="notify-right-icon">
+                                                    <i class='bx bx-radio-circle-marked'></i>
+                                                </a>
+                                                <p class="time">
+                                                    <span class="badge badge-pill badge-primary"><i class='bx bxs-group'></i></span> 
+                                                    <!-- You can calculate and display time here -->
+                                                </p>
+                                            </div>
+                                        </li>
+                                    </div>
+                                    <div class="notify-drop-footer text-center">
+                                        <a href="#">See More</a>
+                                    </div>
+                                </ul>
+                            </li>
+                            <li class="nav-item s-nav">
+                                <a th:href="@{/profile}" class="nav-link nav-links">
+                                    <div class="menu-user-image">
+                                        <img th:src="@{/images/users/user-4.jpg}" class="menu-user-img ml-1" alt="Menu Image">
+                                    </div>
+                                </a>
+                            </li>
+                            <li class="nav-item s-nav nav-icon dropdown">
+                                <a href="settings.html" data-toggle="dropdown" data-placement="bottom" data-title="Settings" class="nav-link settings-link rm-drop-mobile drop-w-tooltip" id="settings-dropdown"><img th:src="@{/images/icons/navbar/settings.png}" class="nav-settings" alt="navbar icon"></a>
+                                <div class="dropdown-menu dropdown-menu-right settings-dropdown shadow-sm" aria-labelledby="settings-dropdown">
+                                    <a class="dropdown-item" href="#">
+                                        <img th:src="@{/images/icons/navbar/help.png}" alt="Navbar icon"> Help Center</a>
+                                    <a class="dropdown-item d-flex align-items-center dark-mode" onClick="event.stopPropagation();" href="#">
+                                        <img th:src="@{/images/icons/navbar/moon.png}" alt="Navbar icon"> Dark Mode
+                                        <button type="button" class="btn btn-lg btn-toggle ml-auto" data-toggle="button" aria-pressed="false" autocomplete="off">
+                                            <div class="handle"></div>
+                                        </button>
+                                    </a>
+                                    <a class="dropdown-item" href="#">
+                                        <img th:src="@{/images/icons/navbar/gear-1.png}" alt="Navbar icon"> Settings</a>
+                                    <a class="dropdown-item logout-btn" href="#">
+                                        <img th:src="@{/images/icons/navbar/logout.png}" alt="Navbar icon"> Log Out</a>
+                                </div>
+                            </li>
+                        </ul>
+
+                    </div>
+
+                </nav>
+                <div class="row profile-right-side-content">
+                    <div class="user-profile">
+                        <div class="profile-header-background">
+                            <a href="#" class="profile-cover">
+                                <img th:src="@{/images/users/default/NiceBackground.jpg}" alt="Profile Header Background">
+                                <div class="cover-overlay">
+                                    <a href="#" class="btn btn-update-cover"><i class='bx bxs-camera'></i> Update Cover Photo</a>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="row profile-rows">
+                            <div class="col-md-3">
+                                <div class="profile-info-left">
+                                    <div class="text-center">
+                                        <div class="profile-img w-shadow">
+                                            <div class="profile-img-overlay"></div>
+                                            <img th:src="@{/images/users/default/Depositphotos.jpg}" alt="Avatar" class="avatar img-circle">
+                                            <div class="profile-img-caption">
+                                                <label for="updateProfilePic" class="upload">
+                                                    <i class='bx bxs-camera'></i> Update
+                                                    <input type="file" id="updateProfilePicInput" class="text-center upload">
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <p class="profile-fullname mt-3" th:text="${userprofile.firstName} +' '+ ${userprofile.lastName}" ></p>
+                                        <p class="profile-username mb-3 text-muted" >@</p>
+                                    </div>
+                                    <div class="intro mt-4">
+                                        <div class="d-flex">
+                                            <button type="button" class="btn btn-follow mr-3"><i class='bx bx-plus'></i> Follow</button>
+                                            <button type="button" class="btn btn-start-chat" data-toggle="modal" data-target="#newMessageModal"><i class='bx bxs-message-rounded'></i> <span class="fs-8">Message</span></button>
+                                            <button type="button" class="btn btn-follow" id="moreMobile" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class='bx bx-dots-horizontal-rounded'></i> <span class="fs-8">More</span></button>
+                                            <div class="dropdown-menu dropdown-menu-right profile-ql-dropdown" aria-labelledby="moreMobile">
+                                                <a href="newsfeed.html" class="dropdown-item">Timeline</a>
+                                                <a href="about.html" class="dropdown-item">About</a>
+                                                <a href="followers.html" class="dropdown-item">Followers</a>
+                                                <a href="following.html" class="dropdown-item">Following</a>
+                                                <a href="photos.html" class="dropdown-item">Photos</a>
+                                                <a href="videos.html" class="dropdown-item">Videos</a>
+                                                <a href="check-ins.html" class="dropdown-item">Check-Ins</a>
+                                                <a href="events.html" class="dropdown-item">Events</a>
+                                                <a href="likes.html" class="dropdown-item">Likes</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="intro mt-5 mv-hidden">
+                                        <div class="intro-item d-flex justify-content-between align-items-center">
+                                            <h3 class="intro-about">Intro</h3>
+                                        </div>
+
+                                        <div th:if="${userprofile.userAbouts != null && !userprofile.userAbouts.isEmpty()}">
+                                            <div th:each="about : ${userprofile.userAbouts}" class="intro-item d-flex justify-content-between align-items-center">
+                                                <p class="intro-title text-muted"><i class='bx bx-briefcase text-primary'></i> 
+                                                    <strong th:text="${about.about.name} +': '+ ${about.description}"></strong> 
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div class="intro-item d-flex justify-content-between align-items-center">
+                                            <button href="#" class="btn btn-quick-link join-group-btn border w-100" id="editProfileDetails">Edit Profile Details</button>
+                                        </div>
+                                    </div>
+                                    <div class="intro mt-5 row mv-hidden">
+                                        <div class="col-md-4">
+                                            <img src="assets/images/users/album/album-1.jpg" width="95" alt="">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-9 p-0">
+                                <div class="profile-info-right">
+                                    <!-- Posts section -->
+                                    <div class="row">
+                                        <div class="col-md-9 profile-center">
+                                            <ul class="list-inline profile-links d-flex justify-content-between w-shadow rounded">
+                                                <li class="list-inline-item profile-active">
+                                                    <a href="#">Timeline</a>
+                                                </li>
+                                                <li class="list-inline-item">
+                                                    <a href="#">About</a></li>
+                                                <li class="list-inline-item">
+                                                    <a href="friends.html">Friends</a>
+                                                </li>
+                                                <li class="list-inline-item">
+                                                    <a href="#">Photos</a>
+                                                </li>
+                                                <li class="list-inline-item dropdown">
+                                                    <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                        <i class='bx bx-dots-vertical-rounded'></i>
+                                                    </a>
+                                                    <div class="dropdown-menu dropdown-menu-right profile-ql-dropdown">
+                                                        <a href="#" class="dropdown-item">Activity Log</a>
+                                                        <a href="#" class="dropdown-item">Videos</a>
+                                                        <a href="#" class="dropdown-item">Check-Ins</a>
+                                                        <a href="#" class="dropdown-item">Events</a>
+                                                        <a href="#" class="dropdown-item">Likes</a>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                            <ul class="list-unstyled" style="margin-bottom: 0;">
+                                                <li class="media post-form w-shadow">
+                                                    <div class="media-body">
+                                                        <form th:action="@{/uploadpost}" method="post" enctype="multipart/form-data">
+                                                            <select class="form-control" id="StatusId" name="StatusId" required>
+                                                                <option th:each = "listStatus : ${status}"
+                                                                        th:value = "${listStatus.id}"
+                                                                        th:text = "${listStatus.name}">
+                                                                </option>
+                                                            </select>
+                                                            <textarea rows="2" placeholder="write something" name="content"></textarea>
+                                                            <div class="attachments">
+                                                                <ul>
+                                                                    <li>
+                                                                        <i class="fa fa-image"></i>
+                                                                        <label class="fileContainer">
+                                                                            <input name="image" type="file" onchange="previewImagePost(event)">
+                                                                        </label>
+                                                                    </li>
+                                                                    <li>
+                                                                        <button type="submit">Post</button>
+                                                                    </li>
+                                                                </ul>
+                                                                <div id="image-preview-container">
+                                                                    <img id="imagePreview" src="" alt="Image Preview" style="max-width: 300px; max-height: 300px;"/>
+                                                            </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                            <ul th:if="${posts != null}" class="list-unstyled" th:each="listpost : ${posts}"> 
+                                                <div class="post border-bottom p-3 bg-white w-shadow" data-id="${listpost.id}"> <!-- id ul cua post -->
+                                                    <div class="media text-muted pt-3">
+                                                        <!-- Avartar user -->
+                                                        <img th:if="${listpost.user.image}" th:src="${listpost.user.image.urlImage}" alt="Online user" class="mr-3 post-user-image">
+                                                        <form th:action="@{/hidepost}" method="post">
+                                                            <input type="hidden" name="id" th:value="${listpost.id}">
+                                                            <button type="submit">Ẩn</button>
+                                                        </form>
+                                                        <div class="media-body pb-3 mb-0 small lh-125">
+                                                            <div class="d-flex justify-content-between align-items-center w-100">
+                                                                <!--Hien thi Name user -->
+                                                                <a href="#" class="text-gray-dark post-user-name" th:text="${listpost.user.lastName} + ${listpost.user.firstName}"></a>
+                                                              
+                                                                
+                                                            </div>
+                                                            <!-- Display time update -->
+                                                            <span class="d-block">3 hours ago <i class='bx bx-globe ml-3'></i></span>
+                                                        </div>
+                                                    </div>
+                                                    <div id="displaycontent">
+                                                            <!-- Content -->
+                                                            <div class="mt-3 ">
+                                                            <p th:text="${listpost.content}"></p>
+                                                        <!--End Content -->
+                                                        <!-- Image cua post -->
+                                                        <div class="d-block mt-3">
+                                                            <img th:if="${listpost.image}"th:src="${listpost.image.urlImage}" class="post-content" alt="post image">
+                                                        </div>
+                                                        <!-- End Image -->
+                                                        </div>
+                                                    </div>
+                                                    <!-- End time -->
+                                                    <div class="mb-3">
+                                                        <!-- Reactions -->
+                                                         
+                                                        <div class="argon-reaction">
+                                                            <span class="like-btn">
+                                                                <a href="#" class="post-card-buttons" id="reactions"><i class='bx bxs-like mr-2'></i></a>
+                                                                <ul class="reactions-box dropdown-shadow">
+                                                                    <li class="reaction reaction-like" data-reaction="Like"><button class="reaction-button" data-reaction-id="1" th:data-post-id="${listpost.id}"></button></li>
+                                                                    <li class="reaction reaction-love" data-reaction="Love"><button class="reaction-button" data-reaction-id="2" th:data-post-id="${listpost.id}"></button></li>
+                                                                    <li class="reaction reaction-haha" data-reaction="HaHa"><button class="reaction-button" data-reaction-id="3" th:data-post-id="${listpost.id}"></button></li>
+                                                                    <li class="reaction reaction-wow" data-reaction="Wow"><button class="reaction-button" data-reaction-id="4" th:data-post-id="${listpost.id}"></button></li>
+                                                                    <li class="reaction reaction-sad" data-reaction="Sad"><button class="reaction-button" data-reaction-id="5" th:data-post-id="${listpost.id}"></button></li>
+                                                                    <li class="reaction reaction-angry" data-reaction="Angry"><button class="reaction-button" data-reaction-id="6" th:data-post-id="${listpost.id}"></button></li>
+                                                                </ul>
+                                                            </span>
+                                                        </div>
+                                                        
+                                                        <!-- End Reactions -->
+                                                        <button class="post-card-buttons show-comments" th:data-id="${listpost.id}"><i class='bx bx-message-rounded mr-2'></i> 5</button>
+                                                        <!-- Share -->
+                                                        <div class="dropdown dropup share-dropup">
+                                                            <a href="#" class="post-card-buttons" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                <i class='bx bx-share-alt mr-2'></i> Share
+                                                            </a>
+                                                            <div class="dropdown-menu post-dropdown-menu">
+                                                                <a href="#" class="dropdown-item">
+                                                                    <div class="row">
+                                                                        <div class="col-md-2">
+                                                                            <i class='bx bx-share-alt'></i>
+                                                                        </div>
+                                                                        <div class="col-md-10">
+                                                                            <span>Share Now (Public)</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </a>
+                                                                <a href="#" class="dropdown-item">
+                                                                    <div class="row">
+                                                                        <div class="col-md-2">
+                                                                            <i class='bx bx-share-alt'></i>
+                                                                        </div>
+                                                                        <div class="col-md-10">
+                                                                            <span>Share...</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </a>
+                                                                <a href="#" class="dropdown-item">
+                                                                    <div class="row">
+                                                                        <div class="col-md-2">
+                                                                            <i class='bx bx-message'></i>
+                                                                        </div>
+                                                                        <div class="col-md-10">
+                                                                            <span>Send as Message</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                        <!-- End Share -->
+                                                    </div>
+                                                    <!-- Comments -->
+                                                    <div class="border-top pt-3 hide-comments" th:data-id="${listpost.id}" style="display: none;">
+                                                        <div class="row bootstrap snippets">
+                                                            <div class="col-md-12">
+                                                                <div class="comment-wrapper">
+                                                                    <div class="panel panel-info">
+                                                                        <div class="panel-body">
+                                                                            <ul class="media-list comments-list">
+                                                                                <!-- Write comment -->
+                                                                                <li class="media comment-form">
+                                                                                    <a href="#" class="pull-left">
+                                                                                        <img th:src="@{/images/users/user-4.jpg}" alt="" class="img-circle">
+                                                                                    </a>
+                                                                                    <div class="media-body" th:data-post-id="${listpost.id}">
+                                                                                        <form id="commentForm-${listpost.id}" class="commentForm">
+                                                                                            <div class="row">
+                                                                                                <div class="col-md-12">
+                                                                                                    <div class="input-group">
+                                                                                                        <input type="hidden" id="postId-${listpost.id}" name="postId" th:value="${listpost.id}">
+                                                                                                        <input type="text" id="content-${listpost.id}" name="content" class="form-control comment-input" placeholder="Write a comment...">
+                                                                                                        <div class="input-group-btn">
+                                                                                                            <button type="submit" class="btn btn-primary">Comment</button>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </form>
+                                                                                    </div>
+                                                                                </li>                                                            
+                                                                                <!-- End Write comment -->
+                                                                                 <!-- Display comment -->
+                                                                                <li th:if="${listpost.comments != null}" th:each="comment : ${listpost.comments}" class="media">
+                                                                                    <a href="#" class="pull-left">
+                                                                                        <img th:src="@{/images/users/user-2.jpg}" alt="" class="img-circle">
+                                                                                    </a>
+                                                                                    <div class="media-body">
+                                                                                        <div class="d-flex justify-content-between align-items-center w-100">
+                                                                                            <strong class="text-gray-dark"><a href="#" class="fs-8" th:text="${comment.userSend.firstName} +' '+${comment.userSend.lastName}"></a></strong>
+                                                                                            <a href="#"><i class='bx bx-dots-horizontal-rounded'></i></a>
+                                                                                        </div>
+                                                                                        <span class="d-block comment-created-time">30 min ago</span>
+                                                                                        <p class="fs-8 pt-2" th:text="${comment.content}">
+                                                                                        </p>
+                                                                                        <div class="commentLR">
+                                                                                            <button type="button" class="btn btn-link fs-8">Like</button>
+                                                                                            <button type="button" class="btn btn-link fs-8">Reply</button>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </li>
+                                                                                <!-- End display comment -->
+                                                                                 <!-- See more -->
+                                                                                <li class="media">
+                                                                                    <div class="media-body">
+                                                                                        <div class="comment-see-more text-center">
+                                                                                            <button type="button" class="btn btn-link fs-8">See More</button>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </li>
+                                                                                <!-- End see more -->
+                    
+                                                                            </ul>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New message modal -->
+    <div class="modal fade" id="newMessageModal" tabindex="-1" role="dialog" aria-labelledby="newMessageModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header new-msg-header">
+                    <h5 class="modal-title" id="newMessageModalLabel">Start new conversation</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body new-msg-body">
+                    <form action="" method="" class="new-msg-form">
+                        <div class="form-group">
+                            <label for="message-text" class="col-form-label">Message:</label>
+                            <textarea class="form-control search-input" rows="5" id="message-text" placeholder="Type a message..."></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer new-msg-footer">
+                    <button type="button" class="btn btn-primary btn-sm">Send message</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Message -->
+    <!-- Edit Details -->
+    <div class="profiledetails animate-overlay" id="edit_profile">
+        <div  class="dialog">
+            <div class="edit_profile_container">
+                <button class="close"><i class="fa-solid fa-xmark"></i></button>
+                <h2>Edit Profile Details</h2>
+                <form th:action="@{/editprofile}" method="post" th:object="${userAboutForm}" class="form_edit_profile" id="form_edit_profile">
+                    <!-- <div class="image_box">
+                        <div class="item" id="image_box_item">
+                            <label for="">Avartar</label>
+                            <input type="file" placeholder="Choose Avartar" id="imageInput"
+                                onchange="previewImage(event)" name="image">
+                        </div>
+                        <div class="preview_box" id="preview_box">
+                        </div>
+                    </div> -->
+                    <div th:each="about, aboutStat : ${abouts}" class="name_box">
+                        <input type="hidden" th:field="*{userAboutDTOs[__${aboutStat.index}__].aboutId}" th:value="${about.id}">
+                        <label th:text="${about.name}"></label>
+                        <input type="text" th:placeholder="${about.name}" th:field="*{userAboutDTOs[__${aboutStat.index}__].description}">
+                    </div>
+                    <button type="submit" id="submitBtn">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- End Edit Datails -->
+    <script>
+        const overlayAdd = document.getElementById('edit_profile');
+        const editProfileDetails = document.getElementById('editProfileDetails')
+        const closeButton = overlayAdd.querySelector('.close');
+        editProfileDetails.addEventListener('click', () => {
+            overlayAdd.style.display = "flex";
+        })
+
+        closeButton.addEventListener('click', () => {
+
+            overlayAdd.style.display = "none";
+        })
+        
+        function previewImagePost(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imagePreview = document.getElementById('imagePreview');
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+        function previewImage(event) {
+            var reader = new FileReader();
+            reader.onload = function () {
+                const previewBox = document.getElementById('preview_box');
+                let showImage = document.createElement('img');
+                showImage.src = reader.result;
+                showImage.classList.add('preview');
+                let deleteButton = document.createElement('span');
+
+                let icon = document.createElement('i');
+                icon.className = "fa-solid fa-xmark";
+                deleteButton.appendChild(icon);
+                let imageBox = document.createElement('div');
+                imageBox.classList.add('imageBox');
+                imageBox.appendChild(showImage);
+                imageBox.appendChild(deleteButton);
+                previewBox.appendChild(imageBox);
+
+                document.getElementById('imageInput').style.display = 'none';
+                const ImageBox = document.getElementById('image_box_item');
+
+                removeMessage(ImageBox);
+
+                deleteButton.addEventListener('click', () => {
+                    imageBox.remove();
+                    document.getElementById('imageInput').value = '';
+                    document.getElementById('imageInput').style.display = 'block';
+                });
+
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        }
+    </script>
+</body>
+</html>

@@ -7,11 +7,11 @@ import org.springframework.stereotype.Repository;
 
 import com.baconbao.mxh.Models.Post.Post;
 import com.baconbao.mxh.Models.Post.Status;
-
-
+import com.baconbao.mxh.Models.User.User;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findByIsActiveAndStatusOrderByCreateAtDesc(boolean active, Status status);
     List<Post> findByIsActiveAndStatus(boolean active, Status status);
+    List<Post> findByUser(User user);
 }
