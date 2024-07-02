@@ -104,6 +104,7 @@
                                     </div>
                                 </ul>
                             </form>
+                            <!-- Nhắn tin -->
                             <li class="nav-item s-nav dropdown message-drop-li">
                                 <a href="#" class="nav-link nav-links message-drop drop-w-tooltip" data-toggle="dropdown" data-placement="bottom" data-title="Messages" role="button" aria-haspopup="true" aria-expanded="false">
                                     <img th:src="@{/images/icons/navbar/message.png}" class="message-dropdown" alt="navbar icon"> <span class="badge badge-pill badge-primary">1</span>
@@ -145,6 +146,13 @@
                                     </div>
                                 </ul>
                             </li>
+                            <!-- Thêm bạn bè -->
+                            <li class="nav-item s-nav dropdown friend-request">
+                                <a th:href="@{/friends}" class="nav-link nav-links rm-drop-mobile drop-w-tooltip" data-toggle="dropdown" data-placement="bottom" data-title="Friend Requests" role="button" aria-haspopup="true" aria-expanded="false">
+                                    <img th:src="@{images/icons/navbar/group.png}" class="friend-request" alt="navbar icon"> <span class="badge-pill badge-primary"><p th:text="'Lời mời kết bạn (' + ${count} +')'"></p></span>
+                                </a>
+                            </li>
+                            <!-- Thông báo -->
                             <li class="nav-item s-nav dropdown notification">
                                 <a href="#" class="nav-link nav-links rm-drop-mobile drop-w-tooltip" data-toggle="dropdown" data-placement="bottom" data-title="Notifications" role="button" aria-haspopup="true" aria-expanded="false">
                                     <img th:src="@{/images/icons/navbar/notification.png}" class="notification-bell" alt="navbar icon">

@@ -4,15 +4,173 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #18191a;
+    margin: 0;
+    padding: 0;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+.container {
+    background-color: #242526;
+    padding: 20px;
+    border-radius: 10px;
+    width: 90%;
+    margin-bottom: 20px;
+}
+
+h3 {
+    color: #e4e6eb;
+    margin-bottom: 20px;
+}
+
+.friend-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    gap: 15px;
+    overflow-x: auto;
+}
+
+.friend, .notFriends {
+    flex: 0 0 auto;
+    width: 200px;
+}
+
+.friend-card {
+    background-color: #3a3b3c;
+    border-radius: 10px;
+    padding: 15px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.avatar {
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    margin-bottom: 15px;
+}
+
+.friend-info {
+    color: #b0b3b8;
+}
+
+.name {
+    font-size: 18px;
+    margin: 10px 0;
+}
+
+.mutual-friends {
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.btn {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.confirm {
+    background-color: #2d88ff;
+    color: white;
+}
+
+.confirm:hover {
+    background-color: #156fe7;
+}
+
+.confirm:active {
+    transform: scale(0.98);
+}
+
+.delete {
+    background-color: #3a3b3c;
+    color: white;
+}
+
+.delete:hover {
+    background-color: #4a4b4c;
+}
+
+.delete:active {
+    transform: scale(0.98);
+}
+
+.view-all {
+    display: block;
+    text-align: right;
+    color: #2d88ff;
+    text-decoration: none;
+    margin-top: 20px;
+}
+
+.view-all:hover {
+    text-decoration: underline;
+}
+
+.divider {
+    width: 90%;
+    border-top: 1px solid #3a3b3c;
+    margin: 20px 0;
+}
+
+    </style>
 </head>
 <body>
-    <h3>Danh sách bạn bè</h3>
-    <ul style="list-style: none;">
-        <li th:each="friend : ${listfriend}">
-            <p th:text="${friend.firstName} + ' ' + ${friend.lastName}"></p>    
-            <button>Hủy kết bạn</button>
-            <button>Xem thông tin</button>
-        </li>
-    </ul>
+    <div class="container">
+        <h3>Lời mời kết bạn</h3>
+        <ul class="friend-list">
+            <li class="friend" th:each="friend : ${listfriend}">
+                <div class="friend-card">
+                    <!-- <img class="avatar" th:src="${friend.avatar}" alt="Avatar"> -->
+                    <div class="friend-info">
+                        <p class="name" th:text="${friend.firstName} + ' ' + ${friend.lastName}"></p>
+                        <p class="mutual-friends">4 bạn chung</p>
+                        <!-- <p th:text="'Số lượng bạn bè: ' + ${count}"></p> -->
+                        <button class="btn confirm">Xác nhận</button>
+                        <button class="btn delete">Xóa</button>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <a th:href="@{#}" class="view-all">Xem tất cả</a>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="container">
+        <h3>Những người bạn có thể biết</h3>
+        <ul class="friend-list">
+            <li class="notFriends" th:each="notFriend : ${listnotFriends}">
+                <div class="friend-card">
+                    <!-- <img class="avatar" th:src="${friend.avatar}" alt="Avatar"> -->
+                    <div class="friend-info">
+                        <p class="name" th:text="${notFriend.firstName} + ' ' + ${notFriend.lastName}"></p>
+                        <p class="mutual-friends">4 bạn chung</p>
+                        <button class="btn confirm">Xác nhận</button>
+                        <button class="btn delete">Xóa</button>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <a th:href="@{#}" class="view-all">Xem tất cả</a>
+    </div>
+    
 </body>
 </html>
