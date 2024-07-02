@@ -2,11 +2,13 @@ package com.baconbao.mxh.Controller.Posts;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -20,7 +22,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.baconbao.mxh.DTO.ApiResponse;
-import com.baconbao.mxh.DTO.CommentDTO;
 import com.baconbao.mxh.DTO.InteractionDTO;
 import com.baconbao.mxh.Exceptions.CustomException;
 import com.baconbao.mxh.Exceptions.ErrorCode;
@@ -85,7 +86,7 @@ public class PostsController {
         model.addAttribute("unreadCount", unreadCount);
         List<Status> status = statusService.findAll();
         model.addAttribute("status", status);
-        Status status1 = statusService.findById(1); //LUU Y TIM STATUS
+        Status status1 = statusService.findById(1); // LUU Y TIM STATUS
         List<Post> posts = postService.findByActiveAndStatus(true, status1);
         model.addAttribute("posts", posts);
         return "index";
@@ -97,9 +98,9 @@ public class PostsController {
         User user = userService.findByEmail(userDetails.getUsername());
         List<Notification> notifications = notificationService.findByUser(user);
         for (Notification notification : notifications) {
-            if(!notification.isChecked()){
+            if (!notification.isChecked()) {
                 notification.setChecked(true);
-            notificationService.saveNotification(notification);
+                notificationService.saveNotification(notification);
             }
         }
         return ResponseEntity.ok().build();
@@ -192,23 +193,43 @@ public class PostsController {
 
     // Đăng comment của post
     @PostMapping("/commenter")
-    public String postComment(@RequestParam("content") String content, @RequestParam("postId") Long idPost, Principal principal) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
-        User user = userService.findByEmail(userDetails.getUsername());
-        System.out.println(content+" comment" +" idPOST"+ idPost);
+    public ResponseEntity<?> postComment(@RequestBody Map<String, Object> payload, Principal principal) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            String content = (String) payload.get("content");
+            Long idPost = Long.valueOf((String) payload.get("postId"));
 
-        Post post = postService.findById(idPost);
-        Comment comment = new Comment();
-        comment.setContent(content);
-        comment.setUserSend(user);
-        comment.setCreateAt(LocalDateTime.now());
+            UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+            User user = userService.findByEmail(userDetails.getUsername());
 
-        List<Comment> comments = post.getComments();
-        comments.add(comment);
-        commentService.save(comment);
-        post.setComments(comments);
-        postService.save(post);
-        return "redirect:/";
+            Post post = postService.findById(idPost);
+            if (post == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Post not found");
+            }
+            System.out.println(post.getId()+" IDPOST");
+            System.out.println(content+" CONTENT");
+            Comment comment = new Comment();
+            comment.setContent(content);
+            comment.setUserSend(user);
+            comment.setCreateAt(LocalDateTime.now());
+
+            List<Comment> comments = post.getComments();
+            comments.add(comment);
+            commentService.save(comment);
+
+            post.setComments(comments);
+            postService.save(post);
+
+            response.put("content", comment);
+
+            return ResponseEntity.ok(response);
+        } catch (NumberFormatException | NullPointerException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid request");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Server error");
+        }
     }
 
     // Lấy phần trả lời bình luận theo id

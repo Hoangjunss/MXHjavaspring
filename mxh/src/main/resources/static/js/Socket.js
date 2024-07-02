@@ -16,21 +16,17 @@ stompClient.connect({}, function (frame) {
     }
     console.log('Connected: ' + frame);
     // Đăng ký để nhận tin nhắn mới từ hàng đợi `/user/queue/messages`
-
-    stompClient.subscribe('/user/queue/messages', function(message) {
-        try{
-        console.log("Received message: ", message.body); // In toàn bộ thông điệp nhận được
-    var chatMessage = JSON.parse(message.body);
-    console.log("Parsed message userFrom id: ", chatMessage.userFrom.id);
-  
-        
-        console.log("Message userFrom id: ", chatMessage.userFrom.id);// Parse dữ liệu JSON từ tin nhắn
-
-        displayChatMessage(chatMessage); // Hiển thị tin nhắn trong khung chat
-        displayChatMessageFrame(chatMessage); 
-    } catch (e) {
-        console.error("Error parsing message body: ", e);
-    }// Cập nhật liên hệ trong danh sách liên hệ
+    stompClient.subscribe('/user/queue/messages', function (message) {
+        try {
+            console.log("Received message: ", message.body); // In toàn bộ thông điệp nhận được
+            var chatMessage = JSON.parse(message.body);
+            console.log("Parsed message userFrom id: ", chatMessage.userFrom.id);
+            console.log("Message userFrom id: ", chatMessage.userFrom.id);// Parse dữ liệu JSON từ tin nhắn
+            displayChatMessage(chatMessage); // Hiển thị tin nhắn trong khung chat
+            displayChatMessageFrame(chatMessage);
+        } catch (e) {
+            console.error("Error parsing message body: ", e);
+        }// Cập nhật liên hệ trong danh sách liên hệ
     });
     // Đăng ký để nhận thông báo từ hàng đợi `/queue/active` (nếu cần)
     stompClient.subscribe('/queue/active', function (message) {
@@ -72,16 +68,18 @@ function sendMessage() {
     stompClient.send("/app/chat.send", {}, JSON.stringify(message));
 }
 
+
+
 // Hiển thị tin nhắn nhận được trong khung chat
 function displayChatMessage(message) {
     var inputElement = $('input[type="hidden"][data-messages-user="' + message.userFrom.id + '"]');
 
-    $('input[type="hidden"]').each(function() {
+    $('input[type="hidden"]').each(function () {
         console.log("Existing input element with data-messages-user: ", $(this).attr('data-messages-user'));
     });
     console.log("Message userFrom id: ", message.userFrom.id);
     console.log(inputElement);
-    if(inputElement.length){
+    if (inputElement.length) {
         console.log("11");
 
         seenMessage(message.id);
@@ -97,10 +95,7 @@ function displayChatMessage(message) {
 // Cập nhật liên hệ trong danh sách liên hệ khi có tin nhắn mới
 function displayChatMessageFrame(message) {
     const countMessageNotSeen = $('span.unread-messages[data-id="' + message.id + '"]');
-
-
-    if(countMessageNotSeen.length>0){
-
+    if (countMessageNotSeen.length > 0) {
         // Retrieve the current text content and try to parse it as an integer
         let messageCount = parseInt(countMessageNotSeen.text(), 10);
         console.log('hello');
@@ -113,21 +108,18 @@ function displayChatMessageFrame(message) {
         // Increment the message count
         messageCount += 1;
         countMessageNotSeen.text(messageCount);
-
-    }else{
+    } else {
         var inputElement = $('input[type="hidden"][data-messages-user="' + message.userFrom.id + '"]');
-        if(inputElement.length==0){
+        if (inputElement.length == 0) {
             console.log('Element not found for message.id:', message.id);
             var contact = $('li.contact[data-user-id="' + message.id + '"]').find('.wrap');
             console.log(contact);
             var unreadMessageSpan = $('<span class="unread-messages" data-id="' + message.id + '">1</span>');
-    
+
             // Thêm span vào trong li.contact
             contact.append(unreadMessageSpan);
             console.log(contact);
         }
-       
-
     }
     var contact = $('li.contact[data-user-id="' + message.id + '"]');
     if (contact.length > 0) {

@@ -22,6 +22,9 @@
     <link th:href="@{/css/post/chat.css}" rel="stylesheet">
     <link href="https://vjs.zencdn.net/7.4.1/video-js.css" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.4.0/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+    <script th:src="@{/js/Socket.js}"></script>
     <script th:src="@{/js/interaction.js}"></script>
 </head>
 
@@ -395,13 +398,13 @@
                                                                 <a href="#" class="pull-left">
                                                                     <img th:src="@{/images/users/user-4.jpg}" alt="" class="img-circle">
                                                                 </a>
-                                                                <div class="media-body">
-                                                                    <form th:action="@{/commenter}" method="post" enctype="multipart/form-data">
+                                                                <div class="media-body" th:data-post-id="${listpost.id}">
+                                                                    <form id="commentForm-${listpost.id}" class="commentForm">
                                                                         <div class="row">
                                                                             <div class="col-md-12">
                                                                                 <div class="input-group">
-                                                                                    <input type="hidden" name="postId" th:value="${listpost.id}">
-                                                                                    <input type="text" name="content" class="form-control comment-input" placeholder="Write a comment...">
+                                                                                    <input type="hidden" id="postId-${listpost.id}" name="postId" th:value="${listpost.id}">
+                                                                                    <input type="text" id="content-${listpost.id}" name="content" class="form-control comment-input" placeholder="Write a comment...">
                                                                                     <div class="input-group-btn">
                                                                                         <button type="submit" class="btn btn-primary">Comment</button>
                                                                                     </div>
@@ -410,7 +413,7 @@
                                                                         </div>
                                                                     </form>
                                                                 </div>
-                                                            </li>
+                                                            </li>                                                            
                                                             <!-- End Write comment -->
                                                              <!-- Display comment -->
                                                             <li th:if="${listpost.comments != null}" th:each="comment : ${listpost.comments}" class="media">

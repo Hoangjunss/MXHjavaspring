@@ -14,7 +14,7 @@ import com.baconbao.mxh.Models.User.User;
 import jakarta.transaction.Transactional;
 
 public interface MessageRepository extends JpaRepository<Message, Long> {
-
+        //Tìm tin nhắn của 2 user từ gần nhất đến xa nhất
         @Query("SELECT m FROM Message m " +
                         "WHERE (m.userFrom = :firstUser AND m.userTo = :secondUser) " +
                         "OR (m.userFrom = :secondUser AND m.userTo = :firstUser) " +
@@ -22,19 +22,23 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
         List<Message> findAllMessagesBetweenTwoUsers(@Param("firstUser") User firstUser,
                         @Param("secondUser") User secondUser); 
 
-                @Query("SELECT m FROM Message m WHERE m.content LIKE %?1 ")
+
+        @Query("SELECT m FROM Message m WHERE m.content LIKE %?1 ")
         List<Message> findByContentLike(String content);
 
+        //Đếm số tin nhắn chưa xem của  user
         @Query("SELECT count(m.id) FROM Message m " +
                         "WHERE ((m.userFrom = :firstUser AND m.userTo = :secondUser) " +
                         "AND m.isSeen=false )")
         int CountMessageBetweenTwoUserIsSeen(@Param("firstUser") User firstUser,
                         @Param("secondUser") User secondUser);
 
+        //Cập nhật trạng thái tin nhắn
         @Modifying
         @Transactional
         @Query("UPDATE Message m SET m.isSeen = true WHERE m.relationship = :relationship AND m.userTo = :userTo")
         void seenMessage(@Param("relationship") Relationship relationship,
                         @Param("userTo") User userTo);
+
 
 }

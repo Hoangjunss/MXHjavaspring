@@ -69,6 +69,63 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
     });
+    document.querySelectorAll('.commentForm').forEach(form => {
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+    
+            const postId = this.querySelector('input[name="postId"]').value;
+            const content = this.querySelector('input[name="content"]').value;
+            alert(content + " " + postId);
+    
+            // Gửi AJAX request đến server
+            fetch('/commenter', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ postId, content })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Tạo phần tử HTML mới cho comment
+                    const newComment = document.createElement('li');
+                    newComment.classList.add('media');
+                    newComment.innerHTML = `
+                        <a href="#" class="pull-left">
+                            <img src="/images/users/user-2.jpg" alt="" class="img-circle">
+                        </a>
+                        <div class="media-body">
+                            <div class="d-flex justify-content-between align-items-center w-100">
+                                <strong class="text-gray-dark"><a href="#" class="fs-8">${data.comment.userSend.firstName} ${data.comment.userSend.lastName}</a></strong>
+                                <a href="#"><i class='bx bx-dots-horizontal-rounded'></i></a>
+                            </div>
+                            <span class="d-block comment-created-time">${data.comment.createdTime}</span>
+                            <p class="fs-8 pt-2">${data.comment.content}</p>
+                            <div class="commentLR">
+                                <button type="button" class="btn btn-link fs-8">Like</button>
+                                <button type="button" class="btn btn-link fs-8">Reply</button>
+                            </div>
+                        </div>
+                    `;
+    
+                    // Thêm comment mới vào danh sách các comment
+                    const commentsList = form.closest('.media').nextElementSibling;
+                    commentsList.insertBefore(newComment, commentsList.firstChild);
+    
+                    // Reset form
+                    form.reset();
+                } else {
+                    // Xử lý khi có lỗi
+                    alert('Đã xảy ra lỗi khi thêm bình luận. SEVER');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Đã xảy ra lỗi khi thêm bình luận. CLIENT');
+            });
+        });
+    });       
 });
 
 function markNotificationsAsRead() {

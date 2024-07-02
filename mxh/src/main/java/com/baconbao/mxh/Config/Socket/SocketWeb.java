@@ -42,4 +42,13 @@ public class SocketWeb {
         
         simpMessagingTemplate.convertAndSendToUser(user.getEmail(), "/queue/seen", relationship.getId()); //Gửi thông báo seen đến user
     }
+
+    public void sendFriendRequestNotification(User fromUser, User toUser) {
+        NotificationDTO notificationDTO = new NotificationDTO();
+        notificationDTO.setFromUser(fromUser);
+        notificationDTO.setToUser(toUser);
+        notificationDTO.setMessage("You have a new friend request from " + fromUser.getFirstName());
+        notificationDTO.setUrl("/friend-requests"); // URL to the friend requests page
+        simpMessagingTemplate.convertAndSendToUser(toUser.getEmail(), "/queue/friend-requests", notificationDTO);
+    }
 }
