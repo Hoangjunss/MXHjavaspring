@@ -44,7 +44,6 @@ public class SocketWeb {
     }
 
     public void sendFriendRequestNotification(Notification notification) {
-        System.out.println(" SOCKETWEB NOTIFICATION");
         simpMessagingTemplate.convertAndSendToUser(notification.getUser().getEmail(), "/queue/addfriend", notification);
     }
 }

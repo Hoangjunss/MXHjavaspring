@@ -202,7 +202,6 @@ public class PostsController {
         try {
             String content = (String) payload.get("content");
             Long idPost = Long.valueOf((String) payload.get("postId"));
-            System.out.println(content + " " + idPost);
 
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
             User user = userService.findByEmail(userDetails.getUsername());
@@ -211,8 +210,6 @@ public class PostsController {
             if (post == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Post not found");
             }
-            System.out.println(post.getId() + " IDPOST");
-            System.out.println(content + " CONTENT");
             Comment comment = new Comment();
             comment.setContent(content);
             comment.setUserSend(user);
@@ -279,7 +276,6 @@ public class PostsController {
             Post post = postService.findById(interactionDTO.getPostId());
             Interact interact = interactService.findById(interactionDTO.getReactionId());
 
-            System.out.println(interactionDTO.getPostId() + " " + interactionDTO.getReactionId() + " INTERACTION");
             Interaction interaction = new Interaction();
             interaction.setInteractionType(interact);
             interaction.setPost(post);
@@ -301,15 +297,7 @@ public class PostsController {
     @PostMapping("/searchuser")
     public ResponseEntity<?> searchuser(@RequestBody String name) {
         try {
-            System.out.println(name + " Key search");
             List<com.baconbao.mxh.Models.test> id_users = testService.findByLastNameOrFirstName(name, name);
-            if (id_users.size() == 0) {
-                System.out.println(" NULL");
-            }
-            for (com.baconbao.mxh.Models.test user : id_users) {
-                System.out.println(user.getLastName() + " SEARCH USER");
-            }
-
             return ResponseEntity.ok(id_users);
         } catch (DataIntegrityViolationException e) {
             throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);

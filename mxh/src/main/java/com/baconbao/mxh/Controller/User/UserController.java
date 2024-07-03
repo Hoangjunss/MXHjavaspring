@@ -41,7 +41,6 @@ import com.baconbao.mxh.DTO.UserDTO;
 import com.baconbao.mxh.Exceptions.CustomException;
 import com.baconbao.mxh.Exceptions.ErrorCode;
 import com.baconbao.mxh.Models.VerifycationToken;
-import com.baconbao.mxh.Models.Post.Comment;
 import com.baconbao.mxh.Models.Post.Image;
 import com.baconbao.mxh.Models.Post.Post;
 import com.baconbao.mxh.Models.Post.Status;
@@ -53,7 +52,6 @@ import com.baconbao.mxh.Models.User.User;
 import com.baconbao.mxh.Models.User.UserAbout;
 import com.baconbao.mxh.Services.CloudinaryService;
 import com.baconbao.mxh.Services.Service.VerifycationTokenService;
-import com.baconbao.mxh.Services.Service.Post.CommentService;
 import com.baconbao.mxh.Services.Service.Post.ImageService;
 import com.baconbao.mxh.Services.Service.Post.PostService;
 import com.baconbao.mxh.Services.Service.Post.StatusService;
@@ -317,7 +315,8 @@ public class UserController {
             response.put("success", success);
             response.put("newStatus", newStatus);
             Notification notification = new Notification();
-            notification.setMessage("You have a friend request from " + userOne.getFirstName() + " " + userOne.getLastName());
+            notification.setMessage(
+                    "You have a friend request from " + userOne.getFirstName() + " " + userOne.getLastName());
             notification.setUser(userTwo);
             notification.setChecked(false);
             notification.setUrl("/friends");
@@ -377,7 +376,6 @@ public class UserController {
         String idUser = idUserMap.get("idUser");
         Long userId = Long.valueOf(idUser);
 
-        System.out.println(idUser + " IDUSERTWO");
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
         User user = userService.findByEmail(userDetails.getUsername());
@@ -571,7 +569,6 @@ public class UserController {
         Relationship relationship = new Relationship();
         if (!isOwnProfile) {
             relationship = relationalService.findRelationship(loggedInUser, user);
-            System.out.println(relationship.getStatus() + " STATUS RELATIONSHIP");
         }
         userAboutForm.setUserAboutDTOs(userAboutDTOs);
         model.addAttribute("relationship", relationship);

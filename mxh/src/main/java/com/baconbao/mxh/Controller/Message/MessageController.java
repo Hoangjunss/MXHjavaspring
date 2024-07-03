@@ -189,10 +189,8 @@ public class MessageController {
         // Kiểm tra trong mối quan hệ userlogin ở vị trí one hay two để hiển thị thông
         // tin của người đối diện đang chat
         if (user.getId() == relationship.getUserOne().getId()) {
-            System.out.println(relationship.getUserTwo().getId());
             model.addAttribute("userTo", relationship.getUserTwo());
         } else {
-            System.out.println(relationship.getUserOne().getId());
             model.addAttribute("userTo", relationship.getUserOne());
         }
         model.addAttribute("relation", relationship);
@@ -234,19 +232,13 @@ public class MessageController {
     public Message sendMessage(@Payload Map<String, Object> message, Principal principal) {
 
         Map<String, Object> innerMessage = (Map<String, Object>) message.get("message");
-        if (innerMessage == null) {
-            // Log lỗi và/hoặc ném ngoại lệ
-            System.err.println("innerMessage is null");
-        }
         String content = "";
         String id = "";
         if (innerMessage.get("content") != null) {
             content = (String) innerMessage.get("content");
-            System.out.println(content + " CHAT.SEND.content");
         }
         if (innerMessage.get("id") != null) {
             id = String.valueOf(innerMessage.get("id"));
-            System.err.println(id + " CHAT.SEND.id");
         }
 
         Message messages = new Message();
@@ -279,7 +271,6 @@ public class MessageController {
     public void sendSeen(@Payload Map<String, Object> message, Principal principal) {
         Map<String, Object> innerMessage = (Map<String, Object>) message.get("message");
         String id = String.valueOf(innerMessage.get("id"));
-        System.out.println(id);
         // Lấy thông tin chi tiết của người dùng hiện tại từ principal
         UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
         // Tìm người dùng hiện tại từ email của họ
@@ -291,15 +282,8 @@ public class MessageController {
     @PostMapping("/searchmessage")
     public ResponseEntity<?> searchMessage(@RequestBody String name) {
         try {
-            System.out.println(name + " Key search");
             List<Message> messages = new ArrayList<>();
             messages = messageService.findByContent(name);
-            if (messages.isEmpty()) {
-                System.out.println("No messages found.");
-            }
-            for (Message message : messages) {
-                System.out.println(message.getContent() + " SEARCH MESSAGE");
-            }
             return ResponseEntity.ok(messages);
         } catch (DataIntegrityViolationException e) {
             throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
