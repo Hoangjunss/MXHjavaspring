@@ -198,7 +198,7 @@
                                 </ul>
                             </li>
                             <li class="nav-item s-nav">
-                                <a th:href="@{/profile}" class="nav-link nav-links">
+                                <a th:href="@{/profile(id=${user.id})}" class="nav-link nav-links">
                                     <div class="menu-user-image">
                                         <img th:src="@{/images/users/user-4.jpg}" class="menu-user-img ml-1" alt="Menu Image">
                                     </div>
@@ -303,7 +303,7 @@
                             <div class="post border-bottom p-3 bg-white w-shadow" data-id="${listpost.id}"> <!-- id ul cua post -->
                                 <div class="media text-muted pt-3">
                                     <!-- Avartar user -->
-                                    <img th:if="${listpost.user.image}" th:src="${listpost.user.image.urlImage}" alt="Online user" class="mr-3 post-user-image">
+                                    <img th:if="${listpost.user.image}" th:src="@{/images/users/default/Depositphotos.jpg}" alt="Online user" class="mr-3 post-user-image"> <!-- th:src="${listpost.user.image.urlImage}" -->
                                     <form th:action="@{/hidepost}" method="post">
                                         <input type="hidden" name="id" th:value="${listpost.id}">
                                         <button type="submit">Ẩn</button>
@@ -311,9 +311,7 @@
                                     <div class="media-body pb-3 mb-0 small lh-125">
                                         <div class="d-flex justify-content-between align-items-center w-100">
                                             <!--Hien thi Name user -->
-                                            <a href="#" class="text-gray-dark post-user-name" th:text="${listpost.user.lastName} + ${listpost.user.firstName}"></a>
-                                          
-                                            
+                                            <a th:href="@{/profile(id=${listpost.user.id})}" class="text-gray-dark post-user-name" th:text="${listpost.user.lastName} + ${listpost.user.firstName}"></a>
                                         </div>
                                         <!-- Display time update -->
                                         <span class="d-block">3 hours ago <i class='bx bx-globe ml-3'></i></span>

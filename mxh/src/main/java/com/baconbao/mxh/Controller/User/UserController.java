@@ -25,6 +25,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
@@ -43,6 +44,7 @@ import com.baconbao.mxh.Models.VerifycationToken;
 import com.baconbao.mxh.Models.Post.Comment;
 import com.baconbao.mxh.Models.Post.Image;
 import com.baconbao.mxh.Models.Post.Post;
+import com.baconbao.mxh.Models.Post.Status;
 import com.baconbao.mxh.Models.User.About;
 import com.baconbao.mxh.Models.User.Notification;
 import com.baconbao.mxh.Models.User.Relationship;
@@ -54,6 +56,7 @@ import com.baconbao.mxh.Services.Service.VerifycationTokenService;
 import com.baconbao.mxh.Services.Service.Post.CommentService;
 import com.baconbao.mxh.Services.Service.Post.ImageService;
 import com.baconbao.mxh.Services.Service.Post.PostService;
+import com.baconbao.mxh.Services.Service.Post.StatusService;
 import com.baconbao.mxh.Services.Service.User.AboutService;
 import com.baconbao.mxh.Services.Service.User.NotificationService;
 import com.baconbao.mxh.Services.Service.User.RelationshipService;
@@ -87,7 +90,7 @@ public class UserController {
     @Autowired
     private NotificationService notificationService;
     @Autowired
-    private CommentService commentService;
+    private StatusService statusService;
 
     // Nhan trang edit dieu kien la "/editaccount"
     @GetMapping("/editaccount")
@@ -274,7 +277,6 @@ public class UserController {
                 friends.add(relationship.getUserOne()); // Ngược lại thì userOne là bạn bè
             }
         }
-
         // Số lượng bạn bè
         int count = getFriendCount(user);
         // Trả về HTML danh sách bạn bè
@@ -287,6 +289,44 @@ public class UserController {
 
         System.out.println("Not Friends: " + notFriends);
         return "seefriend";
+    }
+
+    @PostMapping("/relationship")
+    public ResponseEntity<?> relationship(@RequestBody Map<String, Object> payload, Principal principal) {
+        try {
+            Long userId = Long.parseLong(payload.get("userId").toString());
+            Long status = Long.parseLong(payload.get("status").toString());
+            UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+            User userOne = userService.findByEmail(userDetails.getUsername());
+            User userTwo = userService.findById(userId);
+            Relationship relationship = relationalService.findRelationship(userOne, userTwo);
+            if (relationship == null || (relationship != null && relationship.getStatus().getId() == 4)) {
+                relationship.setUserOne(userOne);
+                relationship.setUserTwo(userTwo);
+                relationship.setStatus(statusRelationshipService.findById(status));
+                relationalService.addUser(relationship);
+            } else {
+                relationship.setStatus(statusRelationshipService.findById(status));
+                relationalService.addUser(relationship);
+            }
+
+            boolean success = true;// result of the update logic
+            long newStatus = status; // the new status after update
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", success);
+            response.put("newStatus", newStatus);
+            Notification notification = new Notification();
+            notification.setMessage("You have a friend request from " + userOne.getFirstName() + " " + userOne.getLastName());
+            notification.setUser(userTwo);
+            notification.setChecked(false);
+            notification.setUrl("/friends");
+            notificationService.saveNotification(notification);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     // dat trang thai cua 2 user
@@ -337,7 +377,7 @@ public class UserController {
         String idUser = idUserMap.get("idUser");
         Long userId = Long.valueOf(idUser);
 
-        System.out.println(idUser+" IDUSERTWO");
+        System.out.println(idUser + " IDUSERTWO");
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
         User user = userService.findByEmail(userDetails.getUsername());
@@ -438,7 +478,6 @@ public class UserController {
     @PostMapping("/editprofile")
     public String editProfile(@ModelAttribute("userAboutForm") UserAboutForm userAboutForm, Principal principal) {
         try {
-            System.out.println(" EDIT PROFILR DETAILS");
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
             User user = userService.findByEmail(userDetails.getUsername());
             for (UserAboutDTO userAboutDTO : userAboutForm.getUserAboutDTOs()) {
@@ -499,14 +538,15 @@ public class UserController {
     }
 
     @GetMapping("/profile")
-    public String showPageProfile(Model model, Principal principal){
+    public String showPageProfile(Model model, @RequestParam("id") Long id, Principal principal) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
-        User user = userService.findByEmail(userDetails.getUsername());
+        User loggedInUser = userService.findByEmail(userDetails.getUsername());
+        User user = (id != null) ? userService.findById(id) : loggedInUser;
+        boolean isOwnProfile = loggedInUser.getId() == user.getId() ? true : false;
         List<Post> posts = postService.findByUserPosts(user);
         List<About> abouts = aboutService.fillAll();
         UserAboutForm userAboutForm = new UserAboutForm();
         List<UserAboutDTO> userAboutDTOs = new ArrayList<>();
-
         // Lấy danh sách mô tả trước đó của người dùng
         List<UserAbout> userAbouts = userAboutService.findByUser(user);
 
@@ -525,16 +565,24 @@ public class UserController {
             }
             userAboutDTOs.add(dto);
         }
+        List<Status> status = statusService.findAll();
         List<Notification> notifications = notificationService.findByUser(user);
-        model.addAttribute("notifications", notifications);
         int unreadCount = notificationService.countUncheckedNotifications(user);
-        model.addAttribute("unreadCount", unreadCount);
+        Relationship relationship = new Relationship();
+        if (!isOwnProfile) {
+            relationship = relationalService.findRelationship(loggedInUser, user);
+            System.out.println(relationship.getStatus() + " STATUS RELATIONSHIP");
+        }
         userAboutForm.setUserAboutDTOs(userAboutDTOs);
+        model.addAttribute("relationship", relationship);
+        model.addAttribute("isOwnProfile", isOwnProfile);
+        model.addAttribute("status", status);
+        model.addAttribute("notifications", notifications);
+        model.addAttribute("unreadCount", unreadCount);
         model.addAttribute("abouts", abouts);
         model.addAttribute("userAboutForm", userAboutForm);
         model.addAttribute("posts", posts);
         model.addAttribute("userprofile", user);
         return "User/profile";
     }
-
 }

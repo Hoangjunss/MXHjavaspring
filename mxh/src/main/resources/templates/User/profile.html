@@ -241,9 +241,49 @@
                                         <p class="profile-username mb-3 text-muted" >@</p>
                                     </div>
                                     <div class="intro mt-4">
-                                        <div class="d-flex">
-                                            <button type="button" class="btn btn-follow mr-3"><i class='bx bx-plus'></i> Follow</button>
-                                            <button type="button" class="btn btn-start-chat" data-toggle="modal" data-target="#newMessageModal"><i class='bx bxs-message-rounded'></i> <span class="fs-8">Message</span></button>
+                                        <div th:if="${isOwnProfile}" class="d-flex">
+                                            <button type="button" class="btn btn-follow mr-3" id="editProfile"><i class='bx bx-plus'></i> Edit Profile</button>
+                                            <button type="button" class="btn btn-start-chat" data-toggle="modal" data-target="#newMessageModal" id="startChatButton">
+                                                <i class='bx bxs-message-rounded'></i> <span class="fs-8">Message</span>
+                                            </button>                                            
+                                            <button type="button" class="btn btn-follow" id="moreMobile" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class='bx bx-dots-horizontal-rounded'></i> <span class="fs-8">More</span></button>
+                                            <div class="dropdown-menu dropdown-menu-right profile-ql-dropdown" aria-labelledby="moreMobile">
+                                                <a href="newsfeed.html" class="dropdown-item">Timeline</a>
+                                                <a href="about.html" class="dropdown-item">About</a>
+                                                <a href="followers.html" class="dropdown-item">Followers</a>
+                                                <a href="following.html" class="dropdown-item">Following</a>
+                                                <a href="photos.html" class="dropdown-item">Photos</a>
+                                                <a href="videos.html" class="dropdown-item">Videos</a>
+                                                <a href="check-ins.html" class="dropdown-item">Check-Ins</a>
+                                                <a href="events.html" class="dropdown-item">Events</a>
+                                                <a href="likes.html" class="dropdown-item">Likes</a>
+                                            </div>
+                                        </div>
+                                        <div th:unless="${isOwnProfile}"  class="d-flex">
+
+                                            <div th:if="${relationship == null}">
+                                                <form th:action="@{/setfriend}" method="post" class="relationship-form">
+                                                    <input type="hidden" name="id" th:value="${userprofile.id}">
+                                                    <button type="button" class="btn btn-follow mr-3 relationship-btn" data-status="1"><i class='bx bx-plus'></i>Add Friend</button>
+                                                </form>
+                                            </div>
+                                            <div th:if="${relationship != null}">
+                                                <form th:if="${relationship.status.id == 4}" th:action="@{/setfriend}" method="post" class="relationship-form">
+                                                    <input type="hidden" name="id" th:value="${userprofile.id}">
+                                                    <button type="button" class="btn btn-follow mr-3 relationship-btn" data-status="1"><i class='bx bx-plus'></i>Add Friend</button>
+                                                </form>
+                                                <form th:if="${relationship.status.id == 1}" th:action="@{/setfriend}" method="post" class="relationship-form">
+                                                    <input type="hidden" name="id" th:value="${userprofile.id}">
+                                                    <button type="button" class="btn btn-follow mr-3 relationship-btn" data-status="2"><i class='bx bx-plus'></i>Accept</button>
+                                                </form>
+                                                <form th:if="${relationship.status.id == 2}" th:action="@{/setfriend}" method="post" class="relationship-form">
+                                                    <input type="hidden" name="id" th:value="${userprofile.id}">
+                                                    <button type="button" class="btn btn-follow mr-3 relationship-btn" data-status="4"><i class='bx bx-plus'></i>UnFriend</button>
+                                                </form>
+                                            </div>
+                                            <button type="button" class="btn btn-start-chat" data-toggle="modal" data-target="#newMessageModal" id="startChatButton">
+                                                <i class='bx bxs-message-rounded'></i> <span class="fs-8">Message</span>
+                                            </button> 
                                             <button type="button" class="btn btn-follow" id="moreMobile" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class='bx bx-dots-horizontal-rounded'></i> <span class="fs-8">More</span></button>
                                             <div class="dropdown-menu dropdown-menu-right profile-ql-dropdown" aria-labelledby="moreMobile">
                                                 <a href="newsfeed.html" class="dropdown-item">Timeline</a>
@@ -272,7 +312,7 @@
                                         </div>
 
                                         <div class="intro-item d-flex justify-content-between align-items-center">
-                                            <button href="#" class="btn btn-quick-link join-group-btn border w-100" id="editProfileDetails">Edit Profile Details</button>
+                                            <button th:if="${isOwnProfile}" href="#" class="btn btn-quick-link join-group-btn border w-100" id="editProfileDetails">Edit Profile Details</button>
                                         </div>
                                     </div>
                                     <div class="intro mt-5 row mv-hidden">
@@ -312,7 +352,7 @@
                                                     </div>
                                                 </li>
                                             </ul>
-                                            <ul class="list-unstyled" style="margin-bottom: 0;">
+                                            <ul th:if="${isOwnProfile}" class="list-unstyled" style="margin-bottom: 0;">
                                                 <li class="media post-form w-shadow">
                                                     <div class="media-body">
                                                         <form th:action="@{/uploadpost}" method="post" enctype="multipart/form-data">
@@ -567,63 +607,6 @@
         </div>
     </div>
     <!-- End Edit Datails -->
-    <script>
-        const overlayAdd = document.getElementById('edit_profile');
-        const editProfileDetails = document.getElementById('editProfileDetails')
-        const closeButton = overlayAdd.querySelector('.close');
-        editProfileDetails.addEventListener('click', () => {
-            overlayAdd.style.display = "flex";
-        })
-
-        closeButton.addEventListener('click', () => {
-
-            overlayAdd.style.display = "none";
-        })
-        
-        function previewImagePost(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const imagePreview = document.getElementById('imagePreview');
-                    imagePreview.src = e.target.result;
-                    imagePreview.style.display = 'block';
-                }
-                reader.readAsDataURL(file);
-            }
-        }
-        function previewImage(event) {
-            var reader = new FileReader();
-            reader.onload = function () {
-                const previewBox = document.getElementById('preview_box');
-                let showImage = document.createElement('img');
-                showImage.src = reader.result;
-                showImage.classList.add('preview');
-                let deleteButton = document.createElement('span');
-
-                let icon = document.createElement('i');
-                icon.className = "fa-solid fa-xmark";
-                deleteButton.appendChild(icon);
-                let imageBox = document.createElement('div');
-                imageBox.classList.add('imageBox');
-                imageBox.appendChild(showImage);
-                imageBox.appendChild(deleteButton);
-                previewBox.appendChild(imageBox);
-
-                document.getElementById('imageInput').style.display = 'none';
-                const ImageBox = document.getElementById('image_box_item');
-
-                removeMessage(ImageBox);
-
-                deleteButton.addEventListener('click', () => {
-                    imageBox.remove();
-                    document.getElementById('imageInput').value = '';
-                    document.getElementById('imageInput').style.display = 'block';
-                });
-
-            };
-            reader.readAsDataURL(event.target.files[0]);
-        }
-    </script>
+    <script th:src="@{/js/User/Profile.js}"></script>
 </body>
 </html>

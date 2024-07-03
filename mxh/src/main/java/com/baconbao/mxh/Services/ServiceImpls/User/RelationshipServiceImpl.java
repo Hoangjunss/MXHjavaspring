@@ -6,7 +6,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.baconbao.mxh.DTO.RelationshipDTO;
@@ -20,40 +19,36 @@ import com.baconbao.mxh.Repository.User.RelationshipRepository;
 import com.baconbao.mxh.Services.Service.User.RelationshipService;
 import com.baconbao.mxh.Services.Service.User.StatusRelationshipService;
 
-import jakarta.persistence.EntityNotFoundException;
-
 @Service
 public class RelationshipServiceImpl implements RelationshipService {
     @Autowired
     private RelationshipRepository relationshipRepository;
-    @Autowired 
+    @Autowired
     private StatusRelationshipService statusService;
 
     @Override
     public void addUser(Relationship relationship) {
-        
-            if (relationship.getId() == null) {
-                relationship.setId(getGenerationId());
-            }
-            relationshipRepository.save(relationship);
-       
+
+        if (relationship.getId() == null) {
+            relationship.setId(getGenerationId());
+        }
+        relationshipRepository.save(relationship);
     }
 
     @Override
 
     public List<Relationship> findAllByUserOne(User user1) {
-      
+        return relationshipRepository.findAllByUserOneId(user1);
 
-            return relationshipRepository.findAllByUserOneId(user1);
-       
     }
 
     @Override
     public Relationship findById(Long id) { // Truy vấn và trả về mối quan hệ với id tương ứng
         Optional<Relationship> relationship = relationshipRepository.findById(id);
-        if (relationship.isPresent()) { 
+        if (relationship.isPresent()) {
             return relationship.get();
-        } return null;
+        }
+        return null;
     }
 
     @Override
@@ -67,18 +62,18 @@ public class RelationshipServiceImpl implements RelationshipService {
 
     public Long getGenerationId() {
         UUID uuid = UUID.randomUUID();
-        return uuid.getMostSignificantBits() &0x1FFFFFFFFFFFFFL;
+        return uuid.getMostSignificantBits() & 0x1FFFFFFFFFFFFFL;
     }
 
     @Override
 
     public List<Relationship> findAllByUserOneId(User user) {
-       
-            StatusRelationship status = statusService.findById(1L);
 
-            System.out.println(status.getStatus()+ "RELATIONSHIP SEARCH STATUS");
-            return relationshipRepository.findAllByUserOneId(user, status);
-      
+        StatusRelationship status = statusService.findById(1L);
+
+        System.out.println(status.getStatus() + "RELATIONSHIP SEARCH STATUS");
+        return relationshipRepository.findAllByUserOneId(user, status);
+
     }
 
     @Override
@@ -90,11 +85,12 @@ public class RelationshipServiceImpl implements RelationshipService {
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
     }
+
     @Override
     public Relationship findByMessage(List<Message> messages) {
-       
-            return relationshipRepository.findByMessages(messages);
-       
+
+        return relationshipRepository.findByMessages(messages);
+
     }
 
 }

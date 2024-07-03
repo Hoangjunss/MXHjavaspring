@@ -83,6 +83,7 @@ public class PostsController {
         UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());// Lấy ra email của người
                                                                                             // dùng đang đăng nhập
         User user = userService.findByEmail(userDetails.getUsername());
+        model.addAttribute("user", user);
         List<Notification> notifications = notificationService.findByUser(user);
         model.addAttribute("notifications", notifications);
         int unreadCount = notificationService.countUncheckedNotifications(user);
