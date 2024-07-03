@@ -370,6 +370,7 @@ public class UserController {
         return "redirect:/";
     }
 
+    //
     @MessageMapping("/friend.add")
     @SendTo("/queue/addfriend")
     public Notification notificationAddFriend(@Payload Map<String, String> idUserMap, Principal principal) {
@@ -535,6 +536,7 @@ public class UserController {
         return "searchuser";
     }
 
+    //Lay thong tin cho profile
     @GetMapping("/profile")
     public String showPageProfile(Model model, @RequestParam("id") Long id, Principal principal) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
