@@ -274,10 +274,15 @@
                                                 </form>
                                             </div>
                                             <div th:if="${relationship != null && relationship.status.id != 4}">
-                                                <form th:if="${relationship.status.id == 1}" th:action="@{/setfriend}" method="post" class="relationship-form">
+                                                <form th:if="${relationship.status.id == 1 && relationship.userOne.id == userprofile.id}" th:action="@{/setfriend}" method="post" class="relationship-form">
                                                     <input type="hidden" name="id" th:value="${userprofile.id}">
                                                     <button type="button" class="btn btn-follow mr-3 relationship-btn" data-status="2"><i class='bx bx-plus'></i>Accept</button>
                                                     <button type="button" class="btn btn-follow mr-3 relationship-btn" data-status="4"><i class='bx bx-plus'></i>Reject</button>
+                                                </form>
+                                                <form th:if="${relationship.status.id == 1 && relationship.userOne.id != userprofile.id}" th:action="@{/setfriend}" method="post" class="relationship-form">
+                                                    <input type="hidden" name="id" th:value="${userprofile.id}">
+                                                    <button type="button" class="btn btn-follow mr-3 relationship-btn" data-status="2"><i class='bx bx-plus'></i>Send to</button>
+                                                    <button type="button" class="btn btn-follow mr-3 relationship-btn" data-status="4"><i class='bx bx-plus'></i>Recall</button>
                                                 </form>
                                                 <form th:if="${relationship.status.id == 2}" th:action="@{/setfriend}" method="post" class="relationship-form">
                                                     <input type="hidden" name="id" th:value="${userprofile.id}">
