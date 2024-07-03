@@ -69,7 +69,7 @@ public class RelationshipServiceImpl implements RelationshipService {
 
     public List<Relationship> findAllByUserOneId(User user) {
 
-        StatusRelationship status = statusService.findById(1L);
+        StatusRelationship status = statusService.findById(1L); // why sao set cứng ???????????
 
         System.out.println(status.getStatus() + "RELATIONSHIP SEARCH STATUS");
         return relationshipRepository.findAllByUserOneId(user, status);
@@ -88,9 +88,12 @@ public class RelationshipServiceImpl implements RelationshipService {
 
     @Override
     public Relationship findByMessage(List<Message> messages) {
-
         return relationshipRepository.findByMessages(messages);
+    }
 
+    @Override
+    public int countfriend(User user, StatusRelationship status) {
+        return relationshipRepository.findAllByUserOneId(user, status).size();
     }
 
 }

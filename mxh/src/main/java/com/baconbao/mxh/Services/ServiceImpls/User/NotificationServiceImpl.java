@@ -60,4 +60,6 @@ public class NotificationServiceImpl implements NotificationService{
     public int countUncheckedNotifications(User user) {
         return notificationRepository.countUncheckedNotification(user);
     }
+
+
 }

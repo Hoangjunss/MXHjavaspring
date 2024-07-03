@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.management.relation.Relation;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -34,6 +36,7 @@ import com.baconbao.mxh.Models.Post.Post;
 import com.baconbao.mxh.Models.Post.ReplyComment;
 import com.baconbao.mxh.Models.Post.Status;
 import com.baconbao.mxh.Models.User.Notification;
+import com.baconbao.mxh.Models.User.StatusRelationship;
 import com.baconbao.mxh.Models.User.User;
 import com.baconbao.mxh.Services.CloudinaryService;
 import com.baconbao.mxh.Services.Service.TestService;
@@ -45,6 +48,8 @@ import com.baconbao.mxh.Services.Service.Post.PostService;
 import com.baconbao.mxh.Services.Service.Post.ReplyCommentService;
 import com.baconbao.mxh.Services.Service.Post.StatusService;
 import com.baconbao.mxh.Services.Service.User.NotificationService;
+import com.baconbao.mxh.Services.Service.User.RelationshipService;
+import com.baconbao.mxh.Services.Service.User.StatusRelationshipService;
 import com.baconbao.mxh.Services.Service.User.UserService;
 
 import lombok.AllArgsConstructor;
@@ -77,6 +82,10 @@ public class PostsController {
     private TestService testService;
     @Autowired
     private NotificationService notificationService;
+    @Autowired
+    private RelationshipService relationshipService;
+    @Autowired
+    private StatusRelationshipService statusRelationshipService;
 
     @GetMapping({ "/", " " })
     public String getPosts(Model model, Principal principal) {
@@ -84,6 +93,8 @@ public class PostsController {
                                                                                             // dùng đang đăng nhập
         User user = userService.findByEmail(userDetails.getUsername());
         model.addAttribute("user", user);
+        int countFriend = relationshipService.countfriend(user, statusRelationshipService.findById(2L));
+        model.addAttribute("countFriend", countFriend);
         List<Notification> notifications = notificationService.findByUser(user);
         model.addAttribute("notifications", notifications);
         int unreadCount = notificationService.countUncheckedNotifications(user);

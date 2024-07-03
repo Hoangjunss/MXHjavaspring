@@ -30,4 +30,6 @@ public interface RelationshipRepository extends JpaRepository<Relationship, Long
 
         Relationship findByMessages(List<Message> messages);
 
+
+
 }

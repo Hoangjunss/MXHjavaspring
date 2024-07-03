@@ -255,7 +255,7 @@ public class UserController {
         // Tìm ra những người không phải bạn bè
         for (Relationship relationship : relationships) {
             if (relationship != null) {
-                if (relationship.getStatus().getId() == 4 || relationship.getStatus().getId() == 1) {
+                if (relationship.getStatus().getId() == 4) {
                     if (relationship.getUserOne().equals(user)) {
                         notFriends.add(relationship.getUserTwo());
                     } else {
@@ -310,6 +310,7 @@ public class UserController {
 
             boolean success = true;// result of the update logic
             long newStatus = status; // the new status after update
+            
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", success);
@@ -569,7 +570,7 @@ public class UserController {
         List<Notification> notifications = notificationService.findByUser(user);
         int unreadCount = notificationService.countUncheckedNotifications(user);
         Relationship relationship = new Relationship();
-        if (!isOwnProfile) {
+        if (!isOwnProfile) { 
             relationship = relationalService.findRelationship(loggedInUser, user);
         }
         userAboutForm.setUserAboutDTOs(userAboutDTOs);

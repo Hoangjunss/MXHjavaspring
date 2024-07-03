@@ -86,6 +86,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     .then(data => {
                         if (data.success) {
                             updateButton(button, data.newStatus);
+                            alert("")
                         } else {
                             alert('Failed to update relationship status');
                         }
@@ -97,15 +98,15 @@ document.addEventListener("DOMContentLoaded", function () {
                 case 0:
                 case 4:
                     button.textContent = 'Add Friend';
-                    button.setAttribute('data-status', '0');
+                    button.setAttribute('data-status', '1');
                     break;
                 case 1:
-                    button.textContent = 'Accept';
-                    button.setAttribute('data-status', '1');
+                    button.textContent = 'Send to';
+                    button.setAttribute('data-status', '2');
                     break;
                 case 2:
                     button.textContent = 'UnFriend';
-                    button.setAttribute('data-status', '2');
+                    button.setAttribute('data-status', '4');
                     break;
             }
         }
