@@ -273,7 +273,7 @@ public class MessageController {
 
  
     @GetMapping("/messagermobile")
-    public ResponseEntity<?> mmobile(@RequestBody String name, Principal principal) {
+    public ResponseEntity<?> mmobile( Principal principal) {
         Map<String, Object> response = new HashMap<>();
         try {
             // Lấy thông tin chi tiết của người dùng hiện tại từ principal
