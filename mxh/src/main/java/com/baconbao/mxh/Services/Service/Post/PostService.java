@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.baconbao.mxh.DTO.PostDTO;
+import com.baconbao.mxh.Models.Post.Comment;
 import com.baconbao.mxh.Models.Post.Post;
 import com.baconbao.mxh.Models.Post.Status;
 import com.baconbao.mxh.Models.User.User;
@@ -19,4 +20,5 @@ public interface PostService {
     Long getGenerationId();
     Post getPost(PostDTO postDTO);
     PostDTO getPostDTO(Post post);
+    List<Comment> findByCommentsOrderByCreateAtDesc(Post post);
 }

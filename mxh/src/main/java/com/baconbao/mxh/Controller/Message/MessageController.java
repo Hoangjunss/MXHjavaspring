@@ -44,7 +44,7 @@ public class MessageController {
     @Autowired
     private RelationshipService relationshipService;
 
-    // Lấy đoạn tin nhắn của 2 user 
+    // Lấy đoạn tin nhắn của 2 user. CHUA RAO DIEU KIEN KHONG TIN NHAN
     @GetMapping("/send")
     public String getMessagePage(@RequestParam Long id, Model model, Principal principal) { // id là id của user cần nhắn tin với user đang login hiện tại 
         // Lấy user đang login
@@ -57,7 +57,7 @@ public class MessageController {
         return "sendmessage";
     }
 
-    // Ở giao diện mobile - hiển thị danh sách bạn bè nhắn tin
+    // Ở giao diện mobile - hiển thị danh sách bạn bè nhắn tin. SUA DONG FOR
     @GetMapping("/messagermobile")
     public String getMessagePageMobile(Model model, Principal principal) {
         // Lấy user đang login
@@ -136,7 +136,7 @@ public class MessageController {
     }
 
     // Ở giao diện website - lấy danh sách quan hệ và hiển thị đoạn chat của người
-    // gần nhất
+    // gần nhấT. SỬA DÒNG FOR
     @GetMapping("/messager")
     public String getMessagePage(Model model, Principal principal) {
         // Lấy user đang login

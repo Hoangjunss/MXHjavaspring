@@ -107,6 +107,7 @@ public class PostsController {
         return "index";
     }
 
+    //SỬA DÒNG FOR
     @PostMapping("/notificationsischecked")
     public ResponseEntity<?> markNotificationsAsRead(Principal principal) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
@@ -316,5 +317,4 @@ public class PostsController {
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
     }
-
 }

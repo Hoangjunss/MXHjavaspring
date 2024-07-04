@@ -65,9 +65,10 @@ document.addEventListener("DOMContentLoaded", function () {
         };
         reader.readAsDataURL(event.target.files[0]);
     }
-        const relationshipForms = document.querySelectorAll('.relationship-form');
-        relationshipForms.forEach(form => {
-            const button = form.querySelector('.relationship-btn');
+    const relationshipForms = document.querySelectorAll('.relationship-form');
+    relationshipForms.forEach(form => {
+        const buttons = form.querySelectorAll('.relationship-btn');
+        buttons.forEach(button => {
             button.addEventListener('click', function () {
                 const userId = form.querySelector('input[name="id"]').value;
                 const status = button.getAttribute('data-status');
@@ -82,33 +83,58 @@ document.addEventListener("DOMContentLoaded", function () {
                         status: status
                     })
                 })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            updateButton(button, data.newStatus);
-                            alert("")
-                        } else {
-                            alert('Failed to update relationship status');
-                        }
-                    })
-                    .catch(error => console.error('Error:', error));
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        updateButtons(form, data.newStatus);
+                    } else {
+                        alert('Failed to update relationship status');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
             });
-        function updateButton(button, newStatus) {
+        });
+    });
+
+    function updateButtons(form, newStatus) {
+        const buttons = form.querySelectorAll('.relationship-btn');
+        buttons.forEach(button => {
             switch (newStatus) {
-                case 0:
-                case 4:
-                    button.textContent = 'Add Friend';
-                    button.setAttribute('data-status', '1');
-                    break;
                 case 1:
-                    button.textContent = 'Send to';
-                    button.setAttribute('data-status', '2');
+                    if (button.getAttribute('data-status') == '1') {
+                        button.textContent = 'Send to';
+                        const recallButton = document.createElement('button');
+                        recallButton.type = 'button';
+                        recallButton.classList.add('btn', 'btn-follow', 'mr-3', 'relationship-btn');
+                        recallButton.setAttribute('data-status', '4');
+                        recallButton.innerHTML = "<i class='bx bx-plus'></i>Recall";
+                        recallButton.addEventListener('click', function() {
+                            updateButtons(form, 4);
+                        });
+                        form.appendChild(recallButton);
+                    } else {
+                        button.remove();
+                    }
                     break;
                 case 2:
-                    button.textContent = 'UnFriend';
-                    button.setAttribute('data-status', '4');
+                    if (button.getAttribute('data-status') == '2') {
+                        button.textContent = 'UnFriend';
+                        button.setAttribute('data-status', '4');
+                    } else {
+                        button.remove();
+                    }
+                    break;
+                case 4:
+                    if (button.getAttribute('data-status') == '4') {
+                        button.textContent = 'Add Friend';
+                        button.setAttribute('data-status', '1');
+                        const recallButton = form.querySelector('button[data-status="4"]');
+                        if (recallButton) recallButton.remove();
+                    } else {
+                        button.remove();
+                    }
                     break;
             }
-        }
-    });
+        });
+    }
 });

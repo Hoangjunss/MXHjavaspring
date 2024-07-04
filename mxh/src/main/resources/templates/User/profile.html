@@ -144,7 +144,7 @@
                                 <a href="#" class="nav-link nav-links rm-drop-mobile drop-w-tooltip" data-toggle="dropdown" data-placement="bottom" data-title="Notifications" role="button" aria-haspopup="true" aria-expanded="false">
                                     <img th:src="@{/images/icons/navbar/notification.png}" class="notification-bell" alt="navbar icon">
                                     <span th:if="${unreadCount > 0}" id="quantityNotification" class="badge-pill badge-primary unread-messages" th:text="${unreadCount}"></span>
-                                </a>                                
+                                </a>  
                                 <ul class="dropdown-menu notify-drop dropdown-menu-right nav-drop shadow-sm">
                                     <div class="notify-drop-title">
                                         <div class="row">
@@ -261,14 +261,14 @@
                                         </div>
                                         <div th:unless="${isOwnProfile}"  class="d-flex">
 
-                                            <div th:if="${relationship == null || relationship.status.id == 4}">
+                                            <div th:if="${relationship == null}">
                                                 <form th:action="@{/setfriend}" method="post" class="relationship-form">
                                                     <input type="hidden" name="id" th:value="${userprofile.id}">
                                                     <button type="button" class="btn btn-follow mr-3 relationship-btn" data-status="1"><i class='bx bx-plus'></i>Add Friend</button>
                                                 </form>
                                             </div>
                                             <div th:if="${relationship != null && relationship.status.id == 4}">
-                                                <form th:if="${relationship.status.id == 1}" th:action="@{/setfriend}" method="post" class="relationship-form">
+                                                <form th:action="@{/setfriend}" method="post" class="relationship-form">
                                                     <input type="hidden" name="id" th:value="${userprofile.id}">
                                                     <button type="button" class="btn btn-follow mr-3 relationship-btn" data-status="1"><i class='bx bx-plus'></i>Add Friend</button>
                                                 </form>
@@ -281,7 +281,7 @@
                                                 </form>
                                                 <form th:if="${relationship.status.id == 1 && relationship.userOne.id != userprofile.id}" th:action="@{/setfriend}" method="post" class="relationship-form">
                                                     <input type="hidden" name="id" th:value="${userprofile.id}">
-                                                    <button type="button" class="btn btn-follow mr-3 relationship-btn" data-status="2"><i class='bx bx-plus'></i>Send to</button>
+                                                    <button type="button" class="btn btn-follow mr-3 relationship-btn"><i class='bx bx-plus'></i>Send to</button>
                                                     <button type="button" class="btn btn-follow mr-3 relationship-btn" data-status="4"><i class='bx bx-plus'></i>Recall</button>
                                                 </form>
                                                 <form th:if="${relationship.status.id == 2}" th:action="@{/setfriend}" method="post" class="relationship-form">
@@ -289,6 +289,7 @@
                                                     <button type="button" class="btn btn-follow mr-3 relationship-btn" data-status="4"><i class='bx bx-plus'></i>UnFriend</button>
                                                 </form>
                                             </div>
+                                            
                                             
                                             <button type="button" class="btn btn-start-chat" data-toggle="modal" data-target="#newMessageModal" id="startChatButton">
                                                 <i class='bx bxs-message-rounded'></i> <span class="fs-8">Message</span>

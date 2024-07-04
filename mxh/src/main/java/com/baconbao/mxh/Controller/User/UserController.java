@@ -41,6 +41,7 @@ import com.baconbao.mxh.DTO.UserDTO;
 import com.baconbao.mxh.Exceptions.CustomException;
 import com.baconbao.mxh.Exceptions.ErrorCode;
 import com.baconbao.mxh.Models.VerifycationToken;
+import com.baconbao.mxh.Models.Post.Comment;
 import com.baconbao.mxh.Models.Post.Image;
 import com.baconbao.mxh.Models.Post.Post;
 import com.baconbao.mxh.Models.Post.Status;
@@ -89,6 +90,10 @@ public class UserController {
     private NotificationService notificationService;
     @Autowired
     private StatusService statusService;
+    @Autowired
+    private RelationshipService relationshipService;
+
+    //INDEX, PROFILE. DUNFG REQUEST API
 
     // Nhan trang edit dieu kien la "/editaccount"
     @GetMapping("/editaccount")
@@ -143,6 +148,7 @@ public class UserController {
         return "redirect:/login";
     }
 
+    //SỬA IF
     @PostMapping("/editaccount")
     // path varriablr la thong tin duoc lay sau dau / cua url
     public String editAccount(Principal principal, Model model, UserDTO userDTO, BindingResult result) {
@@ -209,40 +215,7 @@ public class UserController {
                 .body(resource);
     }
 
-    // Lấy số lượng lời mời kết bạn
-    public int getFriendCount(User user) {
-        List<Relationship> relationships = relationalService.findAllByUserOne(user);
-        List<User> friends = new ArrayList<>();
-        for (Relationship relationship : relationships) {
-            if (relationship.getStatus().getId() == 2) {
-                if (relationship.getUserOne().equals(user)) {
-                    friends.add(relationship.getUserTwo());
-                } else {
-                    friends.add(relationship.getUserOne());
-                }
-            }
-        }
-        return friends.size();
-    }
-
-    @GetMapping("/resources/templates/index.html")
-    public String getAnotherPage(Principal principal, Model model, RedirectAttributes redirectAttributes) {
-
-        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
-        User user = userService.findByEmail(userDetails.getUsername());
-
-        // Đếm số lượng bạn bè
-        int count = getFriendCount(user);
-
-        // Truyền dữ liệu sang html
-        model.addAttribute("count", count);
-
-        System.out.println("Count: " + count);
-
-        return "index";
-    }
-
-    // Lay danh sach ban be
+    // Lay danh sach ban be. SỬA DÒNG FOR
     @GetMapping("/friends")
     public String getMethodNameString(Principal principal, Model model) {
         // Lấy ra email của người dùng đang đăng nhập
@@ -276,7 +249,7 @@ public class UserController {
             }
         }
         // Số lượng bạn bè
-        int count = getFriendCount(user);
+        int count = relationalService.countfriend(user, statusRelationshipService.findById(2L));//lƯU Ý
         // Trả về HTML danh sách bạn bè
         model.addAttribute("count", count);
 
@@ -294,6 +267,7 @@ public class UserController {
         try {
             Long userId = Long.parseLong(payload.get("userId").toString());
             Long status = Long.parseLong(payload.get("status").toString());
+            System.out.println(userId+" "+status+" /RELATIONSHIP");
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
             User userOne = userService.findByEmail(userDetails.getUsername());
             User userTwo = userService.findById(userId);
@@ -310,7 +284,6 @@ public class UserController {
 
             boolean success = true;// result of the update logic
             long newStatus = status; // the new status after update
-            
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", success);
@@ -441,6 +414,7 @@ public class UserController {
         return "test";
     }
 
+    //SỬAR DÒNG FOR
     @GetMapping("/editprofile")
     public String editProfile(Model model, Principal principal) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
@@ -475,6 +449,7 @@ public class UserController {
         return "profileeditaboutdemo";
     }
 
+    //SỬA DÒNG FOR
     @PostMapping("/editprofile")
     public String editProfile(@ModelAttribute("userAboutForm") UserAboutForm userAboutForm, Principal principal) {
         try {
@@ -501,7 +476,7 @@ public class UserController {
         return "searchuser";
     }
 
-    // tìm kiếm bạn bè theo tên và hiển thị ra danh sách bạn bè
+    // tìm kiếm bạn bè theo tên và hiển thị ra danh sách bạn bè. SỬA DÒNG FOR
     @PostMapping("/usersearch")
     public String searchUser(@RequestParam("username") String username, RedirectAttributes redirectAttributes,
             Model model, Principal principal) {
@@ -537,7 +512,7 @@ public class UserController {
         return "searchuser";
     }
 
-    //Lay thong tin cho profile
+    //Lay thong tin cho profile. SỬA DÒNG FOR
     @GetMapping("/profile")
     public String showPageProfile(Model model, @RequestParam("id") Long id, Principal principal) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
@@ -574,6 +549,8 @@ public class UserController {
             relationship = relationalService.findRelationship(loggedInUser, user);
         }
         userAboutForm.setUserAboutDTOs(userAboutDTOs);
+        int countFriend = relationshipService.countfriend(user, statusRelationshipService.findById(2L));
+        model.addAttribute("countFriend", countFriend);
         model.addAttribute("relationship", relationship);
         model.addAttribute("isOwnProfile", isOwnProfile);
         model.addAttribute("status", status);

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.baconbao.mxh.DTO.PostDTO;
 import com.baconbao.mxh.Exceptions.CustomException;
 import com.baconbao.mxh.Exceptions.ErrorCode;
+import com.baconbao.mxh.Models.Post.Comment;
 import com.baconbao.mxh.Models.Post.Post;
 import com.baconbao.mxh.Models.Post.Status;
 import com.baconbao.mxh.Models.User.User;
@@ -109,5 +110,10 @@ public class PostServiceImpl implements PostService {
         } catch (Exception e) {
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
+    }
+
+    @Override
+    public List<Comment> findByCommentsOrderByCreateAtDesc(Post post) {
+        return postRepository.findByCommentsOrderByCreateAtDesc(post);
     }
 }

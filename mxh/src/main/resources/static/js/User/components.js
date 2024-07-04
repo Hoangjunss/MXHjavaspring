@@ -26,11 +26,6 @@ $(function () {
     });
 });
 
-//Messenger page script
-$(".messages").animate({
-    scrollTop: $(document).height()
-}, "fast");
-
 $(".conv-img").click(function () {
     $("#status-options").toggleClass("messenger-user-active");
 });
