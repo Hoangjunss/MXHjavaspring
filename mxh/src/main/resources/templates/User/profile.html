@@ -156,34 +156,13 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <!-- end notify title -->
-                                    <!-- notify content -->
-                                    <div class="drop-content">
-                                        <!-- Start -->
-                                        <li th:each="notification : ${notifications}">
-                                            <div class="col-md-2 col-sm-2 col-xs-2">
-                                                <div class="notify-img">
-                                                    <img th:src="@{/images/users/user-10.png}" alt="notification user image">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-10 col-sm-10 col-xs-10">
-                                                <a th:href="@{${notification.url}}" class="notification-user" th:text="${notification.user.firstName}"></a> 
-                                                <span class="notification-type" th:text="${notification.message}"></span>
-                                                <a href="#" class="notify-right-icon">
-                                                    <i class='bx bx-radio-circle-marked'></i>
-                                                </a>
-                                                <p class="time">
-                                                    <span class="badge badge-pill badge-primary"><i class='bx bxs-group'></i></span> 
-                                                    <!-- You can calculate and display time here -->
-                                                </p>
-                                            </div>
-                                        </li>
-                                    </div>
+                                    <div class="drop-content"> </div>
                                     <div class="notify-drop-footer text-center">
                                         <a href="#">See More</a>
                                     </div>
                                 </ul>
                             </li>
+                            
                             <li class="nav-item s-nav">
                                 <a th:href="@{/profile}" class="nav-link nav-links">
                                     <div class="menu-user-image">

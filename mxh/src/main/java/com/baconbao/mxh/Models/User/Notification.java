@@ -1,5 +1,7 @@
 package com.baconbao.mxh.Models.User;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -23,7 +25,6 @@ public class Notification {
     @Column(name="IdNotification")
     private Long id;
     private String message;
-    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="IdUser")
     private User user;

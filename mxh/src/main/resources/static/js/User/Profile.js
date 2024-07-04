@@ -137,4 +137,72 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     }
+    /* GET API */
+    const notificationItem = document.querySelector('.nav-item.s-nav.dropdown.notification');
+    const dropdownMenu = notificationItem.querySelector('.dropdown-menu');
+    const dropContent = dropdownMenu.querySelector('.drop-content');
+
+    notificationItem.addEventListener('click', (e) => {
+        e.preventDefault(); // Prevent default link behavior
+        markNotificationsAsRead();
+        dropdownMenu.classList.toggle('show');
+        if (dropdownMenu.classList.contains('show')) {
+            fetchNotifications();
+        }
+    });
+
+    // Close the dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!notificationItem.contains(e.target)) {
+            dropdownMenu.classList.remove('show');
+        }
+    });
+
+    function fetchNotifications() {
+        fetch('/api/notifications', { method: 'GET' })
+            .then(response => response.json())
+            .then(data => {
+                dropContent.innerHTML = '';
+                data.notifications.forEach(notification => {
+                    const notificationElement = document.createElement('li');
+                    notificationElement.innerHTML = `
+                        <div class="col-md-2 col-sm-2 col-xs-2">
+                            <div class="notify-img">
+                                <img src="#" alt="notification user image">
+                            </div>
+                        </div>
+                        <div class="col-md-10 col-sm-10 col-xs-10">
+                            <a href="${notification.url}" class="notification-user">${notification.user.firstName}</a>
+                            <span class="notification-type">${notification.message}</span>
+                            <a href="#" class="notify-right-icon">
+                                <i class='bx bx-radio-circle-marked'></i>
+                            </a>
+                            <p class="time">
+                                <span class="badge badge-pill badge-primary"><i class='bx bxs-group'></i></span>
+                                30minutes ago
+                            </p>
+                        </div>
+                    `;
+                    dropContent.appendChild(notificationElement);
+                });
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    function markNotificationsAsRead() {
+        fetch('/notificationsischecked', {
+            method: 'POST'
+        })
+        .then(response => {
+            if (response.ok) {
+                // Remove the unread messages count badge
+                const unreadMessagesBadge = document.querySelectorAll('.unread-messages');
+                unreadMessagesBadge.forEach(badge => badge.remove());
+            } else {
+                console.error('Failed to mark notifications as read.');
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+    /* END API */
 });

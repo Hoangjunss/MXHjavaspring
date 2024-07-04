@@ -6,8 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.management.relation.Relation;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -36,7 +34,6 @@ import com.baconbao.mxh.Models.Post.Post;
 import com.baconbao.mxh.Models.Post.ReplyComment;
 import com.baconbao.mxh.Models.Post.Status;
 import com.baconbao.mxh.Models.User.Notification;
-import com.baconbao.mxh.Models.User.StatusRelationship;
 import com.baconbao.mxh.Models.User.User;
 import com.baconbao.mxh.Services.CloudinaryService;
 import com.baconbao.mxh.Services.Service.TestService;
@@ -107,19 +104,17 @@ public class PostsController {
         return "index";
     }
 
-    //SỬA DÒNG FOR
     @PostMapping("/notificationsischecked")
     public ResponseEntity<?> markNotificationsAsRead(Principal principal) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
-        User user = userService.findByEmail(userDetails.getUsername());
-        List<Notification> notifications = notificationService.findByUser(user);
-        for (Notification notification : notifications) {
-            if (!notification.isChecked()) {
-                notification.setChecked(true);
-                notificationService.saveNotification(notification);
-            }
+        try {
+            UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+            User user = userService.findByEmail(userDetails.getUsername());
+            notificationService.markAllNotificationAsRead(user);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
-        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/uploadpost")

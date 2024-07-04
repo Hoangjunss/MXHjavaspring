@@ -61,5 +61,10 @@ public class NotificationServiceImpl implements NotificationService{
         return notificationRepository.countUncheckedNotification(user);
     }
 
+    @Override
+    public void markAllNotificationAsRead(User user) {
+        notificationRepository.markAllNotificationAsRead(user);
+    }
+
 
 }

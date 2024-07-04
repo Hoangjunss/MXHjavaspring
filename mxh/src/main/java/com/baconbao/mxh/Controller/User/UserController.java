@@ -542,7 +542,6 @@ public class UserController {
             userAboutDTOs.add(dto);
         }
         List<Status> status = statusService.findAll();
-        List<Notification> notifications = notificationService.findByUser(user);
         int unreadCount = notificationService.countUncheckedNotifications(user);
         Relationship relationship = new Relationship();
         if (!isOwnProfile) { 
@@ -554,12 +553,21 @@ public class UserController {
         model.addAttribute("relationship", relationship);
         model.addAttribute("isOwnProfile", isOwnProfile);
         model.addAttribute("status", status);
-        model.addAttribute("notifications", notifications);
         model.addAttribute("unreadCount", unreadCount);
         model.addAttribute("abouts", abouts);
         model.addAttribute("userAboutForm", userAboutForm);
         model.addAttribute("posts", posts);
         model.addAttribute("userprofile", user);
         return "User/profile";
+    }
+
+    @GetMapping("/api/notifications")
+    public ResponseEntity<?> getNotifications(Principal principal) {
+        Map<String, Object> response = new HashMap<>();
+        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+        User user = userService.findByEmail(userDetails.getUsername());
+        List<Notification> notifications = notificationService.findByUser(user);
+        response.put("notifications", notifications);
+        return ResponseEntity.ok(response);
     }
 }

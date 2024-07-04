@@ -14,4 +14,5 @@ public interface NotificationService {
     List<Notification> findByUser(User user);
     List<Notification> findByUserAndChecked(User user, boolean checked);
     int countUncheckedNotifications(User user);
+    void markAllNotificationAsRead(User user);
 }
