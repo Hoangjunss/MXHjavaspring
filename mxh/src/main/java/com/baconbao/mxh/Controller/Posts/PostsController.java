@@ -311,4 +311,11 @@ public class PostsController {
         model.addAttribute("posts", posts);
         return "index";
     }
+
+    @GetMapping("/testcountpost")
+    public String getCountQuantityComment(Model model){
+        List<Object[]> data = postService.findPostAndCommentAndReplyCount(postService.findById(7288845059375852L), true, statusService.findById(1L) );
+        model.addAttribute("data", data);
+        return "/testcountpost";
+    }
 }

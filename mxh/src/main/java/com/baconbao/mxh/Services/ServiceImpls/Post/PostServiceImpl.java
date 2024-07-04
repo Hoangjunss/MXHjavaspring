@@ -116,4 +116,9 @@ public class PostServiceImpl implements PostService {
     public List<Comment> findByCommentsOrderByCreateAtDesc(Post post) {
         return postRepository.findByCommentsOrderByCreateAtDesc(post);
     }
+
+    @Override
+    public List<Object[]> findPostAndCommentAndReplyCount(Post post, boolean active, Status status) {
+        return postRepository.findPostAndCommentAndReplyCount(post, active, status);
+    }
 }

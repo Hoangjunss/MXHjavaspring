@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post and Comment Reply Count</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h2>Post and Comment Reply Count</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Post ID</th>
+                <th>Post Content</th>
+                <th>Comment Count</th>
+                <th>Reply Count</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Iterate over the data -->
+            <tr th:each="item : ${data}">
+                <!-- Access elements of each Object[] -->
+                <td th:text="${item[0].id}"></td> <!-- Post ID -->
+                <td th:text="${item[0].content}"></td> <!-- Post Content -->
+                <td th:text="${item[1]}"></td> <!-- Comment Count -->
+                <td th:text="${item[2]}"></td> <!-- Reply Count -->
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

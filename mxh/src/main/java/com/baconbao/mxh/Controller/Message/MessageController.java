@@ -45,8 +45,20 @@ public class MessageController {
     @Autowired
     private RelationshipService relationshipService;
 
-    @Autowired
-    private RelationshipRepository relationshipRepository;
+    @GetMapping("/messagesmobile")
+    public String getMessagePageMobile() {
+        return "/User/Message/Mobile/Message";
+    }
+
+    @GetMapping("/chatmobile")
+    public String getMessagePageChatMobile() {
+        return "/User/Message/Mobile/Chat";
+    }
+
+    @GetMapping("/messages")
+    public String getMessagePage() {
+        return "/User/Message/Web/Messager";
+    }
 
     // Lấy đoạn tin nhắn của 2 user. CHUA RAO DIEU KIEN KHONG TIN NHAN
     @GetMapping("/send")
