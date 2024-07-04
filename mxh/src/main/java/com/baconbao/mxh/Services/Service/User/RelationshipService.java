@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 
 import com.baconbao.mxh.DTO.RelationshipDTO;
 import com.baconbao.mxh.Models.Message.Message;
-import com.baconbao.mxh.Models.Post.Status;
 import com.baconbao.mxh.Models.User.Relationship;
 import com.baconbao.mxh.Models.User.StatusRelationship;
 import com.baconbao.mxh.Models.User.User;
@@ -21,4 +20,5 @@ public interface RelationshipService {
     List<RelationshipDTO> orderByCreateAt(List<RelationshipDTO> relationships);
     Relationship findByMessage(List<Message> messages);
     int countfriend(User user, StatusRelationship status);
+    /* List<RelationshipDTO> findAllRelationshipsAndMessagesByUser(User user); */
 }

@@ -96,4 +96,9 @@ public class RelationshipServiceImpl implements RelationshipService {
         return relationshipRepository.findAllByUserOneId(user, status).size();
     }
 
+    /* @Override
+    public List<RelationshipDTO> findAllRelationshipsAndMessagesByUser(User user) {
+        
+        return relationshipRepository.findAllRelationshipsAndMessagesByUserId(user.getId());
+    } */
 }
