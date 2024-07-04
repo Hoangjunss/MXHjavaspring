@@ -331,14 +331,12 @@ public class PostsController {
         }
     }
 
-<<<<<<< HEAD
     @GetMapping("/testcountpost")
     public String getCountQuantityComment(Model model){
         List<Object[]> data = postService.findPostAndCommentAndReplyCount(postService.findById(7288845059375852L), true, statusService.findById(1L) );
         model.addAttribute("data", data);
         return "/testcountpost";
     }
-=======
 
     @GetMapping("/status") // Lấy ra tất cả trạng thái
     public ResponseEntity<?> status() {
@@ -370,6 +368,4 @@ public class PostsController {
     
     
     
-    
->>>>>>> 9150c05580896102bb107be5c38f50d0cc3f930f
 }
