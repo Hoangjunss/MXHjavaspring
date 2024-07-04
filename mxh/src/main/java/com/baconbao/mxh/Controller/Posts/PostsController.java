@@ -84,25 +84,7 @@ public class PostsController {
     @Autowired
     private StatusRelationshipService statusRelationshipService;
 
-    @GetMapping({ "/", " " })
-    public String getPosts(Model model, Principal principal) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());// Lấy ra email của người
-                                                                                            // dùng đang đăng nhập
-        User user = userService.findByEmail(userDetails.getUsername());
-        model.addAttribute("user", user);
-        int countFriend = relationshipService.countfriend(user, statusRelationshipService.findById(2L));
-        model.addAttribute("countFriend", countFriend);
-        List<Notification> notifications = notificationService.findByUser(user);
-        model.addAttribute("notifications", notifications);
-        int unreadCount = notificationService.countUncheckedNotifications(user);
-        model.addAttribute("unreadCount", unreadCount);
-        List<Status> status = statusService.findAll();
-        model.addAttribute("status", status);
-        Status status1 = statusService.findById(1); // LUU Y TIM STATUS
-        List<Post> posts = postService.findByActiveAndStatus(true, status1);
-        model.addAttribute("posts", posts);
-        return "index";
-    }
+   
 
     @PostMapping("/notificationsischecked")
     public ResponseEntity<?> markNotificationsAsRead(Principal principal) {
@@ -309,5 +291,24 @@ public class PostsController {
         } catch (Exception e) {
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
+    }
+    @GetMapping({ "/", " " })
+    public String getPosts(Model model, Principal principal) {
+        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());// Lấy ra email của người
+                                                                                            // dùng đang đăng nhập
+        User user = userService.findByEmail(userDetails.getUsername());
+        model.addAttribute("user", user);
+        int countFriend = relationshipService.countfriend(user, statusRelationshipService.findById(2L));
+        model.addAttribute("countFriend", countFriend);
+        List<Notification> notifications = notificationService.findByUser(user);
+        model.addAttribute("notifications", notifications);
+        int unreadCount = notificationService.countUncheckedNotifications(user);
+        model.addAttribute("unreadCount", unreadCount);
+        List<Status> status = statusService.findAll();
+        model.addAttribute("status", status);
+        Status status1 = statusService.findById(1); // LUU Y TIM STATUS
+        List<Post> posts = postService.findByActiveAndStatus(true, status1);
+        model.addAttribute("posts", posts);
+        return "index";
     }
 }

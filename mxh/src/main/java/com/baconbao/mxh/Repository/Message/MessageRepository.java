@@ -41,7 +41,7 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
         void seenMessage(@Param("relationship") Relationship relationship,
                         @Param("userTo") User userTo);
 
-        @Query("SELECT m.userFrom.id, COUNT(m), m.content, MAX(m.createAt) " +
+        @Query("SELECT m.userFrom.id,m.content, MAX(m.createAt) " +
                         "FROM Message m " +
                         "WHERE m.userTo = :userTo AND m.isSeen = false " +
                         "GROUP BY m.userFrom.id, m.content " +

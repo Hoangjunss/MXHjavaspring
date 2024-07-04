@@ -83,7 +83,7 @@ public class MessageController {
      */
 
     // Ở giao diện mobile - lấy đoạn tin nhắn cụ thể của 2 user
-    @GetMapping("/chatmobile")
+   /*  @GetMapping("/chatmobile")
     public String getChatPageMobile(@RequestParam Long id, Model model, Principal principal) {
         // Lấy user đang login
         UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
@@ -100,11 +100,11 @@ public class MessageController {
         model.addAttribute("userTo", userTo);
         model.addAttribute("currentUser", userFrom); // Add the current user to the model
         return "/User/Message/Mobile/Chat";
-    }
+    } */
 
     // Ở giao diện website - lấy danh sách quan hệ và hiển thị đoạn chat của người
     // gần nhấT. SỬA DÒNG FOR
-    @GetMapping("/messager")
+   /*  @GetMapping("/messager")
     public String getMessagePage(Model model, Principal principal) {
         // Lấy user đang login
         UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
@@ -163,7 +163,7 @@ public class MessageController {
         model.addAttribute("relation", relationship);
         model.addAttribute("currentUser", user); // Add the current user to the model
         return "/User/Message/Web/Messager";
-    }
+    } */
 
     // Ở giao diện website - phản hồi dưới dạng JSON cho ajax
     @PostMapping("/chat")
@@ -259,14 +259,8 @@ public class MessageController {
         }
     }
 
-    @GetMapping("/testrelationship")
-    public String testRelationship(Model model) {
-        List<RelationshipDTO> relationshipDTO = relationshipRepository.findAllRelationshipDTO();
-
-        return "/addfriend";
-    }
-
-    @GetMapping("/m")
+ 
+    @GetMapping("/messagermobile")
     public ResponseEntity<?> mmobile(@RequestBody String name, Principal principal) {
         Map<String, Object> response = new HashMap<>();
         try {
@@ -287,4 +281,32 @@ public class MessageController {
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
     }
+    @GetMapping("/chat")
+    public ResponseEntity<?> mobile(@RequestParam("id") Long userId, Principal principal) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            // Lấy thông tin chi tiết của người dùng hiện tại từ principal
+            UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+            // Tìm người dùng hiện tại từ email của họ
+            User userFrom = userService.findByEmail(userDetails.getUsername());
+            // Tìm kiếm tất cả mối quan hệ của user
+              // Tìm user theo id
+        User userTo = userService.findById(userId);
+        // Lấy Danh sách tin nhắn của 2 bên
+        List<Message> listMessage = messageService.messageFromUser(userFrom, userTo);
+        Relationship relationship = relationshipService.findRelationship(userFrom, userTo);
+        messageService.seenMessage(relationship, userFrom);
+        response.put("messages", listMessage);
+        response.put("relation", relationship);
+        response.put("userTo", userTo);
+        response.put("currentUser", userFrom);
+          
+            return ResponseEntity.ok(response);
+        } catch (DataIntegrityViolationException e) {
+            throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+        }
+    }
+    
 }
