@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import com.baconbao.mxh.Models.User.Relationship;
 import com.baconbao.mxh.Models.User.StatusRelationship;
 import com.baconbao.mxh.Models.User.User;
+import com.baconbao.mxh.DTO.RelationshipDTO;
 import com.baconbao.mxh.Models.Message.Message;
 
 
@@ -37,5 +38,14 @@ public interface RelationshipRepository extends JpaRepository<Relationship, Long
         // tìm những người không phải là bạn bè của user
         @Query("SELECT r FROM Relationship r WHERE (r.userOne = :user OR r.userTwo = :user) AND r.status.id = 4")
         List<Relationship> findNotFriendsByUser(@Param("user") User user);
+
+       /*  @Query("SELECT m FROM Message m WHERE (m.sender = :user1 AND m.receiver = :user2) OR (m.sender = :user2 AND m.receiver = :user1) ORDER BY m.createAt DESC")
+        List<Message> findMessagesBetweenUsers(@Param("user1") User user1, @Param("user2") User user2);
+
+        @Query("SELECT m FROM Message m WHERE (m.sender = :user1 AND m.receiver = :user2) OR (m.sender = :user2 AND m.receiver = :user1) ORDER BY m.createAt DESC")
+        Message findLatestMessage(@Param("user1") User user1, @Param("user2") User user2); */
+
+        @Query("SELECT new com.baconbao.mxh.DTO.RelationshipDTO(r) FROM Relationship r")
+        List<RelationshipDTO> findAllRelationshipDTO();
 
 }

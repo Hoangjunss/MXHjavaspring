@@ -120,4 +120,9 @@ public class MessageServiceImpl implements MessageService {
         }
         return null;
     }
+
+    @Override
+    public List<Object[]> countUnseenMessageByUserTo(User userTo) {
+        return messageRepository.countUnseenMessageByUserTo(userTo);
+    }
 }

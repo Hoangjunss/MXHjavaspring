@@ -17,4 +17,5 @@ public interface MessageService {
     void seenMessage(Relationship relationships, User user);
     int CountMessageBetweenTwoUserIsSeen(User user,User user2);
     Message findById(Long id);
+    List<Object[]> countUnseenMessageByUserTo(User userTo);
 }

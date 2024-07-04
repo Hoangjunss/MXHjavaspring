@@ -221,7 +221,6 @@ public class PostsController {
             comment.setContent(content);
             comment.setUserSend(user);
             comment.setCreateAt(LocalDateTime.now());
-
             List<Comment> comments = post.getComments();
             comments.add(comment);
             commentService.save(comment);
@@ -282,7 +281,6 @@ public class PostsController {
             User user = userService.findByEmail(userDetails.getUsername());
             Post post = postService.findById(interactionDTO.getPostId());
             Interact interact = interactService.findById(interactionDTO.getReactionId());
-
             Interaction interaction = new Interaction();
             interaction.setInteractionType(interact);
             interaction.setPost(post);

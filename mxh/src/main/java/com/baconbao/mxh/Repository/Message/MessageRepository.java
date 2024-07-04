@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.baconbao.mxh.DTO.RelationshipDTO;
 import com.baconbao.mxh.Models.Message.Message;
 import com.baconbao.mxh.Models.User.Relationship;
 import com.baconbao.mxh.Models.User.User;
@@ -40,5 +41,7 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
         void seenMessage(@Param("relationship") Relationship relationship,
                         @Param("userTo") User userTo);
 
-
+        @Query("SELECT m.userFrom.id, COUNT(m.userFrom) FROM Message m WHERE m.userTo = :userTo AND m.isSeen=false GROUP BY m.userFrom")
+        List<Object[]> countUnseenMessageByUserTo(@Param("userTo") User userTo);
+        
 }

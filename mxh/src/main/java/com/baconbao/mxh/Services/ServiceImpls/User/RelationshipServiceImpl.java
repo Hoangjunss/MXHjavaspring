@@ -124,3 +124,10 @@ public class RelationshipServiceImpl implements RelationshipService {
         return notFriends;
     }
 }
+
+    /* @Override
+    public List<RelationshipDTO> findAllRelationshipsAndMessagesByUser(User user) {
+        
+        return relationshipRepository.findAllRelationshipsAndMessagesByUserId(user.getId());
+    } */
+
