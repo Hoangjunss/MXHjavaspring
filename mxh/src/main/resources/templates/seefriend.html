@@ -134,7 +134,7 @@ h3 {
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.4.0/dist/sockjs.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
-    <script th:src="@{/js/Socket.js}"></script>
+    <script th:src="@{/js/user/seefriend.js}"></script>
 </head>
 <body>
     <div class="container">
@@ -142,13 +142,11 @@ h3 {
         <ul class="friend-list">
             <li class="friend" th:each="friend : ${listfriend}">
                 <div class="friend-card">
-                    <!-- <img class="avatar" th:src="${friend.avatar}" alt="Avatar"> -->
                     <div class="friend-info">
                         <p class="name" th:text="${friend.firstName} + ' ' + ${friend.lastName}"></p>
-                        <!-- <p class="mutual-friends">4 bạn chung</p> -->
-                        <p th:text="'Số lượng bạn bè: ' + ${count}"></p>
-                        <button class="btn confirm">Xác nhận</button>
-                        <button class="btn delete">Xóa</button>
+                        <p th:text="'Bạn bè chung : ' + ${count}"></p>
+                        <button class="btn confirm" onclick="acceptFriendRequest('${friend.id}')">Xác nhận</button>
+                        <button class="btn delete" onclick="deleteFriend('${friend.id}')">Xóa</button>
                     </div>
                 </div>
             </li>
@@ -163,21 +161,20 @@ h3 {
         <ul class="friend-list">
             <li class="notFriends" th:each="notFriend : ${listnotFriends}">
                 <div class="friend-card">
-                    <!-- <img class="avatar" th:src="${friend.avatar}" alt="Avatar"> -->
                     <div class="friend-info">
                         <p class="name" th:text="${notFriend.firstName} + ' ' + ${notFriend.lastName}"></p>
                         <p class="mutual-friends">4 bạn chung</p>
                         <form>
                             <input type="hidden" id="idUser" name="id" th:value="${notFriend.id}">
-                            <button class="btn confirm" type="button" onclick="sendAddFriend()">Chấp Nhận</button>
+                            <button class="btn confirm" onclick="addFriend('${notFriend.id}')">Thêm bạn bè</button>
                         </form>
-                        <button class="btn delete">Ẩn</button>
+                        <button class="btn delete" onclick="deleteFriend('${notFriend.id}')">Gỡ</button>
                     </div>
                 </div>
             </li>
         </ul>
         <a th:href="@{#}" class="view-all">Xem tất cả</a>
     </div>
-    
 </body>
+
 </html>

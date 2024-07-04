@@ -10,13 +10,18 @@ import com.baconbao.mxh.DTO.AboutDTO;
 import com.baconbao.mxh.Exceptions.CustomException;
 import com.baconbao.mxh.Exceptions.ErrorCode;
 import com.baconbao.mxh.Models.User.About;
+import com.baconbao.mxh.Models.User.UserAbout;
 import com.baconbao.mxh.Repository.User.AboutRepository;
+import com.baconbao.mxh.Repository.User.UserAboutRepository;
 import com.baconbao.mxh.Services.Service.User.AboutService;
+import com.baconbao.mxh.Models.User.User;
 
 @Service
 public class AboutServiceImpl implements AboutService {
     @Autowired
     public AboutRepository aboutRepository;
+    @Autowired
+    private UserAboutRepository userAboutRepository;
 
     @Override
     public About getAbout(AboutDTO aboutDTO) {
@@ -58,4 +63,7 @@ public class AboutServiceImpl implements AboutService {
         throw new CustomException(ErrorCode.ABOUT_NOT_FOUND);
     }
 
+    public List<UserAbout> findByUser(User user) {
+        return userAboutRepository.findByUser(user);
+    }
 }

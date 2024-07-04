@@ -1,5 +1,7 @@
 package com.baconbao.mxh.Services.ServiceImpls.User;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -96,4 +98,29 @@ public class RelationshipServiceImpl implements RelationshipService {
         return relationshipRepository.findAllByUserOneId(user, status).size();
     }
 
+    public List<User> findFriends(User user) {
+        List<Relationship> relationships = relationshipRepository.findFriendByUser(user);
+        List<User> friends = new ArrayList<>();
+        for (Relationship relationship : relationships) {
+            if (relationship.getUserOne().equals(user)) {
+                friends.add(relationship.getUserTwo());
+            } else {
+                friends.add(relationship.getUserOne());
+            }
+        }
+        return friends;
+    }
+
+    public List<User> findNotFriends(User user) {
+        List<Relationship> relationships = relationshipRepository.findNotFriendsByUser(user);
+        List<User> notFriends = new ArrayList<>();
+        for (Relationship relationship : relationships) {
+            if (relationship.getUserOne().equals(user)) {
+                notFriends.add(relationship.getUserTwo());
+            } else {
+                notFriends.add(relationship.getUserOne());
+            }
+        }
+        return notFriends;
+    }
 }

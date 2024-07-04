@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -221,33 +222,11 @@ public class UserController {
         // Lấy ra email của người dùng đang đăng nhập
         UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
         User user = userService.findByEmail(userDetails.getUsername());
-        // Tìm danh sách bạn bè của user
-        List<Relationship> relationships = relationalService.findAllByUserOne(user);
 
-        List<User> notFriends = new ArrayList<>(); // Danh sách không phải bạn bè
-        // Tìm ra những người không phải bạn bè
-        for (Relationship relationship : relationships) {
-            if (relationship != null) {
-                if (relationship.getStatus().getId() == 4) {
-                    if (relationship.getUserOne().equals(user)) {
-                        notFriends.add(relationship.getUserTwo());
-                    } else {
-                        notFriends.add(relationship.getUserOne());
-                    }
-                }
-            }
-        }
+        // Tìm danh sách bạn bè và những người không phải bạn bè của user
+        List<User> friends = relationalService.findFriends(user);
+        List<User> notFriends = relationalService.findNotFriends(user);
 
-        // Tạo danh sách bạn bè từ relationships
-        List<User> friends = new ArrayList<>(); // Danh sách bạn bè
-        for (Relationship relationship : relationships) {
-            if (relationship.getUserOne().equals(user)) { // Nếu userOne là user hiện tại đang đăng nhập thì userTwo là
-                                                          // bạn bè
-                friends.add(relationship.getUserTwo()); // Thêm userTwo vào danh sách bạn bè
-            } else {
-                friends.add(relationship.getUserOne()); // Ngược lại thì userOne là bạn bè
-            }
-        }
         // Số lượng bạn bè
         int count = relationalService.countfriend(user, statusRelationshipService.findById(2L));//lƯU Ý
         // Trả về HTML danh sách bạn bè
@@ -414,7 +393,7 @@ public class UserController {
         return "test";
     }
 
-    //SỬAR DÒNG FOR
+    //SỬA DÒNG FOR
     @GetMapping("/editprofile")
     public String editProfile(Model model, Principal principal) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
@@ -425,13 +404,10 @@ public class UserController {
         List<UserAboutDTO> userAboutDTOs = new ArrayList<>();
 
         // Lấy danh sách mô tả trước đó của người dùng
-        List<UserAbout> userAbouts = userAboutService.findByUser(user);
+        List<UserAbout> userAbouts = userAboutService.findByUser(user); 
 
         // Tạo một map để dễ dàng tra cứu mô tả theo idAbout
-        Map<Long, String> userAboutMap = new HashMap<>();
-        for (UserAbout userAbout : userAbouts) {
-            userAboutMap.put(userAbout.getAbout().getId(), userAbout.getDescription());
-        }
+        Map<Long, String> userAboutMap = userAbouts.stream().collect(Collectors.toMap(ua -> ua.getAbout().getId(), UserAbout::getDescription));
         for (About about : abouts) {
             UserAboutDTO dto = new UserAboutDTO();
             dto.setAboutId(about.getId());
@@ -503,6 +479,7 @@ public class UserController {
         }
         redirectAttributes.addFlashAttribute("friends", friends);
         redirectAttributes.addFlashAttribute("notFriends", notFriends);
+        System.out.println("Not Friends : ");
         return "redirect:/search";
     }
 
@@ -569,5 +546,72 @@ public class UserController {
         List<Notification> notifications = notificationService.findByUser(user);
         response.put("notifications", notifications);
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping(value = "/acceptFriendRequest", consumes = "application/json")
+    public ResponseEntity<?> acceptFriendRequest(@RequestBody Map<String, Object> payload, Principal principal) {
+        try {
+            Long userId = Long.parseLong(payload.get("userId").toString());
+            UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+            User userOne = userService.findByEmail(userDetails.getUsername());
+            User userTwo = userService.findById(userId);
+            Relationship relationship = relationalService.findRelationship(userOne, userTwo);
+            relationship.setStatus(statusRelationshipService.findById(2L));
+            relationalService.addUser(relationship);
+            boolean success = true;
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", success);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping(value = "/deleteFriend", consumes = "application/json")
+    public ResponseEntity<?> deleteFriend(@RequestBody Map<String, Object> payload, Principal principal) {
+        try {
+            Long userId = Long.parseLong(payload.get("userId").toString());
+            UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+            User userOne = userService.findByEmail(userDetails.getUsername());
+            User userTwo = userService.findById(userId);
+            Relationship relationship = relationalService.findRelationship(userOne, userTwo);
+            relationship.setStatus(statusRelationshipService.findById(4L));
+            relationalService.addUser(relationship);
+            boolean success = true;
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", success);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping(value = "/addFriend", consumes = "application/json")
+    public ResponseEntity<?> addFriend(@RequestBody Map<String, Object> payload, Principal principal) {
+        try {
+            Long userId = Long.parseLong(payload.get("userId").toString());
+            UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+            User userOne = userService.findByEmail(userDetails.getUsername());
+            User userTwo = userService.findById(userId);
+            Relationship relationship = relationalService.findRelationship(userOne, userTwo);
+            if (relationship == null || (relationship != null && relationship.getStatus().getId() == 4)) {
+                relationship.setUserOne(userOne);
+                relationship.setUserTwo(userTwo);
+                relationship.setStatus(statusRelationshipService.findById(1L));
+                relationalService.addUser(relationship);
+            } else {
+                relationship.setStatus(statusRelationshipService.findById(1L));
+                relationalService.addUser(relationship);
+            }
+            boolean success = true;
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", success);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }
