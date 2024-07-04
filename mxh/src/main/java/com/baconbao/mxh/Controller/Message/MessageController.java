@@ -271,6 +271,8 @@ public class MessageController {
              User currentUser = userService.findByEmail(userDetails.getUsername());
               // Tìm kiếm tất cả mối quan hệ của user
             List<Relationship> relationships = relationshipService.findAllByUserOneId(currentUser);
+            List<Object[]> countMessNotSeen = messageService.countUnseenMessageByUserTo(currentUser);
+            response.put("countMessNotSeen", countMessNotSeen);
            response.put("user", currentUser);
            response.put("relantionships",relationships);
             return ResponseEntity.ok(response);
