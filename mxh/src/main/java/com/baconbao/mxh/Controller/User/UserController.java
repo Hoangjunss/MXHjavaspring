@@ -437,54 +437,7 @@ public class UserController {
         return "searchuser";
     }
 
-    //Lay thong tin cho profile. SỬA DÒNG FOR
-    @GetMapping("/profile")
-    public String showPageProfile(Model model, @RequestParam("id") Long id, Principal principal) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
-        User loggedInUser = userService.findByEmail(userDetails.getUsername());
-        User user = (id != null) ? userService.findById(id) : loggedInUser;
-        boolean isOwnProfile = loggedInUser.getId() == user.getId() ? true : false;
-        List<Post> posts = postService.findByUserPosts(user);
-        List<About> abouts = aboutService.fillAll();
-        UserAboutForm userAboutForm = new UserAboutForm();
-        List<UserAboutDTO> userAboutDTOs = new ArrayList<>();
-        // Lấy danh sách mô tả trước đó của người dùng
-        List<UserAbout> userAbouts = userAboutService.findByUser(user);
-
-        // Tạo một map để dễ dàng tra cứu mô tả theo idAbout
-        Map<Long, String> userAboutMap = new HashMap<>();
-        for (UserAbout userAbout : userAbouts) {
-            userAboutMap.put(userAbout.getAbout().getId(), userAbout.getDescription());
-        }
-        for (About about : abouts) {
-            UserAboutDTO dto = new UserAboutDTO();
-            dto.setAboutId(about.getId());
-
-            // Kiểm tra xem có mô tả trước đó hay không, nếu có thì gán vào DTO
-            if (userAboutMap.containsKey(about.getId())) {
-                dto.setDescription(userAboutMap.get(about.getId()));
-            }
-            userAboutDTOs.add(dto);
-        }
-        List<Status> status = statusService.findAll();
-        int unreadCount = notificationService.countUncheckedNotifications(user);
-        Relationship relationship = new Relationship();
-        if (!isOwnProfile) { 
-            relationship = relationalService.findRelationship(loggedInUser, user);
-        }
-        userAboutForm.setUserAboutDTOs(userAboutDTOs);
-        int countFriend = relationshipService.countfriend(user, statusRelationshipService.findById(2L));
-        model.addAttribute("countFriend", countFriend);
-        model.addAttribute("relationship", relationship);
-        model.addAttribute("isOwnProfile", isOwnProfile);
-        model.addAttribute("status", status);
-        model.addAttribute("unreadCount", unreadCount);
-        model.addAttribute("abouts", abouts);
-        model.addAttribute("userAboutForm", userAboutForm);
-        model.addAttribute("posts", posts);
-        model.addAttribute("userprofile", user);
-        return "User/profile";
-    }
+    
 
     @GetMapping("/api/notifications")
     public ResponseEntity<?> getNotifications(Principal principal) {
@@ -713,6 +666,71 @@ public class UserController {
    } catch (Exception e) {
        throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
    }
+   //Lay thong tin cho profile. SỬA DÒNG FOR
+  
+}/* 
+@GetMapping("/profile")
+public String showPageProfile(Model model, @RequestParam("id") Long id, Principal principal) {
+    UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+    User loggedInUser = userService.findByEmail(userDetails.getUsername());
+    User user = (id != null) ? userService.findById(id) : loggedInUser;
+    boolean isOwnProfile = loggedInUser.getId() == user.getId() ? true : false;
+    List<Post> posts = postService.findByUserPosts(user);
+    List<About> abouts = aboutService.fillAll();
+    UserAboutForm userAboutForm = new UserAboutForm();
+    List<UserAboutDTO> userAboutDTOs = new ArrayList<>();
+    // Lấy danh sách mô tả trước đó của người dùng
+    List<UserAbout> userAbouts = userAboutService.findByUser(user);
+
+    // Tạo một map để dễ dàng tra cứu mô tả theo idAbout
+    Map<Long, String> userAboutMap = new HashMap<>();
+    for (UserAbout userAbout : userAbouts) {
+        userAboutMap.put(userAbout.getAbout().getId(), userAbout.getDescription());
+    }
+    for (About about : abouts) {
+        UserAboutDTO dto = new UserAboutDTO();
+        dto.setAboutId(about.getId());
+
+        // Kiểm tra xem có mô tả trước đó hay không, nếu có thì gán vào DTO
+        if (userAboutMap.containsKey(about.getId())) {
+            dto.setDescription(userAboutMap.get(about.getId()));
+        }
+        userAboutDTOs.add(dto);
+    }
+    List<Status> status = statusService.findAll();
+    int unreadCount = notificationService.countUncheckedNotifications(user);
+    Relationship relationship = new Relationship();
+    if (!isOwnProfile) { 
+        relationship = relationalService.findRelationship(loggedInUser, user);
+    }
+    userAboutForm.setUserAboutDTOs(userAboutDTOs);
+    int countFriend = relationshipService.countfriend(user, statusRelationshipService.findById(2L));
+    model.addAttribute("countFriend", countFriend);
+    model.addAttribute("relationship", relationship);
+    model.addAttribute("isOwnProfile", isOwnProfile);
+    model.addAttribute("status", status);
+    model.addAttribute("unreadCount", unreadCount);
+    model.addAttribute("abouts", abouts);
+    model.addAttribute("userAboutForm", userAboutForm);
+    model.addAttribute("posts", posts);
+    model.addAttribute("userprofile", user);
+    return "User/profile";
+} */
+@GetMapping("/postUser")
+public ResponseEntity<?> postUser(  @RequestParam("id") Long id) {
+    Map<String, Object> response = new HashMap<>();
+    try {
+       User user=userService.findById(id);
+        List<Post> posts = postService.findByUserPosts(user);
+      
+       return ResponseEntity.ok(posts);
+   } catch (DataIntegrityViolationException e) {
+       throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
+   } catch (Exception e) {
+       throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+   }
+   //Lay thong tin cho profile. SỬA DÒNG FOR
+  
 }
 
     
