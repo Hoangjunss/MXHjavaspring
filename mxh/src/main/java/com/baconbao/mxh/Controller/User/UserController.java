@@ -97,7 +97,7 @@ public class UserController {
     //INDEX, PROFILE. DUNFG REQUEST API
 
     // Nhan trang edit dieu kien la "/editaccount"
-    @GetMapping("/editaccount")
+/*     @GetMapping("/editaccount")
     // model la phan minh tra ve trang html
     // principal giông như session, chứa thông tin người dùng
     public String showEditAccountPage(Model model, Principal principal) {
@@ -110,7 +110,7 @@ public class UserController {
         model.addAttribute("userDTO", userDTO); // userDTO la ten bien de html lay du lieu, userDTO la bien chua du lieu
         // ten file html
         return "editaccount";
-    }
+    } */
 
     @GetMapping("/login")
     public String showLoginPage(Model model) {
@@ -217,29 +217,7 @@ public class UserController {
     }
 
     // Lay danh sach ban be. SỬA DÒNG FOR
-    @GetMapping("/friends")
-    public String getMethodNameString(Principal principal, Model model) {
-        // Lấy ra email của người dùng đang đăng nhập
-        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
-        User user = userService.findByEmail(userDetails.getUsername());
-
-        // Tìm danh sách bạn bè và những người không phải bạn bè của user
-        List<User> friends = relationalService.findFriends(user);
-        List<User> notFriends = relationalService.findNotFriends(user);
-
-        // Số lượng bạn bè
-        int count = relationalService.countfriend(user, statusRelationshipService.findById(2L));//lƯU Ý
-        // Trả về HTML danh sách bạn bè
-        model.addAttribute("count", count);
-
-        // Trả về HTML danh sách bạn bè
-        model.addAttribute("listfriend", friends);
-        // Trả về HTML danh sách không phải bạn bè
-        model.addAttribute("listnotFriends", notFriends);
-
-        System.out.println("Not Friends: " + notFriends);
-        return "seefriend";
-    }
+ 
 
     @PostMapping("/relationship")
     public ResponseEntity<?> relationship(@RequestBody Map<String, Object> payload, Principal principal) {
@@ -394,37 +372,7 @@ public class UserController {
     }
 
     //SỬA DÒNG FOR
-    @GetMapping("/editprofile")
-    public String editProfile(Model model, Principal principal) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
-        User user = userService.findByEmail(userDetails.getUsername());
-
-        List<About> abouts = aboutService.fillAll();
-        UserAboutForm userAboutForm = new UserAboutForm();
-        List<UserAboutDTO> userAboutDTOs = new ArrayList<>();
-
-        // Lấy danh sách mô tả trước đó của người dùng
-        List<UserAbout> userAbouts = userAboutService.findByUser(user); 
-
-        // Tạo một map để dễ dàng tra cứu mô tả theo idAbout
-        Map<Long, String> userAboutMap = userAbouts.stream().collect(Collectors.toMap(ua -> ua.getAbout().getId(), UserAbout::getDescription));
-        for (About about : abouts) {
-            UserAboutDTO dto = new UserAboutDTO();
-            dto.setAboutId(about.getId());
-
-            // Kiểm tra xem có mô tả trước đó hay không, nếu có thì gán vào DTO
-            if (userAboutMap.containsKey(about.getId())) {
-                dto.setDescription(userAboutMap.get(about.getId()));
-            }
-            userAboutDTOs.add(dto);
-        }
-
-        userAboutForm.setUserAboutDTOs(userAboutDTOs);
-        model.addAttribute("abouts", abouts);
-        model.addAttribute("userAboutForm", userAboutForm);
-        return "profileeditaboutdemo";
-    }
-
+  
     //SỬA DÒNG FOR
     @PostMapping("/editprofile")
     public String editProfile(@ModelAttribute("userAboutForm") UserAboutForm userAboutForm, Principal principal) {
@@ -613,5 +561,160 @@ public class UserController {
             e.printStackTrace();
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }/* 
+    @GetMapping("/editaccount")
+    // model la phan minh tra ve trang html
+    // principal giông như session, chứa thông tin người dùng
+    public String showEditAccountPage(Model model, Principal principal) {
+        // tim user theo id
+        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+        User user = userService.findByEmail(userDetails.getUsername());
+        // chuyen user ve userDTO
+        UserDTO userDTO = userService.getUserDTO(user);
+        // tra userdto ve html
+        model.addAttribute("userDTO", userDTO); // userDTO la ten bien de html lay du lieu, userDTO la bien chua du lieu
+        // ten file html
+        return "editaccount";
+    } */
+   @GetMapping("/editaccount")
+   public ResponseEntity<?> editaccount( Principal principal) {
+    try {
+         // tim user theo id
+         UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+         User user = userService.findByEmail(userDetails.getUsername());
+         // chuyen user ve userDTO
+         UserDTO userDTO = userService.getUserDTO(user);
+        return ResponseEntity.ok(userDTO);
+    } catch (DataIntegrityViolationException e) {
+        throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
+    } catch (Exception e) {
+        throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
     }
+   }/* 
+   @GetMapping("/friends")
+   public String getMethodNameString(Principal principal, Model model) {
+       // Lấy ra email của người dùng đang đăng nhập
+       UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+       User user = userService.findByEmail(userDetails.getUsername());
+
+       // Tìm danh sách bạn bè và những người không phải bạn bè của user
+       List<User> friends = relationalService.findFriends(user);
+       List<User> notFriends = relationalService.findNotFriends(user);
+
+       // Số lượng bạn bè
+       int count = relationalService.countfriend(user, statusRelationshipService.findById(2L));//lƯU Ý
+       // Trả về HTML danh sách bạn bè
+       model.addAttribute("count", count);
+
+       // Trả về HTML danh sách bạn bè
+       model.addAttribute("listfriend", friends);
+       // Trả về HTML danh sách không phải bạn bè
+       model.addAttribute("listnotFriends", notFriends);
+
+       System.out.println("Not Friends: " + notFriends);
+       return "seefriend";
+   } */
+    @GetMapping("/friends")
+    public ResponseEntity<?> friends( Principal principal) {
+        try {
+            // tim user theo id
+            UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+            User user = userService.findByEmail(userDetails.getUsername());
+     
+            // Tìm danh sách bạn bè và những người không phải bạn bè của user
+            List<User> friends = relationalService.findFriends(user);
+           return ResponseEntity.ok(friends);
+       } catch (DataIntegrityViolationException e) {
+           throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
+       } catch (Exception e) {
+           throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+       }
+    }
+    @GetMapping("/notFriend")
+    public ResponseEntity<?> notfriends( Principal principal) {
+        try {
+            // tim user theo id
+            UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+            User user = userService.findByEmail(userDetails.getUsername());
+     
+            // Tìm danh sách bạn bè và những người không phải bạn bè của user
+            List<User> notFriends = relationalService.findNotFriends(user);
+           return ResponseEntity.ok(notFriends);
+       } catch (DataIntegrityViolationException e) {
+           throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
+       } catch (Exception e) {
+           throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+       }
+    }
+    @GetMapping("/countFriend")
+    public ResponseEntity<?> countFriend( Principal principal) {
+        try {
+            // tim user theo id
+            UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+            User user = userService.findByEmail(userDetails.getUsername());
+            int count = relationalService.countfriend(user, statusRelationshipService.findById(2L));//lƯU Ý
+           return ResponseEntity.ok(count);
+       } catch (DataIntegrityViolationException e) {
+           throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
+       } catch (Exception e) {
+           throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+       }
+    }
+   /*  @GetMapping("/editprofile")
+    public String editProfile(Model model, Principal principal) {
+        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+        User user = userService.findByEmail(userDetails.getUsername());
+
+        List<About> abouts = aboutService.fillAll();
+        UserAboutForm userAboutForm = new UserAboutForm();
+        List<UserAboutDTO> userAboutDTOs = new ArrayList<>();
+
+        // Lấy danh sách mô tả trước đó của người dùng
+        List<UserAbout> userAbouts = userAboutService.findByUser(user); 
+
+        // Tạo một map để dễ dàng tra cứu mô tả theo idAbout
+        Map<Long, String> userAboutMap = userAbouts.stream().collect(Collectors.toMap(ua -> ua.getAbout().getId(), UserAbout::getDescription));
+        for (About about : abouts) {
+            UserAboutDTO dto = new UserAboutDTO();
+            dto.setAboutId(about.getId());
+
+            // Kiểm tra xem có mô tả trước đó hay không, nếu có thì gán vào DTO
+            if (userAboutMap.containsKey(about.getId())) {
+                dto.setDescription(userAboutMap.get(about.getId()));
+            }
+            userAboutDTOs.add(dto);
+        }
+
+        userAboutForm.setUserAboutDTOs(userAboutDTOs);
+        model.addAttribute("abouts", abouts);
+        model.addAttribute("userAboutForm", userAboutForm);
+        return "profileeditaboutdemo";
+    } */
+   @GetMapping("/editprofile")
+   public ResponseEntity<?> editprofile( Principal principal) {
+    Map<String, Object> response = new HashMap<>();
+    try {
+        // tim user theo id
+        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+        User user = userService.findByEmail(userDetails.getUsername());
+
+        List<About> abouts = aboutService.fillAll();
+      
+
+        // Lấy danh sách mô tả trước đó của người dùng
+        List<UserAbout> userAbouts = userAboutService.findByUser(user); 
+        response.put("about", abouts);
+        response.put("userAbouts",userAbouts);
+        // Tạo một map để dễ dàng tra cứu mô tả theo idAbout
+      
+       return ResponseEntity.ok(response);
+   } catch (DataIntegrityViolationException e) {
+       throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
+   } catch (Exception e) {
+       throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+   }
+}
+
+    
+   
 }
