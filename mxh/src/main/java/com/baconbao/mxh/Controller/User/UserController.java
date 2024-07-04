@@ -553,8 +553,8 @@ public class UserController {
         try {
             Long userId = Long.parseLong(payload.get("userId").toString());
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
-            User userOne = userService.findByEmail(userDetails.getUsername());
-            User userTwo = userService.findById(userId);
+            User userOne = userService.findByEmail(userDetails.getUsername()); // user dang dang nhap
+            User userTwo = userService.findById(userId); // user duoc chon
             Relationship relationship = relationalService.findRelationship(userOne, userTwo);
             relationship.setStatus(statusRelationshipService.findById(2L));
             relationalService.addUser(relationship);
