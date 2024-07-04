@@ -64,19 +64,23 @@ public class MessageController {
     }
 
     // Ở giao diện mobile - hiển thị danh sách bạn bè nhắn tin. SUA DONG FOR
-    /* @GetMapping("/messagermobile")
-    public String getMessagePageMobile(Model model, Principal principal) {
-        // Lấy user đang login
-        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
-        User user = userService.findByEmail(userDetails.getUsername());
-        // Lấy tất cả mối quan hệ và tin nhắn
-        List<RelationshipDTO> relationshipDTOs = relationshipService.findAllRelationshipsAndMessagesByUserId(user);
-        // Sắp xếp danh sách theo ngày nhắn gần nhất
-        relationshipDTOs = relationshipService.orderByCreateAt(relationshipDTOs);
-        // Lưu vào model
-        model.addAttribute("relationships", relationshipDTOs);
-        return "/User/Message/Mobile/Message";
-    } */
+    /*
+     * @GetMapping("/messagermobile")
+     * public String getMessagePageMobile(Model model, Principal principal) {
+     * // Lấy user đang login
+     * UserDetails userDetails =
+     * userDetailsService.loadUserByUsername(principal.getName());
+     * User user = userService.findByEmail(userDetails.getUsername());
+     * // Lấy tất cả mối quan hệ và tin nhắn
+     * List<RelationshipDTO> relationshipDTOs =
+     * relationshipService.findAllRelationshipsAndMessagesByUserId(user);
+     * // Sắp xếp danh sách theo ngày nhắn gần nhất
+     * relationshipDTOs = relationshipService.orderByCreateAt(relationshipDTOs);
+     * // Lưu vào model
+     * model.addAttribute("relationships", relationshipDTOs);
+     * return "/User/Message/Mobile/Message";
+     * }
+     */
 
     // Ở giao diện mobile - lấy đoạn tin nhắn cụ thể của 2 user
     @GetMapping("/chatmobile")
@@ -256,25 +260,26 @@ public class MessageController {
     }
 
     @GetMapping("/testrelationship")
-    public String testRelationship(Model model){
+    public String testRelationship(Model model) {
         List<RelationshipDTO> relationshipDTO = relationshipRepository.findAllRelationshipDTO();
 
         return "/addfriend";
     }
+
     @GetMapping("/m")
-    public ResponseEntity<?> mmobile(@RequestBody String name,Principal principal) {
+    public ResponseEntity<?> mmobile(@RequestBody String name, Principal principal) {
         Map<String, Object> response = new HashMap<>();
         try {
-             // Lấy thông tin chi tiết của người dùng hiện tại từ principal
-             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
-             // Tìm người dùng hiện tại từ email của họ
-             User currentUser = userService.findByEmail(userDetails.getUsername());
-              // Tìm kiếm tất cả mối quan hệ của user
+            // Lấy thông tin chi tiết của người dùng hiện tại từ principal
+            UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+            // Tìm người dùng hiện tại từ email của họ
+            User currentUser = userService.findByEmail(userDetails.getUsername());
+            // Tìm kiếm tất cả mối quan hệ của user
             List<Relationship> relationships = relationshipService.findAllByUserOneId(currentUser);
             List<Object[]> countMessNotSeen = messageService.countUnseenMessageByUserTo(currentUser);
             response.put("countMessNotSeen", countMessNotSeen);
-           response.put("user", currentUser);
-           response.put("relantionships",relationships);
+            response.put("user", currentUser);
+            response.put("relantionships", relationships);
             return ResponseEntity.ok(response);
         } catch (DataIntegrityViolationException e) {
             throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
