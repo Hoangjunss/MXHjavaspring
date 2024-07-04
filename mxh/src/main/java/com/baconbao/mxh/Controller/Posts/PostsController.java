@@ -26,6 +26,7 @@ import com.baconbao.mxh.DTO.ApiResponse;
 import com.baconbao.mxh.DTO.InteractionDTO;
 import com.baconbao.mxh.Exceptions.CustomException;
 import com.baconbao.mxh.Exceptions.ErrorCode;
+import com.baconbao.mxh.Models.Message.Message;
 import com.baconbao.mxh.Models.Post.Comment;
 import com.baconbao.mxh.Models.Post.Image;
 import com.baconbao.mxh.Models.Post.Interact;
@@ -34,6 +35,7 @@ import com.baconbao.mxh.Models.Post.Post;
 import com.baconbao.mxh.Models.Post.ReplyComment;
 import com.baconbao.mxh.Models.Post.Status;
 import com.baconbao.mxh.Models.User.Notification;
+import com.baconbao.mxh.Models.User.Relationship;
 import com.baconbao.mxh.Models.User.User;
 import com.baconbao.mxh.Services.CloudinaryService;
 import com.baconbao.mxh.Services.Service.TestService;
@@ -292,7 +294,7 @@ public class PostsController {
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
     }
-    @GetMapping({ "/", " " })
+   /*  @GetMapping({ "/", " " })
     public String getPosts(Model model, Principal principal) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());// Lấy ra email của người
                                                                                             // dùng đang đăng nhập
@@ -310,12 +312,64 @@ public class PostsController {
         List<Post> posts = postService.findByActiveAndStatus(true, status1);
         model.addAttribute("posts", posts);
         return "index";
+    } */
+
+
+    // Lấy ra tất cả bài viết
+    @GetMapping("/post")
+    public ResponseEntity<?> post() {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Status status1 = statusService.findById(1); // LUU Y TIM STATUS
+            List<Post> posts = postService.findByActiveAndStatus(true, status1);
+            response.put("post", posts);
+            return ResponseEntity.ok(response);
+        } catch (DataIntegrityViolationException e) {
+            throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+        }
     }
 
+<<<<<<< HEAD
     @GetMapping("/testcountpost")
     public String getCountQuantityComment(Model model){
         List<Object[]> data = postService.findPostAndCommentAndReplyCount(postService.findById(7288845059375852L), true, statusService.findById(1L) );
         model.addAttribute("data", data);
         return "/testcountpost";
     }
+=======
+
+    @GetMapping("/status") // Lấy ra tất cả trạng thái
+    public ResponseEntity<?> status() {
+        try {
+            List<Status> status = statusService.findAll();
+            return ResponseEntity.ok(status);
+        } catch (DataIntegrityViolationException e) {
+            throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+        }
+    }
+    
+    @GetMapping("/notifications") // Lấy ra tất cả thông báo
+    public ResponseEntity<?> notifications(@RequestParam("id") Long userId, Principal principal) {
+      
+        try {
+            UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());// Lấy ra email của người
+                                                                                            // dùng đang đăng nhập
+        User user = userService.findByEmail(userDetails.getUsername());
+        List<Notification> notifications = notificationService.findByUser(user);
+            return ResponseEntity.ok(notifications);
+        } catch (DataIntegrityViolationException e) {
+            throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+        }
+    }
+    
+    
+    
+    
+>>>>>>> 9150c05580896102bb107be5c38f50d0cc3f930f
 }
