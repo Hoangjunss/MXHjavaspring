@@ -6,16 +6,18 @@ async function acceptFriendRequest(userId) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ userId: userId })
+            body: JSON.stringify({ 
+                userId: userId 
+            })
         });
 
         if (!response.ok) {
             throw new Error('Đã xảy ra lỗi khi chấp nhận lời mời kết bạn: ' + response.statusText);
         }
 
+        const data = await response.json();
         console.log('Lời mời kết bạn đã được chấp nhận.');
-        // Cập nhật giao diện người dùng nếu cần
-        location.reload(); // Ví dụ: tải lại trang sau khi chấp nhận
+        // location.reload(); // Tải lại trang sau khi chấp nhận
     } catch (error) {
         console.error(error.message);
     }
@@ -36,9 +38,9 @@ async function deleteFriend(userId) {
             throw new Error('Đã xảy ra lỗi khi xóa bạn bè: ' + response.statusText);
         }
 
+        const data = await response.json();
         console.log('Bạn bè đã được xóa.');
-        // Cập nhật giao diện người dùng nếu cần
-        location.reload(); // Ví dụ: tải lại trang sau khi xóa
+        location.reload(); // Tải lại trang sau khi xóa
     } catch (error) {
         console.error(error.message);
     }
@@ -59,9 +61,9 @@ async function addFriend(userId) {
             throw new Error('Đã xảy ra lỗi khi gửi lời mời kết bạn: ' + response.statusText);
         }
 
+        const data = await response.json();
         console.log('Đã gửi lời mời kết bạn.');
-        // Cập nhật giao diện người dùng nếu cần
-        location.reload(); // Ví dụ: tải lại trang sau khi gửi lời mời
+        location.reload(); // Tải lại trang sau khi gửi lời mời
     } catch (error) {
         console.error(error.message);
     }

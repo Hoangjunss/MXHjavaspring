@@ -145,8 +145,8 @@ h3 {
                     <div class="friend-info">
                         <p class="name" th:text="${friend.firstName} + ' ' + ${friend.lastName}"></p>
                         <p th:text="'Bạn bè chung : ' + ${count}"></p>
-                        <button class="btn confirm" onclick="acceptFriendRequest('${friend.id}')">Xác nhận</button>
-                        <button class="btn delete" onclick="deleteFriend('${friend.id}')">Xóa</button>
+                        <button class="btn confirm" th:attr="onclick='acceptFriendRequest(' + ${friend.id} + ')'" >Xác nhận</button>
+                        <button class="btn delete" th:attr="onclick='deleteFriend(' + ${friend.id} + ')'" >Xóa</button>
                     </div>
                 </div>
             </li>
@@ -164,11 +164,8 @@ h3 {
                     <div class="friend-info">
                         <p class="name" th:text="${notFriend.firstName} + ' ' + ${notFriend.lastName}"></p>
                         <p class="mutual-friends">4 bạn chung</p>
-                        <form>
-                            <input type="hidden" id="idUser" name="id" th:value="${notFriend.id}">
-                            <button class="btn confirm" onclick="addFriend('${notFriend.id}')">Thêm bạn bè</button>
-                        </form>
-                        <button class="btn delete" onclick="deleteFriend('${notFriend.id}')">Gỡ</button>
+                        <button class="btn confirm" type="button" th:attr="onclick='addFriend(' + ${notFriend.id} + ')'" >Thêm bạn bè</button>
+                        <button class="btn delete" th:attr="onclick='deleteFriend(' + ${notFriend.id} + ')'" >Gỡ</button>
                     </div>
                 </div>
             </li>
@@ -176,5 +173,3 @@ h3 {
         <a th:href="@{#}" class="view-all">Xem tất cả</a>
     </div>
 </body>
-
-</html>

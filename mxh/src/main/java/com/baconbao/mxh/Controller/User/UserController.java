@@ -548,7 +548,7 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping(value = "/acceptFriendRequest", consumes = "application/json")
+    @PostMapping("/acceptFriendRequest")
     public ResponseEntity<?> acceptFriendRequest(@RequestBody Map<String, Object> payload, Principal principal) {
         try {
             Long userId = Long.parseLong(payload.get("userId").toString());
@@ -568,7 +568,7 @@ public class UserController {
         }
     }
 
-    @PostMapping(value = "/deleteFriend", consumes = "application/json")
+    @PostMapping("/deleteFriend")
     public ResponseEntity<?> deleteFriend(@RequestBody Map<String, Object> payload, Principal principal) {
         try {
             Long userId = Long.parseLong(payload.get("userId").toString());
@@ -588,7 +588,7 @@ public class UserController {
         }
     }
 
-    @PostMapping(value = "/addFriend", consumes = "application/json")
+    @PostMapping("/addFriend")
     public ResponseEntity<?> addFriend(@RequestBody Map<String, Object> payload, Principal principal) {
         try {
             Long userId = Long.parseLong(payload.get("userId").toString());
