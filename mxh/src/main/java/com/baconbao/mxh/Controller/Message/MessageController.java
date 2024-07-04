@@ -261,4 +261,23 @@ public class MessageController {
 
         return "/addfriend";
     }
+    @GetMapping("/m")
+    public ResponseEntity<?> mmobile(@RequestBody String name,Principal principal) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+             // Lấy thông tin chi tiết của người dùng hiện tại từ principal
+             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+             // Tìm người dùng hiện tại từ email của họ
+             User currentUser = userService.findByEmail(userDetails.getUsername());
+              // Tìm kiếm tất cả mối quan hệ của user
+            List<Relationship> relationships = relationshipService.findAllByUserOneId(currentUser);
+           response.put("user", currentUser);
+           response.put("relantionships",relationships);
+            return ResponseEntity.ok(response);
+        } catch (DataIntegrityViolationException e) {
+            throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+        }
+    }
 }
