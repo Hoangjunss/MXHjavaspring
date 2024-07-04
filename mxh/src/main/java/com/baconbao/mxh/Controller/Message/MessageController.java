@@ -45,8 +45,20 @@ public class MessageController {
     @Autowired
     private RelationshipService relationshipService;
 
-    @Autowired
-    private RelationshipRepository relationshipRepository;
+    @GetMapping("/messagesmobile")
+    public String getMessagePageMobile() {
+        return "/User/Message/Mobile/Message";
+    }
+
+    @GetMapping("/chatmobile")
+    public String getMessagePageChatMobile() {
+        return "/User/Message/Mobile/Chat";
+    }
+
+    @GetMapping("/messages")
+    public String getMessagePage() {
+        return "/User/Message/Web/Messager";
+    }
 
     // Lấy đoạn tin nhắn của 2 user. CHUA RAO DIEU KIEN KHONG TIN NHAN
     @GetMapping("/send")
@@ -269,8 +281,8 @@ public class MessageController {
             // Tìm người dùng hiện tại từ email của họ
             User currentUser = userService.findByEmail(userDetails.getUsername());
             // Tìm kiếm tất cả mối quan hệ của user
-            List<Relationship> relationships = relationshipService.findAllByUserOneId(currentUser);
-            List<Object[]> countMessNotSeen = messageService.countUnseenMessageByUserTo(currentUser);
+            List<Relationship> relationships = relationshipService.findAllByUserOneId(currentUser); 
+            List<Object[]> countMessNotSeen = messageService.countUnseenMessageByUserTo(currentUser); // Đếm số tin nhắn chưa xem
             response.put("countMessNotSeen", countMessNotSeen);
             response.put("user", currentUser);
             response.put("relantionships", relationships);

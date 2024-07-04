@@ -308,12 +308,15 @@ public class PostsController {
         model.addAttribute("posts", posts);
         return "index";
     } */
+
+
+    // Lấy ra tất cả bài viết
     @GetMapping("/post")
     public ResponseEntity<?> post() {
         Map<String, Object> response = new HashMap<>();
         try {
             Status status1 = statusService.findById(1); // LUU Y TIM STATUS
-        List<Post> posts = postService.findByActiveAndStatus(true, status1);
+            List<Post> posts = postService.findByActiveAndStatus(true, status1);
             response.put("post", posts);
             return ResponseEntity.ok(response);
         } catch (DataIntegrityViolationException e) {
@@ -322,9 +325,16 @@ public class PostsController {
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
     }
-    @GetMapping("/status")
+
+    @GetMapping("/testcountpost")
+    public String getCountQuantityComment(Model model){
+        List<Object[]> data = postService.findPostAndCommentAndReplyCount(postService.findById(7288845059375852L), true, statusService.findById(1L) );
+        model.addAttribute("data", data);
+        return "/testcountpost";
+    }
+
+    @GetMapping("/status") // Lấy ra tất cả trạng thái
     public ResponseEntity<?> status() {
-      
         try {
             List<Status> status = statusService.findAll();
             return ResponseEntity.ok(status);
@@ -334,7 +344,8 @@ public class PostsController {
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
     }
-    @GetMapping("/notifications")
+    
+    @GetMapping("/notifications") // Lấy ra tất cả thông báo
     public ResponseEntity<?> notifications(@RequestParam("id") Long userId, Principal principal) {
       
         try {
@@ -367,7 +378,6 @@ public class PostsController {
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
     }
-    
     
     
     

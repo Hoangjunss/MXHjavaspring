@@ -2,6 +2,7 @@ package com.baconbao.mxh.Services.Service.Post;
 
 import java.util.List;
 
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import com.baconbao.mxh.DTO.PostDTO;
@@ -12,7 +13,7 @@ import com.baconbao.mxh.Models.User.User;
 
 @Service
 public interface PostService {
-    List<Post> findByActiveAndStatus(boolean active, Status status); 
+    List<Post> findByActiveAndStatus(boolean active, Status status);
     List<Post> findByUserPosts(User user);
     Post findById(Long id);
     void save(Post post);
@@ -21,4 +22,5 @@ public interface PostService {
     Post getPost(PostDTO postDTO);
     PostDTO getPostDTO(Post post);
     List<Comment> findByCommentsOrderByCreateAtDesc(Post post);
+    List<Object[]> findPostAndCommentAndReplyCount(Post post, boolean active, Status status);
 }
