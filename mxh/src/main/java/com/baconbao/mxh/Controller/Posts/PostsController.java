@@ -156,12 +156,7 @@ public class PostsController {
     }
 
     // Chỉnh sửa bài viết
-    @GetMapping("/editpost")
-    public String editPost(Model model, @RequestParam long id) {
-        Post post = postService.findById(id); // tìm post theo id
-        model.addAttribute("post", post); // truyền dữ liệu post qua view (editpost.html)
-        return "editpost";
-    }
+   
 
     // Lưu bài viết đã chỉnh sửa
     @PostMapping("/savepost")
@@ -363,6 +358,25 @@ public class PostsController {
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
     }
+    /* @GetMapping("/editpost")
+    public String editPost(Model model, @RequestParam long id) {
+        Post post = postService.findById(id); // tìm post theo id
+        model.addAttribute("post", post); // truyền dữ liệu post qua view (editpost.html)
+        return "editpost";
+    } */
+    @GetMapping("/editpost")
+    public ResponseEntity<?> editpost(@RequestParam("id") Long id, Principal principal) {
+      
+        try {
+            Post post = postService.findById(id);
+            return ResponseEntity.ok(post);
+        } catch (DataIntegrityViolationException e) {
+            throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+        }
+    }
+    
     
     
     

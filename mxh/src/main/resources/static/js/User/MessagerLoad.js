@@ -3,6 +3,18 @@ document.addEventListener("DOMContentLoaded", function () {
     const messageList = document.getElementById("chatMessages");
     const chatusername = document.getElementById("chatuser");
     const countMessageNotSeen = document.getElementById("countmessageseen");
+    fetch('/messagermobile',{
+        method:'GET'
+    })
+    .then(response => response.json()) // Chuyển đổi phản hồi thành JSON
+    .then(data => {
+  data.relationship.forEach(relantionship=>{
+    if(relantionship.userOne.id==data.user.id){
+
+    }
+    
+  })
+    })
     // Hàm tải tin nhắn từ server
     function loadMessages(userId) {
         fetch('/chat?id=' + userId, {

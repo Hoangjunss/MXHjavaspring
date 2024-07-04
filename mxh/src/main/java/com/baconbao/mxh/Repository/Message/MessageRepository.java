@@ -28,6 +28,7 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
         List<Message> findByContentLike(String content);
 
         //Đếm số tin nhắn chưa xem của  user
+        //sửa lại
         @Query("SELECT count(m.id) FROM Message m " +
                         "WHERE ((m.userFrom = :firstUser AND m.userTo = :secondUser) " +
                         "AND m.isSeen=false )")
