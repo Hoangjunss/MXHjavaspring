@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.baconbao.mxh.DTO.RelationshipDTO;
 import com.baconbao.mxh.Models.Message.Message;
 import com.baconbao.mxh.Models.User.Relationship;
 import com.baconbao.mxh.Models.User.User;
@@ -29,10 +28,10 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
 
         //Đếm số tin nhắn chưa xem của  user
         //sửa lại
-        @Query("SELECT count(m.id) FROM Message m " +
+        @Query("SELECT m.userFrom.id, count(m.id) FROM Message m " +
                         "WHERE ((m.userFrom = :firstUser AND m.userTo = :secondUser) " +
-                        "AND m.isSeen=false )")
-        int CountMessageBetweenTwoUserIsSeen(@Param("firstUser") User firstUser,
+                        "AND m.isSeen=false ) GROUP BY m.userFrom.id")
+        List<Object[]> countMessageBetweenTwoUserIsSeen(@Param("firstUser") User firstUser,
                         @Param("secondUser") User secondUser);
 
         //Cập nhật trạng thái tin nhắn

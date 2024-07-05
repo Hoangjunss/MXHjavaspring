@@ -8,6 +8,7 @@ import com.baconbao.mxh.Models.User.User;
 public interface UserService {
     List<User> fillAll();
     User findById(long userId);
+    User findByUserWithUserAbouts(Long id);
     void saveUser(User user);
     User findByEmail(String email);
     User getUser(UserDTO userDTO);

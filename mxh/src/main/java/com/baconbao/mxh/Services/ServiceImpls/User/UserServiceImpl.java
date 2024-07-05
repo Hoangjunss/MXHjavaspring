@@ -193,4 +193,9 @@ public class UserServiceImpl implements UserService {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
     }
+
+    @Override
+    public User findByUserWithUserAbouts(Long id) {
+        return userRepository.findByUserWithUserAbouts(id);
+    }
 }

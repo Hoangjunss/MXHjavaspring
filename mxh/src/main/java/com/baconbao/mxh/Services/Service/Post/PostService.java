@@ -2,7 +2,6 @@ package com.baconbao.mxh.Services.Service.Post;
 
 import java.util.List;
 
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import com.baconbao.mxh.DTO.PostDTO;

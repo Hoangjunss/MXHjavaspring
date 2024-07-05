@@ -15,7 +15,7 @@ public interface MessageService {
     List<Message> findByContent(String content);
     Message findLatestMessage(User userFrom,User userTo);
     void seenMessage(Relationship relationships, User user);
-    int CountMessageBetweenTwoUserIsSeen(User user,User user2);
+    List<Object[]> countMessageBetweenTwoUserIsSeen(User user,User user2);
     Message findById(Long id);
     List<Object[]> countUnseenMessageByUserTo(User userTo);
 }

@@ -68,7 +68,6 @@ public class User {
         @OneToMany(mappedBy = "userSend")
         @JsonIgnore
         private List<Comment> comments;
-
         @OneToOne
         @JsonIgnore
         @JoinTable(name = "users_image", // Tên bảng liên kết

@@ -16,6 +16,9 @@ import jakarta.transaction.Transactional;
 public interface UserRepository extends JpaRepository<User, Long> {
   User findByEmail(String email);
 
+  @Query("SELECT u FROM User u LEFT JOIN FETCH u.userAbouts WHERE u.id = :id")
+  User findByUserWithUserAbouts(@Param("id") Long user);
+
   @Query(value = "SELECT MAX(id_user) FROM user", nativeQuery = true)
   Integer countById();
 
@@ -24,8 +27,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
   @Query("UPDATE User u SET u.isActive = false WHERE u.isActive = true")
   void updateActiveUserToFalse();
 
-
-  //Lỗi truy vấn LIKE
+  // Lỗi truy vấn LIKE
   @Query(value = "SELECT u FROM User u WHERE u.lastName LIKE %:name% OR u.firstName LIKE %:name%")
   List<User> findAllByFirstNameOrLastName(@Param("name") String name);
 

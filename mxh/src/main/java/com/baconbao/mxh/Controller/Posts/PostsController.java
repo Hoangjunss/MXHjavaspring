@@ -287,7 +287,7 @@ public class PostsController {
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
     }
-   /*  @GetMapping({ "/", " " })
+    @GetMapping({ "/", " " })
     public String getPosts(Model model, Principal principal) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());// Lấy ra email của người
                                                                                             // dùng đang đăng nhập
@@ -305,7 +305,7 @@ public class PostsController {
         List<Post> posts = postService.findByActiveAndStatus(true, status1);
         model.addAttribute("posts", posts);
         return "index";
-    } */
+    }
 
 
     // Lấy ra tất cả bài viết
@@ -345,7 +345,6 @@ public class PostsController {
     
     @GetMapping("/notifications") // Lấy ra tất cả thông báo
     public ResponseEntity<?> notifications(@RequestParam("id") Long userId, Principal principal) {
-      
         try {
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());// Lấy ra email của người
                                                                                             // dùng đang đăng nhập

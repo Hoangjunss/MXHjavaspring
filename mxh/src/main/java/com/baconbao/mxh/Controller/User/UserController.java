@@ -643,30 +643,25 @@ public class UserController {
         model.addAttribute("userAboutForm", userAboutForm);
         return "profileeditaboutdemo";
     } */
-   @GetMapping("/editprofile")
+   @GetMapping("/api/getabouts")
    public ResponseEntity<?> editprofile( Principal principal) {
     Map<String, Object> response = new HashMap<>();
     try {
         // tim user theo id
         UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
         User user = userService.findByEmail(userDetails.getUsername());
-
         List<About> abouts = aboutService.fillAll();
-      
-
         // Lấy danh sách mô tả trước đó của người dùng
         List<UserAbout> userAbouts = userAboutService.findByUser(user); 
-        response.put("about", abouts);
+        response.put("abouts", abouts);
         response.put("userAbouts",userAbouts);
         // Tạo một map để dễ dàng tra cứu mô tả theo idAbout
-      
        return ResponseEntity.ok(response);
    } catch (DataIntegrityViolationException e) {
        throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
    } catch (Exception e) {
        throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
    }
-   //Lay thong tin cho profile. SỬA DÒNG FOR
   
 }/* 
 @GetMapping("/profile")
@@ -706,18 +701,34 @@ public String showPageProfile(Model model, @RequestParam("id") Long id, Principa
     userAboutForm.setUserAboutDTOs(userAboutDTOs);
     int countFriend = relationshipService.countfriend(user, statusRelationshipService.findById(2L));
     model.addAttribute("countFriend", countFriend);
-    model.addAttribute("relationship", relationship);
-    model.addAttribute("isOwnProfile", isOwnProfile);
-    model.addAttribute("status", status);
+    model.addAttribute("relationship", relasOwnProfile);
+    model.addAttribute("status", stationship);
+    model.addAttribute("isOwnProfile", itus);
     model.addAttribute("unreadCount", unreadCount);
     model.addAttribute("abouts", abouts);
     model.addAttribute("userAboutForm", userAboutForm);
     model.addAttribute("posts", posts);
-    model.addAttribute("userprofile", user);
+    model.addAttribute("userprofile", user);//
     return "User/profile";
 } */
+
+@GetMapping("/profile")
+public String getUserProfilePage(){
+    return "User/profile";
+}
+
+@GetMapping("/countNotificationsIsCheck")
+    public ResponseEntity<Map<String, Object>> getNotifications(@RequestParam Long userId, Principal principal) {
+        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+        User loggedInUser = userService.findByEmail(userDetails.getUsername());
+        int unreadCount = notificationService.countUncheckedNotifications(loggedInUser);
+        Map<String, Object> response = new HashMap<>();
+        response.put("unreadCount", unreadCount);
+        return ResponseEntity.ok(response);
+    }
+
 @GetMapping("/postUser")
-public ResponseEntity<?> postUser(  @RequestParam("id") Long id) {
+public ResponseEntity<?> postUser( @RequestParam("id") Long id) {
     Map<String, Object> response = new HashMap<>();
     try {
        User user=userService.findById(id);
@@ -730,9 +741,34 @@ public ResponseEntity<?> postUser(  @RequestParam("id") Long id) {
        throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
    }
    //Lay thong tin cho profile. SỬA DÒNG FOR
-  
 }
 
-    
+    @GetMapping("/api/getuser")
+    public ResponseEntity<?> getUser(@RequestParam Long id) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+           User user=userService.findById(id);
+           response.put("user", user);
+           return ResponseEntity.ok(response);
+       } catch (DataIntegrityViolationException e) {
+           throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
+       } catch (Exception e) {
+           throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+       }
+       //Lay thong tin cho profile. SỬA DÒNG FOR
+    }
+
+    @GetMapping("/api/getrelationship")
+    public ResponseEntity<?> getRelationship(@RequestParam Long userId, Principal principal) {
+        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+        User loggedInUser = userService.findByEmail(userDetails.getUsername());
+        User user =  userService.findById(userId);
+        Relationship relationship = relationalService.findRelationship(loggedInUser,user);
+        boolean isOwnUser = loggedInUser.getId() == user.getId() ? true : false;
+        Map<String, Object> response = new HashMap<>();
+        response.put("isOwnUser", isOwnUser);
+        response.put("relationship", relationship);
+        return ResponseEntity.ok(response);
+    }
    
 }
