@@ -390,9 +390,10 @@ document.addEventListener("DOMContentLoaded", function () {
         const elementPost = document.getElementById('postuserupload');
         if(data.posts == null){
             divContainerPost.innerHTML += `
-            <h2>
+            <h2 class="complex-effect-text">
                 There are currently no posts. Let's share wonderful moments together
             </h2>
+
             `;
         }else{
             data.posts.forEach(post=>{
