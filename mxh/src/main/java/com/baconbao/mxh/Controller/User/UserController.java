@@ -37,7 +37,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.core.io.Resource;
 import org.springframework.dao.DataIntegrityViolationException;
 
-
 import com.baconbao.mxh.DTO.ApiResponse;
 import com.baconbao.mxh.DTO.UserAboutDTO;
 import com.baconbao.mxh.DTO.UserAboutForm;
@@ -97,23 +96,27 @@ public class UserController {
     @Autowired
     private RelationshipService relationshipService;
 
-    //INDEX, PROFILE. DUNFG REQUEST API
+    // INDEX, PROFILE. DUNFG REQUEST API
 
     // Nhan trang edit dieu kien la "/editaccount"
-/*     @GetMapping("/editaccount")
-    // model la phan minh tra ve trang html
-    // principal giông như session, chứa thông tin người dùng
-    public String showEditAccountPage(Model model, Principal principal) {
-        // tim user theo id
-        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
-        User user = userService.findByEmail(userDetails.getUsername());
-        // chuyen user ve userDTO
-        UserDTO userDTO = userService.getUserDTO(user);
-        // tra userdto ve html
-        model.addAttribute("userDTO", userDTO); // userDTO la ten bien de html lay du lieu, userDTO la bien chua du lieu
-        // ten file html
-        return "editaccount";
-    } */
+    /*
+     * @GetMapping("/editaccount")
+     * // model la phan minh tra ve trang html
+     * // principal giông như session, chứa thông tin người dùng
+     * public String showEditAccountPage(Model model, Principal principal) {
+     * // tim user theo id
+     * UserDetails userDetails =
+     * userDetailsService.loadUserByUsername(principal.getName());
+     * User user = userService.findByEmail(userDetails.getUsername());
+     * // chuyen user ve userDTO
+     * UserDTO userDTO = userService.getUserDTO(user);
+     * // tra userdto ve html
+     * model.addAttribute("userDTO", userDTO); // userDTO la ten bien de html lay du
+     * lieu, userDTO la bien chua du lieu
+     * // ten file html
+     * return "editaccount";
+     * }
+     */
 
     @GetMapping("/login")
     public String showLoginPage(Model model) {
@@ -127,42 +130,48 @@ public class UserController {
         model.addAttribute("userDTO", userDTO);
         return "/User/Register";
     }
-/* 
-    @PostMapping("/register")
-    public String register(@ModelAttribute("userDTO") UserDTO userDTO, BindingResult result, Model model) {
-        // BindingResult la doi tuong chua loi cua truong, neu co loi thi tra ve trang
-        // kiem tra email da ton tai hay chua
-        if (userService.isEmailExist(userDTO.getEmail())) {
-            // neu ton tai thi tra ve trang register va thong bao loi
-            // rejectValue la phuong thuc tra ve loi cho truong do
-            result.rejectValue("email", null, "Email already exists"); // email la ten cua truong, null la ten cua loi,
-                                                                       // Email already exists la noi dung loi
-            return "register";
-        }
-        LocalDateTime localDateTime = LocalDateTime.now(); // Lấy thời gian hiện tại theo máy
 
-        // Chuyển đổi LocalDateTime sang Date
-        ZonedDateTime zonedDateTime = localDateTime.atZone(ZoneId.systemDefault());
-        Date date = Date.from(zonedDateTime.toInstant());
-
-        userDTO.setCreateAt(date);
-        User user = userService.getUser(userDTO);
-        verifycationTokenService.registerUser(user); // gửi mail xác nhận
-        // quay về trang login
-        return "redirect:/login";
-    } */
+    /*
+     * @PostMapping("/register")
+     * public String register(@ModelAttribute("userDTO") UserDTO userDTO,
+     * BindingResult result, Model model) {
+     * // BindingResult la doi tuong chua loi cua truong, neu co loi thi tra ve
+     * trang
+     * // kiem tra email da ton tai hay chua
+     * if (userService.isEmailExist(userDTO.getEmail())) {
+     * // neu ton tai thi tra ve trang register va thong bao loi
+     * // rejectValue la phuong thuc tra ve loi cho truong do
+     * result.rejectValue("email", null, "Email already exists"); // email la ten
+     * cua truong, null la ten cua loi,
+     * // Email already exists la noi dung loi
+     * return "register";
+     * }
+     * LocalDateTime localDateTime = LocalDateTime.now(); // Lấy thời gian hiện tại
+     * theo máy
+     * 
+     * // Chuyển đổi LocalDateTime sang Date
+     * ZonedDateTime zonedDateTime = localDateTime.atZone(ZoneId.systemDefault());
+     * Date date = Date.from(zonedDateTime.toInstant());
+     * 
+     * userDTO.setCreateAt(date);
+     * User user = userService.getUser(userDTO);
+     * verifycationTokenService.registerUser(user); // gửi mail xác nhận
+     * // quay về trang login
+     * return "redirect:/login";
+     * }
+     */
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestParam("userDTO") UserDTO userDTO) {
         try {
             if (userService.isEmailExist(userDTO.getEmail())) {
-                 return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponse(false, "Email already exists"));
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponse(false, "Email already exists"));
             }
             LocalDateTime localDateTime = LocalDateTime.now(); // Lấy thời gian hiện tại theo máy
 
             // Chuyển đổi LocalDateTime sang Date
             ZonedDateTime zonedDateTime = localDateTime.atZone(ZoneId.systemDefault());
             Date date = Date.from(zonedDateTime.toInstant());
-    
+
             userDTO.setCreateAt(date);
             User user = userService.getUser(userDTO);
             verifycationTokenService.registerUser(user); // gửi mail xác nhận
@@ -174,66 +183,73 @@ public class UserController {
         }
     }
 
-    //SỬA IF
-   /*  @PostMapping("/editaccount")
-    // path varriablr la thong tin duoc lay sau dau / cua url
-    public String editAccount(Principal principal, Model model, UserDTO userDTO, BindingResult result) {
-        // k@gmail.com 1
-        // user id=1
-        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());// lấy ra cái email
-        User user = userService.findByEmail(userDetails.getUsername());
-        // user tai khoan dang xet truoc thay doi email: kn26066. userDTO: th:field :
-        // kn26066.
-        if (user.getEmail().equals(userDTO.getEmail())) {
-            // chuyen userDTO ve user
-            user.setFirstName(userDTO.getFirstName());
-            user.setLastName(userDTO.getLastName());
-            // luu lai user
-            userService.saveUser(user);
-            // quay ve trang chu
-            return "redirect:/";
-        } else {
-            if (userService.isEmailExist(userDTO.getEmail())) {
-                result.rejectValue("email", null, "Email already exists"); // email la ten cua truong, null la ten cua
-                                                                           // loi, Email already exists la noi dung loi
-                return "editaccount";
-            } else {
+    // SỬA IF
+    /*
+     * @PostMapping("/editaccount")
+     * // path varriablr la thong tin duoc lay sau dau / cua url
+     * public String editAccount(Principal principal, Model model, UserDTO userDTO,
+     * BindingResult result) {
+     * // k@gmail.com 1
+     * // user id=1
+     * UserDetails userDetails =
+     * userDetailsService.loadUserByUsername(principal.getName());// lấy ra cái
+     * email
+     * User user = userService.findByEmail(userDetails.getUsername());
+     * // user tai khoan dang xet truoc thay doi email: kn26066. userDTO: th:field :
+     * // kn26066.
+     * if (user.getEmail().equals(userDTO.getEmail())) {
+     * // chuyen userDTO ve user
+     * user.setFirstName(userDTO.getFirstName());
+     * user.setLastName(userDTO.getLastName());
+     * // luu lai user
+     * userService.saveUser(user);
+     * // quay ve trang chu
+     * return "redirect:/";
+     * } else {
+     * if (userService.isEmailExist(userDTO.getEmail())) {
+     * result.rejectValue("email", null, "Email already exists"); // email la ten
+     * cua truong, null la ten cua
+     * // loi, Email already exists la noi dung loi
+     * return "editaccount";
+     * } else {
+     * user.setFirstName(userDTO.getFirstName());
+     * user.setLastName(userDTO.getLastName());
+     * user.setEmail(userDTO.getEmail());
+     * userService.saveUser(user);
+     * return "redirect:/";
+     * }
+     * }
+     * }
+     */
+    @PostMapping("/editaccount")
+    public ResponseEntity<?> editaccount(@RequestParam("userDTO") UserDTO userDTO, Principal principal) {
+        try {
+            UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());// lấy ra cái email
+            User user = userService.findByEmail(userDetails.getUsername());
+            if (user.getEmail().equals(userDTO.getEmail())) {
+                // chuyen userDTO ve user
                 user.setFirstName(userDTO.getFirstName());
                 user.setLastName(userDTO.getLastName());
-                user.setEmail(userDTO.getEmail());
+                // luu lai user
                 userService.saveUser(user);
-                return "redirect:/";
+                // quay ve trang chu
+                return ResponseEntity.ok(new ApiResponse(true, "Edit account successfull"));
             }
-        }
-    }
- */
-@PostMapping("/editaccount")
-public ResponseEntity<?> editaccount(@RequestParam("userDTO") UserDTO userDTO,Principal principal) {
-    try {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());// lấy ra cái email
-        User user = userService.findByEmail(userDetails.getUsername());
-        if (user.getEmail().equals(userDTO.getEmail())) {
-            // chuyen userDTO ve user
+            if (userService.isEmailExist(userDTO.getEmail())) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponse(false, "Email already exists"));
+            }
             user.setFirstName(userDTO.getFirstName());
             user.setLastName(userDTO.getLastName());
-            // luu lai user
+            user.setEmail(userDTO.getEmail());
             userService.saveUser(user);
-            // quay ve trang chu
-            return ResponseEntity.ok(new ApiResponse(true, "Edit account successfull"));}
-        if (userService.isEmailExist(userDTO.getEmail())) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponse(false, "Email already exists"));
+            return ResponseEntity.ok(new ApiResponse(true, "Edit account successfull"));
+        } catch (DataIntegrityViolationException e) {
+            throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
-        user.setFirstName(userDTO.getFirstName());
-        user.setLastName(userDTO.getLastName());
-        user.setEmail(userDTO.getEmail());
-        userService.saveUser(user);
-        return ResponseEntity.ok(new ApiResponse(true, "Edit account successfull"));
-    } catch (DataIntegrityViolationException e) {
-        throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
-    } catch (Exception e) {
-        throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
     }
-}
+
     // Duong dan xac nhan
     @GetMapping("/confirmUser")
     public String confirmUser(@RequestParam long token) { // @RequestParam lấy giá trị từ url (lấy giá trị của token từ
@@ -269,14 +285,13 @@ public ResponseEntity<?> editaccount(@RequestParam("userDTO") UserDTO userDTO,Pr
     }
 
     // Lay danh sach ban be. SỬA DÒNG FOR
- 
 
     @PostMapping("/relationship")
     public ResponseEntity<?> relationship(@RequestBody Map<String, Object> payload, Principal principal) {
         try {
             Long userId = Long.parseLong(payload.get("userId").toString());
             Long status = Long.parseLong(payload.get("status").toString());
-            System.out.println(userId+" "+status+" /RELATIONSHIP");
+            System.out.println(userId + " " + status + " /RELATIONSHIP");
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
             User userOne = userService.findByEmail(userDetails.getUsername());
             User userTwo = userService.findById(userId);
@@ -312,99 +327,103 @@ public ResponseEntity<?> editaccount(@RequestParam("userDTO") UserDTO userDTO,Pr
     }
 
     // dat trang thai cua 2 user
-   /*  @PostMapping("/setfriend")
-    public String setFriend(Principal principal, @RequestParam long id) {
-        // tim user dang thao tac
-        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());// lấy ra cái email
-        User user = userService.findByEmail(userDetails.getUsername());
-        // lay user bang id duoc post len
-        User friend = userService.findById(id);
+    /*
+     * @PostMapping("/setfriend")
+     * public String setFriend(Principal principal, @RequestParam long id) {
+     * // tim user dang thao tac
+     * UserDetails userDetails =
+     * userDetailsService.loadUserByUsername(principal.getName());// lấy ra cái
+     * email
+     * User user = userService.findByEmail(userDetails.getUsername());
+     * // lay user bang id duoc post len
+     * User friend = userService.findById(id);
+     * 
+     * // tim kiem moi quan he giua 2 user
+     * Relationship relationshipUser = relationalService.findRelationship(user,
+     * friend);
+     * StatusRelationship status = new StatusRelationship();
+     * // neu giua 2 user khong co moi quan he
+     * if (relationshipUser.getStatus() == null) {
+     * // lay status co moi quan he la 1 de gan cho user
+     * status = statusRelationshipService.findById(1L);
+     * relationshipUser = new Relationship();
+     * } else { // neu giua 2 user co quan he truoc do
+     * // lay trang thai hien tai cua 2 user la gi
+     * status = relationshipUser.getStatus();
+     * // do la chi co 4 trang thai nen se set lai trang thai ban dau
+     * if (status.getId() == 4) {
+     * status = statusRelationshipService.findById(1L);
+     * } else {
+     * // neu trang thai tu 1 den 3 thi nang len mot bac
+     * status = statusRelationshipService.findById(status.getId() + 1);
+     * }
+     * }
+     * // luu moi quan he
+     * relationshipUser.setStatus(status);
+     * relationshipUser.setUserOne(user);
+     * relationshipUser.setUserTwo(friend);
+     * relationalService.addUser(relationshipUser);
+     * Notification notification = new Notification();
+     * notification.setMessage("You have a friend request from " +
+     * user.getFirstName() + " " + user.getLastName());
+     * notification.setUser(friend);
+     * notification.setChecked(false);
+     * notification.setUrl("/friends");
+     * notificationService.saveNotification(notification);
+     * return "redirect:/";
+     * }
+     */
 
-        // tim kiem moi quan he giua 2 user
-        Relationship relationshipUser = relationalService.findRelationship(user, friend);
-        StatusRelationship status = new StatusRelationship();
-        // neu giua 2 user khong co moi quan he
-        if (relationshipUser.getStatus() == null) {
-            // lay status co moi quan he la 1 de gan cho user
-            status = statusRelationshipService.findById(1L);
-            relationshipUser = new Relationship();
-        } else { // neu giua 2 user co quan he truoc do
-                 // lay trang thai hien tai cua 2 user la gi
-            status = relationshipUser.getStatus();
-            // do la chi co 4 trang thai nen se set lai trang thai ban dau
-            if (status.getId() == 4) {
+    @PostMapping("/setfriend")
+    public ResponseEntity<?> setfriend(Principal principal, @RequestParam long id) {
+        try {
+            // tim user dang thao tac
+            UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());// lấy ra cái email
+            User user = userService.findByEmail(userDetails.getUsername());
+            // lay user bang id duoc post len
+            User friend = userService.findById(id);
+            Relationship relationshipUser = relationalService.findRelationship(user, friend);
+            StatusRelationship status = new StatusRelationship();
+            if (relationshipUser == null) {
+                // lay status co moi quan he la 1 de gan cho user
                 status = statusRelationshipService.findById(1L);
-            } else {
-                // neu trang thai tu 1 den 3 thi nang len mot bac
-                status = statusRelationshipService.findById(status.getId() + 1);
+                relationshipUser = new Relationship();
+            } else { // neu giua 2 user co quan he truoc do
+                     // lay trang thai hien tai cua 2 user la gi
+                status = relationshipUser.getStatus();
+                // do la chi co 4 trang thai nen se set lai trang thai ban dau
+                if (status.getId() == 4) {
+                    status = statusRelationshipService.findById(1L);
+                } else {
+                    // neu trang thai tu 1 den 3 thi nang len mot bac
+                    status = statusRelationshipService.findById(status.getId() + 1);
+                }
             }
+            relationshipUser.setStatus(status);
+            relationshipUser.setUserOne(user);
+            relationshipUser.setUserTwo(friend);
+            relationalService.addUser(relationshipUser);
+            Notification notification = new Notification();
+            notification.setMessage("You have a friend request from " + user.getFirstName() + " " + user.getLastName());
+            notification.setUser(friend);
+            notification.setChecked(false);
+            notification.setUrl("/friends");
+            notificationService.saveNotification(notification);
+
+            return ResponseEntity.ok(new ApiResponse(true, "setfriend successfull"));
+        } catch (DataIntegrityViolationException e) {
+            throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
-        // luu moi quan he
-        relationshipUser.setStatus(status);
-        relationshipUser.setUserOne(user);
-        relationshipUser.setUserTwo(friend);
-        relationalService.addUser(relationshipUser);
-        Notification notification = new Notification();
-        notification.setMessage("You have a friend request from " + user.getFirstName() + " " + user.getLastName());
-        notification.setUser(friend);
-        notification.setChecked(false);
-        notification.setUrl("/friends");
-        notificationService.saveNotification(notification);
-        return "redirect:/";
     }
- */
 
- @PostMapping("/setfriend")
- public ResponseEntity<?> setfriend(Principal principal, @RequestParam long id) {
-     try {
-        // tim user dang thao tac
-        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());// lấy ra cái email
-        User user = userService.findByEmail(userDetails.getUsername());
-        // lay user bang id duoc post len
-        User friend = userService.findById(id);
-        Relationship relationshipUser = relationalService.findRelationship(user, friend);
-        StatusRelationship status = new StatusRelationship();
-        if (relationshipUser == null) {
-            // lay status co moi quan he la 1 de gan cho user
-            status = statusRelationshipService.findById(1L);
-            relationshipUser = new Relationship();
-        } else { // neu giua 2 user co quan he truoc do
-                 // lay trang thai hien tai cua 2 user la gi
-            status = relationshipUser.getStatus();
-            // do la chi co 4 trang thai nen se set lai trang thai ban dau
-            if (status.getId() == 4) {
-                status = statusRelationshipService.findById(1L);
-            } else {
-                // neu trang thai tu 1 den 3 thi nang len mot bac
-                status = statusRelationshipService.findById(status.getId() + 1);
-            }
-        }
-        relationshipUser.setStatus(status);
-        relationshipUser.setUserOne(user);
-        relationshipUser.setUserTwo(friend);
-        relationalService.addUser(relationshipUser);
-        Notification notification = new Notification();
-        notification.setMessage("You have a friend request from " + user.getFirstName() + " " + user.getLastName());
-        notification.setUser(friend);
-        notification.setChecked(false);
-        notification.setUrl("/friends");
-        notificationService.saveNotification(notification);
-        
-
-         return ResponseEntity.ok(new ApiResponse(true, "setfriend successfull"));
-     } catch (DataIntegrityViolationException e) {
-         throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
-     } catch (Exception e) {
-         throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
-     }
- }
     //
     @MessageMapping("/friend.add")
     @SendTo("/queue/addfriend")
     public Notification notificationAddFriend(@Payload Map<String, String> idUserMap, Principal principal) {
         String idUser = idUserMap.get("idUser");
         Long userId = Long.valueOf(idUser);
-
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
         User user = userService.findByEmail(userDetails.getUsername());
@@ -442,9 +461,34 @@ public ResponseEntity<?> editaccount(@RequestParam("userDTO") UserDTO userDTO,Pr
         return "addfriend";
     }
 
-   /*  @PostMapping("/uploaduserimg")
-    public String uploadUserImg(@RequestParam("image") MultipartFile image, Principal principal) {
+    /*
+     * @PostMapping("/uploaduserimg")
+     * public String uploadUserImg(@RequestParam("image") MultipartFile image,
+     * Principal principal) {
+     * try {
+     * UserDetails userDetails =
+     * userDetailsService.loadUserByUsername(principal.getName());
+     * User user = userService.findByEmail(userDetails.getUsername());
+     * 
+     * Image img = new Image();
+     * Map<String, Object> resultMap = cloudinaryService.upload(image);
+     * String imageUrl = (String) resultMap.get("url");
+     * img.setUrlImage(imageUrl);
+     * imageService.saveImage(img);
+     * Image tmpImg = imageService.findByImage(img.getUrlImage());
+     * user.setImage(tmpImg);
+     * userService.saveUser(user);
+     * 
+     * } catch (Exception e) {
+     * e.printStackTrace();
+     * }
+     * return "redirect:/";
+     * }
+     */
+    @PostMapping("/uploaduserimg")
+    public ResponseEntity<?> uploaduserimg(@RequestParam("image") MultipartFile image, Principal principal) {
         try {
+            // tim user dang thao tac
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
             User user = userService.findByEmail(userDetails.getUsername());
 
@@ -457,44 +501,22 @@ public ResponseEntity<?> editaccount(@RequestParam("userDTO") UserDTO userDTO,Pr
             user.setImage(tmpImg);
             userService.saveUser(user);
 
+            return ResponseEntity.ok(new ApiResponse(true, "uploaduserimg successfull"));
+        } catch (DataIntegrityViolationException e) {
+            throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
-        return "redirect:/";
     }
- */
-@PostMapping("/uploaduserimg")
-public ResponseEntity<?> uploaduserimg(@RequestParam("image") MultipartFile image, Principal principal) {
-    try {
-        // tim user dang thao tac
-        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
-        User user = userService.findByEmail(userDetails.getUsername());
 
-        Image img = new Image();
-        Map<String, Object> resultMap = cloudinaryService.upload(image);
-        String imageUrl = (String) resultMap.get("url");
-        img.setUrlImage(imageUrl);
-        imageService.saveImage(img);
-        Image tmpImg = imageService.findByImage(img.getUrlImage());
-        user.setImage(tmpImg);
-        userService.saveUser(user);
-
-         return ResponseEntity.ok(new ApiResponse(true, "uploaduserimg successfull"));
-     } catch (DataIntegrityViolationException e) {
-         throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
-     } catch (Exception e) {
-         throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
-     }
-}
-    
     @GetMapping("/uploaduserimg")
     public String uploadUserImgPage() {
         return "test";
     }
 
-    //SỬA DÒNG FOR
-  
-    //SỬA DÒNG FOR
+    // SỬA DÒNG FOR
+
+    // SỬA DÒNG FOR
     @PostMapping("/editprofile")
     public String editProfile(@ModelAttribute("userAboutForm") UserAboutForm userAboutForm, Principal principal) {
         try {
@@ -558,8 +580,7 @@ public ResponseEntity<?> uploaduserimg(@RequestParam("image") MultipartFile imag
         return "searchuser";
     }
 
-    
-
+    //Lấy danh sách thông báo
     @GetMapping("/api/notifications")
     public ResponseEntity<?> getNotifications(Principal principal) {
         Map<String, Object> response = new HashMap<>();
@@ -570,6 +591,7 @@ public ResponseEntity<?> uploaduserimg(@RequestParam("image") MultipartFile imag
         return ResponseEntity.ok(response);
     }
 
+    // Chấp nhận yêu cầu kết bạn
     @PostMapping("/acceptFriendRequest")
     public ResponseEntity<?> acceptFriendRequest(@RequestBody Map<String, Object> payload, Principal principal) {
         try {
@@ -590,6 +612,7 @@ public ResponseEntity<?> uploaduserimg(@RequestParam("image") MultipartFile imag
         }
     }
 
+    //Xóa bạn
     @PostMapping("/deleteFriend")
     public ResponseEntity<?> deleteFriend(@RequestBody Map<String, Object> payload, Principal principal) {
         try {
@@ -610,6 +633,7 @@ public ResponseEntity<?> uploaduserimg(@RequestParam("image") MultipartFile imag
         }
     }
 
+    //Kết bạn
     @PostMapping("/addFriend")
     public ResponseEntity<?> addFriend(@RequestBody Map<String, Object> payload, Principal principal) {
         try {
@@ -635,159 +659,179 @@ public ResponseEntity<?> uploaduserimg(@RequestParam("image") MultipartFile imag
             e.printStackTrace();
             return ResponseEntity.badRequest().body(e.getMessage());
         }
-    }/* 
-    @GetMapping("/editaccount")
-    // model la phan minh tra ve trang html
-    // principal giông như session, chứa thông tin người dùng
-    public String showEditAccountPage(Model model, Principal principal) {
-        // tim user theo id
-        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
-        User user = userService.findByEmail(userDetails.getUsername());
-        // chuyen user ve userDTO
-        UserDTO userDTO = userService.getUserDTO(user);
-        // tra userdto ve html
-        model.addAttribute("userDTO", userDTO); // userDTO la ten bien de html lay du lieu, userDTO la bien chua du lieu
-        // ten file html
-        return "editaccount";
-    } */
-   @GetMapping("/editaccount")
-   public ResponseEntity<?> editaccount( Principal principal) {
-    try {
-         // tim user theo id
-         UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
-         User user = userService.findByEmail(userDetails.getUsername());
-         // chuyen user ve userDTO
-         UserDTO userDTO = userService.getUserDTO(user);
-        return ResponseEntity.ok(userDTO);
-    } catch (DataIntegrityViolationException e) {
-        throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
-    } catch (Exception e) {
-        throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
     }
-   }/* 
-   @GetMapping("/friends")
-   public String getMethodNameString(Principal principal, Model model) {
-       // Lấy ra email của người dùng đang đăng nhập
-       UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
-       User user = userService.findByEmail(userDetails.getUsername());
 
-       // Tìm danh sách bạn bè và những người không phải bạn bè của user
-       List<User> friends = relationalService.findFriends(user);
-       List<User> notFriends = relationalService.findNotFriends(user);
+    /* @GetMapping("/editaccount")
+      // model la phan minh tra ve trang html
+      // principal giông như session, chứa thông tin người dùng
+      public String showEditAccountPage(Model model, Principal principal) {
+      // tim user theo id
+      UserDetails userDetails =
+      userDetailsService.loadUserByUsername(principal.getName());
+      User user = userService.findByEmail(userDetails.getUsername());
+      // chuyen user ve userDTO
+      UserDTO userDTO = userService.getUserDTO(user);
+      // tra userdto ve html
+      model.addAttribute("userDTO", userDTO); // userDTO la ten bien de html lay du
+      lieu, userDTO la bien chua du lieu
+      // ten file html
+      return "editaccount";
+      } */
 
-       // Số lượng bạn bè
-       int count = relationalService.countfriend(user, statusRelationshipService.findById(2L));//lƯU Ý
-       // Trả về HTML danh sách bạn bè
-       model.addAttribute("count", count);
-
-       // Trả về HTML danh sách bạn bè
-       model.addAttribute("listfriend", friends);
-       // Trả về HTML danh sách không phải bạn bè
-       model.addAttribute("listnotFriends", notFriends);
-
-       System.out.println("Not Friends: " + notFriends);
-       return "seefriend";
-   } */
-    @GetMapping("/friends")
-    public ResponseEntity<?> friends( Principal principal) {
+    //?
+    @GetMapping("/editaccount")
+    public ResponseEntity<?> editaccount(Principal principal) {
         try {
             // tim user theo id
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
             User user = userService.findByEmail(userDetails.getUsername());
-     
+            // chuyen user ve userDTO
+            UserDTO userDTO = userService.getUserDTO(user);
+            return ResponseEntity.ok(userDTO);
+        } catch (DataIntegrityViolationException e) {
+            throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+        }
+    }
+
+    /*@GetMapping("/friends")
+    public String getMethodNameString(Principal principal, Model model) {
+    // Lấy ra email của người dùng đang đăng nhập
+    UserDetails userDetails =
+    userDetailsService.loadUserByUsername(principal.getName());
+    User user = userService.findByEmail(userDetails.getUsername());
+    
+    // Tìm danh sách bạn bè và những người không phải bạn bè của user
+    List<User> friends = relationalService.findFriends(user);
+    List<User> notFriends = relationalService.findNotFriends(user);
+    
+    // Số lượng bạn bè
+    int count = relationalService.countfriend(user,
+    statusRelationshipService.findById(2L));//lƯU Ý
+    // Trả về HTML danh sách bạn bè
+    model.addAttribute("count", count);
+    
+    // Trả về HTML danh sách bạn bè
+    model.addAttribute("listfriend", friends);
+    // Trả về HTML danh sách không phải bạn bè
+    model.addAttribute("listnotFriends", notFriends);
+    
+    System.out.println("Not Friends: " + notFriends);
+    return "seefriend";
+    } */
+
+    //Lấy danh sách bạn bè
+    @GetMapping("/friends")
+    public ResponseEntity<?> friends(Principal principal) {
+        try {
+            // tim user theo id
+            UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+            User user = userService.findByEmail(userDetails.getUsername());
+
             // Tìm danh sách bạn bè và những người không phải bạn bè của user
             List<User> friends = relationalService.findFriends(user);
-           return ResponseEntity.ok(friends);
-       } catch (DataIntegrityViolationException e) {
-           throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
-       } catch (Exception e) {
-           throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
-       }
-    }
-    @GetMapping("/notFriend")
-    public ResponseEntity<?> notfriends( Principal principal) {
-        try {
-            // tim user theo id
-            UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
-            User user = userService.findByEmail(userDetails.getUsername());
-     
-            // Tìm danh sách bạn bè và những người không phải bạn bè của user
-            List<User> notFriends = relationalService.findNotFriends(user);
-           return ResponseEntity.ok(notFriends);
-       } catch (DataIntegrityViolationException e) {
-           throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
-       } catch (Exception e) {
-           throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
-       }
-    }
-    @GetMapping("/countFriend")
-    public ResponseEntity<?> countFriend( Principal principal) {
-        try {
-            // tim user theo id
-            UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
-            User user = userService.findByEmail(userDetails.getUsername());
-            int count = relationalService.countfriend(user, statusRelationshipService.findById(2L));//lƯU Ý
-           return ResponseEntity.ok(count);
-       } catch (DataIntegrityViolationException e) {
-           throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
-       } catch (Exception e) {
-           throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
-       }
-    }
-   /*  @GetMapping("/editprofile")
-    public String editProfile(Model model, Principal principal) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
-        User user = userService.findByEmail(userDetails.getUsername());
-
-        List<About> abouts = aboutService.fillAll();
-        UserAboutForm userAboutForm = new UserAboutForm();
-        List<UserAboutDTO> userAboutDTOs = new ArrayList<>();
-
-        // Lấy danh sách mô tả trước đó của người dùng
-        List<UserAbout> userAbouts = userAboutService.findByUser(user); 
-
-        // Tạo một map để dễ dàng tra cứu mô tả theo idAbout
-        Map<Long, String> userAboutMap = userAbouts.stream().collect(Collectors.toMap(ua -> ua.getAbout().getId(), UserAbout::getDescription));
-        for (About about : abouts) {
-            UserAboutDTO dto = new UserAboutDTO();
-            dto.setAboutId(about.getId());
-
-            // Kiểm tra xem có mô tả trước đó hay không, nếu có thì gán vào DTO
-            if (userAboutMap.containsKey(about.getId())) {
-                dto.setDescription(userAboutMap.get(about.getId()));
-            }
-            userAboutDTOs.add(dto);
+            return ResponseEntity.ok(friends);
+        } catch (DataIntegrityViolationException e) {
+            throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
+    }
 
-        userAboutForm.setUserAboutDTOs(userAboutDTOs);
-        model.addAttribute("abouts", abouts);
-        model.addAttribute("userAboutForm", userAboutForm);
-        return "profileeditaboutdemo";
-    } */
-   @GetMapping("/api/getabouts")
-   public ResponseEntity<?> editprofile( Principal principal) {
-    Map<String, Object> response = new HashMap<>();
-    try {
-        // tim user theo id
-        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
-        User user = userService.findByEmail(userDetails.getUsername());
-        List<About> abouts = aboutService.fillAll();
-        // Lấy danh sách mô tả trước đó của người dùng
-        List<UserAbout> userAbouts = userAboutService.findByUser(user); 
-        response.put("abouts", abouts);
-        response.put("userAbouts",userAbouts);
-        // Tạo một map để dễ dàng tra cứu mô tả theo idAbout
-       return ResponseEntity.ok(response);
-   } catch (DataIntegrityViolationException e) {
-       throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
-   } catch (Exception e) {
-       throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
-   }
-  
-}/* 
-@GetMapping("/profile")
-public String showPageProfile(Model model, @RequestParam("id") Long id, Principal principal) {
-    UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+    //Lấy danh sách không là bạn bè
+    @GetMapping("/notFriend")
+    public ResponseEntity<?> notfriends(Principal principal) {
+        try {
+            UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+            User user = userService.findByEmail(userDetails.getUsername());
+            List<User> notFriends = relationalService.findNotFriends(user);
+            return ResponseEntity.ok(notFriends);
+        } catch (DataIntegrityViolationException e) {
+            throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+        }
+    }
+
+    //Đếm số lượng bạn bè - LƯU Ý STATUS
+    @GetMapping("/countFriend")
+    public ResponseEntity<?> countFriend(Principal principal) {
+        try {
+            // tim user theo id
+            UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+            User user = userService.findByEmail(userDetails.getUsername());
+            int count = relationalService.countfriend(user, statusRelationshipService.findById(2L));
+            return ResponseEntity.ok(count);
+        } catch (DataIntegrityViolationException e) {
+            throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+        }
+    }
+
+    /*
+    @GetMapping("/editprofile")
+    public String editProfile(Model model, Principal principal) {
+    UserDetails userDetails =
+    userDetailsService.loadUserByUsername(principal.getName());
+    User user = userService.findByEmail(userDetails.getUsername());
+    
+    List<About> abouts = aboutService.fillAll();
+    UserAboutForm userAboutForm = new UserAboutForm();
+    List<UserAboutDTO> userAboutDTOs = new ArrayList<>();
+    
+    // Lấy danh sách mô tả trước đó của người dùng
+    List<UserAbout> userAbouts = userAboutService.findByUser(user);
+    
+    // Tạo một map để dễ dàng tra cứu mô tả theo idAbout
+    Map<Long, String> userAboutMap =
+    userAbouts.stream().collect(Collectors.toMap(ua -> ua.getAbout().getId(),
+    UserAbout::getDescription));
+    for (About about : abouts) {
+    UserAboutDTO dto = new UserAboutDTO();
+    dto.setAboutId(about.getId());
+    
+    // Kiểm tra xem có mô tả trước đó hay không, nếu có thì gán vào DTO
+    if (userAboutMap.containsKey(about.getId())) {
+    dto.setDescription(userAboutMap.get(about.getId()));
+    }
+    userAboutDTOs.add(dto);
+    }
+    
+    userAboutForm.setUserAboutDTOs(userAboutDTOs);
+    model.addAttribute("abouts", abouts);
+    model.addAttribute("userAboutForm", userAboutForm);
+    return "profileeditaboutdemo";
+    }*/
+
+    //Lấy phần About (người dùng mô tả thêm về bản thân)
+    @GetMapping("/api/getabouts")
+    public ResponseEntity<?> editprofile(Principal principal) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            // tim user theo id
+            UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+            User user = userService.findByEmail(userDetails.getUsername());
+            List<About> abouts = aboutService.fillAll();
+            // Lấy danh sách mô tả trước đó của người dùng
+            List<UserAbout> userAbouts = userAboutService.findByUser(user);
+            response.put("abouts", abouts);
+            response.put("userAbouts", userAbouts);
+            // Tạo một map để dễ dàng tra cứu mô tả theo idAbout
+            return ResponseEntity.ok(response);
+        } catch (DataIntegrityViolationException e) {
+            throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+        }
+    }
+    /*
+    @GetMapping("/profile")
+    public String showPageProfile(Model model, @RequestParam("id") Long id,
+    Principal principal) {
+    UserDetails userDetails =
+    userDetailsService.loadUserByUsername(principal.getName());
     User loggedInUser = userService.findByEmail(userDetails.getUsername());
     User user = (id != null) ? userService.findById(id) : loggedInUser;
     boolean isOwnProfile = loggedInUser.getId() == user.getId() ? true : false;
@@ -797,30 +841,31 @@ public String showPageProfile(Model model, @RequestParam("id") Long id, Principa
     List<UserAboutDTO> userAboutDTOs = new ArrayList<>();
     // Lấy danh sách mô tả trước đó của người dùng
     List<UserAbout> userAbouts = userAboutService.findByUser(user);
-
+    
     // Tạo một map để dễ dàng tra cứu mô tả theo idAbout
     Map<Long, String> userAboutMap = new HashMap<>();
     for (UserAbout userAbout : userAbouts) {
-        userAboutMap.put(userAbout.getAbout().getId(), userAbout.getDescription());
+    userAboutMap.put(userAbout.getAbout().getId(), userAbout.getDescription());
     }
     for (About about : abouts) {
-        UserAboutDTO dto = new UserAboutDTO();
-        dto.setAboutId(about.getId());
-
-        // Kiểm tra xem có mô tả trước đó hay không, nếu có thì gán vào DTO
-        if (userAboutMap.containsKey(about.getId())) {
-            dto.setDescription(userAboutMap.get(about.getId()));
-        }
-        userAboutDTOs.add(dto);
+    UserAboutDTO dto = new UserAboutDTO();
+    dto.setAboutId(about.getId());
+    
+    // Kiểm tra xem có mô tả trước đó hay không, nếu có thì gán vào DTO
+    if (userAboutMap.containsKey(about.getId())) {
+    dto.setDescription(userAboutMap.get(about.getId()));
+    }
+    userAboutDTOs.add(dto);
     }
     List<Status> status = statusService.findAll();
     int unreadCount = notificationService.countUncheckedNotifications(user);
     Relationship relationship = new Relationship();
-    if (!isOwnProfile) { 
-        relationship = relationalService.findRelationship(loggedInUser, user);
+    if (!isOwnProfile) {
+    relationship = relationalService.findRelationship(loggedInUser, user);
     }
     userAboutForm.setUserAboutDTOs(userAboutDTOs);
-    int countFriend = relationshipService.countfriend(user, statusRelationshipService.findById(2L));
+    int countFriend = relationshipService.countfriend(user,
+    statusRelationshipService.findById(2L));
     model.addAttribute("countFriend", countFriend);
     model.addAttribute("relationship", relasOwnProfile);
     model.addAttribute("status", stationship);
@@ -831,14 +876,16 @@ public String showPageProfile(Model model, @RequestParam("id") Long id, Principa
     model.addAttribute("posts", posts);
     model.addAttribute("userprofile", user);//
     return "User/profile";
-} */
+    }*/
 
-@GetMapping("/profile")
-public String getUserProfilePage(){
-    return "User/profile";
-}
+    //Lấy trang User/profile.html
+    @GetMapping("/profile")
+    public String getUserProfilePage() {
+        return "User/profile";
+    }
 
-@GetMapping("/countNotificationsIsCheck")
+    //Lấy số lượng thông báo chưa xem
+    @GetMapping("/countNotificationsIsCheck")
     public ResponseEntity<Map<String, Object>> getNotifications(@RequestParam Long userId, Principal principal) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
         User loggedInUser = userService.findByEmail(userDetails.getUsername());
@@ -848,48 +895,49 @@ public String getUserProfilePage(){
         return ResponseEntity.ok(response);
     }
 
-@GetMapping("/postUser")
-public ResponseEntity<?> postUser( @RequestParam("id") Long id) {
-    Map<String, Object> response = new HashMap<>();
-    try {
-       User user=userService.findById(id);
-        List<Post> posts = postService.findByUserPosts(user);
-      
-       return ResponseEntity.ok(posts);
-   } catch (DataIntegrityViolationException e) {
-       throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
-   } catch (Exception e) {
-       throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
-   }
-   //Lay thong tin cho profile. SỬA DÒNG FOR
-}
+    //Lấy dạnh sách bài viết theo user
+    @GetMapping("/postUser")
+    public ResponseEntity<?> postUser(@RequestParam("id") Long id) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            User user = userService.findById(id);
+            List<Post> posts = postService.findByUserPosts(user);
+            response.put("posts", posts);
+            return ResponseEntity.ok(response);
+        } catch (DataIntegrityViolationException e) {
+            throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+        }
+    }
 
+    // Lấy user
     @GetMapping("/api/getuser")
     public ResponseEntity<?> getUser(@RequestParam Long id) {
         Map<String, Object> response = new HashMap<>();
         try {
-           User user=userService.findById(id);
-           response.put("user", user);
-           return ResponseEntity.ok(response);
-       } catch (DataIntegrityViolationException e) {
-           throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
-       } catch (Exception e) {
-           throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
-       }
-       //Lay thong tin cho profile. SỬA DÒNG FOR
+            User user = userService.findById(id);
+            response.put("user", user);
+            return ResponseEntity.ok(response);
+        } catch (DataIntegrityViolationException e) {
+            throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+        }
     }
 
+    // Lấy mối quan hệ - tín hiệu có phải user logged - user đối diện
     @GetMapping("/api/getrelationship")
     public ResponseEntity<?> getRelationship(@RequestParam Long userId, Principal principal) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
         User loggedInUser = userService.findByEmail(userDetails.getUsername());
-        User user =  userService.findById(userId);
-        Relationship relationship = relationalService.findRelationship(loggedInUser,user);
+        User user = userService.findById(userId);
+        Relationship relationship = relationalService.findRelationship(loggedInUser, user);
         boolean isOwnUser = loggedInUser.getId() == user.getId() ? true : false;
         Map<String, Object> response = new HashMap<>();
         response.put("isOwnUser", isOwnUser);
+        response.put("user", user);
         response.put("relationship", relationship);
         return ResponseEntity.ok(response);
     }
-   
 }

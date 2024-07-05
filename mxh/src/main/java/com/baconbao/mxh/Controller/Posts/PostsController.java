@@ -2,6 +2,7 @@ package com.baconbao.mxh.Controller.Posts;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,7 +54,6 @@ import lombok.AllArgsConstructor;
 
 @Controller
 @AllArgsConstructor
-@RequestMapping("/")
 public class PostsController {
     @Autowired
     private PostService postService;
@@ -84,7 +84,10 @@ public class PostsController {
     @Autowired
     private StatusRelationshipService statusRelationshipService;
 
-   
+   @GetMapping({" ", " /"})
+   public String getIndex(){
+    return "index";
+   }
 
     @PostMapping("/notificationsischecked")
     public ResponseEntity<?> markNotificationsAsRead(Principal principal) {
@@ -399,19 +402,20 @@ public ResponseEntity<?> uploadpost(  @RequestParam("content") String content,
         return "index";
     }
 
-   @GetMapping("/")
-   public String home() {
-       return "index";
-   }
    
 
     // Lấy ra tất cả bài viết
     @GetMapping("/post")
-    public ResponseEntity<?> post() {
+    public ResponseEntity<?> post(@RequestParam Long id) {
         Map<String, Object> response = new HashMap<>();
+        List<Post> posts = new ArrayList<>();
         try {
-            Status status1 = statusService.findById(1); // LUU Y TIM STATUS
-            List<Post> posts = postService.findByActiveAndStatus(true, status1);
+            if(id == null){
+                Status status1 = statusService.findById(1); // LUU Y TIM STATUS
+                posts = postService.findByActiveAndStatus(true, status1);
+            }else{
+                posts = postService.findByUserPosts(userService.findById(id));
+            }
             response.put("post", posts);
             return ResponseEntity.ok(response);
         } catch (DataIntegrityViolationException e) {
@@ -430,9 +434,11 @@ public ResponseEntity<?> uploadpost(  @RequestParam("content") String content,
 
     @GetMapping("/status") // Lấy ra tất cả trạng thái
     public ResponseEntity<?> status() {
+        Map<String, Object> response = new HashMap<>();
         try {
             List<Status> status = statusService.findAll();
-            return ResponseEntity.ok(status);
+            response.put("status", status);
+            return ResponseEntity.ok(response);
         } catch (DataIntegrityViolationException e) {
             throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
         } catch (Exception e) {
@@ -443,11 +449,12 @@ public ResponseEntity<?> uploadpost(  @RequestParam("content") String content,
     @GetMapping("/notifications") // Lấy ra tất cả thông báo
     public ResponseEntity<?> notifications(@RequestParam("id") Long userId, Principal principal) {
         try {
-            UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());// Lấy ra email của người
-                                                                                            // dùng đang đăng nhập
-        User user = userService.findByEmail(userDetails.getUsername());
-        List<Notification> notifications = notificationService.findByUser(user);
-            return ResponseEntity.ok(notifications);
+            Map<String, Object> response = new HashMap<>();
+            UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+            User user = userService.findByEmail(userDetails.getUsername());
+            List<Notification> notifications = notificationService.findByUser(user);
+            response.put("notifications", notifications);
+            return ResponseEntity.ok(response);
         } catch (DataIntegrityViolationException e) {
             throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
         } catch (Exception e) {
