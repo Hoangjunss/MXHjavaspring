@@ -402,11 +402,9 @@ public ResponseEntity<?> uploadpost(  @RequestParam("content") String content,
         return "index";
     }
 
-   
-
     // Lấy ra tất cả bài viết
     @GetMapping("/post")
-    public ResponseEntity<?> post(@RequestParam Long id) {
+    public ResponseEntity<?> post(@RequestParam(required = false)  Long id) {
         Map<String, Object> response = new HashMap<>();
         List<Post> posts = new ArrayList<>();
         try {
@@ -416,7 +414,23 @@ public ResponseEntity<?> uploadpost(  @RequestParam("content") String content,
             }else{
                 posts = postService.findByUserPosts(userService.findById(id));
             }
-            response.put("post", posts);
+            response.put("posts", posts);
+            return ResponseEntity.ok(response);
+        } catch (DataIntegrityViolationException e) {
+            throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+        }
+    }
+
+    //Lấy dạnh sách bài viết theo user
+    @GetMapping("/postUser")
+    public ResponseEntity<?> postUser(@RequestParam Long id) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            User user = userService.findById(id);
+            List<Post> posts = postService.findByUserPosts(user);
+            response.put("posts", posts);
             return ResponseEntity.ok(response);
         } catch (DataIntegrityViolationException e) {
             throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);

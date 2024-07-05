@@ -376,6 +376,67 @@
             </div>
         </div>
     </div>
+
+    <!-- Comments -->
+    <!-- <div class="border-top pt-3 hide-comments" th:data-id="${listpost.id}" style="display: none;">
+        <div class="row bootstrap snippets">
+            <div class="col-md-12">
+                <div class="comment-wrapper">
+                    <div class="panel panel-info">
+                        <div class="panel-body">
+                            <ul class="media-list comments-list">
+                                <li class="media comment-form">
+                                    <a href="#" class="pull-left">
+                                        <img th:src="@{/images/users/user-4.jpg}" alt="" class="img-circle">
+                                    </a>
+                                    <div class="media-body" th:data-post-id="${listpost.id}">
+                                        <form id="commentForm-${listpost.id}" class="commentForm">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="input-group">
+                                                        <input type="hidden" id="postId-${listpost.id}" name="postId" th:value="${listpost.id}">
+                                                        <input type="text" id="content-${listpost.id}" name="content" class="form-control comment-input" placeholder="Write a comment...">
+                                                        <div class="input-group-btn">
+                                                            <button type="submit" class="btn btn-primary">Comment</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </li>                    
+                                <li th:if="${listpost.comments != null}" th:each="comment : ${listpost.comments}" class="media">
+                                    <a href="#" class="pull-left">
+                                        <img th:src="@{/images/users/user-2.jpg}" alt="" class="img-circle">
+                                    </a>
+                                    <div class="media-body">
+                                        <div class="d-flex justify-content-between align-items-center w-100">
+                                            <strong class="text-gray-dark"><a href="#" class="fs-8" th:text="${comment.userSend.firstName} +' '+${comment.userSend.lastName}"></a></strong>
+                                            <a href="#"><i class='bx bx-dots-horizontal-rounded'></i></a>
+                                        </div>
+                                        <span class="d-block comment-created-time">30 min ago</span>
+                                        <p class="fs-8 pt-2" th:text="${comment.content}">
+                                        </p>
+                                        <div class="commentLR">
+                                            <button type="button" class="btn btn-link fs-8">Like</button>
+                                            <button type="button" class="btn btn-link fs-8">Reply</button>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="media">
+                                    <div class="media-body">
+                                        <div class="comment-see-more text-center">
+                                            <button type="button" class="btn btn-link fs-8">See More</button>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> -->
     <!-- End Edit Datails -->
 </body>
 </html>

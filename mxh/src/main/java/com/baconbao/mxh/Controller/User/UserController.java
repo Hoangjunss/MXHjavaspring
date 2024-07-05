@@ -895,22 +895,6 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    //Lấy dạnh sách bài viết theo user
-    @GetMapping("/postUser")
-    public ResponseEntity<?> postUser(@RequestParam("id") Long id) {
-        Map<String, Object> response = new HashMap<>();
-        try {
-            User user = userService.findById(id);
-            List<Post> posts = postService.findByUserPosts(user);
-            response.put("posts", posts);
-            return ResponseEntity.ok(response);
-        } catch (DataIntegrityViolationException e) {
-            throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
-        } catch (Exception e) {
-            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
-        }
-    }
-
     // Lấy user
     @GetMapping("/api/getuser")
     public ResponseEntity<?> getUser(@RequestParam Long id) {

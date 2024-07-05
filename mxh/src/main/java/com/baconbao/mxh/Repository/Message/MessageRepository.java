@@ -46,5 +46,5 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
                         "WHERE m.userTo = :userTo AND m.isSeen = false " +
                         "GROUP BY m.userFrom.id, m.content " +
                         "ORDER BY MAX(m.createAt) ASC")
-                List<Object[]> countUnseenMessageByUserTo(@Param("userTo") User userTo);
+        List<Object[]> countUnseenMessageByUserTo(@Param("userTo") User userTo);
 }
