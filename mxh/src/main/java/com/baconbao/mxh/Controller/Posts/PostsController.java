@@ -99,7 +99,7 @@ public class PostsController {
         }
     }
 
-    @PostMapping("/uploadpost")
+/*     @PostMapping("/uploadpost")
     public String uploadPost(Model model,
             @RequestParam("content") String content, // tra ve html co bien la content voi du lieu la content (String)
                                                      // th:text="${content}"
@@ -141,9 +141,45 @@ public class PostsController {
         }
         return "redirect:/";
     }
+ */
+@PostMapping("/uploadpost")
+public ResponseEntity<?> uploadpost(  @RequestParam("content") String content, 
+@RequestParam("StatusId") Long status,
+@RequestParam("image") MultipartFile image, Principal principal) {
+    try {
+        Post post = new Post();
+            Status statusPost = statusService.findById(status);
+            post.setContent(content);
+            post.setStatus(statusPost);
+            post.setActive(true);
+            // dat ngay va gio tao post
+            LocalDateTime localDateTime = LocalDateTime.now();
+            post.setCreateAt(localDateTime);
+            post.setUpdateAt(localDateTime);
+            UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+            User user = userService.findByEmail(userDetails.getUsername());
+            post.setUser(user);
 
+            // Tạo đối tượng Image và lưu URL ảnh
+            // Kiểm tra xem tệp tin ảnh có rỗng không
+            if (!image.isEmpty()) {
+                Image img = new Image();
+                Map<String, Object> resultMap = cloudinaryService.upload(image);
+                String imageUrl = (String) resultMap.get("url");
+                img.setUrlImage(imageUrl);
+                imageService.saveImage(img); // Lưu đối tượng Image
+                Image tmpImg = imageService.findByImage(img.getUrlImage());
+                post.setImage(tmpImg);
+            }
+            postService.save(post); // Lưu đối tượng Post
+        return ResponseEntity.ok().build();
+    } catch (Exception e) {
+        e.printStackTrace();
+        throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+    }
+}
     // An bai viet
-    @PostMapping("/hidepost")
+  /*   @PostMapping("/hidepost")
     public String hidePost(Model model, @RequestParam("id") long id) {
         // RequestParam: lay thuoc tinh cua id duoc post trong the form
         // Tim post theo id da post
@@ -154,11 +190,25 @@ public class PostsController {
         postService.save(post);
         return "redirect:/";
     }
+ */ @PostMapping("/hidepost")
+ public ResponseEntity<?> markNotificationsAsRead( @RequestParam("id") long id) {
+    try {
+        Post post = postService.findById(id);
+        post.setActive(false); // set active
+        LocalDateTime localDateTime = LocalDateTime.now();
+        post.setUpdateAt(localDateTime);
+        postService.save(post);
+        return ResponseEntity.ok().build();
+    } catch (Exception e) {
+        e.printStackTrace();
+        throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+    }
+ }
 
     // Chỉnh sửa bài viết
    
 
-    // Lưu bài viết đã chỉnh sửa
+    /* // Lưu bài viết đã chỉnh sửa
     @PostMapping("/savepost")
     public String savePost(Model model, @RequestParam("id") long id, @RequestParam("content") String content) {
         try {
@@ -172,7 +222,22 @@ public class PostsController {
             e.printStackTrace();
         }
         return "redirect:/";
+    } */
+    @PostMapping("/savepost")
+ public ResponseEntity<?> savepost( @RequestParam("id") long id, @RequestParam("content") String content) {
+    try {
+        Post post = postService.findById(id); // tìm post theo id
+        post.setContent(content);// gán nội dung mới
+        post.setActive(true); // gán trạng thái active
+        LocalDateTime localDateTime = LocalDateTime.now();
+        post.setUpdateAt(localDateTime);
+        postService.save(post); // lưu post đã chỉnh sửa vào database
+        return ResponseEntity.ok().build();
+    } catch (Exception e) {
+        e.printStackTrace();
+        throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
     }
+ }
 
     @GetMapping("/testpost")
     public String test() {
@@ -226,7 +291,7 @@ public class PostsController {
         }
     }
 
-    // Lấy phần trả lời bình luận theo id
+    /* // Lấy phần trả lời bình luận theo id
     @PostMapping("/postReplyComment")
     public String postReplyComment(@RequestParam("id") Long id, @RequestParam("content") String content,
             Principal principal) {
@@ -248,7 +313,34 @@ public class PostsController {
         comment.setReplyComment(replyComments);
         commentService.save(comment);
         return "redirect:/getComment";
+    } */
+    @PostMapping("/postReplyComment")
+ public ResponseEntity<?> postReplyComment(@RequestParam("id") Long id, @RequestParam("content") String content,
+ Principal principal) {
+    try {
+        Comment comment = commentService.findById(id);
+        // Tạo đối tượng reply, lưu những thông tin cần thiết
+        ReplyComment replyComment = new ReplyComment();
+        replyComment.setId(replyCommentService.getGenerationId());
+        replyComment.setContent(content);
+        LocalDateTime localDateTime = LocalDateTime.now();
+        replyComment.setCreateAt(localDateTime);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+        User user = userService.findByEmail(userDetails.getUsername());
+        replyComment.setUserSend(user);
+        // Lưu thông tin
+        List<ReplyComment> replyComments = comment.getReplyComment();
+        replyComments.add(replyComment);
+        replyCommentService.save(replyComment);
+        comment.setReplyComment(replyComments);
+        commentService.save(comment);
+        return ResponseEntity.ok().build();
+    } catch (Exception e) {
+        e.printStackTrace();
+        throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
     }
+ }
+
 
     // Lỗi truy vấn LIKE
     @PostMapping("/interact")
@@ -305,8 +397,17 @@ public class PostsController {
         List<Post> posts = postService.findByActiveAndStatus(true, status1);
         model.addAttribute("posts", posts);
         return "index";
+<<<<<<< HEAD
     }
 
+=======
+    } */
+   @GetMapping("/")
+   public String home() {
+       return "index";
+   }
+   
+>>>>>>> 8bc53557b0de1c909745ff7048122ba2cbd6e283
 
     // Lấy ra tất cả bài viết
     @GetMapping("/post")
@@ -375,6 +476,20 @@ public class PostsController {
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
     }
+    @GetMapping("/comment")
+    public ResponseEntity<?> comment(@RequestParam("id") Long id, Principal principal) {
+      
+        try {
+            Post post = postService.findById(id);
+            List<Comment> commet=post.getComments();
+            return ResponseEntity.ok(commet);
+        } catch (DataIntegrityViolationException e) {
+            throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+        }
+    }
+    
     
     
     
