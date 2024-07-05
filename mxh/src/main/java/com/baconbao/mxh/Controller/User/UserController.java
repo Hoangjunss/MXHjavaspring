@@ -721,7 +721,13 @@ public class UserController {
     return "seefriend";
     } */
 
-    //Lấy danh sách bạn bè
+    @GetMapping("/listfriend")
+    public String getMethodName() {
+        return "seefriend";
+    }
+    
+
+    // Lấy danh sách bạn bè
     @GetMapping("/friends")
     public ResponseEntity<?> friends(Principal principal) {
         try {
@@ -755,20 +761,22 @@ public class UserController {
     }
 
     //Đếm số lượng bạn bè - LƯU Ý STATUS
-    @GetMapping("/countFriend")
+    @GetMapping("/mutualFriend")
     public ResponseEntity<?> countFriend(Principal principal) {
         try {
-            // tim user theo id
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
             User user = userService.findByEmail(userDetails.getUsername());
             int count = relationalService.countfriend(user, statusRelationshipService.findById(2L));
-            return ResponseEntity.ok(count);
+            Map<String, Integer> response = new HashMap<>();
+            response.put("count", count);
+            return ResponseEntity.ok(response);
         } catch (DataIntegrityViolationException e) {
             throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
         } catch (Exception e) {
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
-    }
+}
+
 
     /*
     @GetMapping("/editprofile")
@@ -893,22 +901,6 @@ public class UserController {
         Map<String, Object> response = new HashMap<>();
         response.put("unreadCount", unreadCount);
         return ResponseEntity.ok(response);
-    }
-
-    //Lấy dạnh sách bài viết theo user
-    @GetMapping("/postUser")
-    public ResponseEntity<?> postUser(@RequestParam("id") Long id) {
-        Map<String, Object> response = new HashMap<>();
-        try {
-            User user = userService.findById(id);
-            List<Post> posts = postService.findByUserPosts(user);
-            response.put("posts", posts);
-            return ResponseEntity.ok(response);
-        } catch (DataIntegrityViolationException e) {
-            throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
-        } catch (Exception e) {
-            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
-        }
     }
 
     // Lấy user

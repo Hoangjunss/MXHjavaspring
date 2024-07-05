@@ -18,7 +18,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     List<Post> findByIsActiveAndStatus(boolean active, Status status);
 
-    List<Post> findByUser(User user);
+    List<Post> findByUserOrderByCreateAtDesc(User user);
 
     List<Comment> findByCommentsOrderByCreateAtDesc(Post post);
 
@@ -27,7 +27,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "LEFT JOIN p.comments c " +
             "LEFT JOIN c.replyComment r " +
             "WHERE p = :post AND p.isActive = :active AND p.status = :status " +
-            "GROUP BY p")
+            "GROUP BY p ")
     List<Object[]> findPostAndCommentAndReplyCount(
             @Param("post") Post post,
             @Param("active") boolean active,

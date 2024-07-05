@@ -134,42 +134,24 @@ h3 {
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.4.0/dist/sockjs.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
-    <script th:src="@{/js/user/seefriend.js}"></script>
+    
 </head>
 <body>
     <div class="container">
         <h3>Lời mời kết bạn</h3>
-        <ul class="friend-list">
-            <li class="friend" th:each="friend : ${listfriend}">
-                <div class="friend-card">
-                    <div class="friend-info">
-                        <p class="name" th:text="${friend.firstName} + ' ' + ${friend.lastName}"></p>
-                        <p th:text="'Bạn bè chung : ' + ${count}"></p>
-                        <button class="btn confirm" th:attr="onclick='acceptFriendRequest(' + ${friend.id} + ')'" >Xác nhận</button>
-                        <button class="btn delete" th:attr="onclick='deleteFriend(' + ${friend.id} + ')'" >Xóa</button>
-                    </div>
-                </div>
-            </li>
+        <ul id="friend-list" class="friend-list">
+            <p id="mutual-friends"></p>
         </ul>
-        <a th:href="@{#}" class="view-all">Xem tất cả</a>
+        <a href="#" class="view-all">Xem tất cả</a>
     </div>
 
     <div class="divider"></div>
 
     <div class="container">
         <h3>Những người bạn có thể biết</h3>
-        <ul class="friend-list">
-            <li class="notFriends" th:each="notFriend : ${listnotFriends}">
-                <div class="friend-card">
-                    <div class="friend-info">
-                        <p class="name" th:text="${notFriend.firstName} + ' ' + ${notFriend.lastName}"></p>
-                        <p class="mutual-friends">4 bạn chung</p>
-                        <button class="btn confirm" type="button" th:attr="onclick='addFriend(' + ${notFriend.id} + ')'" >Thêm bạn bè</button>
-                        <button class="btn delete" th:attr="onclick='deleteFriend(' + ${notFriend.id} + ')'" >Gỡ</button>
-                    </div>
-                </div>
-            </li>
-        </ul>
-        <a th:href="@{#}" class="view-all">Xem tất cả</a>
+        <ul id="not-friend-list" class="friend-list"></ul>
+        <a href="#" class="view-all">Xem tất cả</a>
     </div>
+
+    <script th:src="@{/js/user/seefriend.js}"></script>
 </body>

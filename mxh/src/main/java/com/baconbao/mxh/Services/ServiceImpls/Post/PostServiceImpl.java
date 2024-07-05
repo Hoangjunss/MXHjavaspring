@@ -106,7 +106,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<Post> findByUserPosts(User user) {
         try {
-            return postRepository.findByUser(user);
+            return postRepository.findByUserOrderByCreateAtDesc(user);
         } catch (Exception e) {
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
