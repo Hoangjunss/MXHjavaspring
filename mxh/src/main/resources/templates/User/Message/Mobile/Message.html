@@ -31,8 +31,6 @@
                         <button type="button" class="btn btn-create-conversation" data-toggle="modal" data-target="#newConversation"><i class='bx bx-pencil'></i></button>
                     </div>
                     <div class="message-contacts">
-                        <ul class="conversations">
-                            <li th:each="relationship : ${relationships}" th:data-user-id="${relationship.id}" class="contact">
                         <ul class="conversations" id="contact-list">
                             <li th:each="relationship : ${relationships}" th:data-user-id="${relationship.id}" class="contact" >
                                 <a th:href="@{/chatmobile(id=${relationship.idUser})}" style="text-decoration: none;">
