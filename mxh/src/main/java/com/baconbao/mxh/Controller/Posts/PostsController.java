@@ -397,17 +397,13 @@ public ResponseEntity<?> uploadpost(  @RequestParam("content") String content,
         List<Post> posts = postService.findByActiveAndStatus(true, status1);
         model.addAttribute("posts", posts);
         return "index";
-<<<<<<< HEAD
     }
 
-=======
-    } */
    @GetMapping("/")
    public String home() {
        return "index";
    }
    
->>>>>>> 8bc53557b0de1c909745ff7048122ba2cbd6e283
 
     // Lấy ra tất cả bài viết
     @GetMapping("/post")
