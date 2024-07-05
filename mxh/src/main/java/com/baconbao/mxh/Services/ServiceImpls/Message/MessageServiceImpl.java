@@ -102,8 +102,8 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
 
-    public List<Object[]> countMessageBetweenTwoUserIsSeen(User user, User user2) {
-        List<Object[]> data = messageRepository.countMessageBetweenTwoUserIsSeen(user, user2);
+    public List<Object[]> countMessageBetweenTwoUserIsSeen(User user) {
+        List<Object[]> data = messageRepository.countMessageBetweenTwoUserIsSeen(user);
         return data;
     }
 

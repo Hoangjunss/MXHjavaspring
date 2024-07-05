@@ -45,7 +45,7 @@ public class MessageController {
     @Autowired
     private RelationshipService relationshipService;
 
-    @GetMapping("/messagesmobile")
+    @GetMapping("/messagesmobil")
     public String getMessagePageMobile() {
         return "/User/Message/Mobile/Message";
     }
@@ -61,7 +61,7 @@ public class MessageController {
     }
 
     // Lấy đoạn tin nhắn của 2 user. CHUA RAO DIEU KIEN KHONG TIN NHAN
-  /*   @GetMapping("/send")
+    @GetMapping("/send")
     public String getMessagePage(@RequestParam Long id, Model model, Principal principal) { // id là id của user cần
                                                                                             // nhắn tin với user đang
                                                                                             // login hiện tại
@@ -73,7 +73,7 @@ public class MessageController {
         List<Message> listMessage = messageService.messageFromUser(user1, user2);
         model.addAttribute("listmessage", listMessage);
         return "sendmessage";
-    } */
+    }
 
     // Ở giao diện mobile - hiển thị danh sách bạn bè nhắn tin. SUA DONG FOR
     /*
@@ -282,10 +282,13 @@ public class MessageController {
             User currentUser = userService.findByEmail(userDetails.getUsername());
             // Tìm kiếm tất cả mối quan hệ của user
             List<Relationship> relationships = relationshipService.findAllByUserOneId(currentUser); 
-            List<Object[]> countMessNotSeen = messageService.countUnseenMessageByUserTo(currentUser); // Đếm số tin nhắn chưa xem
+            List<Object[]> countUnseen = messageService.countUnseenMessageByUserTo(currentUser); 
+            List<Object[]>countMessNotSeen=messageService.countMessageBetweenTwoUserIsSeen(currentUser);
+            // Đếm số tin nhắn chưa xem
             response.put("countMessNotSeen", countMessNotSeen);
             response.put("user", currentUser);
             response.put("relantionships", relationships);
+            response.put("countUnseen", countUnseen);
             return ResponseEntity.ok(response);
         } catch (DataIntegrityViolationException e) {
             throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);

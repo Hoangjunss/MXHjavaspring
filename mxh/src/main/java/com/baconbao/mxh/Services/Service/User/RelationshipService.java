@@ -22,5 +22,5 @@ public interface RelationshipService {
     List<User> findFriends(User user);
     List<User> findNotFriends(User user);
     int countfriend(User user, StatusRelationship status);
-    /* List<RelationshipDTO> findAllRelationshipsAndMessagesByUser(User user); */
+     
 }

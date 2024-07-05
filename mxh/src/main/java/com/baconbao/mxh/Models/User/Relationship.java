@@ -26,12 +26,10 @@ public class Relationship {
     
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "user_one_id", referencedColumnName = "IdUser")
-    @JsonIgnore
     private User userOne;
 
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "user_two_id", referencedColumnName = "IdUser")
-    @JsonIgnore
     private User userTwo;
 
     @ManyToOne

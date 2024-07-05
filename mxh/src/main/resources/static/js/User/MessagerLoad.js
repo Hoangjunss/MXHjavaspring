@@ -8,13 +8,43 @@ document.addEventListener("DOMContentLoaded", function () {
     })
     .then(response => response.json()) // Chuyển đổi phản hồi thành JSON
     .then(data => {
-  data.relationship.forEach(relantionship=>{
-    if(relantionship.userOne.id==data.user.id){
-
-    }
-    
-  })
+        loadMessagesFrame(data);
     })
+    function loadMessagesFrame(data) {
+        const frame=$('#contact-list');
+        data.relantionships.forEach(relantionships=>{
+            var user;
+            if(relantionships.userOne.id==data.user.id){
+                user=relantionships.userTwo;
+            }else{
+              user=relantionships.userOne;
+            }
+          const display=$(`
+            <li data-relantionships-id="${relantionships.id}" data-user-id="${user.id}" class="contact" >
+                                <a th:href="@{/chatmobile(id=${relantionships.idUser})}" style="text-decoration: none;">
+                                    <div class="wrap">
+                                        <span class="contact-status online"></span>
+                                        <img th:src="@{/images/users/user-1.jpg}" alt="Conversation user" />
+                                        <div class="meta">
+                                            <p class="name" >${user.lastName} ${user.firstName}</p>
+                                           
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+            `)
+            frame.append(display);
+        })
+        data.countMessNotSeen.forEach(element=>{
+            const span=$('li[data-user-id="'+element[0]+'"]').find('.wrap')
+            if(element[1]>0){
+                const display=$(`
+                     <span  class="unread-messages" >${element[1]}</span>
+                    `)
+                    span.append(display);
+            }
+        })
+    }
     // Hàm tải tin nhắn từ server
     function loadMessages(userId) {
         fetch('/chat?id=' + userId, {

@@ -29,9 +29,9 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
         //Đếm số tin nhắn chưa xem của  user
         //sửa lại
         @Query("SELECT m.userFrom.id, count(m.id) FROM Message m " +
-                        "WHERE ((m.userFrom = :firstUser AND m.userTo = :secondUser) " +
-                        "AND m.isSeen=false ) GROUP BY m.userFrom.id")
-        List<Object[]> countMessageBetweenTwoUserIsSeen(@Param("firstUser") User firstUser,
+                        "WHERE  m.userTo = :secondUser " +
+                        "AND m.isSeen=false  GROUP BY m.userFrom.id")
+        List<Object[]> countMessageBetweenTwoUserIsSeen(
                         @Param("secondUser") User secondUser);
 
         //Cập nhật trạng thái tin nhắn
@@ -43,7 +43,7 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
 
         @Query("SELECT m.userFrom.id,m.content, MAX(m.createAt) " +
                         "FROM Message m " +
-                        "WHERE m.userTo = :userTo AND m.isSeen = false " +
+                        "WHERE m.userTo = :userTo " +
                         "GROUP BY m.userFrom.id, m.content " +
                         "ORDER BY MAX(m.createAt) ASC")
                 List<Object[]> countUnseenMessageByUserTo(@Param("userTo") User userTo);

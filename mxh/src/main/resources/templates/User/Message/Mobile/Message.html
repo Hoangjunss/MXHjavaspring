@@ -19,6 +19,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.4.0/dist/sockjs.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
     <script th:src="@{/js/Socket.js}"></script>
+    <script th:src="@{/js/User/MessagerLoad.js}"></script>
 </head>
 <body>
     <div class="row message-right-side-content">
@@ -32,19 +33,7 @@
                     </div>
                     <div class="message-contacts">
                         <ul class="conversations" id="contact-list">
-                            <li th:each="relationship : ${relationships}" th:data-user-id="${relationship.id}" class="contact" >
-                                <a th:href="@{/chatmobile(id=${relationship.idUser})}" style="text-decoration: none;">
-                                    <div class="wrap">
-                                        <span class="contact-status online"></span>
-                                        <img th:src="@{/images/users/user-1.jpg}" alt="Conversation user" />
-                                        <span th:if="${relationship.countMessageNotSeen > 0}" class="unread-messages" th:data-id="${relationship.id}" th:text="${relationship.countMessageNotSeen}"></span>
-                                        <div class="meta">
-                                            <p th:if="${relationship.name}" class="name" th:text="${relationship.name}"></p>
-                                            <p th:if="${relationship.content}" class="preview" th:text="${relationship.content}"></p>
-                                        </div>
-                                    </div>
-                                </a>
-                            </li>
+                           
                         </ul>                        
                     </div>
                 </div>
