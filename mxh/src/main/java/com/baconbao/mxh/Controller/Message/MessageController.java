@@ -61,7 +61,7 @@ public class MessageController {
     }
 
     // Lấy đoạn tin nhắn của 2 user. CHUA RAO DIEU KIEN KHONG TIN NHAN
-    @GetMapping("/send")
+  /*   @GetMapping("/send")
     public String getMessagePage(@RequestParam Long id, Model model, Principal principal) { // id là id của user cần
                                                                                             // nhắn tin với user đang
                                                                                             // login hiện tại
@@ -73,7 +73,7 @@ public class MessageController {
         List<Message> listMessage = messageService.messageFromUser(user1, user2);
         model.addAttribute("listmessage", listMessage);
         return "sendmessage";
-    }
+    } */
 
     // Ở giao diện mobile - hiển thị danh sách bạn bè nhắn tin. SUA DONG FOR
     /*

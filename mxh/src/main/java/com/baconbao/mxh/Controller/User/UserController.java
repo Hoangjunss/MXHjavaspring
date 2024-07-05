@@ -14,6 +14,8 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -34,8 +36,9 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.core.io.Resource;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpHeaders;
 
+
+import com.baconbao.mxh.DTO.ApiResponse;
 import com.baconbao.mxh.DTO.UserAboutDTO;
 import com.baconbao.mxh.DTO.UserAboutForm;
 import com.baconbao.mxh.DTO.UserDTO;
@@ -124,7 +127,7 @@ public class UserController {
         model.addAttribute("userDTO", userDTO);
         return "/User/Register";
     }
-
+/* 
     @PostMapping("/register")
     public String register(@ModelAttribute("userDTO") UserDTO userDTO, BindingResult result, Model model) {
         // BindingResult la doi tuong chua loi cua truong, neu co loi thi tra ve trang
@@ -147,10 +150,32 @@ public class UserController {
         verifycationTokenService.registerUser(user); // gửi mail xác nhận
         // quay về trang login
         return "redirect:/login";
+    } */
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestParam("userDTO") UserDTO userDTO) {
+        try {
+            if (userService.isEmailExist(userDTO.getEmail())) {
+                 return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponse(false, "Email already exists"));
+            }
+            LocalDateTime localDateTime = LocalDateTime.now(); // Lấy thời gian hiện tại theo máy
+
+            // Chuyển đổi LocalDateTime sang Date
+            ZonedDateTime zonedDateTime = localDateTime.atZone(ZoneId.systemDefault());
+            Date date = Date.from(zonedDateTime.toInstant());
+    
+            userDTO.setCreateAt(date);
+            User user = userService.getUser(userDTO);
+            verifycationTokenService.registerUser(user); // gửi mail xác nhận
+            return ResponseEntity.ok(new ApiResponse(true, "Register successfull"));
+        } catch (DataIntegrityViolationException e) {
+            throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+        }
     }
 
     //SỬA IF
-    @PostMapping("/editaccount")
+   /*  @PostMapping("/editaccount")
     // path varriablr la thong tin duoc lay sau dau / cua url
     public String editAccount(Principal principal, Model model, UserDTO userDTO, BindingResult result) {
         // k@gmail.com 1
@@ -181,7 +206,34 @@ public class UserController {
             }
         }
     }
-
+ */
+@PostMapping("/editaccount")
+public ResponseEntity<?> editaccount(@RequestParam("userDTO") UserDTO userDTO,Principal principal) {
+    try {
+        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());// lấy ra cái email
+        User user = userService.findByEmail(userDetails.getUsername());
+        if (user.getEmail().equals(userDTO.getEmail())) {
+            // chuyen userDTO ve user
+            user.setFirstName(userDTO.getFirstName());
+            user.setLastName(userDTO.getLastName());
+            // luu lai user
+            userService.saveUser(user);
+            // quay ve trang chu
+            return ResponseEntity.ok(new ApiResponse(true, "Edit account successfull"));}
+        if (userService.isEmailExist(userDTO.getEmail())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponse(false, "Email already exists"));
+        }
+        user.setFirstName(userDTO.getFirstName());
+        user.setLastName(userDTO.getLastName());
+        user.setEmail(userDTO.getEmail());
+        userService.saveUser(user);
+        return ResponseEntity.ok(new ApiResponse(true, "Edit account successfull"));
+    } catch (DataIntegrityViolationException e) {
+        throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
+    } catch (Exception e) {
+        throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+    }
+}
     // Duong dan xac nhan
     @GetMapping("/confirmUser")
     public String confirmUser(@RequestParam long token) { // @RequestParam lấy giá trị từ url (lấy giá trị của token từ
@@ -260,7 +312,7 @@ public class UserController {
     }
 
     // dat trang thai cua 2 user
-    @PostMapping("/setfriend")
+   /*  @PostMapping("/setfriend")
     public String setFriend(Principal principal, @RequestParam long id) {
         // tim user dang thao tac
         UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());// lấy ra cái email
@@ -300,7 +352,52 @@ public class UserController {
         notificationService.saveNotification(notification);
         return "redirect:/";
     }
+ */
 
+ @PostMapping("/setfriend")
+ public ResponseEntity<?> setfriend(Principal principal, @RequestParam long id) {
+     try {
+        // tim user dang thao tac
+        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());// lấy ra cái email
+        User user = userService.findByEmail(userDetails.getUsername());
+        // lay user bang id duoc post len
+        User friend = userService.findById(id);
+        Relationship relationshipUser = relationalService.findRelationship(user, friend);
+        StatusRelationship status = new StatusRelationship();
+        if (relationshipUser == null) {
+            // lay status co moi quan he la 1 de gan cho user
+            status = statusRelationshipService.findById(1L);
+            relationshipUser = new Relationship();
+        } else { // neu giua 2 user co quan he truoc do
+                 // lay trang thai hien tai cua 2 user la gi
+            status = relationshipUser.getStatus();
+            // do la chi co 4 trang thai nen se set lai trang thai ban dau
+            if (status.getId() == 4) {
+                status = statusRelationshipService.findById(1L);
+            } else {
+                // neu trang thai tu 1 den 3 thi nang len mot bac
+                status = statusRelationshipService.findById(status.getId() + 1);
+            }
+        }
+        relationshipUser.setStatus(status);
+        relationshipUser.setUserOne(user);
+        relationshipUser.setUserTwo(friend);
+        relationalService.addUser(relationshipUser);
+        Notification notification = new Notification();
+        notification.setMessage("You have a friend request from " + user.getFirstName() + " " + user.getLastName());
+        notification.setUser(friend);
+        notification.setChecked(false);
+        notification.setUrl("/friends");
+        notificationService.saveNotification(notification);
+        
+
+         return ResponseEntity.ok(new ApiResponse(true, "setfriend successfull"));
+     } catch (DataIntegrityViolationException e) {
+         throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
+     } catch (Exception e) {
+         throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+     }
+ }
     //
     @MessageMapping("/friend.add")
     @SendTo("/queue/addfriend")
@@ -345,7 +442,7 @@ public class UserController {
         return "addfriend";
     }
 
-    @PostMapping("/uploaduserimg")
+   /*  @PostMapping("/uploaduserimg")
     public String uploadUserImg(@RequestParam("image") MultipartFile image, Principal principal) {
         try {
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
@@ -365,7 +462,31 @@ public class UserController {
         }
         return "redirect:/";
     }
+ */
+@PostMapping("/uploaduserimg")
+public ResponseEntity<?> uploaduserimg(@RequestParam("image") MultipartFile image, Principal principal) {
+    try {
+        // tim user dang thao tac
+        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+        User user = userService.findByEmail(userDetails.getUsername());
 
+        Image img = new Image();
+        Map<String, Object> resultMap = cloudinaryService.upload(image);
+        String imageUrl = (String) resultMap.get("url");
+        img.setUrlImage(imageUrl);
+        imageService.saveImage(img);
+        Image tmpImg = imageService.findByImage(img.getUrlImage());
+        user.setImage(tmpImg);
+        userService.saveUser(user);
+
+         return ResponseEntity.ok(new ApiResponse(true, "uploaduserimg successfull"));
+     } catch (DataIntegrityViolationException e) {
+         throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
+     } catch (Exception e) {
+         throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+     }
+}
+    
     @GetMapping("/uploaduserimg")
     public String uploadUserImgPage() {
         return "test";
