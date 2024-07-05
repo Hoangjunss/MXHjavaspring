@@ -398,7 +398,11 @@ public ResponseEntity<?> uploadpost(  @RequestParam("content") String content,
         model.addAttribute("posts", posts);
         return "index";
     } */
-
+   @GetMapping("/")
+   public String home() {
+       return "index";
+   }
+   
 
     // Lấy ra tất cả bài viết
     @GetMapping("/post")
@@ -468,6 +472,20 @@ public ResponseEntity<?> uploadpost(  @RequestParam("content") String content,
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
     }
+    @GetMapping("/comment")
+    public ResponseEntity<?> comment(@RequestParam("id") Long id, Principal principal) {
+      
+        try {
+            Post post = postService.findById(id);
+            List<Comment> commet=post.getComments();
+            return ResponseEntity.ok(commet);
+        } catch (DataIntegrityViolationException e) {
+            throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+        }
+    }
+    
     
     
     
