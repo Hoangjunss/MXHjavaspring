@@ -495,7 +495,6 @@ public ResponseEntity<?> uploadpost(  @RequestParam("content") String content,
     }
     @GetMapping("/comment")
     public ResponseEntity<?> comment(@RequestParam("id") Long id, Principal principal) {
-      
         try {
             Post post = postService.findById(id);
             List<Comment> commet=post.getComments();
