@@ -69,7 +69,7 @@ function displayPosts(data){
                                                         </div>
                                                         
                                                         <!-- End Reactions -->
-                                                        <button class="post-card-buttons show-comments" data-id="${post.id}"><i class='bx bx-message-rounded mr-2'></i>${countComment}</button>
+                                                        <button class="post-card-buttons show-comments" onclick="showComment(${post.id})" data-id="${post.id}"><i class='bx bx-message-rounded mr-2'></i>${countComment}</button>
                                                         <!-- Share -->
                                                         <div class="dropdown dropup share-dropup">
                                                             <a href="#" class="post-card-buttons" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -116,16 +116,15 @@ function displayPosts(data){
             postDisplay.append(postElement);
        });
 }
-/* function showComment(id){
+function showComment(id){
+    alert(id+" POSTID")
     fetch('/comment?'+id,{
         method:'GET'
     })  .then(response => response.json()) 
     .then(data => {
         displayComment(data)
     })
-}
-
-    
+}   
 
 function displayComment(data){
    const comment=$('.media');
@@ -191,4 +190,4 @@ function displaystatus(data){
             <option  value="${element.id}">${element.name}</option>
             `)
     })
-} */
+}

@@ -26,7 +26,7 @@
     <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
     <script th:src="@{/js/Socket.js}"></script>
     <!-- <script th:src="@{/js/User/components.js}"></script> -->
-    <!-- <script th:src="@{/js/interaction.js}"></script> -->
+    <script th:src="@{/js/interaction.js}"></script>
     <script th:src="@{/js/User/Profile.js}"></script>
 
 </head>
@@ -354,37 +354,23 @@
     <div class="profiledetails animate-overlay" id="edit_profile">
         <div  class="dialog">
             <div class="edit_profile_container">
-                <button class="close"><i class="fa-solid fa-xmark"></i></button>
+                <button class="close" onclick="closeEditProfileDetails()"><i class="fa-solid fa-xmark"></i></button>
                 <h2>Edit Profile Details</h2>
-                <form th:action="@{/editprofile}" method="post" th:object="${userAboutForm}" class="form_edit_profile" id="form_edit_profile">
-                    <!-- <div class="image_box">
-                        <div class="item" id="image_box_item">
-                            <label for="">Avartar</label>
-                            <input type="file" placeholder="Choose Avartar" id="imageInput"
-                                onchange="previewImage(event)" name="image">
-                        </div>
-                        <div class="preview_box" id="preview_box">
-                        </div>
-                    </div> -->
-                    <div th:each="about, aboutStat : ${abouts}" class="name_box">
-                        <input type="hidden" th:field="*{userAboutDTOs[__${aboutStat.index}__].aboutId}" th:value="${about.id}">
-                        <label th:text="${about.name}"></label>
-                        <input type="text" th:placeholder="${about.name}" th:field="*{userAboutDTOs[__${aboutStat.index}__].description}">
-                    </div>
-                    <button type="submit" id="submitBtn">Save</button>
+                <form class="form_edit_profile" id="form_edit_profile">
+                    <!-- Các trường dữ liệu sẽ được thêm vào đây từ JavaScript -->
                 </form>
-            </div>
+            </div>            
         </div>
     </div>
 
     <!-- Comments -->
-    <!-- <div class="border-top pt-3 hide-comments" th:data-id="${listpost.id}" style="display: none;">
+    <div class="border-top pt-3 hide-comments" th:data-id="${listpost.id}" style="display: none;">
         <div class="row bootstrap snippets">
             <div class="col-md-12">
                 <div class="comment-wrapper">
                     <div class="panel panel-info">
                         <div class="panel-body">
-                            <ul class="media-list comments-list">
+                            <ul class="media-list comments-list" id="comments-list">
                                 <li class="media comment-form">
                                     <a href="#" class="pull-left">
                                         <img th:src="@{/images/users/user-4.jpg}" alt="" class="img-circle">
@@ -423,20 +409,20 @@
                                         </div>
                                     </div>
                                 </li>
-                                <li class="media">
+                                <!-- <li class="media">
                                     <div class="media-body">
                                         <div class="comment-see-more text-center">
                                             <button type="button" class="btn btn-link fs-8">See More</button>
                                         </div>
                                     </div>
-                                </li>
+                                </li> -->
                             </ul>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div> -->
+    </div>
     <!-- End Edit Datails -->
 </body>
 </html>
