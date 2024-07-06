@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const messageList = document.getElementById("chatMessages");
     const chatusername = document.getElementById("chatuser");
     const countMessageNotSeen = document.getElementById("countmessageseen");
-<<<<<<< HEAD
+
     const messageFrame=$('#contact-list');
     const messageContent=$('.content');
     if(messageFrame.length>0&&messageContent.length>0){
@@ -67,18 +67,7 @@ if(id!=null){
             `)
             frame.append(input);
         data.relantionships.forEach(relantionships=>{
-=======
-    fetch('/messagermobile', {
-        method: 'GET'
-    })
-        .then(response => response.json()) // Chuyển đổi phản hồi thành JSON
-        .then(data => {
-            loadMessagesFrame(data);
-        })
-    function loadMessagesFrame(data) {
-        const frame = $('#contact-list');
-        data.relantionships.forEach(relantionships => {
->>>>>>> 64d91996a01acce6a35c07becfd25b0a23763244
+
             var user;
             if (relantionships.userOne.id == data.user.id) {
                 user = relantionships.userTwo;
