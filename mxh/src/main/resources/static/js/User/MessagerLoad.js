@@ -3,23 +3,25 @@ document.addEventListener("DOMContentLoaded", function () {
     const messageList = document.getElementById("chatMessages");
     const chatusername = document.getElementById("chatuser");
     const countMessageNotSeen = document.getElementById("countmessageseen");
-    fetch('/messagermobile',{
-        method:'GET'
+    fetch('/messagermobile', {
+        method: 'GET'
     })
-    .then(response => response.json()) // Chuyển đổi phản hồi thành JSON
-    .then(data => {
-        loadMessagesFrame(data);
-    })
+        .then(response => response.json()) // Chuyển đổi phản hồi thành JSON
+        .then(data => {
+            loadMessagesFrame(data);
+        })
     function loadMessagesFrame(data) {
-        const frame=$('#contact-list');
-        data.relantionships.forEach(relantionships=>{
+        const frame = $('#contact-list');
+        data.relantionships.forEach(relantionships => {
             var user;
-            if(relantionships.userOne.id==data.user.id){
-                user=relantionships.userTwo;
-            }else{
-              user=relantionships.userOne;
+            if (relantionships.userOne.id == data.user.id) {
+                user = relantionships.userTwo;
+            } else {
+                user = relantionships.userOne;
             }
-          const display=$(`
+            data.unseenMessages.forEach(unseenMessage => {
+                if (unseenMessage[0] == user.id) {
+                    const display = $(`
             <li data-relantionships-id="${relantionships.id}" data-user-id="${user.id}" class="contact" >
                                 <a th:href="@{/chatmobile(id=${relantionships.idUser})}" style="text-decoration: none;">
                                     <div class="wrap">
@@ -27,21 +29,23 @@ document.addEventListener("DOMContentLoaded", function () {
                                         <img th:src="@{/images/users/user-1.jpg}" alt="Conversation user" />
                                         <div class="meta">
                                             <p class="name" >${user.lastName} ${user.firstName}</p>
-                                           
+                                           <p class="preview">${unseenMessage[2]}</p>
                                         </div>
                                     </div>
                                 </a>
                             </li>
             `)
-            frame.append(display);
+                    frame.append(display);
+                }
+            })
         })
-        data.countMessNotSeen.forEach(element=>{
-            const span=$('li[data-user-id="'+element[0]+'"]').find('.wrap')
-            if(element[1]>0){
-                const display=$(`
+        data.countMessNotSeen.forEach(element => {
+            const span = $('li[data-user-id="' + element[0] + '"]').find('.wrap')
+            if (element[1] > 0) {
+                const display = $(`
                      <span  class="unread-messages" >${element[1]}</span>
                     `)
-                    span.append(display);
+                span.append(display);
             }
         })
     }
@@ -62,7 +66,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 <a href="#" class="message-profile-name">${chatUser.firstName} ${chatUser.lastName}</a>
             `;
                 var inputElement = $('#id');
-
                 // Thay đổi giá trị (value)
                 inputElement.val(chatUser.id);
 

@@ -101,7 +101,6 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-
     public List<Object[]> countMessageBetweenTwoUserIsSeen(User user) {
         List<Object[]> data = messageRepository.countMessageBetweenTwoUserIsSeen(user);
         return data;
@@ -118,6 +117,6 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public List<Object[]> countUnseenMessageByUserTo(User userTo) {
-        return messageRepository.countUnseenMessageByUserTo(userTo);
+        return messageRepository.countUnseenMessageByUserTo(userTo.getId());
     }
 }

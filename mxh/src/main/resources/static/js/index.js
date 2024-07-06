@@ -3,7 +3,6 @@ document.addEventListener("DOMContentLoaded", function () {
         method:'GET'
     })  .then(response => response.json()) // Chuyển đổi phản hồi thành JSON
     .then(data => {
-        alert(data)
         console.log(data);
         displayPosts(data)
     })
