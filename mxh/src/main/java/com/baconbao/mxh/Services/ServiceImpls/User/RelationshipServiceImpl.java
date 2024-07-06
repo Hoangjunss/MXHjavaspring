@@ -70,7 +70,7 @@ public class RelationshipServiceImpl implements RelationshipService {
 
     public List<Relationship> findAllByUserOneId(User user) {
 
-        StatusRelationship status = statusService.findById(1L); // why sao set cứng ???????????
+        StatusRelationship status = statusService.findById(2L); // why sao set cứng ???????????
 
         System.out.println(status.getStatus() + "RELATIONSHIP SEARCH STATUS");
         return relationshipRepository.findAllByUserOneId(user, status);

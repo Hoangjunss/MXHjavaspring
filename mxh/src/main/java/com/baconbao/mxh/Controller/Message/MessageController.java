@@ -282,13 +282,12 @@ public class MessageController {
             User currentUser = userService.findByEmail(userDetails.getUsername());
             // Tìm kiếm tất cả mối quan hệ của user
             List<Relationship> relationships = relationshipService.findAllByUserOneId(currentUser); 
-            List<Object[]> countUnseen = messageService.countUnseenMessageByUserTo(currentUser); 
+            List<Object[]> countUnseen = messageService.countUnseenMessageByUserTo(currentUser);
             List<Object[]>countMessNotSeen=messageService.countMessageBetweenTwoUserIsSeen(currentUser);
-            // Đếm số tin nhắn chưa xem
             response.put("countMessNotSeen", countMessNotSeen);
             response.put("user", currentUser);
             response.put("relantionships", relationships);
-            response.put("countUnseen", countUnseen);
+            response.put("unseenMessages", countUnseen);
             return ResponseEntity.ok(response);
         } catch (DataIntegrityViolationException e) {
             throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);

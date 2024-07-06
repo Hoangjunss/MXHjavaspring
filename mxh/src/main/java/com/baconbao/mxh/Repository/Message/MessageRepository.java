@@ -41,10 +41,23 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
         void seenMessage(@Param("relationship") Relationship relationship,
                         @Param("userTo") User userTo);
 
-        @Query("SELECT m.userFrom.id,m.content, MAX(m.createAt) " +
-                        "FROM Message m " +
-                        "WHERE m.userTo = :userTo " +
-                        "GROUP BY m.userFrom.id, m.content " +
-                        "ORDER BY MAX(m.createAt) ASC")
-        List<Object[]> countUnseenMessageByUserTo(@Param("userTo") User userTo);
+        @Query(value = "SELECT " +
+        "CASE " +
+        "    WHEN m.from_user_id = :userId THEN m.to_user_id " +
+        "    ELSE m.from_user_id " +
+        "END AS oppositeUserId, " +
+        "MAX(m.create_at) AS latestMessageTime, " +
+        "(SELECT m2.content " +
+        " FROM message AS m2 " +
+        " WHERE (m2.from_user_id = m.from_user_id AND m2.to_user_id = m.to_user_id) " +
+        "    OR (m2.from_user_id = m.to_user_id AND m2.to_user_id = m.from_user_id) " +
+        " ORDER BY m2.create_at DESC LIMIT 1) AS latestMessageContent " +
+        "FROM message AS m " +
+        "WHERE m.to_user_id = :userId OR m.from_user_id = :userId " +
+        "GROUP BY CASE " +
+        "    WHEN m.from_user_id = :userId THEN m.to_user_id " +
+        "    ELSE m.from_user_id " +
+        "END " +
+        "ORDER BY latestMessageTime ASC", nativeQuery = true)
+        List<Object[]> countUnseenMessageByUserTo(@Param("userId") Long userId);
 }
