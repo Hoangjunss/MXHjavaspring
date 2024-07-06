@@ -1,37 +1,64 @@
+
+// Xác nhận yêu cầu kết bạn
+function acceptFriendRequest(friendId, listItem) {
+    fetch(`/acceptFriendRequest`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ userId: friendId })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Friend request accepted:', data);
+        listItem.remove();
+        fetchFriends();
+        fetchNotFriends();
+    })
+    .catch(error => console.error('Error accepting friend request:', error));
+}
+
+
+// Xóa bạn bè
+function deleteFriend(friendId, listItem) {
+    fetch(`/deleteFriend/${friendId}`, { method: 'POST' })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Friend deleted:', data);
+        })
+        .then(() => {
+            listItem.remove(); // hoặc listItem.style.display = 'none'; để ẩn đi
+            fetchFriends();
+            fetchNotFriends();
+        })
+        .catch(error => console.error('Error deleting friend:', error));
+}
+
+// Thêm bạn bè
+function addFriend(friendId) {
+    fetch(`/addFriend/${friendId}`, { method: 'POST' })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Friend added:', data);
+            fetchNotFriends();
+            fetchFriends();
+        })
+        .catch(error => console.error('Error adding friend:', error));
+}
+
 // Xử lý khi DOM được tải hoàn toàn
 document.addEventListener("DOMContentLoaded", function () {
-    // Gán sự kiện submit cho form (nếu có)
-    const form = document.getElementById('yourFormId');
-    if (form) {
-        form.addEventListener('submit', function (event) {
-            event.preventDefault(); // Ngăn chặn hành vi mặc định của form
 
-            // Lấy dữ liệu form và xử lý bằng fetch hoặc XMLHttpRequest
-            const formData = new FormData(form);
-            const url = form.action; // Lấy URL endpoint từ action của form
-
-            fetch(url, {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                // Xử lý dữ liệu trả về (nếu cần)
-                console.log('Response:', data);
-
-                // Cập nhật lại danh sách bạn bè và danh sách bạn bè chưa kết bạn
-                fetchFriends();
-                fetchNotFriends();
-
-                // Thông báo hoặc cập nhật UI tại đây (nếu cần)
-                alert('Xử lý thành công!');
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Đã xảy ra lỗi khi xử lý yêu cầu.');
-            });
-        });
-    }
 
     // Hàm lấy danh sách bạn bè
     function fetchFriends() {
@@ -40,8 +67,8 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(data => {
                 const friendList = document.getElementById('friend-list');
                 friendList.innerHTML = ''; // Xóa nội dung cũ
+
                 data.forEach(friend => {
-                    // Tạo và thêm các item bạn bè vào danh sách
                     fetchMutualFriendsCount(friend.id).then(count => {
                         const listItem = createFriendItem(friend, 'acceptFriendRequest', 'deleteFriend', true, count);
                         friendList.appendChild(listItem);
@@ -58,8 +85,8 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(data => {
                 const notFriendList = document.getElementById('not-friend-list');
                 notFriendList.innerHTML = ''; // Xóa nội dung cũ
+
                 data.forEach(notFriend => {
-                    // Tạo và thêm các item bạn bè chưa kết bạn vào danh sách
                     fetchMutualFriendsCount(notFriend.id).then(count => {
                         const listItem = createFriendItem(notFriend, 'addFriend', 'deleteFriend', false, count);
                         notFriendList.appendChild(listItem);
@@ -68,6 +95,7 @@ document.addEventListener("DOMContentLoaded", function () {
             })
             .catch(error => console.error('Error fetching not friends:', error));
     }
+
 
     // Hàm tạo item bạn bè
     function createFriendItem(friend, confirmCallback, deleteCallback, isFriend, mutualFriendsCount) {
@@ -133,49 +161,7 @@ document.addEventListener("DOMContentLoaded", function () {
         return listItem;
     }
 
-    // Xác nhận yêu cầu kết bạn
-    function acceptFriendRequest(friendId, listItem) {
-        fetch(`/acceptFriendRequest/${friendId}`, { method: 'POST' })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Friend request accepted:', data);
-                fetchFriends();
-                fetchNotFriends();
-            })
-            .catch(error => console.error('Error accepting friend request:', error));
-    }
-
-    // Xóa bạn bè
-    function deleteFriend(friendId, listItem) {
-        fetch(`/deleteFriend/${friendId}`, { method: 'POST' })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log('Friend deleted:', data);
-            })
-            .then(() => {
-                listItem.remove(); // hoặc listItem.style.display = 'none'; để ẩn đi
-                fetchFriends();
-                fetchNotFriends();
-            })
-            .catch(error => console.error('Error deleting friend:', error));
-    }
-
-    // Thêm bạn bè
-    function addFriend(friendId) {
-        fetch(`/addFriend/${friendId}`, { method: 'POST' })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Friend added:', data);
-                fetchNotFriends();
-                fetchFriends();
-            })
-            .catch(error => console.error('Error adding friend:', error));
-    }
+    
 
     // Lấy số lượng bạn chung
     function fetchMutualFriendsCount(friendId) {
