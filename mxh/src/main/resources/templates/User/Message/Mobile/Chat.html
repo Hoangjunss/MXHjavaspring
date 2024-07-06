@@ -18,57 +18,14 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <link th:href="@{/css/User/Message/MessageMobile.css}" rel="stylesheet">
     <script th:src="@{/js/Socket.js}"></script>
+    <script th:src="@{/js/User/MessagerLoad.js}"></script>
 </head>
 <body>
     <div class="row message-right-side-content">
         <div class="col-md-12">
             <div id="message-frame">
                 <div class="content">
-                    <div class="row">
-                        <div class="col-md-12 messenger-top-section">
-                            <div class="contact-profile d-flex align-items-center justify-content-between">
-                                <div class="messenger-top-luser df-aic">
-                                    <img th:src="@{/images/users/user-2.jpg}" class="messenger-user" alt="Convarsation user image" />
-                                    <a href="#" class="message-profile-name" th:text=" ${userTo.lastName}+' '+${userTo.firstName}"></a>
-                                </div>
-                                <div class="social-media messenger-top-ricon df-aic">
-                                    <img th:src="@{/images/messenger/phone.png}" data-toggle="modal" data-target="#callModal" class="msg-top-more-info" alt="Messenger icons">
-                                    <img th:src="@{/images/messenger/videocam.png}" class="msg-top-more-info" alt="Messenger icons">
-                                    <img th:src="@{/images/messenger/info.png}" class="msg-top-more-info" alt="Messenger icons">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-12" style="max-height: 532px;">
-                            <input type="hidden" th:value="${userTo.id}" id="id" th:data-messages-user="${userTo.id}">
-                            <input type="hidden" id="idRelationship" th:value="${relation.id}" >
-                            <div class="messages">
-                                <ul class="messages-content" id="chatMessages">
-                                    <li class="contentmessage" th:each="message : ${messages}" 
-                                        th:class="${message.userFrom.id} == ${currentUser.id} ? 'message-reply' : 'message-receive'">
-                                        <img th:if="${message.userFrom.id} != ${currentUser.id}" 
-                                        th:src="@{/images/users/user-1.jpg}" alt="Conversation user image" />
-                                        <p th:text="${message.content}"></p>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="message-input">
-                                <div class="wrap">
-                                    <form class="d-inline form-inline">
-                                        <div class="d-flex align-items-center justify-content-between messenger-icons">
-                                            <div class="input-group messenger-input">
-                                                <input id="content" type="text" class="form-control search-input" placeholder="Type a message..." aria-label="Type a message..." aria-describedby="button-addon2">
-                                            </div>
-                                            <button onclick="sendMessage()" type="button" class="btn search-button" id="send-message">
-                                                <img th:src="@{/images/messenger/m-send.png}" alt="Messenger icons">
-                                            </button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                  
                 </div>
             </div>
         </div>

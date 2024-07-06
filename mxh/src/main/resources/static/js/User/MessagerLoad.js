@@ -3,16 +3,71 @@ document.addEventListener("DOMContentLoaded", function () {
     const messageList = document.getElementById("chatMessages");
     const chatusername = document.getElementById("chatuser");
     const countMessageNotSeen = document.getElementById("countmessageseen");
-    fetch('/messagermobile', {
-        method: 'GET'
-    })
+
+    const messageFrame=$('#contact-list');
+    const messageContent=$('.content');
+    if(messageFrame.length>0&&messageContent.length>0){
+        fetch('/messagermobile',{
+            method:'GET'
+        })
+        .then(response => response.json()) // Chuyển đổi phản hồi thành JSON
+        .then(data => {
+            loadMessagesFrame(data);
+            const idUser=$('#active').val();
+            fetch('/chat?id='+idUser,{
+                method:"GET"
+            }) .then(response => response.json()) // Chuyển đổi phản hồi thành JSON
+            .then(data => {
+                loadMessage(data);
+            })
+        })
+        
+            console.log(1);
+        
+    }else if(messageFrame.length>0){
+        console.log(2);
+        fetch('/messagermobile',{
+            method:'GET'
+        })
         .then(response => response.json()) // Chuyển đổi phản hồi thành JSON
         .then(data => {
             loadMessagesFrame(data);
         })
+        
+    }else{
+        console.log(3);
+        const currentUrl = window.location.href;
+
+// Tạo đối tượng URLSearchParams từ URL
+const urlParams = new URLSearchParams(window.location.search);
+
+// Lấy giá trị của tham số 'name'
+const id = urlParams.get('id');
+if(id!=null){
+    fetch('/chat?id='+id,{
+        method:"GET"
+    }) .then(response => response.json()) // Chuyển đổi phản hồi thành JSON
+    .then(data => {
+        loadMessage(data);
+    })
+}
+    }
+   
     function loadMessagesFrame(data) {
-        const frame = $('#contact-list');
-        data.relantionships.forEach(relantionships => {
+        const frame=$('#contact-list');
+        if(frame.length>0){
+            var userActive;
+            if(data.relantionships[0].userOne.id==data.user.id){
+                userActive=data.relantionships[0].userTwo;
+            }else{
+                userActive=data.relantionships[0].userOne;
+            }
+        const input=$(`
+             <input type="hidden" value="${userActive.id}" id="active" >
+            `)
+            frame.append(input);
+        data.relantionships.forEach(relantionships=>{
+
             var user;
             if (relantionships.userOne.id == data.user.id) {
                 user = relantionships.userTwo;
@@ -23,7 +78,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (unseenMessage[0] == user.id) {
                     const display = $(`
             <li data-relantionships-id="${relantionships.id}" data-user-id="${user.id}" class="contact" >
-                                <a th:href="@{/chatmobile(id=${relantionships.idUser})}" style="text-decoration: none;">
+                                <a href="/chatmobile?id=${user.id}" style="text-decoration: none;">
                                     <div class="wrap">
                                         <span class="contact-status online"></span>
                                         <img th:src="@{/images/users/user-1.jpg}" alt="Conversation user" />
@@ -48,6 +103,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 span.append(display);
             }
         })
+    }
     }
     // Hàm tải tin nhắn từ server
     function loadMessages(userId) {
@@ -114,5 +170,81 @@ document.addEventListener("DOMContentLoaded", function () {
             showChat(userId); // Gọi hàm showChat với ID người dùng
         });
     });
+    
+    
+    function loadMessage(data) {
+        const message=$('.content');
+        if(message.length>0){
+            const display=$(`
+             
+                    <div class="row">
+                        <div class="col-md-12 messenger-top-section">
+                            <div class="contact-profile d-flex align-items-center justify-content-between">
+                                <div class="messenger-top-luser df-aic">
+                                    <img th:src="@{/images/users/user-2.jpg}" class="messenger-user" alt="Convarsation user image" />
+                                    <a href="#" class="message-profile-name" > ${data.userTo.lastName} ${data.userTo.firstName}</a>
+                                </div>
+                                <div class="social-media messenger-top-ricon df-aic">
+                                    <img th:src="@{/images/messenger/phone.png}" data-toggle="modal" data-target="#callModal" class="msg-top-more-info" alt="Messenger icons">
+                                    <img th:src="@{/images/messenger/videocam.png}" class="msg-top-more-info" alt="Messenger icons">
+                                    <img th:src="@{/images/messenger/info.png}" class="msg-top-more-info" alt="Messenger icons">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12" style="max-height: 532px;">
+                            <input type="hidden"value="${data.userTo.id}" id="id" data-messages-user="${data.userTo.id}">
+                            <input type="hidden" id="idRelationship" value="${data.relation.id}" >
+                            <div class="messages">
+                                <ul class="messages-content" id="chatMessages">
+                                    
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="message-input">
+                                <div class="wrap">
+                                    <form class="d-inline form-inline">
+                                        <div class="d-flex align-items-center justify-content-between messenger-icons">
+                                            <div class="input-group messenger-input">
+                                                <input id="content" type="text" class="form-control search-input" placeholder="Type a message..." aria-label="Type a message..." aria-describedby="button-addon2">
+                                            </div>
+                                            <button onclick="sendMessage()" type="button" class="btn search-button" id="send-message">
+                                                <img th:src="@{/images/messenger/m-send.png}" alt="Messenger icons">
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+                `)
+                message.append(display);
+                const content=$('#chatMessages');
+                if(content.length>0){
+                    data.messages.forEach(element=>{
+                        const display=$(`
+                            <li class="contentmessage ${element.userFrom.id == data.currentUser.id ? 'message-reply' : 'message-receive'}" >
+                                            
+                                            <p >${element.content}</p>
+                                        </li>
+                            `)
+                            if (element.userFrom.id != data.currentUser.id) {
+                                const img = $(`
+                                  <img 
+                                    src="/images/users/user-1.jpg" 
+                                    alt="Conversation user image" 
+                                  />
+                                `);
+                                
+                                // Thêm thẻ <img> vào phần tử <li>
+                                display.append(img);
+                            }
+                            content.append(display);
+                    })
+                    
+                }
+        }
+    }
 
 });

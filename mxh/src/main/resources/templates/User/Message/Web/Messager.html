@@ -221,69 +221,14 @@
                                     <button type="button" class="btn btn-create-conversation" data-toggle="modal" data-target="#newConversation"><i class='bx bx-pencil'></i></button>
                                 </div>
                                 <div class="message-contacts">
-                                    <ul class="conversations">
-                                        <li th:each="relationship : ${relationships}" class="contact" th:data-user-id="${relationship.id}">
-                                            <div class="wrap">
-                                                <input type="hidden" th:value="${relationship.idUser}" class="user-id"/>
-                                                <span class="contact-status online"></span>
-                                                <img th:src="@{/images/users/user-1.jpg}" alt="Conversation user" />
-                                                <span th:if="${relationship.countMessageNotSeen}>0" class="unread-messages" th:data-id="${relationship.id}"  th:text="${relationship.countMessageNotSeen}"></span>                                                
-                                                <div class="meta">
-                                                    <p th:if="${relationship.name}" class="name" th:text="${relationship.name}"></p>
-                                                    <p th:if="${relationship.content}" class="preview" th:text="${relationship.content}"></p>
-                                                </div>
-                                            </div>
-                                        </li>
+                                    <ul class="conversations" id="contact-list">
+                                        
                                     </ul>
                                 </div>
                             </div>
                             <div class="content">
-                                <div class="row">
-                                    <div class="col-md-12 messenger-top-section">
-                                        <div class="contact-profile d-flex align-items-center justify-content-between">
-                                            <div class="messenger-top-luser df-aic" id="chatuser">
-                                                <img th:src="@{/images/users/user-2.jpg}" class="messenger-user" alt="Conversation user image" />
-                                                <a href="#" class="message-profile-name" th:text="${userTo.lastName}+' '+${userTo.firstName}"></a>
-                                            </div>
-                                            <div class="social-media messenger-top-ricon df-aic">
-                                                <img th:src="@{/images/messenger/phone.png}" data-toggle="modal" data-target="#callModal" class="msg-top-more-info" alt="Messenger icons">
-                                                <img th:src="@{/images/messenger/videocam.png}" class="msg-top-more-info" alt="Messenger icons">
-                                                <img th:src="@{/images/messenger/info.png}" class="msg-top-more-info" alt="Messenger icons">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-12" style="max-height: 532px;">
-                                        <input type="hidden" th:value="${userTo.id}" id="id" th:data-messages-user="${userTo.id}">
-                                        <input type="hidden" id="idRelationship" th:value="${relation.id}" >
-                                        <div class="messages">
-                                            <ul id="chatMessages" class="messages-content">
-                                                <!-- Tin nhắn sẽ được thêm vào đây bằng AJAX -->
-                                                <li th:each="message : ${listmessage}" 
-                                                    th:class="${message.userFrom.id} == ${currentUser.id} ? 'message-reply' : 'message-receive'">
-                                                    <img th:if="${message.userFrom.id} != ${currentUser.id}" 
-                                                    th:src="@{/images/users/user-1.jpg}" alt="Conversation user image" />
-                                                    <p th:text="${message.content}"></p>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <div class="message-input">
-                                            <div class="wrap">
-                                                <form class="d-inline form-inline">
-                                                    <div class="d-flex align-items-center justify-content-between messenger-icons">
-                                                        <div class="input-group messenger-input">
-                                                            <input id="content" type="text" class="form-control search-input" placeholder="Type a message..." aria-label="Type a message..." aria-describedby="button-addon2">
-                                                        </div>
-                                                        <button onclick="sendMessage()" type="button" class="btn search-button" id="send-message">
-                                                            <img th:src="@{/images/messenger/m-send.png}" alt="Messenger icons">
-                                                        </button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                
+                                
                             </div>
                         </div>
                     </div>
