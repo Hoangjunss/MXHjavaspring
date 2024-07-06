@@ -20,7 +20,8 @@ public interface RelationshipService {
     List<RelationshipDTO> orderByCreateAt(List<RelationshipDTO> relationships);
     Relationship findByMessage(List<Message> messages);
     List<User> findFriends(User user);
+    List<Relationship> findRelationshipPending(User user);
     List<User> findNotFriends(User user);
     int countMutualFriends(User user, Long friendId);
-     
+    
 }

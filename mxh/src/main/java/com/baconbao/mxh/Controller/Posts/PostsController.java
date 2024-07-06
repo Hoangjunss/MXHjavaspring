@@ -483,7 +483,6 @@ public ResponseEntity<?> uploadpost(  @RequestParam("content") String content,
     } */
     @GetMapping("/editpost")
     public ResponseEntity<?> editpost(@RequestParam("id") Long id, Principal principal) {
-      
         try {
             Post post = postService.findById(id);
             return ResponseEntity.ok(post);
@@ -494,11 +493,14 @@ public ResponseEntity<?> uploadpost(  @RequestParam("content") String content,
         }
     }
     @GetMapping("/comment")
-    public ResponseEntity<?> comment(@RequestParam("id") Long id, Principal principal) {
+    public ResponseEntity<?> comment(@RequestParam Long id, Principal principal) {
+        Map<String, Object> response = new HashMap<>();
         try {
             Post post = postService.findById(id);
             List<Comment> commet=post.getComments();
-            return ResponseEntity.ok(commet);
+            response.put("comments", commet);
+            System.out.println(commet.size());
+            return ResponseEntity.ok(response);
         } catch (DataIntegrityViolationException e) {
             throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
         } catch (Exception e) {

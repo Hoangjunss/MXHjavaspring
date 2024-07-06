@@ -139,6 +139,11 @@ public class RelationshipServiceImpl implements RelationshipService {
         }
         return notFriends;
     }
+
+    @Override
+    public List<Relationship> findRelationshipPending(User user) {
+        return relationshipRepository.findFriendByUser(user);
+    }
 }
 
    

@@ -32,7 +32,7 @@ public interface RelationshipRepository extends JpaRepository<Relationship, Long
         Relationship findByMessages(List<Message> messages);
 
         // tìm bạn bè của user
-        @Query("SELECT r FROM Relationship r WHERE (r.userOne = :user OR r.userTwo = :user) AND r.status.id <> 4")
+        @Query("SELECT r FROM Relationship r WHERE (r.userOne = :user OR r.userTwo = :user) AND r.status.id = 1")
         List<Relationship> findFriendByUser(@Param("user") User user);
 
         // tìm những người không phải là bạn bè của user

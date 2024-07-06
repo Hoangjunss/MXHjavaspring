@@ -15,10 +15,11 @@ function acceptFriendRequest(friendId, listItem) {
         return response.json();
     })
     .then(data => {
+        console.log(data.relationship);
         console.log('Friend request accepted:', data);
-        listItem.remove();
-        fetchFriends();
-        fetchNotFriends();
+        if(data.relationship.status.id == 2){
+            listItem.remove();
+        }
     })
     .catch(error => console.error('Error accepting friend request:', error));
 }
@@ -38,27 +39,35 @@ function deleteFriend(friendId, listItem) {
         })
         .then(() => {
             listItem.remove(); // hoặc listItem.style.display = 'none'; để ẩn đi
-            fetchFriends();
-            fetchNotFriends();
+            /* fetchFriends();
+            fetchNotFriends(); */
         })
         .catch(error => console.error('Error deleting friend:', error));
 }
 
 // Thêm bạn bè
-function addFriend(friendId) {
-    fetch(`/addFriend/${friendId}`, { method: 'POST' })
+function addFriend(friendId, listItem) {
+    alert(friendId);
+    fetch(`/addFriend`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ userId: friendId })
+    })
         .then(response => response.json())
         .then(data => {
             console.log('Friend added:', data);
-            fetchNotFriends();
-            fetchFriends();
+            /* listItem.remove(); */
+            /* fetchNotFriends();
+            fetchFriends(); */
+            // Thêm mã HTML tại đây để di chuyển mục từ "not-friend-list" sang "friend-list"
         })
         .catch(error => console.error('Error adding friend:', error));
 }
 
 // Xử lý khi DOM được tải hoàn toàn
 document.addEventListener("DOMContentLoaded", function () {
-
 
     // Hàm lấy danh sách bạn bè
     function fetchFriends() {
@@ -67,12 +76,13 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(data => {
                 const friendList = document.getElementById('friend-list');
                 friendList.innerHTML = ''; // Xóa nội dung cũ
-
-                data.forEach(friend => {
-                    fetchMutualFriendsCount(friend.id).then(count => {
-                        const listItem = createFriendItem(friend, 'acceptFriendRequest', 'deleteFriend', true, count);
+                data.relationships.forEach(relationship => {
+                    if(relationship.userTwo.id == data.user.id){
+                        fetchMutualFriendsCount(relationship.userOne.id).then(count => {
+                        const listItem = createFriendItem(relationship.userOne, 'acceptFriendRequest', 'deleteFriend', true, count);
                         friendList.appendChild(listItem);
                     });
+                    }
                 });
             })
             .catch(error => console.error('Error fetching friends:', error));

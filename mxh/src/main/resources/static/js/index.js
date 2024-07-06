@@ -118,17 +118,18 @@ function displayPosts(data){
 }
 function showComment(id){
     alert(id+" POSTID")
-    fetch('/comment?'+id,{
+    fetch('/comment?id='+id,{
         method:'GET'
     })  .then(response => response.json()) 
     .then(data => {
+        alert(data.comments.length + " comments");
         displayComment(data)
     })
 }   
 
 function displayComment(data){
-   const comment=$('.media');
-   data.forEach(element=>{
+   const commentlist=$('.media');
+   data.comments.forEach(element=>{
        const display=$(`
          <a href="#" class="pull-left">
                                                                     <img th:src="@{/images/users/user-2.jpg}" alt="" class="img-circle">
@@ -147,7 +148,7 @@ function displayComment(data){
                                                                     </div>
                                                                 </div>
         `)
-        comment.append(display);
+        commentlist.append(display);
    })
 }
 function showNotification(){

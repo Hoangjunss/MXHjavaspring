@@ -605,6 +605,7 @@ public class UserController {
             relationalService.addUser(relationship);
             boolean success = true;
             Map<String, Object> response = new HashMap<>();
+            response.put("relationship", relationship);
             response.put("success", success);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
@@ -648,11 +649,9 @@ public class UserController {
                 relationship.setUserTwo(userTwo);
                 relationship.setStatus(statusRelationshipService.findById(1L));
                 relationalService.addUser(relationship);
-            } else {
-                relationship.setStatus(statusRelationshipService.findById(1L));
-                relationalService.addUser(relationship);
             }
             boolean success = true;
+            
             Map<String, Object> response = new HashMap<>();
             response.put("success", success);
             return ResponseEntity.ok(response);
@@ -731,15 +730,15 @@ public class UserController {
     // Lấy danh sách bạn bè
     @GetMapping("/friends")
     public ResponseEntity<?> friends(Principal principal) {
+        Map<String, Object> response = new HashMap<>();
         try {
             // tim user theo id
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
             User user = userService.findByEmail(userDetails.getUsername());
-
-            // Tìm danh sách bạn bè và những người không phải bạn bè của user
-            List<User> friends = relationalService.findFriends(user);
-            
-            return ResponseEntity.ok(friends);
+            List<Relationship> relationships = relationshipService.findRelationshipPending(user);
+            response.put("relationships", relationships);
+            response.put("user", user);
+            return ResponseEntity.ok(response);
         } catch (DataIntegrityViolationException e) {
             throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
         } catch (Exception e) {
