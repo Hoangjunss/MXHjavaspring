@@ -1,121 +1,197 @@
+// Xử lý khi DOM được tải hoàn toàn
 document.addEventListener("DOMContentLoaded", function () {
+    // Gán sự kiện submit cho form (nếu có)
+    const form = document.getElementById('yourFormId');
+    if (form) {
+        form.addEventListener('submit', function (event) {
+            event.preventDefault(); // Ngăn chặn hành vi mặc định của form
+
+            // Lấy dữ liệu form và xử lý bằng fetch hoặc XMLHttpRequest
+            const formData = new FormData(form);
+            const url = form.action; // Lấy URL endpoint từ action của form
+
+            fetch(url, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Xử lý dữ liệu trả về (nếu cần)
+                console.log('Response:', data);
+
+                // Cập nhật lại danh sách bạn bè và danh sách bạn bè chưa kết bạn
+                fetchFriends();
+                fetchNotFriends();
+
+                // Thông báo hoặc cập nhật UI tại đây (nếu cần)
+                alert('Xử lý thành công!');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Đã xảy ra lỗi khi xử lý yêu cầu.');
+            });
+        });
+    }
+
+    // Hàm lấy danh sách bạn bè
+    function fetchFriends() {
+        fetch('/friends')
+            .then(response => response.json())
+            .then(data => {
+                const friendList = document.getElementById('friend-list');
+                friendList.innerHTML = ''; // Xóa nội dung cũ
+                data.forEach(friend => {
+                    // Tạo và thêm các item bạn bè vào danh sách
+                    fetchMutualFriendsCount(friend.id).then(count => {
+                        const listItem = createFriendItem(friend, 'acceptFriendRequest', 'deleteFriend', true, count);
+                        friendList.appendChild(listItem);
+                    });
+                });
+            })
+            .catch(error => console.error('Error fetching friends:', error));
+    }
+
+    // Hàm lấy danh sách bạn bè chưa kết bạn
+    function fetchNotFriends() {
+        fetch('/notFriend')
+            .then(response => response.json())
+            .then(data => {
+                const notFriendList = document.getElementById('not-friend-list');
+                notFriendList.innerHTML = ''; // Xóa nội dung cũ
+                data.forEach(notFriend => {
+                    // Tạo và thêm các item bạn bè chưa kết bạn vào danh sách
+                    fetchMutualFriendsCount(notFriend.id).then(count => {
+                        const listItem = createFriendItem(notFriend, 'addFriend', 'deleteFriend', false, count);
+                        notFriendList.appendChild(listItem);
+                    });
+                });
+            })
+            .catch(error => console.error('Error fetching not friends:', error));
+    }
+
+    // Hàm tạo item bạn bè
+    function createFriendItem(friend, confirmCallback, deleteCallback, isFriend, mutualFriendsCount) {
+        const listItem = document.createElement('li');
+        listItem.className = 'friend';
+
+        const friendCard = document.createElement('div');
+        friendCard.className = 'friend-card';
+
+        const friendInfo = document.createElement('div');
+        friendInfo.className = 'friend-info';
+
+        const name = document.createElement('p');
+        name.className = 'name';
+        name.textContent = `${friend.firstName} ${friend.lastName}`;
+
+        const mutualFriends = document.createElement('p');
+        mutualFriends.className = 'mutual-friends';
+        mutualFriends.textContent = `Bạn chung: ${mutualFriendsCount}`;
+
+        const actionButton = document.createElement('button');
+        actionButton.className = 'btn confirm';
+        actionButton.textContent = isFriend ? 'Xác nhận' : 'Thêm bạn bè';
+
+        const deleteButton = document.createElement('button');
+        deleteButton.className = 'btn delete';
+        deleteButton.textContent = isFriend ? 'Xóa' : 'Gỡ';
+
+        // Xử lý sự kiện click cho nút xác nhận
+        actionButton.onclick = () => {
+            if (window[confirmCallback] && typeof window[confirmCallback] === 'function') {
+                if (confirm(`Bạn có chắc muốn ${isFriend ? 'xác nhận yêu cầu kết bạn?' : 'gửi lời mời kết bạn?'}`)) {
+                    window[confirmCallback](friend.id, listItem);
+                    alert(isFriend ? `Bạn và ${friend.firstName} ${friend.lastName} đã trở thành bạn bè!` : 'Gửi lời mời kết bạn thành công!');
+                    listItem.remove(); // hoặc listItem.style.display = 'none'; để ẩn đi
+                }
+            } else {
+                console.error(`${confirmCallback} is not a function or not defined.`);
+            }
+        };
+
+        // Xử lý sự kiện click cho nút xóa
+        deleteButton.onclick = () => {
+            if (window[deleteCallback] && typeof window[deleteCallback] === 'function') {
+                if (confirm('Xóa bạn bè?')) {
+                    window[deleteCallback](friend.id, listItem);
+                    alert('Xóa bạn bè thành công!');
+                    listItem.remove(); // hoặc listItem.style.display = 'none'; để ẩn đi
+                }
+            } else {
+                console.error(`${deleteCallback} is not a function or not defined.`);
+            }
+        };
+
+        friendInfo.appendChild(name);
+        friendInfo.appendChild(mutualFriends);
+        friendInfo.appendChild(actionButton);
+        friendInfo.appendChild(deleteButton);
+
+        friendCard.appendChild(friendInfo);
+        listItem.appendChild(friendCard);
+
+        return listItem;
+    }
+
+    // Xác nhận yêu cầu kết bạn
+    function acceptFriendRequest(friendId, listItem) {
+        fetch(`/acceptFriendRequest/${friendId}`, { method: 'POST' })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Friend request accepted:', data);
+                fetchFriends();
+                fetchNotFriends();
+            })
+            .catch(error => console.error('Error accepting friend request:', error));
+    }
+
+    // Xóa bạn bè
+    function deleteFriend(friendId, listItem) {
+        fetch(`/deleteFriend/${friendId}`, { method: 'POST' })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Friend deleted:', data);
+            })
+            .then(() => {
+                listItem.remove(); // hoặc listItem.style.display = 'none'; để ẩn đi
+                fetchFriends();
+                fetchNotFriends();
+            })
+            .catch(error => console.error('Error deleting friend:', error));
+    }
+
+    // Thêm bạn bè
+    function addFriend(friendId) {
+        fetch(`/addFriend/${friendId}`, { method: 'POST' })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Friend added:', data);
+                fetchNotFriends();
+                fetchFriends();
+            })
+            .catch(error => console.error('Error adding friend:', error));
+    }
+
+    // Lấy số lượng bạn chung
+    function fetchMutualFriendsCount(friendId) {
+        return fetch(`/mutualFriend/${friendId}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Mutual friends count:', data.count);
+                return data.count;
+            })
+            .catch(error => {
+                console.error('Error fetching mutual friends count:', error);
+                return 0; // Trả về 0 nếu có lỗi
+            });
+    }
+
+    // Tải danh sách bạn bè khi trang được tải
     fetchFriends();
     fetchNotFriends();
-    fetchMutualFriendsCount();
 });
-
-// Lấy danh sách bạn bè
-function fetchFriends() {
-    fetch('/friends')
-        .then(response => response.json())
-        .then(data => {
-            const friendList = document.getElementById('friend-list');
-            friendList.innerHTML = ''; // Clear the list first
-            data.forEach(friend => {
-                const listItem = createFriendItem(friend, 'acceptFriendRequest', 'deleteFriend');
-                friendList.appendChild(listItem);
-            });
-        })
-        .catch(error => console.error('Error fetching friends:', error));
-}
-
-// Lấy danh sách bạn bè chưa kết bạn
-function fetchNotFriends() {
-    fetch('/notFriend')
-        .then(response => response.json())
-        .then(data => {
-            const notFriendList = document.getElementById('not-friend-list');
-            notFriendList.innerHTML = ''; // Clear the list first
-            data.forEach(notFriend => {
-                const listItem = createFriendItem(notFriend, 'addFriend', 'deleteFriend');
-                notFriendList.appendChild(listItem);
-            });
-        })
-        .catch(error => console.error('Error fetching not friends:', error));
-}
-
-// Tạo item bạn bè
-function createFriendItem(friend, confirmCallback, deleteCallback) {
-    const listItem = document.createElement('li');
-    listItem.className = 'friend';
-
-    const friendCard = document.createElement('div');
-    friendCard.className = 'friend-card';
-
-    const friendInfo = document.createElement('div');
-    friendInfo.className = 'friend-info';
-
-    const name = document.createElement('p');
-    name.className = 'name';
-    name.textContent = `${friend.firstName} ${friend.lastName}`;
-
-    const mutualFriends = document.createElement('p');
-    mutualFriends.className = 'mutual-friends';
-    mutualFriends.textContent = `Bạn chung: ${friend.mutualFriendsCount}`;
-
-    const confirmButton = document.createElement('button');
-    confirmButton.className = 'btn confirm';
-    confirmButton.textContent = 'Xác nhận';
-    confirmButton.onclick = () => window[confirmCallback](friend.id);
-
-    const deleteButton = document.createElement('button');
-    deleteButton.className = 'btn delete';
-    deleteButton.textContent = 'Xóa';
-    deleteButton.onclick = () => window[deleteCallback](friend.id);
-
-    friendInfo.appendChild(name);
-    friendInfo.appendChild(mutualFriends);
-    friendInfo.appendChild(confirmButton);
-    friendInfo.appendChild(deleteButton);
-
-    friendCard.appendChild(friendInfo);
-    listItem.appendChild(friendCard);
-
-    return listItem;
-}
-
-// xác nhận yêu cầu kết bạn
-function acceptFriendRequest(friendId) {
-    fetch(`/acceptFriendRequest/${friendId}`, { method: 'POST' })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Friend request accepted:', data);
-            fetchFriends();
-        })
-        .catch(error => console.error('Error accepting friend request:', error));
-}
-
-// xóa bạn bè
-function deleteFriend(friendId) {
-    fetch(`/deleteFriend/${friendId}`, { method: 'DELETE' })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Friend deleted:', data);
-            fetchFriends();
-            fetchNotFriends();
-        })
-        .catch(error => console.error('Error deleting friend:', error));
-}
-
-// thêm bạn bè
-function addFriend(friendId) {
-    fetch(`/addFriend/${friendId}`, { method: 'POST' })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Friend added:', data);
-            fetchNotFriends();
-        })
-        .catch(error => console.error('Error adding friend:', error));
-}
-
-// Lấy số lượng bạn chung
-function fetchMutualFriendsCount() {
-    fetch('/mutualFriend')
-        .then(response => response.json())
-        .then(data => {
-            const mutualFriendsCount = document.getElementById('mutual-friends');
-            mutualFriendsCount.textContent = data.count;
-            console.log('Mutual friends count:', data.count);
-        })
-        .catch(error => console.error('Error fetching mutual friends count:', error));
-}

@@ -48,4 +48,6 @@ public interface RelationshipRepository extends JpaRepository<Relationship, Long
         @Query("SELECT new com.baconbao.mxh.DTO.RelationshipDTO(r) FROM Relationship r")
         List<RelationshipDTO> findAllRelationshipDTO();
 
+        @Query("SELECT r FROM Relationship r WHERE (r.userOne = :firstUser OR r.userTwo = :firstUser) AND r.status = :status")
+        List<User> findFriendsByUserAndStatus(@Param("firstUser") User firstUser, @Param("status") StatusRelationship status);
 }

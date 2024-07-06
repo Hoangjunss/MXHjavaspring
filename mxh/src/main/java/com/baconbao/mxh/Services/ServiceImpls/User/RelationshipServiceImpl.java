@@ -19,13 +19,16 @@ import com.baconbao.mxh.Models.User.User;
 import com.baconbao.mxh.Repository.User.RelationshipRepository;
 import com.baconbao.mxh.Services.Service.User.RelationshipService;
 import com.baconbao.mxh.Services.Service.User.StatusRelationshipService;
-
+import com.baconbao.mxh.Services.Service.User.UserService;
 @Service
+
 public class RelationshipServiceImpl implements RelationshipService {
     @Autowired
     private RelationshipRepository relationshipRepository;
     @Autowired
     private StatusRelationshipService statusService;
+    @Autowired
+    private UserService userService;
 
     @Override
     public void addUser(Relationship relationship) {
@@ -93,8 +96,22 @@ public class RelationshipServiceImpl implements RelationshipService {
     }
 
     @Override
-    public int countfriend(User user, StatusRelationship status) {
-        return relationshipRepository.findAllByUserOneId(user, status).size();
+    public int countMutualFriends(User user, Long friendId) {
+        // tìm bạn bè của user
+        List<User> relationships = relationshipRepository.findFriendsByUserAndStatus(user, statusService.findById(2L));
+        
+        // tìm bạn bè của bạn bè
+        User friend = userService.findById(friendId);
+        List<User> friendFriends = relationshipRepository.findFriendsByUserAndStatus(friend, statusService.findById(2L));
+
+        // tìm số lượng bạn chung
+        int count = 0;
+        for (User u : relationships) {
+            if (friendFriends.contains(u)) {
+                count++;
+            }
+        }
+        return count;
     }
 
     public List<User> findFriends(User user) {

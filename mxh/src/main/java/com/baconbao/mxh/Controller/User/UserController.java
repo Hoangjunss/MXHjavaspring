@@ -27,6 +27,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -737,6 +738,7 @@ public class UserController {
 
             // Tìm danh sách bạn bè và những người không phải bạn bè của user
             List<User> friends = relationalService.findFriends(user);
+            
             return ResponseEntity.ok(friends);
         } catch (DataIntegrityViolationException e) {
             throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
@@ -761,12 +763,13 @@ public class UserController {
     }
 
     //Đếm số lượng bạn bè - LƯU Ý STATUS
-    @GetMapping("/mutualFriend")
-    public ResponseEntity<?> countFriend(Principal principal) {
+    @GetMapping("/mutualFriend/{friendId}")
+    public ResponseEntity<?> countFriend(@PathVariable Long friendId, Principal principal) {
         try {
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
             User user = userService.findByEmail(userDetails.getUsername());
-            int count = relationalService.countfriend(user, statusRelationshipService.findById(2L));
+            int count = relationalService.countMutualFriends(user, friendId);
+            System.out.println("Count: " + count);
             Map<String, Integer> response = new HashMap<>();
             response.put("count", count);
             return ResponseEntity.ok(response);
@@ -775,7 +778,7 @@ public class UserController {
         } catch (Exception e) {
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
-}
+    }
 
 
     /*

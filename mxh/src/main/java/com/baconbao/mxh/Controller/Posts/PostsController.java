@@ -388,8 +388,8 @@ public ResponseEntity<?> uploadpost(  @RequestParam("content") String content,
                                                                                             // dùng đang đăng nhập
         User user = userService.findByEmail(userDetails.getUsername());
         model.addAttribute("user", user);
-        int countFriend = relationshipService.countfriend(user, statusRelationshipService.findById(2L));
-        model.addAttribute("countFriend", countFriend);
+        // int countFriend = relationshipService.countfriend(user, statusRelationshipService.findById(2L));
+        // model.addAttribute("countFriend", countFriend);
         List<Notification> notifications = notificationService.findByUser(user);
         model.addAttribute("notifications", notifications);
         int unreadCount = notificationService.countUncheckedNotifications(user);

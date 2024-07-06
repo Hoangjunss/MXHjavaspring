@@ -21,6 +21,6 @@ public interface RelationshipService {
     Relationship findByMessage(List<Message> messages);
     List<User> findFriends(User user);
     List<User> findNotFriends(User user);
-    int countfriend(User user, StatusRelationship status);
+    int countMutualFriends(User user, Long friendId);
      
 }
