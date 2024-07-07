@@ -172,6 +172,7 @@
 .comments-list {
     max-height: 400px; /* Set the desired height for the scrollable area */
     overflow-y: auto;  /* Enable vertical scrolling */
+    overflow-x: hidden;
     padding: 0;        /* Remove default padding, if any */
     margin: 0;         /* Remove default margin, if any */
     list-style: none;  /* Remove default list styling */

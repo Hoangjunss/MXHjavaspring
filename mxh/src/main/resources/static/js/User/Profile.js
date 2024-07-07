@@ -558,7 +558,7 @@ function updateCommentsPost(data, postId) {
                 <div class="comment-wrapper">
                     <div class="panel panel-info">
                         <div class="panel-body">
-                            <ul class="media-list" id="comments-list" style="list-style:none;">
+                            <ul class="media-list comments-list" id="comments-list" style="list-style:none;">
                                 <li class="media comment-form">
                                     <a href="#" class="pull-left">
                                         <img th:src="@{/images/users/user-4.jpg}" alt="" class="img-circle">
