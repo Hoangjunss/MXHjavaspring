@@ -17,8 +17,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Hàm để lấy thông tin thông báo từ server
     function fetchNotificationsIsCheck(userId) {
-        fetch(`/countNotificationsIsCheck?userId=${userId}`,{
-            method:'GET'
+        fetch(`/countNotificationsIsCheck?userId=${userId}`, {
+            method: 'GET'
         })
             .then(response => response.json())
             .then(data => {
@@ -26,67 +26,67 @@ document.addEventListener("DOMContentLoaded", function () {
             })
             .catch(error => console.error('Error fetching notifications:', error));
     }
-    
-    function fetchUser(userId){
-        fetch(`/api/getuser?id=${userId}`,{
-            method:'GET'
+
+    function fetchUser(userId) {
+        fetch(`/api/getuser?id=${userId}`, {
+            method: 'GET'
         })
-           .then(response => response.json())
-           .then(data => {
+            .then(response => response.json())
+            .then(data => {
                 console.log(data);
                 updateProfile(data);
             })
-           .catch(error => console.error('Error fetching user:', error));
+            .catch(error => console.error('Error fetching user:', error));
     }
 
-    function fetchRelationship(userId){
-        fetch(`/api/getrelationship?userId=${userId}`,{
-            method:'GET'
+    function fetchRelationship(userId) {
+        fetch(`/api/getrelationship?userId=${userId}`, {
+            method: 'GET'
         })
-           .then(response => response.json())
-           .then(data => {
+            .then(response => response.json())
+            .then(data => {
                 console.log(data);
                 updateRelationship(data);
                 fetchStatusPost();
             })
-           .catch(error => console.error('Error fetching relationship:', error));
+            .catch(error => console.error('Error fetching relationship:', error));
     }
 
-    function fetchUserAbouts(userId){
-        fetch(`/api/getabouts?userId=${userId}`,{
-            method:'GET'
+    function fetchUserAbouts(userId) {
+        fetch(`/api/getabouts?userId=${userId}`, {
+            method: 'GET'
         })
-           .then(response => response.json())
-           .then(data => {
+            .then(response => response.json())
+            .then(data => {
                 console.log(data);
                 updateUserAbouts(data);
             })
-           .catch(error => console.error('Error fetching user abouts:', error));
+            .catch(error => console.error('Error fetching user abouts:', error));
     }
-    
-    function fetchStatusPost(){
-        fetch(`/status`,{
-            method:'GET'
+
+    function fetchStatusPost() {
+        fetch(`/status`, {
+            method: 'GET'
         })
-           .then(response => response.json())
-           .then(data => {
+            .then(response => response.json())
+            .then(data => {
                 console.log(data);
                 updateStatusPost(data);
             })
-           .catch(error => console.error('Error fetching status post:', error));
+            .catch(error => console.error('Error fetching status post:', error));
     }
 
-    function fetchPostUser(userId){
+    function fetchPostUser(userId) {
         alert(userId);
-        fetch(`/post?id=${userId}`,{
-            method:'GET'
+        fetch(`/post?id=${userId}`, {
+            method: 'GET'
         })
-           .then(response => response.json())
-           .then(data => {
+            .then(response => response.json())
+            .then(data => {
                 console.log(data);
                 updatePostPage(data);
             })
-           .catch(error => console.error('Error fetching status post:', error));
+            .catch(error => console.error('Error fetching status post:', error));
     }
     /* END API */
 
@@ -142,7 +142,7 @@ document.addEventListener("DOMContentLoaded", function () {
         };
         reader.readAsDataURL(event.target.files[0]);
     }
-    
+
     const relationshipForms = document.querySelectorAll('.relationship-form');
     relationshipForms.forEach(form => {
         const buttons = form.querySelectorAll('.relationship-btn');
@@ -161,15 +161,15 @@ document.addEventListener("DOMContentLoaded", function () {
                         status: status
                     })
                 })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        updateButtons(form, data.newStatus);
-                    } else {
-                        alert('Failed to update relationship status');
-                    }
-                })
-                .catch(error => console.error('Error:', error));
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            updateButtons(form, data.newStatus);
+                        } else {
+                            alert('Failed to update relationship status');
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
             });
         });
     });
@@ -186,7 +186,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         recallButton.classList.add('btn', 'btn-follow', 'mr-3', 'relationship-btn');
                         recallButton.setAttribute('data-status', '4');
                         recallButton.innerHTML = "<i class='bx bx-plus'></i>Recall";
-                        recallButton.addEventListener('click', function() {
+                        recallButton.addEventListener('click', function () {
                             updateButtons(form, 4);
                         });
                         form.appendChild(recallButton);
@@ -299,27 +299,29 @@ function displayEditProfileDetails() {
             // Tạo HTML cho form dựa trên dữ liệu nhận được
             const formEditProfile = document.getElementById('form_edit_profile');
             formEditProfile.innerHTML = ''; // Xóa bỏ các phần tử trong form trước khi thêm mới
+            let inputField = ''; // Sử dụng let thay vì const
 
             abouts.forEach((about, index) => {
                 const userAbout = userAbouts.find(ua => ua.about.id === about.id);
                 const description = userAbout ? userAbout.description : '';
 
-                const inputField = `
-                    <div class="name_box">
-                        <input type="hidden" name="userAboutDTOs[${index}].aboutId" value="${about.id}">
-                        <label>${about.name}</label>
-                        <input type="text" placeholder="${about.name}" name="userAboutDTOs[${index}].description" value="${description}">
-                    </div>
-                    <button type="submit" id="submitBtn">Save</button>
-                `;
+                inputField = `
+        <div class="name_box">
+            <input type="hidden" name="userAboutDTOs[${index}].aboutId" value="${about.id}">
+            <label>${about.name}</label>
+            <input type="text" placeholder="${about.name}" name="userAboutDTOs[${index}].description" value="${description}">
+        </div>
+    `;
                 formEditProfile.insertAdjacentHTML('beforeend', inputField);
             });
 
-            overlayAdd.style.display = "flex"; // Hiển thị overlay khi dữ liệu đã được load và xử lý
+            const submitButton = `<button type="submit" id="submitBtn">Save</button>`;
+            formEditProfile.insertAdjacentHTML('beforeend', submitButton);
+
+            const overlayAdd = document.getElementById('edit_profile');
+            overlayAdd.style.display = "flex";
         })
         .catch(error => console.error('Error fetching abouts:', error));
-
-    
 }
 
 // Hàm đóng modal
@@ -327,7 +329,6 @@ function closeEditProfileDetails() {
     const overlayAdd = document.getElementById('edit_profile');
     overlayAdd.style.display = "none";
 }
-
 
 // Hàm để cập nhật thông tin thông báo đã đ��c
 function updateNotificationsIsCheck(data) {
@@ -341,12 +342,12 @@ function updateNotificationsIsCheck(data) {
     }
 }
 
-function updateProfile(data){
+function updateProfile(data) {
     const fullNameElement = document.querySelector('.profile-fullname');
     fullNameElement.textContent = `${data.user.firstName} ${data.user.lastName}`;
 }
 
-function updateRelationship(data){
+function updateRelationship(data) {
     isUserLogged = data.isOwnUser;
     const divsetfriend = document.getElementById('setfriend');
     const fromSetFriend = document.getElementById('setfrienduser');
@@ -390,14 +391,14 @@ function updateRelationship(data){
             }
         }
     }
-}  
+}
 
-function updateUserAbouts(data){
+function updateUserAbouts(data) {
     const aboutUserUI = document.getElementById('aboutuser');
     if (data.userAbouts != null) {
         data.userAbouts.forEach(userAbout => {
-            data.abouts.forEach(about =>{
-                if(userAbout.about.id == about.id){
+            data.abouts.forEach(about => {
+                if (userAbout.about.id == about.id) {
                     aboutUserUI.innerHTML += `
                     <div class="intro-item d-flex justify-content-between align-items-center">
                                         <p class="intro-title text-muted"><i class='bx bx-briefcase text-primary'></i> 
@@ -408,7 +409,7 @@ function updateUserAbouts(data){
                 }
             })
         })
-        if(isUserLogged){
+        if (isUserLogged) {
             aboutUserUI.innerHTML += `<div class="intro-item d-flex justify-content-between align-items-center">
                                 <button href="#" onclick="displayEditProfileDetails()" class="btn btn-quick-link join-group-btn border w-100" id="editProfileDetails">Edit Profile Details</button>
                             </div>
@@ -416,35 +417,35 @@ function updateUserAbouts(data){
         }
     }
 }
-    
-function updateStatusPost(data){
+
+function updateStatusPost(data) {
     if (isUserLogged) {
         const statusSelect = document.getElementById('StatusId');
-            data.status.forEach(stt =>{
-                const option = document.createElement('option');
-                option.value = stt.id;
-                option.textContent = stt.name;
-                statusSelect.appendChild(option);
-            })
-    }else if(!isUserLogged){
+        data.status.forEach(stt => {
+            const option = document.createElement('option');
+            option.value = stt.id;
+            option.textContent = stt.name;
+            statusSelect.appendChild(option);
+        })
+    } else if (!isUserLogged) {
         document.getElementById('uploadpost').remove();
     }
 }
 
-function updatePostPage(data){
+function updatePostPage(data) {
     const divContainerPost = document.getElementById('containerpost')
     const elementPost = document.getElementById('postuserupload');
-    if(data.posts == null){
+    if (data.posts == null) {
         divContainerPost.innerHTML += `
         <h2 class="complex-effect-text">
             There are currently no posts. Let's share wonderful moments together
         </h2>
 
         `;
-    }else{
-        data.posts.forEach(post=>{
+    } else {
+        data.posts.forEach(post => {
             const imgUser = '#';
-            const imgPost =  post.image!=null && post.image.urlImage != null ? post.image.urlImage : '#';
+            const imgPost = post.image != null && post.image.urlImage != null ? post.image.urlImage : '#';
             const countComment = post.comments ? post.comments.length : 0;
             divContainerPost.innerHTML += `
             <ul class="list-unstyled" id="postuserupload"> 
@@ -543,7 +544,7 @@ function updatePostPage(data){
     }
 }
 
-function displaylistcomment(){
+/* function displaylistcomment(){
     const postId = button.dataset.id;
     const commentslist = document.getElementById('comments-list');
     commentslist += `<li class="media comment-form">
@@ -568,3 +569,4 @@ function displaylistcomment(){
                                 </li>
     `;
 }
+ */
