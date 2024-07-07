@@ -13,8 +13,6 @@ document.addEventListener("DOMContentLoaded", function () {
         fetchPostUser(userId);
     }
 
-
-
     // Hàm để lấy thông tin thông báo từ server
     function fetchNotificationsIsCheck(userId) {
         fetch(`/countNotificationsIsCheck?userId=${userId}`, {
@@ -88,6 +86,7 @@ document.addEventListener("DOMContentLoaded", function () {
             })
             .catch(error => console.error('Error fetching status post:', error));
     }
+
     /* END API */
 
     document.getElementById('startChatButton').addEventListener('click', function () {
@@ -285,6 +284,18 @@ document.addEventListener("DOMContentLoaded", function () {
             .catch(error => console.error('Error:', error));
     }
 });
+
+function fetchCommentsPost(id){
+    fetch(`/comment?id=${id}`, {
+        method: 'GET'
+    })
+       .then(response => response.json())
+       .then(data => {
+            console.log(data, id);
+            updateCommentsPost(data, id);
+        })
+       .catch(error => console.error('Error fetching comments post:', error));
+}
 
 function displayEditProfileDetails() {
     const overlayAdd = document.getElementById('edit_profile');
@@ -496,7 +507,7 @@ function updatePostPage(data) {
                                                     </div>
                                                     
                                                     <!-- End Reactions -->
-                                                    <button class="post-card-buttons show-comments" onclick="displaylistcomment()" data-id="${post.id}"><i class='bx bx-message-rounded mr-2'></i>${countComment}</button>
+                                                    <button class="post-card-buttons show-comments" onclick="fetchCommentsPost(${post.id})" data-id="${post.id}"><i class='bx bx-message-rounded mr-2'></i>${countComment}</button>
                                                     <!-- Share -->
                                                     <div class="dropdown dropup share-dropup">
                                                         <a href="#" class="post-card-buttons" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -544,20 +555,31 @@ function updatePostPage(data) {
     }
 }
 
-/* function displaylistcomment(){
-    const postId = button.dataset.id;
-    const commentslist = document.getElementById('comments-list');
-    commentslist += `<li class="media comment-form">
+function updateCommentsPost(data, postId) {
+    const divContainerComment = document.getElementById('commentslist');
+    divContainerComment.setAttribute('data-id', postId);
+    if (divContainerComment.style.display === 'flex') {
+        divContainerComment.style.display = 'none';
+        return; // Không thực hiện các hành động khác nếu đã ẩn thẻ
+    }
+    let commentsFrom = `
+        <div class="row bootstrap snippets">
+            <div class="col-md-12">
+                <div class="comment-wrapper">
+                    <div class="panel panel-info">
+                        <div class="panel-body">
+                            <ul class="media-list comments-list" id="comments-list">
+                                <li class="media comment-form">
                                     <a href="#" class="pull-left">
                                         <img th:src="@{/images/users/user-4.jpg}" alt="" class="img-circle">
                                     </a>
-                                    <div class="media-body" th:data-post-id="${listpost.id}">
-                                        <form id="commentForm-${listpost.id}" class="commentForm">
+                                    <div class="media-body" data-post-id="${postId}">
+                                        <form id="commentForm-${postId}" class="commentForm">
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <div class="input-group">
-                                                        <input type="hidden" id="postId-${listpost.id}" name="postId" th:value="${listpost.id}">
-                                                        <input type="text" id="content-${listpost.id}" name="content" class="form-control comment-input" placeholder="Write a comment...">
+                                                        <input type="hidden" id="postId-${postId}" name="postId" value="${postId}">
+                                                        <input type="text" id="content-${postId}" name="content" class="form-control comment-input" placeholder="Write a comment...">
                                                         <div class="input-group-btn">
                                                             <button type="submit" class="btn btn-primary">Comment</button>
                                                         </div>
@@ -568,5 +590,48 @@ function updatePostPage(data) {
                                     </div>
                                 </li>
     `;
+
+    let displayComment = '';
+    if (data.comments != null) {
+        data.comments.forEach(comment => {
+            displayComment += `
+                <li class="media">
+                    <a href="#" class="pull-left">
+                        <img th:src="@{/images/users/user-2.jpg}" alt="" class="img-circle">
+                    </a>
+                    <div class="media-body">
+                        <div class="d-flex justify-content-between align-items-center w-100">
+                            <strong class="text-gray-dark"><a href="#" class="fs-8">${comment.userSend.firstName} ${comment.userSend.lastName}</a></strong>
+                            <a href="#"><i class='bx bx-dots-horizontal-rounded'></i></a>
+                        </div>
+                        <span class="d-block comment-created-time">30 min ago</span>
+                        <p class="fs-8 pt-2">${comment.content}</p>
+                        <div class="commentLR">
+                            <button type="button" class="btn btn-link fs-8">Like</button>
+                            <button type="button" class="btn btn-link fs-8">Reply</button>
+                        </div>
+                    </div>
+                </li>
+            `;
+        });
+
+        displayComment += `
+            <li class="media">
+                <div class="media-body">
+                    <div class="comment-see-more text-center">
+                        <button type="button" class="btn btn-link fs-8">See More</button>
+                    </div>
+                </div>
+            </li>
+            </ul>
+            </div>
+            </div>
+            </div>
+            </div>
+            </div>
+        `;
+    }
+
+    divContainerComment.innerHTML = commentsFrom + displayComment;
+    divContainerComment.style.display = 'flex';
 }
- */
