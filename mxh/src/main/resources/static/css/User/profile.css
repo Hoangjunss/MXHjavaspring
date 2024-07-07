@@ -614,3 +614,13 @@ body .profiledetails{
     0%, 100% { transform: translateX(0); }
     50% { transform: translateX(5px); }
 }
+.hide-comments {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease-out;
+}
+
+.show-comments {
+    max-height: 1000px;
+    transform: max-height 0.5s ease-in;
+}
