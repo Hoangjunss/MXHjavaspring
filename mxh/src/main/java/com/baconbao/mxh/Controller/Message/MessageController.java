@@ -23,13 +23,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.baconbao.mxh.DTO.RelationshipDTO;
 import com.baconbao.mxh.Exceptions.CustomException;
 import com.baconbao.mxh.Exceptions.ErrorCode;
 import com.baconbao.mxh.Models.Message.Message;
 import com.baconbao.mxh.Models.User.Relationship;
 import com.baconbao.mxh.Models.User.User;
-import com.baconbao.mxh.Repository.User.RelationshipRepository;
 import com.baconbao.mxh.Services.Service.Message.MessageService;
 import com.baconbao.mxh.Services.Service.User.RelationshipService;
 import com.baconbao.mxh.Services.Service.User.UserService;

@@ -42,7 +42,7 @@ public class InteractionServiceImpl  implements InteractionService{
 
     public Long getGenerationId() {
         UUID uuid = UUID.randomUUID();
-        return uuid.getMostSignificantBits() & Long.MAX_VALUE;
+        return uuid.getMostSignificantBits() &0x1FFFFFFFFFFFFFL;
     }
 
     

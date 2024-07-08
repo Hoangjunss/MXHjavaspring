@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let isUserLogged;
     // Kiểm tra xem userId có tồn tại không
     if (userId) {
-        fetchNotificationsIsCheck(userId);
+        fetchNotificationsIsCheck();
         fetchUser(userId);
         fetchRelationship(userId);
         fetchUserAbouts(userId);
@@ -14,8 +14,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Hàm để lấy thông tin thông báo từ server
-    function fetchNotificationsIsCheck(userId) {
-        fetch(`/countNotificationsIsCheck?userId=${userId}`, {
+    function fetchNotificationsIsCheck() {
+        fetch(`/countNotificationsIsCheck`, {
             method: 'GET'
         })
             .then(response => response.json())

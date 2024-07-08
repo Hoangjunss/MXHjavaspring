@@ -28,6 +28,7 @@ public class Notification {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="IdUser")
     private User user;
+    private LocalDateTime createAt;
     private boolean isChecked;
     private String url;
 }

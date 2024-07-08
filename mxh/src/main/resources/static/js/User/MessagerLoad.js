@@ -4,79 +4,79 @@ document.addEventListener("DOMContentLoaded", function () {
     const chatusername = document.getElementById("chatuser");
     const countMessageNotSeen = document.getElementById("countmessageseen");
 
-    const messageFrame=$('#contact-list');
-    const messageContent=$('.content');
-    if(messageFrame.length>0&&messageContent.length>0){
-        fetch('/messagermobile',{
-            method:'GET'
+    const messageFrame = $('#contact-list');
+    const messageContent = $('.content');
+    if (messageFrame.length > 0 && messageContent.length > 0) {
+        fetch('/messagermobile', {
+            method: 'GET'
         })
-        .then(response => response.json()) // Chuyển đổi phản hồi thành JSON
-        .then(data => {
-            loadMessagesFrame(data);
-            const idUser=$('#active').val();
-            fetch('/chat?id='+idUser,{
-                method:"GET"
-            }) .then(response => response.json()) // Chuyển đổi phản hồi thành JSON
+            .then(response => response.json()) // Chuyển đổi phản hồi thành JSON
             .then(data => {
-                loadMessage(data);
+                loadMessagesFrame(data);
+                const idUser = $('#active').val();
+                fetch('/chat?id=' + idUser, {
+                    method: "GET"
+                }).then(response => response.json()) // Chuyển đổi phản hồi thành JSON
+                    .then(data => {
+                        loadMessage(data);
+                    })
             })
-        })
-        
-            console.log(1);
-        
-    }else if(messageFrame.length>0){
+
+        console.log(1);
+
+    } else if (messageFrame.length > 0) {
         console.log(2);
-        fetch('/messagermobile',{
-            method:'GET'
+        fetch('/messagermobile', {
+            method: 'GET'
         })
-        .then(response => response.json()) // Chuyển đổi phản hồi thành JSON
-        .then(data => {
-            loadMessagesFrame(data);
-        })
-        
-    }else{
+            .then(response => response.json()) // Chuyển đổi phản hồi thành JSON
+            .then(data => {
+                loadMessagesFrame(data);
+            })
+
+    } else {
         console.log(3);
         const currentUrl = window.location.href;
 
-// Tạo đối tượng URLSearchParams từ URL
-const urlParams = new URLSearchParams(window.location.search);
+        // Tạo đối tượng URLSearchParams từ URL
+        const urlParams = new URLSearchParams(window.location.search);
 
-// Lấy giá trị của tham số 'name'
-const id = urlParams.get('id');
-if(id!=null){
-    fetch('/chat?id='+id,{
-        method:"GET"
-    }) .then(response => response.json()) // Chuyển đổi phản hồi thành JSON
-    .then(data => {
-        loadMessage(data);
-    })
-}
+        // Lấy giá trị của tham số 'name'
+        const id = urlParams.get('id');
+        if (id != null) {
+            fetch('/chat?id=' + id, {
+                method: "GET"
+            }).then(response => response.json()) // Chuyển đổi phản hồi thành JSON
+                .then(data => {
+                    loadMessage(data);
+                })
+        }
     }
-   
+
     function loadMessagesFrame(data) {
-        const frame=$('#contact-list');
-        if(frame.length>0){
+        const frame = $('#contact-list');
+        if (frame.length > 0) {
             var userActive;
-            if(data.relantionships[0].userOne.id==data.user.id){
-                userActive=data.relantionships[0].userTwo;
-            }else{
-                userActive=data.relantionships[0].userOne;
+            if (data.relantionships[0].userOne.id == data.user.id) {
+                userActive = data.relantionships[0].userTwo;
+            } else {
+                userActive = data.relantionships[0].userOne;
             }
-        const input=$(`
+            const input = $(`
              <input type="hidden" value="${userActive.id}" id="active" >
             `)
             frame.append(input);
-        data.relantionships.forEach(relantionships=>{
+            data.relantionships.forEach(relantionships => {
 
-            var user;
-            if (relantionships.userOne.id == data.user.id) {
-                user = relantionships.userTwo;
-            } else {
-                user = relantionships.userOne;
-            }
-            data.unseenMessages.forEach(unseenMessage => {
-                if (unseenMessage[0] == user.id) {
-                    const display = $(`
+                var user;
+                if (relantionships.userOne.id == data.user.id) {
+                    user = relantionships.userTwo;
+                } else {
+                    user = relantionships.userOne;
+                }
+                data.unseenMessages.forEach(unseenMessage => {
+                    if (unseenMessage[0] == user.id) {
+                        const display = $(`
             <li data-relantionships-id="${relantionships.id}" data-user-id="${user.id}" class="contact" >
                                 <a href="/chatmobile?id=${user.id}" style="text-decoration: none;">
                                     <div class="wrap">
@@ -90,20 +90,20 @@ if(id!=null){
                                 </a>
                             </li>
             `)
-                    frame.append(display);
-                }
+                        frame.append(display);
+                    }
+                })
             })
-        })
-        data.countMessNotSeen.forEach(element => {
-            const span = $('li[data-user-id="' + element[0] + '"]').find('.wrap')
-            if (element[1] > 0) {
-                const display = $(`
+            data.countMessNotSeen.forEach(element => {
+                const span = $('li[data-user-id="' + element[0] + '"]').find('.wrap')
+                if (element[1] > 0) {
+                    const display = $(`
                      <span  class="unread-messages" >${element[1]}</span>
                     `)
-                span.append(display);
-            }
-        })
-    }
+                    span.append(display);
+                }
+            })
+        }
     }
     // Hàm tải tin nhắn từ server
     function loadMessages(userId) {
@@ -170,12 +170,12 @@ if(id!=null){
             showChat(userId); // Gọi hàm showChat với ID người dùng
         });
     });
-    
-    
+
+
     function loadMessage(data) {
-        const message=$('.content');
-        if(message.length>0){
-            const display=$(`
+        const message = $('.content');
+        if (message.length > 0) {
+            const display = $(`
              
                     <div class="row">
                         <div class="col-md-12 messenger-top-section">
@@ -219,31 +219,31 @@ if(id!=null){
                     </div>
                 
                 `)
-                message.append(display);
-                const content=$('#chatMessages');
-                if(content.length>0){
-                    data.messages.forEach(element=>{
-                        const display=$(`
+            message.append(display);
+            const content = $('#chatMessages');
+            if (content.length > 0) {
+                data.messages.forEach(element => {
+                    const display = $(`
                             <li class="contentmessage ${element.userFrom.id == data.currentUser.id ? 'message-reply' : 'message-receive'}" >
                                             
                                             <p >${element.content}</p>
                                         </li>
                             `)
-                            if (element.userFrom.id != data.currentUser.id) {
-                                const img = $(`
+                    if (element.userFrom.id != data.currentUser.id) {
+                        const img = $(`
                                   <img 
                                     src="/images/users/user-1.jpg" 
                                     alt="Conversation user image" 
                                   />
                                 `);
-                                
-                                // Thêm thẻ <img> vào phần tử <li>
-                                display.append(img);
-                            }
-                            content.append(display);
-                    })
-                    
-                }
+
+                        // Thêm thẻ <img> vào phần tử <li>
+                        display.append(img);
+                    }
+                    content.append(display);
+                })
+
+            }
         }
     }
 

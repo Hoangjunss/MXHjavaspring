@@ -10,7 +10,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -24,7 +23,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -45,10 +43,7 @@ import com.baconbao.mxh.DTO.UserDTO;
 import com.baconbao.mxh.Exceptions.CustomException;
 import com.baconbao.mxh.Exceptions.ErrorCode;
 import com.baconbao.mxh.Models.VerifycationToken;
-import com.baconbao.mxh.Models.Post.Comment;
 import com.baconbao.mxh.Models.Post.Image;
-import com.baconbao.mxh.Models.Post.Post;
-import com.baconbao.mxh.Models.Post.Status;
 import com.baconbao.mxh.Models.User.About;
 import com.baconbao.mxh.Models.User.Notification;
 import com.baconbao.mxh.Models.User.Relationship;
@@ -58,8 +53,6 @@ import com.baconbao.mxh.Models.User.UserAbout;
 import com.baconbao.mxh.Services.CloudinaryService;
 import com.baconbao.mxh.Services.Service.VerifycationTokenService;
 import com.baconbao.mxh.Services.Service.Post.ImageService;
-import com.baconbao.mxh.Services.Service.Post.PostService;
-import com.baconbao.mxh.Services.Service.Post.StatusService;
 import com.baconbao.mxh.Services.Service.User.AboutService;
 import com.baconbao.mxh.Services.Service.User.NotificationService;
 import com.baconbao.mxh.Services.Service.User.RelationshipService;
@@ -89,11 +82,7 @@ public class UserController {
     @Autowired
     private UserAboutService userAboutService;
     @Autowired
-    private PostService postService;
-    @Autowired
     private NotificationService notificationService;
-    @Autowired
-    private StatusService statusService;
     @Autowired
     private RelationshipService relationshipService;
 
@@ -514,10 +503,7 @@ public class UserController {
     public String uploadUserImgPage() {
         return "test";
     }
-
-    // SỬA DÒNG FOR
-
-    // SỬA DÒNG FOR
+    
     @PostMapping("/editprofile")
     public String editProfile(@ModelAttribute("userAboutForm") UserAboutForm userAboutForm, Principal principal) {
         try {
@@ -531,7 +517,7 @@ public class UserController {
                 userAbout.setDescription(userAboutDTO.getDescription());
                 userAboutService.save(userAbout);
             }
-            return "redirect:/profile";
+            return "redirect:/profile?id="+user.getId();
         } catch (DataIntegrityViolationException e) {
             throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
         } catch (Exception e) {
@@ -896,7 +882,7 @@ public class UserController {
 
     //Lấy số lượng thông báo chưa xem
     @GetMapping("/countNotificationsIsCheck")
-    public ResponseEntity<Map<String, Object>> getNotifications(@RequestParam Long userId, Principal principal) {
+    public ResponseEntity<Map<String, Object>> getNotificationsIsCheck(Principal principal) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
         User loggedInUser = userService.findByEmail(userDetails.getUsername());
         int unreadCount = notificationService.countUncheckedNotifications(loggedInUser);

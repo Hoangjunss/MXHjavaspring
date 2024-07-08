@@ -111,3 +111,12 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     });       
 });
+
+function redirectToMessagePage() {
+    // Kiểm tra kích thước cửa sổ trình duyệt
+    if (window.innerWidth <= 768) {
+        window.location.href = '/messagesmobil'; // Chuyển hướng đến trang mobile nếu kích thước cửa sổ nhỏ hơn hoặc bằng điểm ngắt
+    } else {
+        window.location.href = '/messages'; // Chuyển hướng đến trang web nếu kích thước cửa sổ lớn hơn điểm ngắt
+    }
+}

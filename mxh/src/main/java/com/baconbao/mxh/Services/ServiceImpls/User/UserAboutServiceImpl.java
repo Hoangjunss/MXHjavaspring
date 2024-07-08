@@ -60,7 +60,7 @@ public class UserAboutServiceImpl implements UserAboutService {
 
     public Long getGenerationId() {
         UUID uuid = UUID.randomUUID();
-        return uuid.getMostSignificantBits() & Long.MAX_VALUE;
+        return uuid.getMostSignificantBits() &0x1FFFFFFFFFFFFFL;
     }
 
     @Override

@@ -20,8 +20,8 @@ public class ReplyCommentServiceImpl implements ReplyCommentService{
 
     @Override
     public Long getGenerationId() {
-           UUID uuid = UUID.randomUUID();
-            return uuid.getMostSignificantBits() & Long.MAX_VALUE;
+        UUID uuid = UUID.randomUUID();
+        return uuid.getMostSignificantBits() &0x1FFFFFFFFFFFFFL;
     }
     
 }

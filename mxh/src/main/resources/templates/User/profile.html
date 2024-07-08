@@ -38,7 +38,7 @@
                 <nav id="navbar-main" class="navbar navbar-expand-lg shadow-sm sticky-top">
                     <div class="w-100 justify-content-md-center">
                         <ul class="navbar-nav mr-5 flex-row" id="main_menu">
-                            <a class="navbar-brand nav-item mr-lg-5" href="index.html"><img th:src="@{/images/logo-64x64.png}" width="40" height="40" class="mr-3" alt="Logo"></a>
+                            <a class="navbar-brand nav-item mr-lg-5" th:href="@{/}"><img th:src="@{/images/logo-64x64.png}" width="40" height="40" class="mr-3" alt="Logo"></a>
                             <!-- Collect the nav links, forms, and other content for toggling -->
                             <form class="w-30 mx-2 my-auto d-inline form-inline mr-5 dropdown search-form">
                                 <div class="input-group" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="searchDropdown">
@@ -94,9 +94,9 @@
                             </form>
                             <!-- Nhắn tin -->
                             <li class="nav-item s-nav dropdown message-drop-li">
-                                <a href="#" class="nav-link nav-links message-drop drop-w-tooltip" data-toggle="dropdown" data-placement="bottom" data-title="Messages" role="button" aria-haspopup="true" aria-expanded="false">
+                                <a href="#" class="nav-link nav-links message-drop drop-w-tooltip" data-toggle="dropdown" data-placement="bottom" data-title="Messages" role="button" aria-haspopup="true" aria-expanded="false" onclick="redirectToMessagePage()">
                                     <img th:src="@{/images/icons/navbar/message.png}" class="message-dropdown" alt="navbar icon"> <span class="badge badge-pill badge-primary">1</span>
-                                </a>
+                                </a>          
                                 <ul class="dropdown-menu notify-drop dropdown-menu-right nav-drop shadow-sm">
                                     <div class="notify-drop-title">
                                         <div class="row">
@@ -136,7 +136,7 @@
                             </li>
                             <!-- Thêm bạn bè -->
                             <li class="nav-item s-nav dropdown friend-request">
-                                <a th:href="@{/friends}" class="nav-link nav-links rm-drop-mobile drop-w-tooltip" data-toggle="dropdown" data-placement="bottom" data-title="Friend Requests" role="button" aria-haspopup="true" aria-expanded="false">
+                                <a th:href="@{/listfriend}" class="nav-link nav-links rm-drop-mobile drop-w-tooltip" data-toggle="dropdown" data-placement="bottom" data-title="Friend Requests" role="button" aria-haspopup="true" aria-expanded="false">
                                     <img th:src="@{images/icons/navbar/group.png}" class="friend-request" alt="navbar icon"> <span class="badge-pill badge-primary"><p th:text="'Lời mời kết bạn (' + ${countFriend} +')'"></p></span>
                                 </a>
                             </li>
@@ -163,9 +163,8 @@
                                     </div>
                                 </ul>                                
                             </li>
-                            
                             <li class="nav-item s-nav">
-                                <a th:href="@{/profile}" class="nav-link nav-links">
+                                <a href="#" class="nav-link nav-links">
                                     <div class="menu-user-image">
                                         <img th:src="@{/images/users/user-4.jpg}" class="menu-user-img ml-1" alt="Menu Image">
                                     </div>
@@ -285,7 +284,6 @@
                                                     </div>
                                                 </li>
                                             </ul>
-                                            
                                             <ul class="list-unstyled" id="uploadpost" style="margin-bottom: 0;">
                                                 <li class="media post-form w-shadow">
                                                     <div class="media-body">
@@ -316,7 +314,6 @@
                                             </ul>
                                             
                                         </div>
-                                        
                                     </div>
                                 </div>
                             </div>
@@ -358,7 +355,7 @@
             <div class="edit_profile_container">
                 <button class="close" onclick="closeEditProfileDetails()"><i class="fa-solid fa-xmark"></i></button>
                 <h2>Edit Profile Details</h2>
-                <form class="form_edit_profile" id="form_edit_profile">
+                <form th:action="@{/editprofile}" th:object="${userAboutForm}" method="post" class="form_edit_profile" id="form_edit_profile">
                     <!-- Các trường dữ liệu sẽ được thêm vào đây từ JavaScript -->
                 </form>
             </div>            

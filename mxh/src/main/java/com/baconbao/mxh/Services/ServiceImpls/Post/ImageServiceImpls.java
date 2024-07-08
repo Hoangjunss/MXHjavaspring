@@ -35,8 +35,8 @@ public class ImageServiceImpls implements ImageService {
    @Override
    public Long getGenerationId() {
       UUID uuid = UUID.randomUUID();
-      return uuid.getMostSignificantBits() & Long.MAX_VALUE;
-   }
+      return uuid.getMostSignificantBits() &0x1FFFFFFFFFFFFFL;
+  }
 
    @Override
    public Image findById(long id) {

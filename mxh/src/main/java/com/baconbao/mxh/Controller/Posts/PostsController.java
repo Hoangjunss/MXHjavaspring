@@ -79,10 +79,6 @@ public class PostsController {
     private TestService testService;
     @Autowired
     private NotificationService notificationService;
-    @Autowired
-    private RelationshipService relationshipService;
-    @Autowired
-    private StatusRelationshipService statusRelationshipService;
 
    @GetMapping({" ", " /"})
    public String getIndex(){

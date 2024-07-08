@@ -26,6 +26,9 @@
 \*-------------------------------------------*/
 
 /* Notification & Message dropdown */
+
+
+
 .dropdown-menu.notify-drop.show {
     min-width: 330px;
     background-color: #fff;
@@ -139,6 +142,44 @@
     color: #000 !important;
     font-weight: 500 !important;
 }
+
+.notification-link {
+    display: flex;
+    text-decoration: none;
+    color: inherit; /* Để giữ nguyên màu chữ */
+}
+
+.notification-link .col-md-2, 
+.notification-link .col-sm-2, 
+.notification-link .col-xs-2, 
+.notification-link .col-md-10, 
+.notification-link .col-sm-10, 
+.notification-link .col-xs-10 {
+    display: flex;
+    align-items: center; /* Để căn giữa nội dung theo chiều dọc */
+}
+
+.notification-link .notify-img img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 50%;
+}
+
+.notification-link .notification-user {
+    font-weight: bold;
+    display: block;
+}
+
+.notification-link .notification-type,
+.notification-link .notify-right-icon,
+.notification-link .time {
+    display: block;
+}
+
+.notification-link .notify-right-icon {
+    margin-left: auto; /* Đẩy icon sang phải */
+}
+
 /* END Dropdown */
 
 /*-------------------------------------------*\
