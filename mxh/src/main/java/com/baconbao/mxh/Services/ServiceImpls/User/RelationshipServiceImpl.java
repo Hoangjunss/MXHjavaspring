@@ -114,6 +114,11 @@ public class RelationshipServiceImpl implements RelationshipService {
         return count;
     }
 
+    @Override
+    public int countfriend(User user, StatusRelationship status) {
+        return relationshipRepository.findRelationshipPending(user , status).size();
+    }
+
     public List<User> findFriends(User user) {
         List<Relationship> relationships = relationshipRepository.findFriendByUser(user);
         List<User> friends = new ArrayList<>();

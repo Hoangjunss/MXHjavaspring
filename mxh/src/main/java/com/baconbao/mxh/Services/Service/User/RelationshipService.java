@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import com.baconbao.mxh.DTO.RelationshipDTO;
 import com.baconbao.mxh.Models.Message.Message;
 import com.baconbao.mxh.Models.User.Relationship;
+import com.baconbao.mxh.Models.User.StatusRelationship;
 import com.baconbao.mxh.Models.User.User;
 
 @Service
@@ -22,5 +23,6 @@ public interface RelationshipService {
     List<Relationship> findRelationshipPending(User user);
     List<User> findNotFriends(User user);
     int countMutualFriends(User user, Long friendId);
+    int countfriend(User user, StatusRelationship status);
     
 }

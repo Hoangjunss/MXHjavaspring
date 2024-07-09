@@ -876,7 +876,12 @@ public class UserController {
 
     //Lấy trang User/profile.html
     @GetMapping("/profile")
-    public String getUserProfilePage() {
+    public String getUserProfilePage(Model model, Principal principal) {
+        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());// Lấy ra email của người
+                                                                                            // dùng đang đăng nhập
+        User user = userService.findByEmail(userDetails.getUsername());
+        int countFriend = relationshipService.countfriend(user, statusRelationshipService.findById(1L));
+        model.addAttribute("countFriend", countFriend);
         return "User/profile";
     }
 

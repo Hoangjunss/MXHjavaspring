@@ -30,6 +30,7 @@ import com.baconbao.mxh.Models.User.Relationship;
 import com.baconbao.mxh.Models.User.User;
 import com.baconbao.mxh.Services.Service.Message.MessageService;
 import com.baconbao.mxh.Services.Service.User.RelationshipService;
+import com.baconbao.mxh.Services.Service.User.StatusRelationshipService;
 import com.baconbao.mxh.Services.Service.User.UserService;
 
 @Controller
@@ -42,6 +43,8 @@ public class MessageController {
     private UserDetailsService userDetailsService;
     @Autowired
     private RelationshipService relationshipService;
+    @Autowired
+    private StatusRelationshipService statusRelationshipService;
 
     @GetMapping("/messagesmobil")
     public String getMessagePageMobile() {
@@ -54,7 +57,12 @@ public class MessageController {
     }
 
     @GetMapping("/messages")
-    public String getMessagePage() {
+    public String getMessagePage(Model model, Principal principal) {
+        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());// Lấy ra email của người
+                                                                                            // dùng đang đăng nhập
+        User user = userService.findByEmail(userDetails.getUsername());
+        int countFriend = relationshipService.countfriend(user, statusRelationshipService.findById(1L));
+        model.addAttribute("countFriend", countFriend);
         return "/User/Message/Web/Messager";
     }
 

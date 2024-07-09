@@ -48,6 +48,16 @@ public interface RelationshipRepository extends JpaRepository<Relationship, Long
         @Query("SELECT new com.baconbao.mxh.DTO.RelationshipDTO(r) FROM Relationship r")
         List<RelationshipDTO> findAllRelationshipDTO();
 
+        // tìm bạn bè của user
         @Query("SELECT r FROM Relationship r WHERE (r.userOne = :firstUser OR r.userTwo = :firstUser) AND r.status = :status")
         List<User> findFriendsByUserAndStatus(@Param("firstUser") User firstUser, @Param("status") StatusRelationship status);
+
+        // đếm số lượng bạn chung giữa 2 user
+        // @Query("SELECT COUNT(r) FROM Relationship r WHERE (r.userOne = :user AND r.userTwo = :friend AND r.status = 1) OR (r.userOne = :friend AND r.userTwo = :user AND r.status = 1)")
+        // int countMutualFriends(@Param("user") User user, @Param("friend") Long friendId);
+
+        // tìm mối quan hệ đang chờ xác nhận
+        @Query("SELECT r FROM Relationship r WHERE (r.userOne = :user OR r.userTwo = :user) AND r.status = :status")
+        List<Relationship> findRelationshipPending(@Param("user") User user, @Param("status") StatusRelationship status);
+
 }

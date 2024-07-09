@@ -77,8 +77,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 const friendList = document.getElementById('friend-list');
                 friendList.innerHTML = ''; // Xóa nội dung cũ
                 data.relationships.forEach(relationship => {
-                    if(relationship.userTwo.id == data.user.id){
-                        fetchMutualFriendsCount(relationship.userOne.id).then(count => {
+                    if(relationship.userTwo.id == data.user.id){ // Nếu userTwo là user hiện tại (user được gửi lời mời kết bạn)
+                        fetchMutualFriendsCount(relationship.userOne.id).then(count => { 
                         const listItem = createFriendItem(relationship.userOne, 'acceptFriendRequest', 'deleteFriend', true, count);
                         friendList.appendChild(listItem);
                     });
