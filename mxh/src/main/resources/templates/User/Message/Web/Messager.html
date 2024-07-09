@@ -27,6 +27,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.4.0/dist/sockjs.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
     <script th:src="@{/js/Socket.js}"></script>
+    <script th:src="@{/js/Navarbar.js}"></script>
     <script th:src="@{/js/User/MessagerLoad.js}"></script>
 </head>
 
@@ -36,22 +37,8 @@
             <div class="col-md-12 message-right-side">
                 <nav id="navbar-main" class="navbar navbar-expand-lg shadow-sm sticky-top">
                     <div class="w-100 justify-content-md-center">
-                        <ul class="nav navbar-nav enable-mobile px-2">
-                            <li class="nav-item w-100 py-2">
-                                <!-- Form serarch post/user -->
-                                <form class="d-inline form-inline w-100 px-4">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control search-input" placeholder="Search for people, companies, events and more..." aria-label="Search" aria-describedby="search-addon">
-                                        <div class="input-group-append">
-                                            <button class="btn search-button" type="button"><i class='bx bx-search'></i></button>
-                                        </div>
-                                    </div>
-                                </form>
-                                <!-- end Form search post/user -->
-                            </li>
-                        </ul>
                         <ul class="navbar-nav mr-5 flex-row" id="main_menu">
-                            <a class="navbar-brand nav-item mr-lg-5" href="index.html"><img th:src="@{/images/logo-64x64.png}" width="40" height="40" class="mr-3" alt="Logo"></a>
+                            <a class="navbar-brand nav-item mr-lg-5" th:href="@{/}"><img th:src="@{/images/logo-64x64.png}" width="40" height="40" class="mr-3" alt="Logo"></a>
                             <!-- Collect the nav links, forms, and other content for toggling -->
                             <form class="w-30 mx-2 my-auto d-inline form-inline mr-5 dropdown search-form">
                                 <div class="input-group" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="searchDropdown">
@@ -105,10 +92,11 @@
                                     </div>
                                 </ul>
                             </form>
+                            <!-- Nhắn tin -->
                             <li class="nav-item s-nav dropdown message-drop-li">
-                                <a href="#" class="nav-link nav-links message-drop drop-w-tooltip" data-toggle="dropdown" data-placement="bottom" data-title="Messages" role="button" aria-haspopup="true" aria-expanded="false">
+                                <a href="#" class="nav-link nav-links message-drop drop-w-tooltip" data-toggle="dropdown" data-placement="bottom" data-title="Messages" role="button" aria-haspopup="true" aria-expanded="false" onclick="redirectToMessagePage()">
                                     <img th:src="@{/images/icons/navbar/message.png}" class="message-dropdown" alt="navbar icon"> <span class="badge badge-pill badge-primary">1</span>
-                                </a>
+                                </a>                                
                                 <ul class="dropdown-menu notify-drop dropdown-menu-right nav-drop shadow-sm">
                                     <div class="notify-drop-title">
                                         <div class="row">
@@ -146,14 +134,22 @@
                                     </div>
                                 </ul>
                             </li>
+                            <!-- Thêm bạn bè -->
+                            <li class="nav-item s-nav dropdown friend-request">
+                                <a th:href="@{/listfriend}" class="nav-link nav-links rm-drop-mobile drop-w-tooltip" data-toggle="dropdown" data-placement="bottom" data-title="Friend Requests" role="button" aria-haspopup="true" aria-expanded="false">
+                                    <img th:src="@{images/icons/navbar/group.png}" class="friend-request" alt="navbar icon"> <span class="badge-pill badge-primary"><p th:text="'Lời mời kết bạn (' + ${countFriend} +')'"></p></span>
+                                </a>
+                            </li>
+                            <!-- Thông báo -->
                             <li class="nav-item s-nav dropdown notification">
                                 <a href="#" class="nav-link nav-links rm-drop-mobile drop-w-tooltip" data-toggle="dropdown" data-placement="bottom" data-title="Notifications" role="button" aria-haspopup="true" aria-expanded="false">
-                                    <img th:src="@{/images/icons/navbar/notification.png}" class="notification-bell" alt="navbar icon"> <span class="badge badge-pill badge-primary">3</span>
+                                    <img th:src="@{/images/icons/navbar/notification.png}" class="notification-bell" alt="navbar icon">
+                                    <span id="quantityNotification" class="badge-pill badge-primary unread-messages" style="display: none;"></span>
                                 </a>
                                 <ul class="dropdown-menu notify-drop dropdown-menu-right nav-drop shadow-sm">
                                     <div class="notify-drop-title">
                                         <div class="row">
-                                            <div class="col-md-6 col-sm-6 col-xs-6 fs-8">Notifications <span class="badge badge-pill badge-primary ml-2">3</span></div>
+                                            <div class="col-md-6 col-sm-6 col-xs-6 fs-8">Notifications <span id="quantityNotification" class="badge-pill badge-primary unread-messages" style="display: none;"></span></div>
                                             <div class="col-md-6 col-sm-6 col-xs-6 text-right">
                                                 <a href="#" class="notify-right-icon">
                                                     Mark All as Read
@@ -161,31 +157,14 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <!-- end notify title -->
-                                    <!-- notify content -->
-                                    <div class="drop-content">
-                                        <!-- Start -->
-                                        <li>
-                                            <div class="col-md-2 col-sm-2 col-xs-2">
-                                                <div class="notify-img">
-                                                    <img th:src="@{/images/users/user-10.png}" alt="notification user image">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-10 col-sm-10 col-xs-10">
-                                                <a href="#" class="notification-user">Sean</a> <span class="notification-type">replied to your comment on a post in </span><a href="#" class="notification-for">PHP</a>
-                                                <a href="#" class="notify-right-icon">
-                                                    <i class='bx bx-radio-circle-marked'></i>
-                                                </a>
-                                                <p class="time">
-                                                    <span class="badge badge-pill badge-primary"><i class='bx bxs-group'></i></span> 3h
-                                                </p>
-                                            </div>
-                                        </li>
+                                    <div class="drop-content"> </div>
+                                    <div class="notify-drop-footer text-center">
+                                        <a href="#">See More</a>
                                     </div>
-                                </ul>
+                                </ul>                                
                             </li>
                             <li class="nav-item s-nav">
-                                <a href="profile.html" class="nav-link nav-links">
+                                <a th:href="@{/profile}" class="nav-link nav-links">
                                     <div class="menu-user-image">
                                         <img th:src="@{/images/users/user-4.jpg}" class="menu-user-img ml-1" alt="Menu Image">
                                     </div>
@@ -211,6 +190,7 @@
                         </ul>
                     </div>
                 </nav>
+                
                 <div class="row message-right-side-content">
                     <div class="col-md-12">
                         <div id="message-frame">

@@ -54,9 +54,11 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
     });
+    
     document.querySelectorAll('.commentForm').forEach(form => {
         form.addEventListener('submit', function (event) {
             event.preventDefault();
+            alert("COMMENTER")
     
             const postId = this.querySelector('input[name="postId"]').value;
             const content = this.querySelector('input[name="content"]').value;

@@ -46,8 +46,6 @@ import com.baconbao.mxh.Services.Service.Post.PostService;
 import com.baconbao.mxh.Services.Service.Post.ReplyCommentService;
 import com.baconbao.mxh.Services.Service.Post.StatusService;
 import com.baconbao.mxh.Services.Service.User.NotificationService;
-import com.baconbao.mxh.Services.Service.User.RelationshipService;
-import com.baconbao.mxh.Services.Service.User.StatusRelationshipService;
 import com.baconbao.mxh.Services.Service.User.UserService;
 
 import lombok.AllArgsConstructor;
@@ -249,7 +247,7 @@ public ResponseEntity<?> uploadpost(  @RequestParam("content") String content,
         Map<String, Object> response = new HashMap<>();
         try {
             String content = (String) payload.get("content");
-            Long idPost = Long.valueOf((String) payload.get("postId"));
+            Long idPost = Long.valueOf(payload.get("postId")+"");
 
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
             User user = userService.findByEmail(userDetails.getUsername());
@@ -281,11 +279,9 @@ public ResponseEntity<?> uploadpost(  @RequestParam("content") String content,
             return ResponseEntity.ok(response);
         } catch (NumberFormatException | NullPointerException e) {
             e.printStackTrace();
-            response.put("success", false);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid request");
         } catch (Exception e) {
             e.printStackTrace();
-            response.put("success", false);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Server error");
         }
     }

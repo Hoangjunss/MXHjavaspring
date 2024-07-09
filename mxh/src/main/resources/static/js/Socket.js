@@ -57,6 +57,11 @@ function seenMessage(messages) {
 // Gửi tin nhắn tới WebSocket server
 function sendMessage() {
     var content = document.getElementById('content').value;
+    let content = contentInput.value.trimStart().trimEnd();
+    // Kiểm tra nếu nội dung chỉ chứa khoảng trắng
+    if (content === '') {
+        return;
+    }
     var id = document.getElementById('id').value;
     var message = {
         message: {

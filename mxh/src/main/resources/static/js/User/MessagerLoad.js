@@ -181,18 +181,18 @@ document.addEventListener("DOMContentLoaded", function () {
                         <div class="col-md-12 messenger-top-section">
                             <div class="contact-profile d-flex align-items-center justify-content-between">
                                 <div class="messenger-top-luser df-aic">
-                                    <img th:src="@{/images/users/user-2.jpg}" class="messenger-user" alt="Convarsation user image" />
+                                    <img src="/images/users/user-2.jpg" class="messenger-user" alt="Convarsation user image" />
                                     <a href="#" class="message-profile-name" > ${data.userTo.lastName} ${data.userTo.firstName}</a>
                                 </div>
                                 <div class="social-media messenger-top-ricon df-aic">
-                                    <img th:src="@{/images/messenger/phone.png}" data-toggle="modal" data-target="#callModal" class="msg-top-more-info" alt="Messenger icons">
-                                    <img th:src="@{/images/messenger/videocam.png}" class="msg-top-more-info" alt="Messenger icons">
-                                    <img th:src="@{/images/messenger/info.png}" class="msg-top-more-info" alt="Messenger icons">
+                                    <img src="/images/messenger/phone.png" data-toggle="modal" data-target="#callModal" class="msg-top-more-info" alt="Messenger icons">
+                                    <img src="/images/messenger/videocam.png" class="msg-top-more-info" alt="Messenger icons">
+                                    <img src="/images/messenger/info.png" class="msg-top-more-info" alt="Messenger icons">
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-12" style="max-height: 532px;">
-                            <input type="hidden"value="${data.userTo.id}" id="id" data-messages-user="${data.userTo.id}">
+                            <input type="hidden" value="${data.userTo.id}" id="id" data-messages-user="${data.userTo.id}">
                             <input type="hidden" id="idRelationship" value="${data.relation.id}" >
                             <div class="messages">
                                 <ul class="messages-content" id="chatMessages">
@@ -209,7 +209,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                 <input id="content" type="text" class="form-control search-input" placeholder="Type a message..." aria-label="Type a message..." aria-describedby="button-addon2">
                                             </div>
                                             <button onclick="sendMessage()" type="button" class="btn search-button" id="send-message">
-                                                <img th:src="@{/images/messenger/m-send.png}" alt="Messenger icons">
+                                                <img src="/images/messenger/m-send.png" alt="Messenger icons">
                                             </button>
                                         </div>
                                     </form>

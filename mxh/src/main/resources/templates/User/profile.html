@@ -26,8 +26,11 @@
     <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
     <script th:src="@{/js/Socket.js}"></script>
     <!-- <script th:src="@{/js/User/components.js}"></script> -->
-    <script th:src="@{/js/interaction.js}"></script>
+    <script th:src="@{/js/Navarbar.js}"></script>
     <script th:src="@{/js/User/Profile.js}"></script>
+    <script th:src="@{/js/Post/Posts.js}"></script>
+    <script th:src="@{/js/Post/Comments.js}"></script>
+    <script th:src="@{/js/interaction.js}"></script>
 
 </head>
 
@@ -96,7 +99,7 @@
                             <li class="nav-item s-nav dropdown message-drop-li">
                                 <a href="#" class="nav-link nav-links message-drop drop-w-tooltip" data-toggle="dropdown" data-placement="bottom" data-title="Messages" role="button" aria-haspopup="true" aria-expanded="false" onclick="redirectToMessagePage()">
                                     <img th:src="@{/images/icons/navbar/message.png}" class="message-dropdown" alt="navbar icon"> <span class="badge badge-pill badge-primary">1</span>
-                                </a>          
+                                </a>                                
                                 <ul class="dropdown-menu notify-drop dropdown-menu-right nav-drop shadow-sm">
                                     <div class="notify-drop-title">
                                         <div class="row">
@@ -188,15 +191,13 @@
                                 </div>
                             </li>
                         </ul>
-
                     </div>
-
                 </nav>
                 <div class="row profile-right-side-content">
                     <div class="user-profile">
                         <div class="profile-header-background">
                             <a href="#" class="profile-cover">
-                                <img th:src="@{/images/users/default/NiceBackground.jpg}" alt="Profile Header Background">
+                                <img th:src="@{/images/background/auth-bg.jpg}" alt="Profile Header Background">
                                 <div class="cover-overlay">
                                     <a href="#" class="btn btn-update-cover"><i class='bx bxs-camera'></i> Update Cover Photo</a>
                                 </div>
@@ -208,7 +209,7 @@
                                     <div class="text-center">
                                         <div class="profile-img w-shadow">
                                             <div class="profile-img-overlay"></div>
-                                            <img th:src="@{/images/users/default/Depositphotos.jpg}" alt="Avatar" class="avatar img-circle">
+                                            <img th:src="@{/images/users/user-1.jpg}" alt="Avatar" class="avatar img-circle">
                                             <div class="profile-img-caption">
                                                 <label for="updateProfilePic" class="upload">
                                                     <i class='bx bxs-camera'></i> Update
@@ -224,7 +225,7 @@
                                             <form th:action="@{/setfriend}" method="post" class="relationship-form" id="setfrienduser">
 
                                             </form>
-                                            <button type="button" class="btn btn-start-chat" data-toggle="modal" data-target="#newMessageModal" id="startChatButton">
+                                            <button type="button" class="btn btn-start-chat" data-toggle="modal" data-target="#newMessageModal" onclick="openmessage()">
                                                 <i class='bx bxs-message-rounded'></i> <span class="fs-8">Message</span>
                                             </button> 
                                             <button type="button" class="btn btn-follow" id="moreMobile" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class='bx bx-dots-horizontal-rounded'></i> <span class="fs-8">More</span></button>
@@ -289,7 +290,7 @@
                                                     <div class="media-body">
                                                         <form th:action="@{/uploadpost}" method="post" enctype="multipart/form-data">
                                                             <select class="form-control" id="StatusId" name="StatusId" required>
-                                                                
+        
                                                             </select>
                                                             <textarea rows="2" placeholder="write something" name="content"></textarea>
                                                             <div class="attachments">
@@ -297,7 +298,7 @@
                                                                     <li>
                                                                         <i class="fa fa-image"></i>
                                                                         <label class="fileContainer">
-                                                                            <input name="image" type="file" onchange="previewImagePost(event)">
+                                                                            <input name="image" type="file" onchange="previewImage(event)" placeholder="Choose Image">
                                                                         </label>
                                                                     </li>
                                                                     <li>
