@@ -86,28 +86,6 @@ public class UserController {
     @Autowired
     private RelationshipService relationshipService;
 
-    // INDEX, PROFILE. DUNFG REQUEST API
-
-    // Nhan trang edit dieu kien la "/editaccount"
-    /*
-     * @GetMapping("/editaccount")
-     * // model la phan minh tra ve trang html
-     * // principal giông như session, chứa thông tin người dùng
-     * public String showEditAccountPage(Model model, Principal principal) {
-     * // tim user theo id
-     * UserDetails userDetails =
-     * userDetailsService.loadUserByUsername(principal.getName());
-     * User user = userService.findByEmail(userDetails.getUsername());
-     * // chuyen user ve userDTO
-     * UserDTO userDTO = userService.getUserDTO(user);
-     * // tra userdto ve html
-     * model.addAttribute("userDTO", userDTO); // userDTO la ten bien de html lay du
-     * lieu, userDTO la bien chua du lieu
-     * // ten file html
-     * return "editaccount";
-     * }
-     */
-
     @GetMapping("/login")
     public String showLoginPage(Model model) {
         return "/User/Login";
@@ -121,35 +99,19 @@ public class UserController {
         return "/User/Register";
     }
 
-    /*
-     * @PostMapping("/register")
-     * public String register(@ModelAttribute("userDTO") UserDTO userDTO,
-     * BindingResult result, Model model) {
-     * // BindingResult la doi tuong chua loi cua truong, neu co loi thi tra ve
-     * trang
-     * // kiem tra email da ton tai hay chua
-     * if (userService.isEmailExist(userDTO.getEmail())) {
-     * // neu ton tai thi tra ve trang register va thong bao loi
-     * // rejectValue la phuong thuc tra ve loi cho truong do
-     * result.rejectValue("email", null, "Email already exists"); // email la ten
-     * cua truong, null la ten cua loi,
-     * // Email already exists la noi dung loi
-     * return "register";
-     * }
-     * LocalDateTime localDateTime = LocalDateTime.now(); // Lấy thời gian hiện tại
-     * theo máy
-     * 
-     * // Chuyển đổi LocalDateTime sang Date
-     * ZonedDateTime zonedDateTime = localDateTime.atZone(ZoneId.systemDefault());
-     * Date date = Date.from(zonedDateTime.toInstant());
-     * 
-     * userDTO.setCreateAt(date);
-     * User user = userService.getUser(userDTO);
-     * verifycationTokenService.registerUser(user); // gửi mail xác nhận
-     * // quay về trang login
-     * return "redirect:/login";
-     * }
-     */
+    @GetMapping("/usercurrent")
+    public ResponseEntity<?> userCurrent(Principal principal) {
+        try {
+            UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());// lấy ra cái email
+            User user = userService.findByEmail(userDetails.getUsername());
+            return ResponseEntity.ok(user);
+        } catch (DataIntegrityViolationException e) {
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+        }
+    }
+
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestParam("userDTO") UserDTO userDTO) {
         try {
@@ -647,23 +609,6 @@ public class UserController {
         }
     }
 
-    /* @GetMapping("/editaccount")
-      // model la phan minh tra ve trang html
-      // principal giông như session, chứa thông tin người dùng
-      public String showEditAccountPage(Model model, Principal principal) {
-      // tim user theo id
-      UserDetails userDetails =
-      userDetailsService.loadUserByUsername(principal.getName());
-      User user = userService.findByEmail(userDetails.getUsername());
-      // chuyen user ve userDTO
-      UserDTO userDTO = userService.getUserDTO(user);
-      // tra userdto ve html
-      model.addAttribute("userDTO", userDTO); // userDTO la ten bien de html lay du
-      lieu, userDTO la bien chua du lieu
-      // ten file html
-      return "editaccount";
-      } */
-
     //?
     @GetMapping("/editaccount")
     public ResponseEntity<?> editaccount(Principal principal) {
@@ -680,32 +625,6 @@ public class UserController {
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
     }
-
-    /*@GetMapping("/friends")
-    public String getMethodNameString(Principal principal, Model model) {
-    // Lấy ra email của người dùng đang đăng nhập
-    UserDetails userDetails =
-    userDetailsService.loadUserByUsername(principal.getName());
-    User user = userService.findByEmail(userDetails.getUsername());
-    
-    // Tìm danh sách bạn bè và những người không phải bạn bè của user
-    List<User> friends = relationalService.findFriends(user);
-    List<User> notFriends = relationalService.findNotFriends(user);
-    
-    // Số lượng bạn bè
-    int count = relationalService.countfriend(user,
-    statusRelationshipService.findById(2L));//lƯU Ý
-    // Trả về HTML danh sách bạn bè
-    model.addAttribute("count", count);
-    
-    // Trả về HTML danh sách bạn bè
-    model.addAttribute("listfriend", friends);
-    // Trả về HTML danh sách không phải bạn bè
-    model.addAttribute("listnotFriends", notFriends);
-    
-    System.out.println("Not Friends: " + notFriends);
-    return "seefriend";
-    } */
 
     @GetMapping("/listfriend")
     public String getMethodName() {
@@ -765,42 +684,6 @@ public class UserController {
         }
     }
 
-
-    /*
-    @GetMapping("/editprofile")
-    public String editProfile(Model model, Principal principal) {
-    UserDetails userDetails =
-    userDetailsService.loadUserByUsername(principal.getName());
-    User user = userService.findByEmail(userDetails.getUsername());
-    
-    List<About> abouts = aboutService.fillAll();
-    UserAboutForm userAboutForm = new UserAboutForm();
-    List<UserAboutDTO> userAboutDTOs = new ArrayList<>();
-    
-    // Lấy danh sách mô tả trước đó của người dùng
-    List<UserAbout> userAbouts = userAboutService.findByUser(user);
-    
-    // Tạo một map để dễ dàng tra cứu mô tả theo idAbout
-    Map<Long, String> userAboutMap =
-    userAbouts.stream().collect(Collectors.toMap(ua -> ua.getAbout().getId(),
-    UserAbout::getDescription));
-    for (About about : abouts) {
-    UserAboutDTO dto = new UserAboutDTO();
-    dto.setAboutId(about.getId());
-    
-    // Kiểm tra xem có mô tả trước đó hay không, nếu có thì gán vào DTO
-    if (userAboutMap.containsKey(about.getId())) {
-    dto.setDescription(userAboutMap.get(about.getId()));
-    }
-    userAboutDTOs.add(dto);
-    }
-    
-    userAboutForm.setUserAboutDTOs(userAboutDTOs);
-    model.addAttribute("abouts", abouts);
-    model.addAttribute("userAboutForm", userAboutForm);
-    return "profileeditaboutdemo";
-    }*/
-
     //Lấy phần About (người dùng mô tả thêm về bản thân)
     @GetMapping("/api/getabouts")
     public ResponseEntity<?> editprofile(Principal principal) {
@@ -822,67 +705,19 @@ public class UserController {
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
     }
-    /*
-    @GetMapping("/profile")
-    public String showPageProfile(Model model, @RequestParam("id") Long id,
-    Principal principal) {
-    UserDetails userDetails =
-    userDetailsService.loadUserByUsername(principal.getName());
-    User loggedInUser = userService.findByEmail(userDetails.getUsername());
-    User user = (id != null) ? userService.findById(id) : loggedInUser;
-    boolean isOwnProfile = loggedInUser.getId() == user.getId() ? true : false;
-    List<Post> posts = postService.findByUserPosts(user);
-    List<About> abouts = aboutService.fillAll();
-    UserAboutForm userAboutForm = new UserAboutForm();
-    List<UserAboutDTO> userAboutDTOs = new ArrayList<>();
-    // Lấy danh sách mô tả trước đó của người dùng
-    List<UserAbout> userAbouts = userAboutService.findByUser(user);
-    
-    // Tạo một map để dễ dàng tra cứu mô tả theo idAbout
-    Map<Long, String> userAboutMap = new HashMap<>();
-    for (UserAbout userAbout : userAbouts) {
-    userAboutMap.put(userAbout.getAbout().getId(), userAbout.getDescription());
-    }
-    for (About about : abouts) {
-    UserAboutDTO dto = new UserAboutDTO();
-    dto.setAboutId(about.getId());
-    
-    // Kiểm tra xem có mô tả trước đó hay không, nếu có thì gán vào DTO
-    if (userAboutMap.containsKey(about.getId())) {
-    dto.setDescription(userAboutMap.get(about.getId()));
-    }
-    userAboutDTOs.add(dto);
-    }
-    List<Status> status = statusService.findAll();
-    int unreadCount = notificationService.countUncheckedNotifications(user);
-    Relationship relationship = new Relationship();
-    if (!isOwnProfile) {
-    relationship = relationalService.findRelationship(loggedInUser, user);
-    }
-    userAboutForm.setUserAboutDTOs(userAboutDTOs);
-    int countFriend = relationshipService.countfriend(user,
-    statusRelationshipService.findById(2L));
-    model.addAttribute("countFriend", countFriend);
-    model.addAttribute("relationship", relasOwnProfile);
-    model.addAttribute("status", stationship);
-    model.addAttribute("isOwnProfile", itus);
-    model.addAttribute("unreadCount", unreadCount);
-    model.addAttribute("abouts", abouts);
-    model.addAttribute("userAboutForm", userAboutForm);
-    model.addAttribute("posts", posts);
-    model.addAttribute("userprofile", user);//
-    return "User/profile";
-    }*/
 
     //Lấy trang User/profile.html
-    @GetMapping("/profile")
-    public String getUserProfilePage(Model model, Principal principal) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());// Lấy ra email của người
-                                                                                            // dùng đang đăng nhập
-        User user = userService.findByEmail(userDetails.getUsername());
-        int countFriend = relationshipService.countfriend(user, statusRelationshipService.findById(1L));
-        model.addAttribute("countFriend", countFriend);
-        return "User/profile";
+    @GetMapping("/countfriend")
+    public ResponseEntity<?> countFriend(Principal principal) {
+        try {
+            UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+            User loggedInUser = userService.findByEmail(userDetails.getUsername());
+            int countFriend = relationshipService.countfriend(loggedInUser, statusRelationshipService.findById(1L));
+            return ResponseEntity.ok(countFriend);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 
     //Lấy số lượng thông báo chưa xem

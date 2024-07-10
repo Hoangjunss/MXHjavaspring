@@ -1,4 +1,19 @@
 document.addEventListener("DOMContentLoaded", function () {
+    fetch('/usercurrent', {
+        method: 'GET'
+    }).then(response=> response.json())
+    .then(data => {
+        const profileLink = document.getElementById('profileLink');
+        const avatarImage = document.getElementById('avataruser');
+        profileLink.href = '/profile?id='+ data.id;
+        if (data.image) {
+            avatarImage.src = data.image;
+        } else {
+            avatarImage.src = '/images/users/user-4.jpg';
+        }
+    })
+    .catch(error => console.error('Error fetching status post:', error));
+
     fetch(`/countNotificationsIsCheck`, {
         method: 'GET'
     })

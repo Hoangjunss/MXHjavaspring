@@ -380,25 +380,6 @@ public ResponseEntity<?> uploadpost(  @RequestParam("content") String content,
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
     }
-    @GetMapping({ "/", " " })
-    public String getPosts(Model model, Principal principal) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());// Lấy ra email của người
-                                                                                            // dùng đang đăng nhập
-        User user = userService.findByEmail(userDetails.getUsername());
-        model.addAttribute("user", user);
-        int countFriend = relationshipService.countfriend(user, statusRelationshipService.findById(1L));
-        model.addAttribute("countFriend", countFriend);
-        List<Notification> notifications = notificationService.findByUser(user);
-        model.addAttribute("notifications", notifications);
-        int unreadCount = notificationService.countUncheckedNotifications(user);
-        model.addAttribute("unreadCount", unreadCount);
-        List<Status> status = statusService.findAll();
-        model.addAttribute("status", status);
-        Status status1 = statusService.findById(1); // LUU Y TIM STATUS
-        List<Post> posts = postService.findByActiveAndStatus(true, status1);
-        model.addAttribute("posts", posts);
-        return "index";
-    }
 
     // Lấy ra tất cả bài viết
     @GetMapping("/post")
@@ -412,22 +393,6 @@ public ResponseEntity<?> uploadpost(  @RequestParam("content") String content,
             }else{
                 posts = postService.findByUserPosts(userService.findById(id));
             }
-            response.put("posts", posts);
-            return ResponseEntity.ok(response);
-        } catch (DataIntegrityViolationException e) {
-            throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
-        } catch (Exception e) {
-            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
-        }
-    }
-
-    //Lấy dạnh sách bài viết theo user
-    @GetMapping("/postUser")
-    public ResponseEntity<?> postUser(@RequestParam Long id) {
-        Map<String, Object> response = new HashMap<>();
-        try {
-            User user = userService.findById(id);
-            List<Post> posts = postService.findByUserPosts(user);
             response.put("posts", posts);
             return ResponseEntity.ok(response);
         } catch (DataIntegrityViolationException e) {
