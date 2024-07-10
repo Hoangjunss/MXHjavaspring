@@ -5,9 +5,13 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.baconbao.mxh.Config.Socket.SocketWeb;
+import com.baconbao.mxh.Exceptions.CustomException;
+import com.baconbao.mxh.Exceptions.ErrorCode;
 import com.baconbao.mxh.Models.User.Notification;
 import com.baconbao.mxh.Models.User.User;
 import com.baconbao.mxh.Repository.User.NotificationReponsitory;
@@ -26,28 +30,46 @@ public class NotificationServiceImpl implements NotificationService{
         if (notification.isPresent()) {
             return notification.get();
         }else{
-            throw new RuntimeException("Notification not found");
+            throw new CustomException(ErrorCode.NOTIFICATION_NOT_FOUND);
         }
     }
 
     @Override
     public List<Notification> findByUser(User user) {
-        return notificationRepository.findByUser(user);
+        try {
+            return notificationRepository.findByUser(user);
+        } catch (DataAccessException e) {
+            throw new CustomException(ErrorCode.DATABASE_ACCESS_ERROR);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+        }
     }
 
     @Override
     public List<Notification> findByUserAndChecked(User user, boolean isChecked) {
-        return notificationRepository.findByUserAndIsChecked(user, isChecked);
+        try {
+            return notificationRepository.findByUserAndIsChecked(user, isChecked);
+        } catch (DataAccessException e) {
+            throw new CustomException(ErrorCode.DATABASE_ACCESS_ERROR);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+        }
     }
 
     @Override
     public void saveNotification(Notification notification) {
-        if (notification.getId()==null) {
-            notification.setId(getGenerationId());
-            notificationRepository.save(notification);
-            socketWeb.sendFriendRequestNotification(notification);
-        }else{
-            notificationRepository.save(notification);
+        try {
+            if (notification.getId()==null) {
+                notification.setId(getGenerationId());
+                notificationRepository.save(notification);
+                socketWeb.sendFriendRequestNotification(notification);
+            }else{
+                notificationRepository.save(notification);
+            }
+        } catch (DataIntegrityViolationException e) {
+            throw new CustomException(ErrorCode.USER_UNABLE_TO_SAVE);
+        } catch (DataAccessException e) {
+            throw new CustomException(ErrorCode.DATABASE_ACCESS_ERROR);
         }
     }
 

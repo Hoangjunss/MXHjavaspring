@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,7 +20,9 @@ import com.baconbao.mxh.Repository.User.UserRepository;
 import com.baconbao.mxh.Services.Service.User.UserService;
 
 import jakarta.annotation.PostConstruct;
-import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.NonUniqueResultException;
+import jakarta.persistence.QueryTimeoutException;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -45,7 +48,6 @@ public class UserServiceImpl implements UserService {
     // Luu user
     @Override
     public void saveUser(User username) {
-
         try {
             if (username.getId() == null) {
                 username.setId(getGenerationId());
@@ -53,9 +55,9 @@ public class UserServiceImpl implements UserService {
             }
             userRepository.save(username); // lưu user vào database
         } catch (DataIntegrityViolationException e) {
-            throw new CustomException(ErrorCode.USER_NOT_SAVE);
-        } catch (Exception e) {
-            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+            throw new CustomException(ErrorCode.USER_UNABLE_TO_SAVE);
+        } catch (DataAccessException e) {
+            throw new CustomException(ErrorCode.DATABASE_ACCESS_ERROR);
         }
     }
 
@@ -72,10 +74,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean isEmailExist(String email) {
         User user = userRepository.findByEmail(email); // tìm kiếm user theo email
-        if (user != null)
-            return true; // thông báo email đã tồn tại
-        else
-            return false; // thông báo email chưa tồn tại
+        return user != null ? true : false;
     }
 
     // Tim user bang id
@@ -119,12 +118,9 @@ public class UserServiceImpl implements UserService {
     public List<User> fillAll() {
         try {
             return userRepository.findAll();
-        } catch (EntityNotFoundException e) {
-            throw new CustomException(ErrorCode.USER_NOT_FOUND);
-        } catch (Exception e) {
-            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+        } catch (DataAccessException e) {
+            throw new CustomException(ErrorCode.DATABASE_ACCESS_ERROR);
         }
-
     }
 
     // Kiem tra email co ton tai
@@ -139,9 +135,10 @@ public class UserServiceImpl implements UserService {
             user.setIsActive(true);
             userRepository.save(user);
             socketWeb.setActive(user);
-        } catch (Exception e) {
-
-            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+        }catch (DataIntegrityViolationException e) {
+            throw new CustomException(ErrorCode.USER_UNABLE_TO_SAVE);
+        } catch (DataAccessException e) {
+            throw new CustomException(ErrorCode.DATABASE_ACCESS_ERROR);
         }
     }
 
@@ -151,9 +148,10 @@ public class UserServiceImpl implements UserService {
             user.setIsActive(false);
             userRepository.save(user);
             socketWeb.setActive(user);
-        } catch (Exception e) {
-
-            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+        }catch (DataIntegrityViolationException e) {
+            throw new CustomException(ErrorCode.USER_UNABLE_TO_SAVE);
+        } catch (DataAccessException e) {
+            throw new CustomException(ErrorCode.DATABASE_ACCESS_ERROR);
         }
     }
 
@@ -163,9 +161,10 @@ public class UserServiceImpl implements UserService {
             if (userRepository.count() > 0) {
                 userRepository.updateActiveUserToFalse();
             }
-        } catch (Exception e) {
-
-            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+        }catch (DataIntegrityViolationException e) {
+            throw new CustomException(ErrorCode.USER_UNABLE_TO_SAVE);
+        } catch (DataAccessException e) {
+            throw new CustomException(ErrorCode.DATABASE_ACCESS_ERROR);
         }
     }
 
@@ -180,8 +179,10 @@ public class UserServiceImpl implements UserService {
     public List<User> findAllByFirstNameOrLastName(String name) {
         try {
             return userRepository.findByLastNameOrFirstName(name, name);
-        } catch (Exception e) {
-            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        }catch (QueryTimeoutException e) {
+            throw new CustomException(ErrorCode.QUERY_TIMEOUT);
+        } catch (DataAccessException e) {
+            throw new CustomException(ErrorCode.DATABASE_ACCESS_ERROR);
         }
     }
 
@@ -189,13 +190,25 @@ public class UserServiceImpl implements UserService {
     public List<User> searchUser(String username) {
         try {
             return userRepository.searchUser(username);
-        } catch (Exception e) {
-            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        }catch (QueryTimeoutException e) {
+            throw new CustomException(ErrorCode.QUERY_TIMEOUT);
+        } catch (DataAccessException e) {
+            throw new CustomException(ErrorCode.DATABASE_ACCESS_ERROR);
         }
     }
 
     @Override
     public User findByUserWithUserAbouts(Long id) {
-        return userRepository.findByUserWithUserAbouts(id);
+        try {
+            return userRepository.findByUserWithUserAbouts(id);
+        }catch (QueryTimeoutException e) {
+            throw new CustomException(ErrorCode.QUERY_TIMEOUT);
+        }  catch (NoResultException e) {
+            throw new CustomException(ErrorCode.EMPTY_RESULT);
+        } catch (NonUniqueResultException e) {
+            throw new CustomException(ErrorCode.NON_UNIQUE_RESULT);
+        } catch (DataAccessException e) {
+            throw new CustomException(ErrorCode.DATABASE_ACCESS_ERROR);
+        }
     }
 }

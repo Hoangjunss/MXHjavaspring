@@ -7,6 +7,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.baconbao.mxh.DTO.RelationshipDTO;
@@ -20,6 +22,10 @@ import com.baconbao.mxh.Repository.User.RelationshipRepository;
 import com.baconbao.mxh.Services.Service.User.RelationshipService;
 import com.baconbao.mxh.Services.Service.User.StatusRelationshipService;
 import com.baconbao.mxh.Services.Service.User.UserService;
+
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.NonUniqueResultException;
+import jakarta.persistence.QueryTimeoutException;
 @Service
 
 public class RelationshipServiceImpl implements RelationshipService {
@@ -32,36 +38,55 @@ public class RelationshipServiceImpl implements RelationshipService {
 
     @Override
     public void addUser(Relationship relationship) {
-
-        if (relationship.getId() == null) {
-            relationship.setId(getGenerationId());
+        try {
+            if (relationship.getId() == null) {
+                relationship.setId(getGenerationId());
+            }
+            relationshipRepository.save(relationship);
+        } catch (DataIntegrityViolationException e) {
+            throw new CustomException(ErrorCode.RELATIONSHIP_UNABLE_TO_SAVE);
+        } catch (DataAccessException e) {
+            throw new CustomException(ErrorCode.DATABASE_ACCESS_ERROR);
         }
-        relationshipRepository.save(relationship);
     }
 
     @Override
-
     public List<Relationship> findAllByUserOne(User user1) {
-        return relationshipRepository.findAllByUserOneId(user1);
-
+        try {
+            return relationshipRepository.findAllByUserOneId(user1);
+        }catch (QueryTimeoutException e) {
+            throw new CustomException(ErrorCode.QUERY_TIMEOUT);
+        } catch (DataAccessException e) {
+            throw new CustomException(ErrorCode.DATABASE_ACCESS_ERROR);
+        }
     }
 
     @Override
     public Relationship findById(Long id) { // Truy vấn và trả về mối quan hệ với id tương ứng
-        Optional<Relationship> relationship = relationshipRepository.findById(id);
-        if (relationship.isPresent()) {
-            return relationship.get();
+        try {
+            Optional<Relationship> relationship = relationshipRepository.findById(id);
+            return relationship.isPresent() ? relationship.get() : null;
+        } catch (NoResultException e) {
+            throw new CustomException(ErrorCode.RELATIONSHIP_NOT_FOUND);
+        } catch (NonUniqueResultException e) {
+            throw new CustomException(ErrorCode.NON_UNIQUE_RESULT);
+        } catch (DataAccessException e) {
+            throw new CustomException(ErrorCode.DATABASE_ACCESS_ERROR);
         }
-        return null;
     }
 
     @Override
     public Relationship findRelationship(User userOne, User userTwo) { // Truy vấn và trả về mối quan hệ giữa hai user
-        Relationship relationship = relationshipRepository.findRelationship(userOne, userTwo);
-        if (relationship != null) {
-            return relationship;
+        try {
+            Relationship relationship = relationshipRepository.findRelationship(userOne, userTwo);
+            return relationship != null ? relationship : null;
+        } catch (NoResultException e) {
+            throw new CustomException(ErrorCode.RELATIONSHIP_NOT_FOUND);
+        } catch (NonUniqueResultException e) {
+            throw new CustomException(ErrorCode.NON_UNIQUE_RESULT);
+        } catch (DataAccessException e) {
+            throw new CustomException(ErrorCode.DATABASE_ACCESS_ERROR);
         }
-        return null;
     }
 
     public Long getGenerationId() {
@@ -72,12 +97,12 @@ public class RelationshipServiceImpl implements RelationshipService {
     @Override
 
     public List<Relationship> findAllByUserOneId(User user) {
-
-        StatusRelationship status = statusService.findById(1L); // why sao set cứng ???????????
-
-        System.out.println(status.getStatus() + "RELATIONSHIP SEARCH STATUS");
-        return relationshipRepository.findAllByUserOneId(user, status);
-
+        try {
+            StatusRelationship status = statusService.findById(1L); // why sao set cứng ???????????
+            return relationshipRepository.findAllByUserOneId(user, status);
+        } catch (DataAccessException e) {
+            throw new CustomException(ErrorCode.DATABASE_ACCESS_ERROR);
+        }
     }
 
     @Override
@@ -92,7 +117,13 @@ public class RelationshipServiceImpl implements RelationshipService {
 
     @Override
     public Relationship findByMessage(List<Message> messages) {
-        return relationshipRepository.findByMessages(messages);
+        try {
+            return relationshipRepository.findByMessages(messages);
+        } catch (DataAccessException e) {
+            throw new CustomException(ErrorCode.DATABASE_ACCESS_ERROR);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+        }
     }
 
     @Override
@@ -116,7 +147,11 @@ public class RelationshipServiceImpl implements RelationshipService {
 
     @Override
     public int countfriend(User user, StatusRelationship status) {
-        return relationshipRepository.findRelationshipPending(user , status).size();
+        try {
+            return relationshipRepository.findRelationshipPending(user , status).size();
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+        }
     }
 
     public List<User> findFriends(User user) {
@@ -147,7 +182,11 @@ public class RelationshipServiceImpl implements RelationshipService {
 
     @Override
     public List<Relationship> findRelationshipPending(User user) {
-        return relationshipRepository.findFriendByUser(user);
+        try {
+            return relationshipRepository.findFriendByUser(user);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+        }
     }
 }
 

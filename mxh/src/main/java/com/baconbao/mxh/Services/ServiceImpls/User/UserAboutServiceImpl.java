@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,7 @@ import com.baconbao.mxh.Repository.User.UserAboutRepository;
 import com.baconbao.mxh.Services.Service.User.UserAboutService;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.NonUniqueResultException;
 
 @Service
 public class UserAboutServiceImpl implements UserAboutService {
@@ -52,9 +54,9 @@ public class UserAboutServiceImpl implements UserAboutService {
             }
             userAboutRepository.save(userAbout);
         } catch (DataIntegrityViolationException e) {
-            throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
-        } catch (Exception e){
-            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+            throw new CustomException(ErrorCode.USER_ABOUT_UNABLE_TO_SAVE);
+        } catch (DataAccessException e) {
+            throw new CustomException(ErrorCode.DATABASE_ACCESS_ERROR);
         }
     }
 
@@ -70,8 +72,10 @@ public class UserAboutServiceImpl implements UserAboutService {
             return userAbout;
         } catch (EntityNotFoundException e) {
             throw new CustomException(ErrorCode.USER_ABOUT_NOT_FOUND);
-        } catch(Exception e){
-            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+        }catch (NonUniqueResultException e) {
+            throw new CustomException(ErrorCode.NON_UNIQUE_RESULT);
+        } catch (DataAccessException e) {
+            throw new CustomException(ErrorCode.DATABASE_ACCESS_ERROR);
         }
     }
     

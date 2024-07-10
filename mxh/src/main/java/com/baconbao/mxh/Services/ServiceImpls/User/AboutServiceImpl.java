@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import com.baconbao.mxh.DTO.AboutDTO;
@@ -64,6 +65,12 @@ public class AboutServiceImpl implements AboutService {
     }
 
     public List<UserAbout> findByUser(User user) {
-        return userAboutRepository.findByUser(user);
+        try {
+            return userAboutRepository.findByUser(user);
+        } catch (DataAccessException e) {
+            throw new CustomException(ErrorCode.DATABASE_ACCESS_ERROR);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+        }
     }
 }

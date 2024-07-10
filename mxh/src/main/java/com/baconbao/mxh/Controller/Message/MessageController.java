@@ -271,7 +271,7 @@ public class MessageController {
             messages = messageService.findByContent(name);
             return ResponseEntity.ok(messages);
         } catch (DataIntegrityViolationException e) {
-            throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
+            throw new CustomException(ErrorCode.USER_UNABLE_TO_SAVE);
         } catch (Exception e) {
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
@@ -296,7 +296,7 @@ public class MessageController {
             response.put("unseenMessages", countUnseen);
             return ResponseEntity.ok(response);
         } catch (DataIntegrityViolationException e) {
-            throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
+            throw new CustomException(ErrorCode.USER_UNABLE_TO_SAVE);
         } catch (Exception e) {
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
@@ -323,7 +323,7 @@ public class MessageController {
           
             return ResponseEntity.ok(response);
         } catch (DataIntegrityViolationException e) {
-            throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
+            throw new CustomException(ErrorCode.USER_UNABLE_TO_SAVE);
         } catch (Exception e) {
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }

@@ -4,6 +4,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
@@ -26,9 +27,9 @@ public class ImageServiceImpls implements ImageService {
          img.setUrlImage(image.getUrlImage());
          imageRepository.save(img);
       } catch (DataIntegrityViolationException e) {
-         throw new CustomException(ErrorCode.IMAGE_NOT_SAVED);
-      } catch (Exception e) {
-         throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+         throw new CustomException(ErrorCode.IMAGE_UNABLE_TO_SAVE);
+      } catch (DataAccessException e) {
+         throw new CustomException(ErrorCode.DATABASE_ACCESS_ERROR);
       }
    }
 
@@ -48,7 +49,7 @@ public class ImageServiceImpls implements ImageService {
    }
 
    @Override
-   public Image findByImage(String url) throws CustomException {
+   public Image findByImage(String url) {
       Image img = imageRepository.findByUrlImage(url);
       if (img == null) {
          throw new CustomException(ErrorCode.IMAGE_NOT_FOUND);

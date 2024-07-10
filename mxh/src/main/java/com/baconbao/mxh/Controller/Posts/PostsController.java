@@ -358,7 +358,7 @@ public ResponseEntity<?> uploadpost(  @RequestParam("content") String content,
             interactionService.saveInteraction(interaction);
             return ResponseEntity.ok(new ApiResponse(true, "Reaction saved successfully"));
         } catch (DataIntegrityViolationException e) {
-            throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
+            throw new CustomException(ErrorCode.USER_UNABLE_TO_SAVE);
         } catch (Exception e) {
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
@@ -375,7 +375,7 @@ public ResponseEntity<?> uploadpost(  @RequestParam("content") String content,
             List<com.baconbao.mxh.Models.test> id_users = testService.findByLastNameOrFirstName(name, name);
             return ResponseEntity.ok(id_users);
         } catch (DataIntegrityViolationException e) {
-            throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
+            throw new CustomException(ErrorCode.USER_UNABLE_TO_SAVE);
         } catch (Exception e) {
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
@@ -396,7 +396,7 @@ public ResponseEntity<?> uploadpost(  @RequestParam("content") String content,
             response.put("posts", posts);
             return ResponseEntity.ok(response);
         } catch (DataIntegrityViolationException e) {
-            throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
+            throw new CustomException(ErrorCode.USER_UNABLE_TO_SAVE);
         } catch (Exception e) {
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
@@ -417,7 +417,7 @@ public ResponseEntity<?> uploadpost(  @RequestParam("content") String content,
             response.put("status", status);
             return ResponseEntity.ok(response);
         } catch (DataIntegrityViolationException e) {
-            throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
+            throw new CustomException(ErrorCode.USER_UNABLE_TO_SAVE);
         } catch (Exception e) {
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
@@ -433,7 +433,7 @@ public ResponseEntity<?> uploadpost(  @RequestParam("content") String content,
             response.put("notifications", notifications);
             return ResponseEntity.ok(response);
         } catch (DataIntegrityViolationException e) {
-            throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
+            throw new CustomException(ErrorCode.USER_UNABLE_TO_SAVE);
         } catch (Exception e) {
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
@@ -450,7 +450,7 @@ public ResponseEntity<?> uploadpost(  @RequestParam("content") String content,
             Post post = postService.findById(id);
             return ResponseEntity.ok(post);
         } catch (DataIntegrityViolationException e) {
-            throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
+            throw new CustomException(ErrorCode.USER_UNABLE_TO_SAVE);
         } catch (Exception e) {
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
@@ -465,7 +465,7 @@ public ResponseEntity<?> uploadpost(  @RequestParam("content") String content,
             System.out.println(commet.size());
             return ResponseEntity.ok(response);
         } catch (DataIntegrityViolationException e) {
-            throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
+            throw new CustomException(ErrorCode.USER_UNABLE_TO_SAVE);
         } catch (Exception e) {
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }

@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +19,6 @@ import com.baconbao.mxh.Models.User.User;
 import com.baconbao.mxh.Repository.Post.PostRepository;
 import com.baconbao.mxh.Services.Service.Post.PostService;
 
-import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class PostServiceImpl implements PostService {
@@ -33,8 +33,8 @@ public class PostServiceImpl implements PostService {
     public List<Post> findByActiveAndStatus(boolean active, Status idStatus) {
         try {
             return postRepository.findByIsActiveAndStatusOrderByCreateAtDesc(active, idStatus);
-        } catch (EntityNotFoundException e) {
-            throw new CustomException(ErrorCode.POST_NOT_FOUND);
+        } catch (DataAccessException e) {
+            throw new CustomException(ErrorCode.DATABASE_ACCESS_ERROR);
         } catch (Exception e) {
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
@@ -57,9 +57,9 @@ public class PostServiceImpl implements PostService {
             }
             postRepository.save(post);
         } catch (DataIntegrityViolationException e) {
-            throw new CustomException(ErrorCode.POST_NOT_SAVED);
-        } catch (Exception e){
-            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+            throw new CustomException(ErrorCode.POST_UNABLE_TO_SAVE);
+        } catch (DataAccessException e) {
+            throw new CustomException(ErrorCode.DATABASE_ACCESS_ERROR);
         }
     }
 
@@ -69,9 +69,9 @@ public class PostServiceImpl implements PostService {
             Post psot = findById(id);
             postRepository.delete(psot);
         } catch (DataIntegrityViolationException e) {
-            throw new CustomException(ErrorCode.POST_NOT_SAVED);
-        } catch (Exception e){
-            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+            throw new CustomException(ErrorCode.POST_UNABLE_TO_SAVE);
+        } catch (DataAccessException e) {
+            throw new CustomException(ErrorCode.DATABASE_ACCESS_ERROR);
         }
     }
 
@@ -106,6 +106,8 @@ public class PostServiceImpl implements PostService {
     public List<Post> findByUserPosts(User user) {
         try {
             return postRepository.findByUserOrderByCreateAtDesc(user);
+        } catch (DataAccessException e) {
+            throw new CustomException(ErrorCode.DATABASE_ACCESS_ERROR);
         } catch (Exception e) {
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
@@ -113,11 +115,23 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<Comment> findByCommentsOrderByCreateAtDesc(Post post) {
-        return postRepository.findByCommentsOrderByCreateAtDesc(post);
+        try {
+            return postRepository.findByCommentsOrderByCreateAtDesc(post);
+        } catch (DataAccessException e) {
+            throw new CustomException(ErrorCode.DATABASE_ACCESS_ERROR);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+        }
     }
 
     @Override
     public List<Object[]> findPostAndCommentAndReplyCount(Post post, boolean active, Status status) {
-        return postRepository.findPostAndCommentAndReplyCount(post, active, status);
+        try {
+            return postRepository.findPostAndCommentAndReplyCount(post, active, status);
+        } catch (DataAccessException e) {
+            throw new CustomException(ErrorCode.DATABASE_ACCESS_ERROR);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+        }
     }
 }

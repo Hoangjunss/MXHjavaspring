@@ -129,7 +129,7 @@ public class UserController {
             verifycationTokenService.registerUser(user); // gửi mail xác nhận
             return ResponseEntity.ok(new ApiResponse(true, "Register successfull"));
         } catch (DataIntegrityViolationException e) {
-            throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
+            throw new CustomException(ErrorCode.USER_ABOUT_NOT_FOUND);
         } catch (Exception e) {
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
@@ -196,7 +196,7 @@ public class UserController {
             userService.saveUser(user);
             return ResponseEntity.ok(new ApiResponse(true, "Edit account successfull"));
         } catch (DataIntegrityViolationException e) {
-            throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
+            throw new CustomException(ErrorCode.USER_ABOUT_UNABLE_TO_SAVE);
         } catch (Exception e) {
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
@@ -364,7 +364,7 @@ public class UserController {
 
             return ResponseEntity.ok(new ApiResponse(true, "setfriend successfull"));
         } catch (DataIntegrityViolationException e) {
-            throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
+            throw new CustomException(ErrorCode.USER_ABOUT_UNABLE_TO_SAVE);
         } catch (Exception e) {
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
@@ -455,7 +455,7 @@ public class UserController {
 
             return ResponseEntity.ok(new ApiResponse(true, "uploaduserimg successfull"));
         } catch (DataIntegrityViolationException e) {
-            throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
+            throw new CustomException(ErrorCode.USER_ABOUT_UNABLE_TO_SAVE);
         } catch (Exception e) {
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
@@ -481,7 +481,7 @@ public class UserController {
             }
             return "redirect:/profile?id="+user.getId();
         } catch (DataIntegrityViolationException e) {
-            throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
+            throw new CustomException(ErrorCode.USER_ABOUT_UNABLE_TO_SAVE);
         } catch (Exception e) {
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
@@ -620,7 +620,7 @@ public class UserController {
             UserDTO userDTO = userService.getUserDTO(user);
             return ResponseEntity.ok(userDTO);
         } catch (DataIntegrityViolationException e) {
-            throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
+            throw new CustomException(ErrorCode.USER_ABOUT_UNABLE_TO_SAVE);
         } catch (Exception e) {
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
@@ -645,7 +645,7 @@ public class UserController {
             response.put("user", user);
             return ResponseEntity.ok(response);
         } catch (DataIntegrityViolationException e) {
-            throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
+            throw new CustomException(ErrorCode.USER_ABOUT_UNABLE_TO_SAVE);
         } catch (Exception e) {
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
@@ -660,7 +660,7 @@ public class UserController {
             List<User> notFriends = relationalService.findNotFriends(user);
             return ResponseEntity.ok(notFriends);
         } catch (DataIntegrityViolationException e) {
-            throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
+            throw new CustomException(ErrorCode.USER_ABOUT_UNABLE_TO_SAVE);
         } catch (Exception e) {
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
@@ -678,7 +678,7 @@ public class UserController {
             response.put("count", count);
             return ResponseEntity.ok(response);
         } catch (DataIntegrityViolationException e) {
-            throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
+            throw new CustomException(ErrorCode.USER_ABOUT_UNABLE_TO_SAVE);
         } catch (Exception e) {
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
@@ -700,7 +700,7 @@ public class UserController {
             // Tạo một map để dễ dàng tra cứu mô tả theo idAbout
             return ResponseEntity.ok(response);
         } catch (DataIntegrityViolationException e) {
-            throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
+            throw new CustomException(ErrorCode.USER_ABOUT_UNABLE_TO_SAVE);
         } catch (Exception e) {
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
@@ -740,7 +740,7 @@ public class UserController {
             response.put("user", user);
             return ResponseEntity.ok(response);
         } catch (DataIntegrityViolationException e) {
-            throw new CustomException(ErrorCode.USER_ABOUT_NOT_SAVED);
+            throw new CustomException(ErrorCode.USER_ABOUT_UNABLE_TO_SAVE);
         } catch (Exception e) {
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }

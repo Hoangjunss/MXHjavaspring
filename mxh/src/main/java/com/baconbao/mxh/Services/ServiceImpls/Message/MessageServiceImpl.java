@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +18,6 @@ import com.baconbao.mxh.Models.User.User;
 import com.baconbao.mxh.Repository.Message.MessageRepository;
 import com.baconbao.mxh.Services.Service.Message.MessageService;
 
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -29,8 +29,12 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public List<Message> messageFromUser(User userFrom, User userTo) {
-        // Truy vấn và trả về tất cả tin nhắn giữa hai người dùng
-        return messageRepository.findAllMessagesBetweenTwoUsers(userFrom, userTo);
+        try {
+            // Truy vấn và trả về tất cả tin nhắn giữa hai người dùng
+            return messageRepository.findAllMessagesBetweenTwoUsers(userFrom, userTo);
+        } catch (DataAccessException e) {
+            throw new CustomException(ErrorCode.DATABASE_ACCESS_ERROR);
+        }
     }
 
     @Override
@@ -46,7 +50,7 @@ public class MessageServiceImpl implements MessageService {
             socketWeb.sendMessage(message);
         } catch (DataIntegrityViolationException e) {
             // Xử lý ngoại lệ nếu không thể lưu tin nhắn
-            throw new CustomException(ErrorCode.IMAGE_NOT_SAVED);
+            throw new CustomException(ErrorCode.MESSAGE_UNABLE_TO_SAVE);
         } catch (Exception e) {
             // Xử lý các ngoại lệ khác
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
@@ -64,26 +68,21 @@ public class MessageServiceImpl implements MessageService {
     public List<Message> findByContent(String content) {
         try {
             return messageRepository.findByContentLike(content);
-        } catch (EntityNotFoundException e) {
-            // Xử lý ngoại lệ nếu không tìm thấy tin nhắn
-            throw new CustomException(ErrorCode.MESSAGE_NOT_FOUND);
+        } catch (DataAccessException e) {
+            throw new CustomException(ErrorCode.DATABASE_ACCESS_ERROR);
         } catch (Exception e) {
-            // Xử lý các ngoại lệ khác
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
     }
 
     @Override
     public Message findLatestMessage(User userFrom, User userTo) {
-
         // Lấy tất cả tin nhắn giữa hai người dùng
         List<Message> messages = messageRepository.findAllMessagesBetweenTwoUsers(userFrom, userTo);
         // Lấy tin nhắn gần nhất
         Message message = messages.get(messages.size() - 1);
-
         // Trả về tin nhắn gần nhất, hoặc null nếu không có tin nhắn
         return messages.isEmpty() ? null : message;
-
     }
 
     // Loi khong xac dinh
@@ -94,7 +93,7 @@ public class MessageServiceImpl implements MessageService {
             messageRepository.seenMessage(relationships, user);
             socketWeb.setSeen(relationships, user);
         } catch (DataIntegrityViolationException e) {
-            throw new CustomException(ErrorCode.MESSAGE_NOT_UPDATE);
+            throw new CustomException(ErrorCode.MESSAGE_UNABLE_TO_UPDATE);
         } catch (Exception e) {
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
@@ -102,21 +101,30 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public List<Object[]> countMessageBetweenTwoUserIsSeen(User user) {
-        List<Object[]> data = messageRepository.countMessageBetweenTwoUserIsSeen(user);
-        return data;
+        try {
+            List<Object[]> data = messageRepository.countMessageBetweenTwoUserIsSeen(user);
+            return data;
+        } catch (DataAccessException e) {
+            throw new CustomException(ErrorCode.DATABASE_ACCESS_ERROR);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+        }
     }
 
     @Override
     public Message findById(Long id) {
         Optional<Message> messageOptional = messageRepository.findById(id);
-        if (messageOptional.isPresent()) {
-            return messageOptional.get();
-        }
-        return null;
+        return messageOptional.isPresent() ? messageOptional.get() : null;
     }
 
     @Override
     public List<Object[]> countUnseenMessageByUserTo(User userTo) {
-        return messageRepository.countUnseenMessageByUserTo(userTo.getId());
+        try {
+            return messageRepository.countUnseenMessageByUserTo(userTo.getId());
+        } catch (DataAccessException e) {
+            throw new CustomException(ErrorCode.DATABASE_ACCESS_ERROR);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+        }
     }
 }

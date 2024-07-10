@@ -24,7 +24,7 @@ public class InteractionServiceImpl  implements InteractionService{
         if(interaction.isPresent()) {
             return interaction.get();
         }else{
-            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+            throw new CustomException(ErrorCode.INTERACT_NOT_FOUND);
         }
     }
 
@@ -36,7 +36,7 @@ public class InteractionServiceImpl  implements InteractionService{
             }
             interactionRepository.save(interaction);
         } catch (DataIntegrityViolationException e) {
-            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+            throw new CustomException(ErrorCode.INTERACT_UNABLE_TO_SAVE);
         }
     }
 
