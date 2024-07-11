@@ -175,7 +175,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Lấy số lượng bạn chung
     function fetchMutualFriendsCount(friendId) {
-        return fetch(`/mutualFriend/${friendId}`)
+        return fetch(`/mutualFriend?friendId=${friendId}`)
             .then(response => response.json())
             .then(data => {
                 console.log('Mutual friends count:', data.count);

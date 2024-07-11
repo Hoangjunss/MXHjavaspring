@@ -720,23 +720,24 @@ public class UserController {
     }
 
     //Đếm số lượng bạn bè - LƯU Ý STATUS
-    @GetMapping("/mutualFriend/{friendId}")
-    public ResponseEntity<?> countFriend(@PathVariable Long friendId, Principal principal) {
+    @GetMapping("/mutualFriend")
+    public ResponseEntity<?> countFriend(@RequestParam Long friendId, Principal principal) {
         try {
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
             User user = userService.findByEmail(userDetails.getUsername());
             int count = relationalService.countMutualFriends(user, friendId);
-            System.out.println("Count: " + count);
+            System.out.println("count :" + count);
             Map<String, Integer> response = new HashMap<>();
             response.put("count", count);
             return ResponseEntity.ok(response);
-        }catch (CustomException e) {
+        } catch (CustomException e) {
             return new ResponseEntity<>(new ApiResponse(false, e.getErrorCode().getMessage()), e.getErrorCode().getStatusCode());
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(new ApiResponse(false, "An unexpected error occurred"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 
     //Lấy phần About (người dùng mô tả thêm về bản thân)
     @GetMapping("/api/getabouts")
@@ -764,11 +765,13 @@ public class UserController {
     //Lấy trang User/profile.html
     @GetMapping("/countfriend")
     public ResponseEntity<?> countFriend(Principal principal) {
+        Map<String, Integer> response = new HashMap<>();
         try {
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
             User loggedInUser = userService.findByEmail(userDetails.getUsername());
             int countFriend = relationshipService.countfriend(loggedInUser, statusRelationshipService.findById(1L));
-            return ResponseEntity.ok(countFriend);
+            response.put("countFriend", countFriend);
+            return ResponseEntity.ok(response);
         }catch (CustomException e) {
             return new ResponseEntity<>(new ApiResponse(false, e.getErrorCode().getMessage()), e.getErrorCode().getStatusCode());
         } catch (Exception e) {
