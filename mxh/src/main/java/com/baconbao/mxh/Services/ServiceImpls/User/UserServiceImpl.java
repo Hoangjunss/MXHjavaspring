@@ -14,7 +14,6 @@ import com.baconbao.mxh.Config.Socket.SocketWeb;
 import com.baconbao.mxh.DTO.UserDTO;
 import com.baconbao.mxh.Exceptions.CustomException;
 import com.baconbao.mxh.Exceptions.ErrorCode;
-import com.baconbao.mxh.Exceptions.UserNotFoundException;
 import com.baconbao.mxh.Models.User.User;
 import com.baconbao.mxh.Repository.User.UserRepository;
 import com.baconbao.mxh.Services.Service.User.UserService;
@@ -84,7 +83,7 @@ public class UserServiceImpl implements UserService {
         if (user.isPresent()) {
             return user.get();
         }
-        throw new UserNotFoundException("User not found id: " + userId);
+        throw new CustomException(ErrorCode.USER_NOT_FOUND);
     }
 
     // Chuyen userDTO ve user

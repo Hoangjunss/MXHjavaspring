@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -23,8 +22,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.baconbao.mxh.DTO.ApiResponse;
 import com.baconbao.mxh.Exceptions.CustomException;
-import com.baconbao.mxh.Exceptions.ErrorCode;
 import com.baconbao.mxh.Models.Message.Message;
 import com.baconbao.mxh.Models.User.Relationship;
 import com.baconbao.mxh.Models.User.User;
@@ -204,10 +203,11 @@ public class MessageController {
             response.put("relationship", relationship);
             // Trả về phản hồi HTTP 200 với dữ liệu JSON
             return ResponseEntity.ok(response);
+        } catch (CustomException e) {
+            return new ResponseEntity<>(new ApiResponse(false, e.getErrorCode().getMessage()), e.getErrorCode().getStatusCode());
         } catch (Exception e) {
-            // Nếu có lỗi, đặt thông báo lỗi vào phản hồi và trả về HTTP 500
-            response.put("error", "An error occurred: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            e.printStackTrace();
+            return new ResponseEntity<>(new ApiResponse(false, "An unexpected error occurred"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -270,10 +270,11 @@ public class MessageController {
             List<Message> messages = new ArrayList<>();
             messages = messageService.findByContent(name);
             return ResponseEntity.ok(messages);
-        } catch (DataIntegrityViolationException e) {
-            throw new CustomException(ErrorCode.USER_UNABLE_TO_SAVE);
+        } catch (CustomException e) {
+            return new ResponseEntity<>(new ApiResponse(false, e.getErrorCode().getMessage()), e.getErrorCode().getStatusCode());
         } catch (Exception e) {
-            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+            e.printStackTrace();
+            return new ResponseEntity<>(new ApiResponse(false, "An unexpected error occurred"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -295,10 +296,11 @@ public class MessageController {
             response.put("relantionships", relationships);
             response.put("unseenMessages", countUnseen);
             return ResponseEntity.ok(response);
-        } catch (DataIntegrityViolationException e) {
-            throw new CustomException(ErrorCode.USER_UNABLE_TO_SAVE);
+        } catch (CustomException e) {
+            return new ResponseEntity<>(new ApiResponse(false, e.getErrorCode().getMessage()), e.getErrorCode().getStatusCode());
         } catch (Exception e) {
-            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+            e.printStackTrace();
+            return new ResponseEntity<>(new ApiResponse(false, "An unexpected error occurred"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
     @GetMapping("/chat")
@@ -322,10 +324,11 @@ public class MessageController {
         response.put("currentUser", userFrom);
           
             return ResponseEntity.ok(response);
-        } catch (DataIntegrityViolationException e) {
-            throw new CustomException(ErrorCode.USER_UNABLE_TO_SAVE);
+        } catch (CustomException e) {
+            return new ResponseEntity<>(new ApiResponse(false, e.getErrorCode().getMessage()), e.getErrorCode().getStatusCode());
         } catch (Exception e) {
-            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+            e.printStackTrace();
+            return new ResponseEntity<>(new ApiResponse(false, "An unexpected error occurred"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
     
