@@ -53,8 +53,9 @@ public interface RelationshipRepository extends JpaRepository<Relationship, Long
         List<User> findFriendsByUserAndStatus(@Param("firstUser") User firstUser, @Param("status") StatusRelationship status);
 
         // đếm số lượng bạn chung giữa 2 user
-        // @Query("SELECT COUNT(r) FROM Relationship r WHERE (r.userOne = :user AND r.userTwo = :friend AND r.status = 1) OR (r.userOne = :friend AND r.userTwo = :user AND r.status = 1)")
-        // int countMutualFriends(@Param("user") User user, @Param("friend") Long friendId);
+        @Query("SELECT COUNT(r) FROM Relationship r WHERE (r.userOne.id = :userId AND r.userTwo.id IN (SELECT r2.userTwo.id FROM Relationship r2 WHERE r2.userOne.id = :friendId AND r2.status.id = :statusId)) OR (r.userTwo.id = :userId AND r.userOne.id IN (SELECT r2.userOne.id FROM Relationship r2 WHERE r2.userTwo.id = :friendId AND r2.status.id = :statusId))")
+        int countMutualFriends(@Param("userId") Long userId, @Param("friendId") Long friendId, @Param("statusId") Long statusId);
+        
 
         // tìm mối quan hệ đang chờ xác nhận
         @Query("SELECT r FROM Relationship r WHERE (r.userOne = :user OR r.userTwo = :user) AND r.status = :status")

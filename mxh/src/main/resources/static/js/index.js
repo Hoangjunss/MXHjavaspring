@@ -19,3 +19,5 @@ function displaystatus(data){
             statusSelect.appendChild(option);
         })
 }
+
+

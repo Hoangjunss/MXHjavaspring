@@ -126,24 +126,19 @@ public class RelationshipServiceImpl implements RelationshipService {
         }
     }
 
+    // Đếm số lượng bạn chung giữa 2 user
     @Override
     public int countMutualFriends(User user, Long friendId) {
-        // tìm bạn bè của user
-        List<User> relationships = relationshipRepository.findFriendsByUserAndStatus(user, statusService.findById(2L));
-        
-        // tìm bạn bè của bạn bè
-        User friend = userService.findById(friendId);
-        List<User> friendFriends = relationshipRepository.findFriendsByUserAndStatus(friend, statusService.findById(2L));
-
-        // tìm số lượng bạn chung
-        int count = 0;
-        for (User u : relationships) {
-            if (friendFriends.contains(u)) {
-                count++;
-            }
+        try {
+            User friend = userService.findById(friendId);
+            StatusRelationship status = statusService.findById(2L);
+            return relationshipRepository.countMutualFriends(user.getId(), friend.getId(), status.getId());
+        } catch (DataAccessException e) {
+            throw new CustomException(ErrorCode.DATABASE_ACCESS_ERROR);
         }
-        return count;
     }
+
+    
 
     @Override
     public int countfriend(User user, StatusRelationship status) {
