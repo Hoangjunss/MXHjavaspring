@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Error</title>
+</head>
+<body>
+    <div th:if="${errorConfirmUser}">
+        <h1>Error Confirm </h1>
+        <p th:text="${errorConfirmUser}"></p>
+        <a th:href="@{/register}">Go to Register</a>
+    </div>
+    <div th:if="${errorEditProfile}">
+        <h1>Error Edit Profile </h1>
+        <p th:text="${errorEditProfile}"></p>
+        <a th:href="@{/}">Go to Index</a>
+    </div>
+    <div th:if="${errorSearchUser}">
+        <h1>Error Search User </h1>
+        <p th:text="${errorSearchUser}"></p>
+    </div>
+</body>
+</html>

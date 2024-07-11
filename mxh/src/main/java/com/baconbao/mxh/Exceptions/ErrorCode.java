@@ -84,7 +84,17 @@ public enum ErrorCode {
     COMMENT_UNABLE_TO_SAVE(11002, "Unable to save comment", HttpStatus.INTERNAL_SERVER_ERROR),
     COMMENT_UNABLE_TO_UPDATE(11003, "Unable to update comment", HttpStatus.INTERNAL_SERVER_ERROR),
     COMMENT_ALREADY_EXISTS(11005, "Comment already exists", HttpStatus.BAD_REQUEST),
-    COMMENT_TOO_MANY_REQUESTS(11006, "Too many requests for comments", HttpStatus.TOO_MANY_REQUESTS),
+    COMMENT_TOO_MANY_REQUESTS(11006, "Too many requests for comments", HttpStatus.TOO_MANY_REQUESTS), 
+
+    //Verification related exceptions
+    VERIFICATION_FAILED(13001, "Verification failed", HttpStatus.FORBIDDEN),
+    VERIFICATION_UNABLE_TO_SAVE(13002, "Unable to save Verification", HttpStatus.INTERNAL_SERVER_ERROR),
+    VERIFICATION_UNABLE_TO_UPDATE(13003, "Unable to update Verification", HttpStatus.INTERNAL_SERVER_ERROR),
+    VERIFICATION_TOKEN_ALREADY_EXISTS(13004, "Verification token already exists", HttpStatus.BAD_REQUEST),
+    VERIFICATION_TOKEN_NOT_FOUND(13005, "Verification token not found",HttpStatus.NOT_FOUND),
+    VERIFICATION_TOKEN_EXPIRED(13006, "Verification token expired", HttpStatus.UNAUTHORIZED),
+    // Download related exceptions
+    DOWNLOAD_FAILED(12001, "Download failed", HttpStatus.FAILED_DEPENDENCY),
 
     ;
 
