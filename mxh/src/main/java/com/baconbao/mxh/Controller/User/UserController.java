@@ -758,11 +758,14 @@ public class UserController {
     //Lấy trang User/profile.html
     @GetMapping("/countfriend")
     public ResponseEntity<?> countFriend(Principal principal) {
-        Map<String, Integer> response = new HashMap<>();
+        Map<String, Object> response = new HashMap<>();
         try {
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
             User loggedInUser = userService.findByEmail(userDetails.getUsername());
             int countFriend = relationshipService.countfriend(loggedInUser, statusRelationshipService.findById(1L));
+            List<Relationship> relationships = relationshipService.findRelationshipPending(loggedInUser);
+            response.put("loggedInUser", loggedInUser);
+            response.put("relationships", relationships);
             response.put("countFriend", countFriend);
             return ResponseEntity.ok(response);
         }catch (CustomException e) {
@@ -833,4 +836,10 @@ public class UserController {
             return new ResponseEntity<>(new ApiResponse(false, "An unexpected error occurred"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping("/Confirm")
+    public String confirm() {
+        return "User/Confirm";
+    }
 }
+
