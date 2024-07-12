@@ -68,7 +68,8 @@ public class User {
         @OneToMany(mappedBy = "userSend")
         @JsonIgnore
         private List<Comment> comments;
-        @OneToOne
+
+        @OneToOne(fetch = FetchType.EAGER)
         @JsonIgnore
         @JoinTable(name = "users_image", // Tên bảng liên kết
                         joinColumns = @JoinColumn(name = "IdUser"), // Khóa ngoại của bảng User

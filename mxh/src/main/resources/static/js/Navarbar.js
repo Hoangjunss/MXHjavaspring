@@ -3,13 +3,15 @@ document.addEventListener("DOMContentLoaded", function () {
         method: 'GET'
     }).then(response=> response.json())
     .then(data => {
+        console.log(data);
         const profileLink = document.getElementById('profileLink');
-        const avatarImage = document.getElementById('avataruser');
+        const avatarImage = document.getElementById('avartaruser');
         profileLink.href = '/profile?id='+ data.id;
+        alert(data.image);
         if (data.image) {
-            avatarImage.src = data.image;
+            avatarImage.src = data.image.urlImage;
         } else {
-            avatarImage.src = '/images/users/user-4.jpg';
+            avatarImage.src = '/images/users/DefaultAvtUser.png';
         }
     })
     .catch(error => console.error('Error fetching status post:', error));

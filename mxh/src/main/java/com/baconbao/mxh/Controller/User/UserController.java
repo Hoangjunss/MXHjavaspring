@@ -442,7 +442,7 @@ public class UserController {
      * 
      * Image img = new Image();
      * Map<String, Object> resultMap = cloudinaryService.upload(image);
-     * String imageUrl = (String) resultMap.get("url");
+     * String imageUrl = (String) ""src/main/resources/static/images/users/default.png"";
      * img.setUrlImage(imageUrl);
      * imageService.saveImage(img);
      * Image tmpImg = imageService.findByImage(img.getUrlImage());
@@ -756,6 +756,12 @@ public class UserController {
     }
 
     //Lấy trang User/profile.html
+    @GetMapping("/profile")
+    public String getProfilePage(){
+        return "User/profile";
+    }
+
+
     @GetMapping("/countfriend")
     public ResponseEntity<?> countFriend(Principal principal) {
         Map<String, Integer> response = new HashMap<>();

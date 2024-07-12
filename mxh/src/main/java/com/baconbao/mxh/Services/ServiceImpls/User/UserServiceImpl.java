@@ -15,8 +15,10 @@ import com.baconbao.mxh.Config.Socket.SocketWeb;
 import com.baconbao.mxh.DTO.UserDTO;
 import com.baconbao.mxh.Exceptions.CustomException;
 import com.baconbao.mxh.Exceptions.ErrorCode;
+import com.baconbao.mxh.Models.Post.Image;
 import com.baconbao.mxh.Models.User.User;
 import com.baconbao.mxh.Repository.User.UserRepository;
+import com.baconbao.mxh.Services.Service.Post.ImageService;
 import com.baconbao.mxh.Services.Service.User.UserService;
 
 import jakarta.annotation.PostConstruct;
@@ -30,6 +32,8 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private ImageService imageService;
     @Autowired
     private SocketWeb socketWeb;
 
@@ -53,6 +57,8 @@ public class UserServiceImpl implements UserService {
                 username.setId(getGenerationId());
                 username.setPassword(passwordEncoder.encode(username.getPassword())); // mã hóa mật khẩu
                 username.setCreateAt(LocalDateTime.now());
+                /* Image tmpImg = imageService.findById(936993986790369L);
+                username.setImage(tmpImg); */
             }
             userRepository.save(username); // lưu user vào database
         } catch (DataIntegrityViolationException e) {
