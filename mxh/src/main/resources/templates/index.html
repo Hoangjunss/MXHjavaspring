@@ -204,17 +204,17 @@
                                                 <img src="images/resources/admin2.jpg" alt="">
                                             </figure>
                                             <div class="newpst-input">
-                                                <form th:action="@{/uploadpost}" method="post" enctype="multipart/form-data">
+                                                <form id="uploadPostUser" enctype="multipart/form-data">
                                                     <select class="form-control" id="StatusId" name="StatusId" required>
 
                                                     </select>
-                                                    <textarea rows="2" placeholder="write something" name="content"></textarea>
+                                                    <textarea rows="2" placeholder="write something" id="contentPost" name="content"></textarea>
                                                     <div class="attachments">
                                                         <ul>
                                                             <li>
                                                                 <i class="fa fa-image"></i>
                                                                 <label class="fileContainer">
-                                                                    <input name="image" type="file" onchange="previewImage(event)" placeholder="Choose Image">
+                                                                    <input name="image" id="imagePost" type="file" onchange="previewImage(event)" placeholder="Choose Image">
                                                                 </label>
                                                             </li>
                                                             <li>

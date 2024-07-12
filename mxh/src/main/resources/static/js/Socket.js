@@ -57,15 +57,15 @@ function seenMessage(messages) {
 // Gửi tin nhắn tới WebSocket server
 function sendMessage() {
     var content = document.getElementById('content').value;
-    let content = contentInput.value.trimStart().trimEnd();
+    let contentt = content.trimStart().trimEnd();
     // Kiểm tra nếu nội dung chỉ chứa khoảng trắng
-    if (content === '') {
+    if (contentt === '') {
         return;
     }
     var id = document.getElementById('id').value;
     var message = {
         message: {
-            content: content,
+            content: contentt,
             id: id
         }
     };

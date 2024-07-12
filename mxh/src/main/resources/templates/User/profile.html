@@ -209,7 +209,7 @@
                                     <div class="text-center">
                                         <div class="profile-img w-shadow">
                                             <div class="profile-img-overlay"></div>
-                                            <img th:src="@{/images/users/user-1.jpg}" alt="Avatar" class="avatar img-circle">
+                                            <img  id="imageProfile" alt="Avatar" class="avatar img-circle">
                                             <div class="profile-img-caption">
                                                 <label for="updateProfilePic" class="upload">
                                                     <i class='bx bxs-camera'></i> Update
@@ -259,7 +259,7 @@
                                 <div class="profile-info-right">
                                     <!-- Posts section -->
                                     <div class="row">
-                                        <div class="col-md-9 profile-center" id="containerpost">
+                                        <div class="col-md-9 profile-center" id="displaycontent">
                                             <ul class="list-inline profile-links d-flex justify-content-between w-shadow rounded">
                                                 <li class="list-inline-item profile-active">
                                                     <a href="#">Timeline</a>
@@ -288,17 +288,17 @@
                                             <ul class="list-unstyled" id="uploadpost" style="margin-bottom: 0;">
                                                 <li class="media post-form w-shadow">
                                                     <div class="media-body">
-                                                        <form th:action="@{/uploadpost}" method="post" enctype="multipart/form-data">
+                                                        <form id="uploadPostUser" enctype="multipart/form-data">
                                                             <select class="form-control" id="StatusId" name="StatusId" required>
         
                                                             </select>
-                                                            <textarea rows="2" placeholder="write something" name="content"></textarea>
+                                                            <textarea rows="2" placeholder="write something" id="contentPost" name="content"></textarea>
                                                             <div class="attachments">
                                                                 <ul>
                                                                     <li>
                                                                         <i class="fa fa-image"></i>
                                                                         <label class="fileContainer">
-                                                                            <input name="image" type="file" onchange="previewImage(event)" placeholder="Choose Image">
+                                                                            <input name="image" id="imagePost" type="file" onchange="previewImage(event)" placeholder="Choose Image">
                                                                         </label>
                                                                     </li>
                                                                     <li>

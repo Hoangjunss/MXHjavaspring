@@ -48,10 +48,14 @@ function displayComment(data, postId) {
     let displayComment = '';
     if (data.comments != null) {
         data.comments.forEach(comment => {
+            let avtUserCmt='/images/users/DefaultAvtUser.png';
+            if(comment.userSend.image){
+                avtUserCmt = comment.userSend.image.urlImage;
+            }
             displayComment += `
                 <li class="media">
-                    <a href="#" class="pull-left">
-                        <img th:src="@{/images/users/user-2.jpg}" alt="" class="img-circle">
+                    <a href="/profile?id=${comment.userSend.id}" class="pull-left">
+                        <img src="${avtUserCmt}" alt="" class="img-circle">
                     </a>
                     <div class="media-body">
                         <div class="d-flex justify-content-between align-items-center w-100">
@@ -126,10 +130,14 @@ function submitComment(postId) {
 }
 
 function addCommentToDOM(comment, postId) {
+    let avtUserCmt='/images/users/DefaultAvtUser.png';
+            if(comment.userSend.image){
+                avtUserCmt = comment.userSend.image.urlImage;
+            }
     const commentHTML = `
         <li class="media">
-            <a href="#" class="pull-left">
-                <img src="/images/users/user-2.jpg" alt="" class="img-circle">
+            <a href="/profile?id=${comment.userSend.id}" class="pull-left">
+                <img src="${avtUserCmt}" alt="" class="img-circle">
             </a>
             <div class="media-body">
                 <div class="d-flex justify-content-between align-items-center w-100">

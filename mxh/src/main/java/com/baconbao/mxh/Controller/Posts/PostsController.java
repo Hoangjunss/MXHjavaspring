@@ -10,6 +10,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
@@ -138,10 +139,10 @@ public class PostsController {
     }
  */
 
-    @PostMapping("/uploadpost")
-    public ResponseEntity<?> uploadpost(  @RequestParam("content") String content, 
-                                @RequestParam("StatusId") Long status,
-                                @RequestParam("image") MultipartFile image, Principal principal) {
+    @PostMapping("/uploadpostuser")
+    public ResponseEntity<?> uploadpost(@RequestParam("content") String content, 
+    @RequestParam("StatusId") Long status,
+    @RequestParam(value = "image", required = false) MultipartFile image, Principal principal) {
         try {
             Post post = new Post();
                 Status statusPost = statusService.findById(status);
@@ -158,7 +159,7 @@ public class PostsController {
 
                 // Tạo đối tượng Image và lưu URL ảnh
                 // Kiểm tra xem tệp tin ảnh có rỗng không
-                if (!image.isEmpty()) {
+                if (image != null) {
                     Image img = new Image();
                     Map<String, Object> resultMap = cloudinaryService.upload(image);
                     String imageUrl = (String) resultMap.get("url");
@@ -168,7 +169,7 @@ public class PostsController {
                     post.setImage(tmpImg);
                 }
                 postService.save(post); // Lưu đối tượng Post
-            return ResponseEntity.ok().build();
+                return ResponseEntity.ok(new ApiResponse(true, "Post uploaded successfully"));
         } catch (CustomException e) {
             return new ResponseEntity<>(new ApiResponse(false, e.getErrorCode().getMessage()), e.getErrorCode().getStatusCode());
         } catch (Exception e) {

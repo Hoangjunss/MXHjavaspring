@@ -6,6 +6,43 @@ document.addEventListener("DOMContentLoaded", function () {
     }else{
         fetchPosts();
     }
+
+    $('#uploadPostUser').submit(function(event){
+        event.preventDefault();
+    
+        var formData = new FormData();
+        var status = $('#StatusId').val();
+        var content = $('#contentPost').val();
+    var image = $('#imagePost')[0].files[0];
+
+    formData.append('StatusId', status);
+    formData.append('content', content);
+
+    if (image) {
+        formData.append('image', image);
+    }
+    console.log(image);
+    fetch('/uploadpostuser', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok.');
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert("Error: " + (data.message || "Unknown error occurred"));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+    })
 });
 
 function fetchPostUser(userId) {
@@ -31,7 +68,7 @@ function fetchPosts(){
 }
 
 function updatePostPage(data) {
-    const divContainerPost = document.getElementById('containerpost');
+    const divContainerPost = document.getElementById('displaycontent');
 
     if (data.posts == null) {
         divContainerPost.innerHTML += `
@@ -41,7 +78,7 @@ function updatePostPage(data) {
         `;
     } else {
         data.posts.forEach(post => {
-            divContainerPost.innerHTML += createPostContent(post);
+            createPostContent(post);
         });
     }
 }
@@ -51,17 +88,17 @@ function displayPosts(data) {
     postDisplay.empty(); // Clear previous content
 
     data.posts.forEach(post => {
-        const postElement = createPostContent(post);
-        postDisplay.append(postElement);
+        createPostContent(post);
     });
 }
 
 function createPostContent(post) {
-    const imgUser = '#';
-    const imgPost = post.image != null && post.image.urlImage != null ? post.image.urlImage : '#';
+    const postDisplay = $('#displaycontent');
+    const imgUser = post.user.image!=null ?  post.user.image.urlImage : '/images/users/DefaultAvtUser.png';
+    const imgPost = post.image != null ? post.image.urlImage : '#';
     const countComment = post.comments ? post.comments.length : 0;
 
-    return `
+    const displayPost= `
         <ul class="list-unstyled" id="postuserupload"> 
             <div class="post border-bottom p-3 bg-white w-shadow">
                 <div class="media text-muted pt-3">
@@ -81,7 +118,7 @@ function createPostContent(post) {
                     <div class="mt-3 ">
                         <p>${post.content}</p>
                         <div class="d-block mt-3">
-                            <img src="${imgPost}" class="post-content">
+                            <img id="postImage" class="post-content" style="display: none;">
                         </div>
                     </div>
                 </div>
@@ -144,4 +181,10 @@ function createPostContent(post) {
             </div>
         </ul>
     `;
+    postDisplay.append(displayPost);
+    var postImage = document.getElementById('postImage');
+    if (imgPost && imgPost.trim() !== '') {
+        postImage.src = imgPost;
+        postImage.style.display = 'block'; // Hiển thị ảnh nếu imgPost có giá trị
+    }
 }

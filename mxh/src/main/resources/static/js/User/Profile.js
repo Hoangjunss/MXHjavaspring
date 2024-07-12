@@ -226,6 +226,12 @@ function closeEditProfileDetails() {
 }
 
 function updateProfile(data) {
+    const avartaruser = $('#imageProfile');
+    if(data.user.image){
+        avartaruser.attr('src', data.user.image.urlImage);
+    }else{
+        avartaruser.attr('src', '/images/users/DefaultAvtUser.png');
+    }
     const fullNameElement = document.querySelector('.profile-fullname');
     fullNameElement.textContent = `${data.user.firstName} ${data.user.lastName}`;
 }
