@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
@@ -101,6 +102,8 @@ public class UserController {
         try {
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());// lấy ra cái email
             User user = userService.findByEmail(userDetails.getUsername());
+            Hibernate.initialize(user.getImage());
+            
             return ResponseEntity.ok(user);
         }catch (CustomException e) {
             return new ResponseEntity<>(new ApiResponse(false, e.getErrorCode().getMessage()), e.getErrorCode().getStatusCode());

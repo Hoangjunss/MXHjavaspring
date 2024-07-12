@@ -7,7 +7,6 @@ document.addEventListener("DOMContentLoaded", function () {
         const profileLink = document.getElementById('profileLink');
         const avatarImage = document.getElementById('avartaruser');
         profileLink.href = '/profile?id='+ data.id;
-        alert(data.image);
         if (data.image) {
             avatarImage.src = data.image.urlImage;
         } else {
