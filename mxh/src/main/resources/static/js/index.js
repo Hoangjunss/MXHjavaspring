@@ -30,12 +30,22 @@ function displayStatus(data) {
 function fetchFriendRequestsCount() {
     return fetch('/countfriend')
         .then(response => response.json())
-        .then(data => {
-            console.log('Friend requests count:', data.countFriend);
-            return data.countFriend;
+        .then(data => {      
+            // Tạo một biến để lưu số lượng lời mời kết bạn
+            let friendRequestsCount = 0;
+            
+            data.relationships.forEach(relationship => {
+                if (relationship.userTwo.id === data.loggedInUser.id) {
+                    console.log('Friend requests count:', data.countFriend);
+                    friendRequestsCount = data.countFriend;
+                }
+            });
+
+            // Trả về số lượng lời mời kết bạn
+            return friendRequestsCount;
         })
         .catch(error => {
             console.error('Error fetching friend requests count:', error);
-            return 0; // Return 0 in case of error
+            return 0; // Trả về 0 trong trường hợp có lỗi
         });
 }
