@@ -11,7 +11,39 @@ $(document).ready(function() {
         isError |= validatePassword('#inputPassword4', '#inputRe-enterPassword', '.errorPassword', '.errorRe-Password');
 
         if (!isError) {
-            this.submit();
+            let formData = {
+                lastName: document.getElementById("inputLastName").value,
+                firstName: document.getElementById("inputFirstName").value,
+                password: document.getElementById("inputPassword4").value,
+                email: document.getElementById("inputEmail4").value,
+            };
+            fetch("/register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    if (response.status === 409) {
+                        throw new Error("Email already exists");
+                    } else {
+                        throw new Error("An unexpected error occurred");
+                    }
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    window.location.href = "/confirmation";
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                alert(error.message);
+            });
         }
     });
 

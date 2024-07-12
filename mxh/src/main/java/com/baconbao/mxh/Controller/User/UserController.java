@@ -3,10 +3,7 @@ package com.baconbao.mxh.Controller.User;
 import java.io.IOException;
 import java.security.Principal;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +23,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -115,18 +111,15 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestParam("userDTO") UserDTO userDTO) {
+    public ResponseEntity<?> register(@RequestBody UserDTO userDTO) {
         try {
             if (userService.isEmailExist(userDTO.getEmail())) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponse(false, "Email already exists"));
             }
-            LocalDateTime localDateTime = LocalDateTime.now(); // Lấy thời gian hiện tại theo máy
-            ZonedDateTime zonedDateTime = localDateTime.atZone(ZoneId.systemDefault());
-            Date date = Date.from(zonedDateTime.toInstant());
-            userDTO.setCreateAt(date);
+            userDTO.setCreateAt(LocalDateTime.now());
             User user = userService.getUser(userDTO);
             verifycationTokenService.registerUser(user); // gửi mail xác nhận
-            return ResponseEntity.ok(new ApiResponse(true, "Register successfull"));
+            return ResponseEntity.ok(new ApiResponse(true, "Register successful"));
         } catch (CustomException e) {
             return new ResponseEntity<>(new ApiResponse(false, e.getErrorCode().getMessage()), e.getErrorCode().getStatusCode());
         } catch (Exception e) {

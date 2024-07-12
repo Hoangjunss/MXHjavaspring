@@ -1,7 +1,7 @@
 package com.baconbao.mxh.Models.User;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import com.baconbao.mxh.Models.Message.Message;
@@ -47,7 +47,7 @@ public class User {
         @Column(name = "Email")
         private String email;
         @Column(name = "CreateAt")
-        private Date createAt;
+        private LocalDateTime createAt;
         private Boolean isActive;
         @OneToMany(mappedBy = "userOne", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
         @JsonIgnore

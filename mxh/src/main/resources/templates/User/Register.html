@@ -23,22 +23,21 @@
                         <h3 class="pt-3 font-weight-bold">Register</h3>
                     </div>
                     <div class="panel-body p-3">
-                        <form  id="formRegister" th:action="@{/register}" th:object="${userDTO}" method="post" >
+                        <form id="formRegister">
                             <div class="form-group">
-                                <div class="input-field"> <span class="far fa-user p-2"></span> <input  id="inputFirstName" type="text" placeholder="Enter your First Name" th:field="*{firstName}"> </div>
+                                <div class="input-field"> <span class="far fa-user p-2"></span> <input  id="inputFirstName" type="text" placeholder="Enter your First Name"> </div>
                                 <div class="error errorFirstName" style="color:red; display:none;"></div>
                             </div>
                             <div class="form-group">
-                                <div class="input-field"> <span class="far fa-user p-2"></span> <input  id="inputLastName" type="text" placeholder="Enter your Last Name" th:field="*{lastName}"> </div>
+                                <div class="input-field"> <span class="far fa-user p-2"></span> <input  id="inputLastName" type="text" placeholder="Enter your Last Name"> </div>
                                 <div class="error errorLastName" style="color:red; display:none;"></div>
                             </div>
                             <div class="form-group py-2">
-                                <div class="input-field"> <span class="far fa-user p-2"></span> <input  id="inputEmail4" type="text" placeholder="Username or Email" th:field="*{email}"> </div>
+                                <div class="input-field"> <span class="far fa-user p-2"></span> <input  id="inputEmail4" type="text" placeholder="Username or Email"> </div>
                                 <div class="error errorEmail" style="color:red; display:none;"></div>
-                                <div th:errors="*{email}" class="text-danger error" th:if="${#fields.hasErrors('email')}"></div> 
                             </div>
                             <div class="form-group py-1 pb-2">
-                                <div class="input-field"> <span class="fas fa-lock px-2"></span> <input id="inputPassword4" type="password"  placeholder="Enter your Password" th:field="*{password}"></div>
+                                <div class="input-field"> <span class="fas fa-lock px-2"></span> <input id="inputPassword4" type="password"  placeholder="Enter your Password"></div>
                                 <div class="error errorPassword" style="color:red;"></div>
                             </div>
                             <div class="form-group py-1 pb-2">

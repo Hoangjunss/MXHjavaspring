@@ -1,6 +1,6 @@
 package com.baconbao.mxh.DTO;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,6 +17,6 @@ public class UserDTO {
     private String firstName;
     private String password;
     private String email;
-    private Date createAt;
+    private LocalDateTime createAt;
     private Boolean isActive;
 }

@@ -1,5 +1,6 @@
 package com.baconbao.mxh.Services.ServiceImpls.User;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -51,6 +52,7 @@ public class UserServiceImpl implements UserService {
             if (username.getId() == null) {
                 username.setId(getGenerationId());
                 username.setPassword(passwordEncoder.encode(username.getPassword())); // mã hóa mật khẩu
+                username.setCreateAt(LocalDateTime.now());
             }
             userRepository.save(username); // lưu user vào database
         } catch (DataIntegrityViolationException e) {
