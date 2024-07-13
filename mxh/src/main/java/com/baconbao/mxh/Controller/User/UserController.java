@@ -258,15 +258,13 @@ public class UserController {
             User userOne = userService.findByEmail(userDetails.getUsername());
             User userTwo = userService.findById(userId);
             Relationship relationship = relationalService.findRelationship(userOne, userTwo);
-            if (relationship == null || (relationship != null && relationship.getStatus().getId() == 4)) {
-                relationship.setUserOne(userOne);
-                relationship.setUserTwo(userTwo);
-                relationship.setStatus(statusRelationshipService.findById(status));
-                relationalService.addUser(relationship);
-            } else {
-                relationship.setStatus(statusRelationshipService.findById(status));
-                relationalService.addUser(relationship);
+            if (relationship == null) {
+                relationship = new Relationship();
             }
+            relationship.setUserOne(userOne);
+            relationship.setUserTwo(userTwo);
+            relationship.setStatus(statusRelationshipService.findById(status));
+            relationalService.addUser(relationship);
 
             boolean success = true;// result of the update logic
             long newStatus = status; // the new status after update

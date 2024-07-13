@@ -140,7 +140,7 @@
                             <!-- Thêm bạn bè -->
                             <li class="nav-item s-nav dropdown friend-request">
                                 <a th:href="@{/listfriend}" class="nav-link nav-links rm-drop-mobile drop-w-tooltip" data-toggle="dropdown" data-placement="bottom" data-title="Friend Requests" role="button" aria-haspopup="true" aria-expanded="false">
-                                    <img th:src="@{images/icons/navbar/group.png}" class="friend-request" alt="navbar icon"> <span class="badge-pill badge-primary"><p th:text="'Lời mời kết bạn (' + ${countFriend} +')'"></p></span>
+                                    <img th:src="@{images/icons/navbar/group.png}" class="friend-request" alt="navbar icon"> <span class="badge-pill badge-primary"><p id="friend-request-count">Lời mời kết bạn (0)</p></span>
                                 </a>
                             </li>
                             <!-- Thông báo -->
@@ -222,7 +222,7 @@
                                     </div>
                                     <div class="intro mt-4" id="operationuser">
                                         <div class="d-flex" id="setfriend">
-                                            <form th:action="@{/setfriend}" method="post" class="relationship-form" id="setfrienduser">
+                                            <form class="relationship-form" id="setfrienduser">
 
                                             </form>
                                             <button type="button" class="btn btn-start-chat" data-toggle="modal" data-target="#newMessageModal" onclick="openmessage()">

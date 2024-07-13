@@ -107,78 +107,37 @@ document.addEventListener("DOMContentLoaded", function () {
         reader.readAsDataURL(event.target.files[0]);
     }
 
-    const relationshipForms = document.querySelectorAll('.relationship-form');
-    relationshipForms.forEach(form => {
-        const buttons = form.querySelectorAll('.relationship-btn');
-        buttons.forEach(button => {
-            button.addEventListener('click', function () {
-                const userId = form.querySelector('input[name="id"]').value;
-                const status = button.getAttribute('data-status');
-                alert(status + " " + userId);
-                fetch('/relationship', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        userId: userId,
-                        status: status
-                    })
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            updateButtons(form, data.newStatus);
-                        } else {
-                            alert('Failed to update relationship status');
-                        }
-                    })
-                    .catch(error => console.error('Error:', error));
-            });
-        });
+        // Gắn sự kiện submit cho form 'setfrienduser'
+    document.getElementById('setfrienduser').addEventListener('submit', function(event) {
+        event.preventDefault(); // Ngăn chặn hành động mặc định của form
+
+        const form = event.target; // Lấy thẻ form được submit
+        const userId = form.querySelector('input[name="id"]').value;
+        const status = form.querySelector('.relationship-btn').getAttribute('data-status'); // Đổi button thành thẻ form
+
+        alert(status + " " + userId);
+
+        fetch('/relationship', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                userId: userId,
+                status: status
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                updateButtons(form, data.newStatus);
+            } else {
+                alert('Cập nhật trạng thái mối quan hệ thất bại');
+            }
+        })
+        .catch(error => console.error('Lỗi:', error));
     });
 
-    function updateButtons(form, newStatus) {
-        const buttons = form.querySelectorAll('.relationship-btn');
-        buttons.forEach(button => {
-            switch (newStatus) {
-                case 1:
-                    if (button.getAttribute('data-status') == '1') {
-                        button.textContent = 'Send to';
-                        const recallButton = document.createElement('button');
-                        recallButton.type = 'button';
-                        recallButton.classList.add('btn', 'btn-follow', 'mr-3', 'relationship-btn');
-                        recallButton.setAttribute('data-status', '4');
-                        recallButton.innerHTML = "<i class='bx bx-plus'></i>Recall";
-                        recallButton.addEventListener('click', function () {
-                            updateButtons(form, 4);
-                        });
-                        form.appendChild(recallButton);
-                    } else {
-                        button.remove();
-                    }
-                    break;
-                case 2:
-                    if (button.getAttribute('data-status') == '2') {
-                        button.textContent = 'UnFriend';
-                        button.setAttribute('data-status', '4');
-                    } else {
-                        button.remove();
-                    }
-                    break;
-                case 4:
-                    if (button.getAttribute('data-status') == '4') {
-                        button.textContent = 'Add Friend';
-                        button.setAttribute('data-status', '1');
-                        const recallButton = form.querySelector('button[data-status="4"]');
-                        if (recallButton) recallButton.remove();
-                    } else {
-                        button.remove();
-                    }
-                    break;
-            }
-        });
-    }
 });
 
 function displayEditProfileDetails() {
@@ -248,32 +207,32 @@ function updateRelationship(data) {
     } else if (!data.isOwnUser) {
         if (data.relationship == null) {
             fromSetFriend.innerHTML += `
-                <input type="hidden" name="id" th:value="${data.user.id}">
+                <input type="hidden" name="id" value="${data.user.id}">
                 <button type="button" class="btn btn-follow mr-3 relationship-btn" data-status="1"><i class='bx bx-plus'></i>Add Friend</button>
             `;
         } else if (data.relationship != null && data.relationship.status.id == 4) {
             fromSetFriend.innerHTML += ` 
-                <input type="hidden" name="id" th:value="${data.user.id}">
+                <input type="hidden" name="id" value="${data.user.id}">
                 <button type="button" class="btn btn-follow mr-3 relationship-btn" data-status="1"><i class='bx bx-plus'></i>Add Friend</button>
                                            
             `;
         } else if (data.relationship != null && data.relationship.status.id != 4) {
             if (data.relationship.status.id == 1 && data.relationship.userOne.id == data.user.id) {
                 fromSetFriend.innerHTML += `
-                <input type="hidden" name="id" th:value="${data.user.id}">
+                <input type="hidden" name="id" value="${data.user.id}">
                 <button type="button" class="btn btn-follow mr-3 relationship-btn" data-status="2"><i class='bx bx-plus'></i>Accept</button>
                 <button type="button" class="btn btn-follow mr-3 relationship-btn" data-status="4"><i class='bx bx-plus'></i>Reject</button>
                                            
             `;
             } else if (data.relationship.status.id == 1 && data.relationship.userOne.id != data.user.id) {
                 fromSetFriend.innerHTML += `
-                    <input type="hidden" name="id" th:value="${data.user.id}">
+                    <input type="hidden" name="id" value="${data.user.id}">
                     <button type="button" class="btn btn-follow mr-3 relationship-btn"><i class='bx bx-plus'></i>Send to</button>
                     <button type="button" class="btn btn-follow mr-3 relationship-btn" data-status="4"><i class='bx bx-plus'></i>Recall</button>                
                 `;
             } else if (data.relationship.status.id == 2) {
                 fromSetFriend.innerHTML += `
-                    <input type="hidden" name="id" th:value="${data.user.id}">
+                    <input type="hidden" name="id" value="${data.user.id}">
                     <button type="button" class="btn btn-follow mr-3 relationship-btn" data-status="4"><i class='bx bx-plus'></i>UnFriend</button>
                                            
                 `;
@@ -327,4 +286,78 @@ function openmessage(){
     } else {
         window.location.href = '/messages';
     }
+}
+
+function handleRelationshipButtonClick(event) {
+    if (event.target.classList.contains('relationship-btn')) {
+        const button = event.target;
+        const form = button.closest('.relationship-form');
+        const userId = form.querySelector('input[name="id"]').value;
+        const status = button.getAttribute('data-status');
+        alert(status + " " + userId);
+        updateRelationshipStatus(userId, status, form);
+    }
+}
+
+function updateRelationshipStatus(userId, status, form) {
+    fetch('/relationship', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            userId: userId,
+            status: status
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            updateButtons(form, data.newStatus);
+        } else {
+            alert('Cập nhật trạng thái mối quan hệ thất bại');
+        }
+    })
+    .catch(error => console.error('Lỗi:', error));
+}
+
+
+function updateButtons(form, newStatus) {
+    alert(newStatus);
+    const buttons = form.querySelectorAll('.relationship-btn');
+    buttons.forEach(button => {
+        switch (newStatus) {
+            case 1:
+                if (button.getAttribute('data-status') == '1') {
+                    button.textContent = 'Send to';
+                    const recallButton = document.createElement('button');
+                    recallButton.type = 'button';
+                    recallButton.classList.add('btn', 'btn-follow', 'mr-3', 'relationship-btn');
+                    recallButton.setAttribute('data-status', '4');
+                    recallButton.innerHTML = "<i class='bx bx-plus'></i>Recall";
+                    form.appendChild(recallButton);
+                } else {
+                    button.remove();
+                }
+                break;
+            case 2:
+                if (button.getAttribute('data-status') == '2') {
+                    button.textContent = 'UnFriend';
+                    button.setAttribute('data-status', '4');
+                } else {
+                    button.remove();
+                }
+                break;
+            case 4:
+                if (button.getAttribute('data-status') == '4') {
+                    button.textContent = 'Add Friend';
+                    button.setAttribute('data-status', '1');
+                    const recallButton = form.querySelector('button[data-status="4"]');
+                    if (recallButton) recallButton.remove();
+                } else {
+                    button.remove();
+                }
+                break;
+        }
+    });
 }
