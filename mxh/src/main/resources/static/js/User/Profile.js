@@ -107,7 +107,53 @@ document.addEventListener("DOMContentLoaded", function () {
         reader.readAsDataURL(event.target.files[0]);
     }
 
+    document.getElementById('form_edit_account').addEventListener('submit', function(event) {
+        event.preventDefault();
+    
+        const form = event.target;
+        const firstName = form.querySelector('input[name="firstName"]').value.trim();
+        const lastName = form.querySelector('input[name="lastName"]').value.trim();
+        const email = form.querySelector('input[name="email"]').value.trim();
 
+        // Kiểm tra nếu có bất kỳ trường nào bị bỏ trống
+        if (!firstName || !lastName || !email) {
+            alert('Vui lòng điền đầy đủ thông tin.');
+            return; // Dừng xử lý tiếp theo nếu có trường bị bỏ trống
+        }
+
+        const formData = {
+            firstName: firstName,
+            lastName: lastName,
+            email: email
+        };
+        // Ẩn thông báo lỗi trước khi gửi request
+        document.getElementById('email-error').style.display = 'none';
+    
+        fetch('/editaccount', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Edit account successful');
+                // Tải lại trang hiện tại
+                window.location.reload();
+            } else if (data.message === "Email already exists") {
+                document.getElementById('email-error').style.display = 'block';
+            } else {
+                alert(data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An unexpected error occurred');
+        });
+    });
+    
 });
 
 function displayEditProfileDetails() {
@@ -148,9 +194,35 @@ function displayEditProfileDetails() {
         .catch(error => console.error('Error fetching abouts:', error));
 }
 
+function displayEditProfile(user){
+    const editProfile = document.getElementById('form_edit_account');
+    const editProfileHtml = `<div class="name_box">
+        <label>First Name</label>
+        <input type="text" name="firstName" value="${user.firstName}">
+    </div>
+    <div class="name_box">
+        <label>Last Name</label>
+        <input type="text" name="lastName" value="${user.lastName}">
+    </div>
+    <div class="name_box">
+        <label>Email</label>
+        <input type="text" name="email" value="${user.email}">
+        <p id="email-error" style="color: red; display: none;">Email already exists</p>
+    </div>
+    <button type="submit" id="submitBtn">Save</button>
+    `;
+    editProfile.innerHTML = editProfileHtml;
+    const overlayAdd = document.getElementById('edit_profile_user');
+    overlayAdd.style.display = "flex";
+}
+
 // Hàm đóng modal
 function closeEditProfileDetails() {
     const overlayAdd = document.getElementById('edit_profile');
+    overlayAdd.style.display = "none";
+}
+function closeEditProfile() {
+    const overlayAdd = document.getElementById('edit_profile_user');
     overlayAdd.style.display = "none";
 }
 
@@ -171,9 +243,10 @@ function updateRelationship(data) {
     const fromSetFriend = document.getElementById('setfrienduser');
     if (data.isOwnUser) {
         fromSetFriend.remove();
-        divsetfriend.innerHTML += `
-            <button type="button" class="btn btn-follow mr-3" id="editProfile"><i class='bx bx-plus'></i> Edit Profile</button>
-        `;
+        const userString = JSON.stringify(data.user).replace(/'/g, "&apos;");
+        divsetfriend.insertAdjacentHTML('afterbegin', `
+            <button type="button" class="btn btn-follow mr-3" id="editProfile" onclick='displayEditProfile(${userString})'><i class='bx bx-plus'></i> Edit Profile</button>
+        `);
     } else if (!data.isOwnUser) {
         if (data.relationship == null) {
             fromSetFriend.innerHTML += `

@@ -186,18 +186,15 @@ public class UserController {
     }
 
     @PostMapping("/editaccount")
-    public ResponseEntity<?> editaccount(@RequestParam("userDTO") UserDTO userDTO, Principal principal) {
+    public ResponseEntity<?> editaccount(@RequestBody UserDTO userDTO, Principal principal) {
         try {
-            UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());// lấy ra cái email
+            UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
             User user = userService.findByEmail(userDetails.getUsername());
             if (user.getEmail().equals(userDTO.getEmail())) {
-                // chuyen userDTO ve user
                 user.setFirstName(userDTO.getFirstName());
                 user.setLastName(userDTO.getLastName());
-                // luu lai user
                 userService.saveUser(user);
-                // quay ve trang chu
-                return ResponseEntity.ok(new ApiResponse(true, "Edit account successfull"));
+                return ResponseEntity.ok(new ApiResponse(true, "Edit account successful"));
             }
             if (userService.isEmailExist(userDTO.getEmail())) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponse(false, "Email already exists"));
@@ -206,14 +203,15 @@ public class UserController {
             user.setLastName(userDTO.getLastName());
             user.setEmail(userDTO.getEmail());
             userService.saveUser(user);
-            return ResponseEntity.ok(new ApiResponse(true, "Edit account successfull"));
-        }catch (CustomException e) {
+            return ResponseEntity.ok(new ApiResponse(true, "Edit account successful"));
+        } catch (CustomException e) {
             return new ResponseEntity<>(new ApiResponse(false, e.getErrorCode().getMessage()), e.getErrorCode().getStatusCode());
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(new ApiResponse(false, "An unexpected error occurred"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 
     // Lay duong dan anh de tai ve
     @GetMapping("/download")
@@ -376,7 +374,7 @@ public class UserController {
         }
     }
     
-    @PostMapping("/editprofile")
+    @PostMapping("/editprofiledetails")
     public String editProfile(@ModelAttribute("userAboutForm") UserAboutForm userAboutForm, Principal principal, Model model) {
         try {
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
@@ -531,7 +529,7 @@ public class UserController {
         }
     }
 
-    //?
+    /* //?
     @GetMapping("/editaccount")
     public ResponseEntity<?> editaccount(Principal principal) {
         try {
@@ -547,7 +545,7 @@ public class UserController {
             e.printStackTrace();
             return new ResponseEntity<>(new ApiResponse(false, "An unexpected error occurred"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }
+    } */
     
     // Lấy danh sách bạn bè
     @GetMapping("/friends")
