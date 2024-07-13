@@ -243,43 +243,57 @@ public class UserController {
     }
 
     @PostMapping("/relationship")
-    public ResponseEntity<?> relationship(@RequestBody Map<String, Object> payload, Principal principal) {
-        try {
-            Long userId = Long.parseLong(payload.get("userId").toString());
-            Long status = Long.parseLong(payload.get("status").toString());
-            UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
-            User userOne = userService.findByEmail(userDetails.getUsername());
-            User userTwo = userService.findById(userId);
-            Relationship relationship = relationalService.findRelationship(userOne, userTwo);
-            if (relationship == null) {
-                relationship = new Relationship();
-            }
-            relationship.setUserOne(userOne);
-            relationship.setUserTwo(userTwo);
-            relationship.setStatus(statusRelationshipService.findById(status));
-            relationalService.addUser(relationship);
-
-            if (status == 1L) {
-                String message = "You have a friend request from " + userOne.getFirstName() + " " + userOne.getLastName();
-                createNotification(userTwo, message);
-            }
-
-            boolean success = true;
-            long newStatus = status;
-
-            Map<String, Object> response = new HashMap<>();
-            response.put("success", success);
-            response.put("newStatus", newStatus);
-            response.put("relationship", relationship);
-
-            return ResponseEntity.ok(response);
-        }catch (CustomException e) {
-            return new ResponseEntity<>(new ApiResponse(false, e.getErrorCode().getMessage()), e.getErrorCode().getStatusCode());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(new ApiResponse(false, "An unexpected error occurred"), HttpStatus.INTERNAL_SERVER_ERROR);
+public ResponseEntity<?> relationship(@RequestBody Map<String, Object> payload, Principal principal) {
+    try {
+        Long userId = payload.get("userId") != null ? Long.parseLong(payload.get("userId").toString()) : null;
+        Long status = payload.get("status") != null ? Long.parseLong(payload.get("status").toString()) : null;
+        
+        if (userId == null) {
+            return new ResponseEntity<>(new ApiResponse(false, "userId is required"), HttpStatus.BAD_REQUEST);
         }
+        
+        // Kiểm tra status và xử lý khi status là null
+        if (status == null) {
+            return new ResponseEntity<>(new ApiResponse(false, "status is required"), HttpStatus.BAD_REQUEST);
+        }
+        
+        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+        User userOne = userService.findByEmail(userDetails.getUsername());
+        User userTwo = userService.findById(userId);
+        
+        Relationship relationship = relationalService.findRelationship(userOne, userTwo);
+        if (relationship == null) {
+            relationship = new Relationship();
+        }
+        relationship.setUserOne(userOne);
+        relationship.setUserTwo(userTwo);
+        relationship.setStatus(statusRelationshipService.findById(status));
+        relationalService.addUser(relationship);
+
+        if (status == 1L) {
+            String message = "Bạn nhận được lời mời kết bạn từ " + userOne.getFirstName() + " " + userOne.getLastName();
+            createNotification(userTwo, message);
+        }
+
+        boolean success = true;
+        long newStatus = status;
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", success);
+        response.put("newStatus", newStatus);
+        response.put("relationship", relationship);
+
+        return ResponseEntity.ok(response);
+    } catch (CustomException e) {
+        return new ResponseEntity<>(new ApiResponse(false, e.getErrorCode().getMessage()), e.getErrorCode().getStatusCode());
+    } catch (Exception e) {
+        e.printStackTrace();
+        return new ResponseEntity<>(new ApiResponse(false, "An unexpected error occurred"), HttpStatus.INTERNAL_SERVER_ERROR);
     }
+}
+
+
+
 
     @MessageMapping("/friend.add")
     @SendTo("/queue/addfriend")

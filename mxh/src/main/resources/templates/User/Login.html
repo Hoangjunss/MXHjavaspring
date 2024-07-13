@@ -9,10 +9,12 @@
         <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css">
         <link th:href="@{/css/User/Login.css}" rel="stylesheet">
+        <link rel="stylesheet" href="https://unpkg.com/nprogress@0.2.0/nprogress.css">
         <!-- JavaScript -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
         <script th:src="@{/js/User/Account/Login.js}"></script>
+        <script src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.js"></script>
     </head>
 <body>
     <div class="container">
@@ -33,13 +35,32 @@
                                 <div class="error errorPassword" style="color:red;"></div>
                             </div>
                             <div class="form-inline"><a href="#" id="forgot" class="font-weight-bold">Forgot password?</a> </div>
-                            <button type="submit" class="btn btn-primary btn-block mt-3">Login</button>
-                            <div class="text-center pt-4 text-muted">Don't have an account? <a th:href="@{/register}">Sign up</a> </div>
+                            <button type="submit" class="btn btn-primary btn-block mt-3" id="loginBtn">Login</button>
+                            <div class="text-center pt-4 text-muted">Don't have an account? <a th:href="@{/register}" id="registerLink">Sign up</a> </div>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <script>
+        // Bắt đầu thanh tiến trình khi load trang
+        NProgress.start();
+
+        // Start progress bar when clicking the Sign up link
+        document.getElementById('registerLink').addEventListener('click', function() {
+            NProgress.start();
+        });
+
+        // Bắt đầu thanh tiến trình khi người dùng nhấp vào nút đăng nhập
+        document.getElementById('loginBtn').addEventListener('click', function() {
+            NProgress.start();
+        });
+
+        // Stop progress bar when the page finishes loading
+        window.addEventListener('load', function() {
+            NProgress.done();
+        });
+    </script>
 </body>
 </html>

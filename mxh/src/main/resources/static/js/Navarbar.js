@@ -117,12 +117,15 @@ function fetchFriendRequestsCount() {
         .then(response => response.json())
         .then(data => {      
             // Tạo một biến để lưu số lượng lời mời kết bạn
-            let friendRequestsCount = 0;
+            let friendRequestsCount = data.countFriend;
             
             data.relationships.forEach(relationship => {
-                if (relationship.userTwo.id === data.loggedInUser.id) {
+
+                if (relationship.userOne.id === data.loggedInUser.id) {
+                    // nếu userOne là user hiện tại (user gửi lời mời kết bạn) thì giảm biến đếm lên 1
+                    
                     console.log('Friend requests count:', data.countFriend);
-                    friendRequestsCount = data.countFriend;
+                    friendRequestsCount--;
                 }
             });
 
