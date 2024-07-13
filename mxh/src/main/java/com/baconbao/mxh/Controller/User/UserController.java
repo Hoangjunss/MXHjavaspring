@@ -84,17 +84,72 @@ public class UserController {
     @Autowired
     private RelationshipService relationshipService;
 
-    @GetMapping("/login")
+    //GET PAGE 
+    @GetMapping("/login") //Login
     public String showLoginPage() {
         return "/User/Login";
     }
 
-    // Nhan duong dan va trang ve trang register.html trong templates
-    @GetMapping("/register")
+    @GetMapping("/register") //Register
     public String showRegisterPage(Model model) {
         UserDTO userDTO = new UserDTO();
         model.addAttribute("userDTO", userDTO);
         return "/User/Register";
+    }
+
+    @GetMapping("/hello") //Add friend
+    public String addFriendTest() {
+        return "addfriend";
+    }
+    
+    @GetMapping("/uploaduserimg") //Upload Image user
+    public String uploadUserImgPage() {
+        return "test";
+    }
+    
+    @GetMapping("/hellosearch") //Search User - test
+    public String searchUserPage() {
+        return "searchuser";
+    }
+    
+    @GetMapping("/search") //Search user 
+    public String showSearchResults() {
+        return "searchuser";
+    }
+    
+    @GetMapping("/listfriend") //List friend
+    public String getMethodName() {
+        return "seefriend";
+    }
+    
+    @GetMapping("/profile") //Profile
+    public String getProfilePage(){
+        return "User/profile";
+    }
+
+    @GetMapping("/Confirm") //Confirm
+    public String confirm() {
+        return "User/Confirm";
+    }
+
+    @GetMapping("/confirmUser")
+    public String confirmUser(@RequestParam long token, Model model) { // @RequestParam lấy giá trị từ url (lấy giá trị của token từ url
+        try {
+            VerifycationToken verifycationToken = verifycationTokenService.findById(token);
+            // neu token het han thi khi an vo chuyen ve register
+            if (verifycationToken == null)
+                return "User/Register";
+            // else xac nhan token va chuyen ve index
+            verifycationTokenService.confirmUser(token);
+            return "User/Login";
+        } catch (CustomException e) {
+            model.addAttribute("errorConfirmUser", e.getErrorCode().getMessage());
+            return "error"; // trả về trang lỗi hoặc một thông báo lỗi
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.addAttribute("errorConfirmUser", "An unexpected error occurred");
+            return "error"; // trả về trang lỗi hoặc một thông báo lỗi
+        }
     }
 
     @GetMapping("/usercurrent")
@@ -103,7 +158,6 @@ public class UserController {
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());// lấy ra cái email
             User user = userService.findByEmail(userDetails.getUsername());
             Hibernate.initialize(user.getImage());
-            
             return ResponseEntity.ok(user);
         }catch (CustomException e) {
             return new ResponseEntity<>(new ApiResponse(false, e.getErrorCode().getMessage()), e.getErrorCode().getStatusCode());
@@ -121,7 +175,7 @@ public class UserController {
             }
             userDTO.setCreateAt(LocalDateTime.now());
             User user = userService.getUser(userDTO);
-            verifycationTokenService.registerUser(user); // gửi mail xác nhận
+            verifycationTokenService.registerUser(user);
             return ResponseEntity.ok(new ApiResponse(true, "Register successful"));
         } catch (CustomException e) {
             return new ResponseEntity<>(new ApiResponse(false, e.getErrorCode().getMessage()), e.getErrorCode().getStatusCode());
@@ -131,45 +185,6 @@ public class UserController {
         }
     }
 
-    // SỬA IF
-    /*
-     * @PostMapping("/editaccount")
-     * // path varriablr la thong tin duoc lay sau dau / cua url
-     * public String editAccount(Principal principal, Model model, UserDTO userDTO,
-     * BindingResult result) {
-     * // k@gmail.com 1
-     * // user id=1
-     * UserDetails userDetails =
-     * userDetailsService.loadUserByUsername(principal.getName());// lấy ra cái
-     * email
-     * User user = userService.findByEmail(userDetails.getUsername());
-     * // user tai khoan dang xet truoc thay doi email: kn26066. userDTO: th:field :
-     * // kn26066.
-     * if (user.getEmail().equals(userDTO.getEmail())) {
-     * // chuyen userDTO ve user
-     * user.setFirstName(userDTO.getFirstName());
-     * user.setLastName(userDTO.getLastName());
-     * // luu lai user
-     * userService.saveUser(user);
-     * // quay ve trang chu
-     * return "redirect:/";
-     * } else {
-     * if (userService.isEmailExist(userDTO.getEmail())) {
-     * result.rejectValue("email", null, "Email already exists"); // email la ten
-     * cua truong, null la ten cua
-     * // loi, Email already exists la noi dung loi
-     * return "editaccount";
-     * } else {
-     * user.setFirstName(userDTO.getFirstName());
-     * user.setLastName(userDTO.getLastName());
-     * user.setEmail(userDTO.getEmail());
-     * userService.saveUser(user);
-     * return "redirect:/";
-     * }
-     * }
-     * }
-     */
-    
     @PostMapping("/editaccount")
     public ResponseEntity<?> editaccount(@RequestParam("userDTO") UserDTO userDTO, Principal principal) {
         try {
@@ -197,27 +212,6 @@ public class UserController {
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(new ApiResponse(false, "An unexpected error occurred"), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    // Duong dan xac nhan
-    @GetMapping("/confirmUser")
-    public String confirmUser(@RequestParam long token, Model model) { // @RequestParam lấy giá trị từ url (lấy giá trị của token từ url
-        try {
-            VerifycationToken verifycationToken = verifycationTokenService.findById(token);
-            // neu token het han thi khi an vo chuyen ve register
-            if (verifycationToken == null)
-                return "User/Register";
-            // else xac nhan token va chuyen ve index
-            verifycationTokenService.confirmUser(token);
-            return "User/Login";
-        } catch (CustomException e) {
-            model.addAttribute("errorConfirmUser", e.getErrorCode().getMessage());
-            return "error"; // trả về trang lỗi hoặc một thông báo lỗi
-        } catch (Exception e) {
-            e.printStackTrace();
-            model.addAttribute("errorConfirmUser", "An unexpected error occurred");
-            return "error"; // trả về trang lỗi hoặc một thông báo lỗi
         }
     }
 
@@ -253,7 +247,6 @@ public class UserController {
         try {
             Long userId = Long.parseLong(payload.get("userId").toString());
             Long status = Long.parseLong(payload.get("status").toString());
-            System.out.println(userId + " " + status + " /RELATIONSHIP");
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
             User userOne = userService.findByEmail(userDetails.getUsername());
             User userTwo = userService.findById(userId);
@@ -272,107 +265,9 @@ public class UserController {
             Map<String, Object> response = new HashMap<>();
             response.put("success", success);
             response.put("newStatus", newStatus);
-            Notification notification = new Notification();
-            notification.setMessage(
-                    "You have a friend request from " + userOne.getFirstName() + " " + userOne.getLastName());
-            notification.setUser(userTwo);
-            notification.setChecked(false);
-            notification.setUrl("/friends");
-            notificationService.saveNotification(notification);
+            String message = "You have a friend request from " + userOne.getFirstName() + " " + userOne.getLastName();
+            createNotification(userTwo, message);
             return ResponseEntity.ok(response);
-        }catch (CustomException e) {
-            return new ResponseEntity<>(new ApiResponse(false, e.getErrorCode().getMessage()), e.getErrorCode().getStatusCode());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(new ApiResponse(false, "An unexpected error occurred"), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    // dat trang thai cua 2 user
-    /*
-     * @PostMapping("/setfriend")
-     * public String setFriend(Principal principal, @RequestParam long id) {
-     * // tim user dang thao tac
-     * UserDetails userDetails =
-     * userDetailsService.loadUserByUsername(principal.getName());// lấy ra cái
-     * email
-     * User user = userService.findByEmail(userDetails.getUsername());
-     * // lay user bang id duoc post len
-     * User friend = userService.findById(id);
-     * 
-     * // tim kiem moi quan he giua 2 user
-     * Relationship relationshipUser = relationalService.findRelationship(user,
-     * friend);
-     * StatusRelationship status = new StatusRelationship();
-     * // neu giua 2 user khong co moi quan he
-     * if (relationshipUser.getStatus() == null) {
-     * // lay status co moi quan he la 1 de gan cho user
-     * status = statusRelationshipService.findById(1L);
-     * relationshipUser = new Relationship();
-     * } else { // neu giua 2 user co quan he truoc do
-     * // lay trang thai hien tai cua 2 user la gi
-     * status = relationshipUser.getStatus();
-     * // do la chi co 4 trang thai nen se set lai trang thai ban dau
-     * if (status.getId() == 4) {
-     * status = statusRelationshipService.findById(1L);
-     * } else {
-     * // neu trang thai tu 1 den 3 thi nang len mot bac
-     * status = statusRelationshipService.findById(status.getId() + 1);
-     * }
-     * }
-     * // luu moi quan he
-     * relationshipUser.setStatus(status);
-     * relationshipUser.setUserOne(user);
-     * relationshipUser.setUserTwo(friend);
-     * relationalService.addUser(relationshipUser);
-     * Notification notification = new Notification();
-     * notification.setMessage("You have a friend request from " +
-     * user.getFirstName() + " " + user.getLastName());
-     * notification.setUser(friend);
-     * notification.setChecked(false);
-     * notification.setUrl("/friends");
-     * notificationService.saveNotification(notification);
-     * return "redirect:/";
-     * }
-     */
-
-    @PostMapping("/setfriend")
-    public ResponseEntity<?> setfriend(Principal principal, @RequestParam long id) {
-        try {
-            // tim user dang thao tac
-            UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());// lấy ra cái email
-            User user = userService.findByEmail(userDetails.getUsername());
-            // lay user bang id duoc post len
-            User friend = userService.findById(id);
-            Relationship relationshipUser = relationalService.findRelationship(user, friend);
-            StatusRelationship status = new StatusRelationship();
-            if (relationshipUser == null) {
-                // lay status co moi quan he la 1 de gan cho user
-                status = statusRelationshipService.findById(1L);
-                relationshipUser = new Relationship();
-            } else { // neu giua 2 user co quan he truoc do
-                     // lay trang thai hien tai cua 2 user la gi
-                status = relationshipUser.getStatus();
-                // do la chi co 4 trang thai nen se set lai trang thai ban dau
-                if (status.getId() == 4) {
-                    status = statusRelationshipService.findById(1L);
-                } else {
-                    // neu trang thai tu 1 den 3 thi nang len mot bac
-                    status = statusRelationshipService.findById(status.getId() + 1);
-                }
-            }
-            relationshipUser.setStatus(status);
-            relationshipUser.setUserOne(user);
-            relationshipUser.setUserTwo(friend);
-            relationalService.addUser(relationshipUser);
-            Notification notification = new Notification();
-            notification.setMessage("You have a friend request from " + user.getFirstName() + " " + user.getLastName());
-            notification.setUser(friend);
-            notification.setChecked(false);
-            notification.setUrl("/friends");
-            notificationService.saveNotification(notification);
-
-            return ResponseEntity.ok(new ApiResponse(true, "setfriend successfull"));
         }catch (CustomException e) {
             return new ResponseEntity<>(new ApiResponse(false, e.getErrorCode().getMessage()), e.getErrorCode().getStatusCode());
         } catch (Exception e) {
@@ -427,11 +322,6 @@ public class UserController {
         }
     }
 
-    @GetMapping("/hello")
-    public String addFriendTest() {
-        return "addfriend";
-    }
-
     /*
      * @PostMapping("/uploaduserimg")
      * public String uploadUserImg(@RequestParam("image") MultipartFile image,
@@ -480,11 +370,6 @@ public class UserController {
             return new ResponseEntity<>(new ApiResponse(false, "An unexpected error occurred"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-    @GetMapping("/uploaduserimg")
-    public String uploadUserImgPage() {
-        return "test";
-    }
     
     @PostMapping("/editprofile")
     public String editProfile(@ModelAttribute("userAboutForm") UserAboutForm userAboutForm, Principal principal, Model model) {
@@ -502,20 +387,14 @@ public class UserController {
             return "redirect:/profile?id="+user.getId();
         } catch (CustomException e) {
             model.addAttribute("errorEditProfile", e.getErrorCode().getMessage());
-            return "error"; // trả về trang lỗi hoặc một thông báo lỗi
+            return "error";
         } catch (Exception e) {
             e.printStackTrace();
             model.addAttribute("errorEditProfile", "An unexpected error occurred");
-            return "error"; // trả về trang lỗi hoặc một thông báo lỗi
+            return "error";
         }
     }
 
-    @GetMapping("/hellosearch")
-    public String searchUserPage() {
-        return "searchuser";
-    }
-
-    // tìm kiếm bạn bè theo tên và hiển thị ra danh sách bạn bè. SỬA DÒNG FOR
     @PostMapping("/usersearch")
     public String searchUser(@RequestParam("username") String username, RedirectAttributes redirectAttributes,
             Model model, Principal principal) {
@@ -525,7 +404,6 @@ public class UserController {
             List<User> users = userService.searchUser(username);
             List<User> friends = new ArrayList<>();
             List<User> notFriends = new ArrayList<>();
-    
             for (User u : users) {
                 if (u.getId() == user.getId()) {
                     continue; // Bỏ qua user hiện tại
@@ -547,18 +425,12 @@ public class UserController {
             return "redirect:/search";
         } catch (CustomException e) {
             model.addAttribute("errorSearchUser", e.getErrorCode().getMessage());
-            return "error"; // trả về trang lỗi hoặc một thông báo lỗi
+            return "error";
         } catch (Exception e) {
             e.printStackTrace();
             model.addAttribute("errorSearchUser", "An unexpected error occurred");
-            return "error"; // trả về trang lỗi hoặc một thông báo lỗi
+            return "error";
         }
-    }
-
-    @GetMapping("/search")
-    public String showSearchResults(Model model) {
-        // Model sẽ chứa các thuộc tính từ RedirectAttributes trong phương thức POST
-        return "searchuser";
     }
 
     //Lấy danh sách thông báo
@@ -671,11 +543,6 @@ public class UserController {
             return new ResponseEntity<>(new ApiResponse(false, "An unexpected error occurred"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-    @GetMapping("/listfriend")
-    public String getMethodName() {
-        return "seefriend";
-    }
     
     // Lấy danh sách bạn bè
     @GetMapping("/friends")
@@ -720,7 +587,6 @@ public class UserController {
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
             User user = userService.findByEmail(userDetails.getUsername());
             int count = relationalService.countMutualFriends(user, friendId);
-            System.out.println("count :" + count);
             Map<String, Integer> response = new HashMap<>();
             response.put("count", count);
             return ResponseEntity.ok(response);
@@ -755,13 +621,6 @@ public class UserController {
             return new ResponseEntity<>(new ApiResponse(false, "An unexpected error occurred"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-    //Lấy trang User/profile.html
-    @GetMapping("/profile")
-    public String getProfilePage(){
-        return "User/profile";
-    }
-
 
     @GetMapping("/countfriend")
     public ResponseEntity<?> countFriend(Principal principal) {
@@ -844,9 +703,13 @@ public class UserController {
         }
     }
 
-    @GetMapping("/Confirm")
-    public String confirm() {
-        return "User/Confirm";
+    public void createNotification(User user, String message){
+        Notification notification = new Notification();
+            notification.setMessage(message);
+            notification.setUser(user);
+            notification.setChecked(false);
+            notification.setUrl("/listfriend");
+            notificationService.saveNotification(notification);
     }
 }
 
