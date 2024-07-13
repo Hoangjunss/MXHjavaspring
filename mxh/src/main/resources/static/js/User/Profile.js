@@ -333,6 +333,7 @@ function updateButtons(form, newStatus) {
         }
     });
 }
+
 document.addEventListener('click', function(event) {
     if (event.target.closest('.relationship-form') && event.target.classList.contains('relationship-btn')) {
         handleRelationshipButtonClick(event);

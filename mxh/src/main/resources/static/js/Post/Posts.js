@@ -95,7 +95,7 @@ function displayPosts(data) {
 function createPostContent(post) {
     const postDisplay = $('#displaycontent');
     const imgUser = post.user.image!=null ?  post.user.image.urlImage : '/images/users/DefaultAvtUser.png';
-    const imgPost = post.image != null ? post.image.urlImage : '#';
+    const imgPost = post.image != null ? post.image.urlImage : null;
     const countComment = post.comments ? post.comments.length : 0;
 
     const displayPost= `
@@ -117,9 +117,9 @@ function createPostContent(post) {
                 <div id="displaycontent">
                     <div class="mt-3 ">
                         <p>${post.content}</p>
-                        <div class="d-block mt-3">
-                            <img id="postImage" class="post-content" style="display: none;">
-                        </div>
+                        ${imgPost ? `<div class="d-block mt-3">
+                            <img id="postImage" class="post-content" src="${imgPost}">
+                        </div>` : ''}
                     </div>
                 </div>
                 <div class="mb-3">
@@ -182,9 +182,4 @@ function createPostContent(post) {
         </ul>
     `;
     postDisplay.append(displayPost);
-    var postImage = document.getElementById('postImage');
-    if (imgPost && imgPost.trim() !== '') {
-        postImage.src = imgPost;
-        postImage.style.display = 'block'; // Hiển thị ảnh nếu imgPost có giá trị
-    }
 }

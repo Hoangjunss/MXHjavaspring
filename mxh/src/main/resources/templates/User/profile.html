@@ -16,6 +16,7 @@
 
     <!-- Styles -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <link th:href="@{/css/post/style.css}" rel="stylesheet">
     <link th:href="@{/css/post/components.css}" rel="stylesheet">
     <link th:href="@{/css/User/profile.css}" rel="stylesheet">
@@ -351,18 +352,34 @@
         </div>
     </div>
     <!-- End Message -->
+
     <!-- Edit Details -->
     <div class="profiledetails animate-overlay" id="edit_profile">
         <div  class="dialog">
             <div class="edit_profile_container">
                 <button class="close" onclick="closeEditProfileDetails()"><i class="fa-solid fa-xmark"></i></button>
                 <h2>Edit Profile Details</h2>
-                <form th:action="@{/editprofile}" th:object="${userAboutForm}" method="post" class="form_edit_profile" id="form_edit_profile">
+                <form th:action="@{/editaccount}" th:object="${userAboutForm}" method="post" class="form_edit_profile" id="form_edit_account">
+                    
+                </form>
+            </div>            
+        </div>
+    </div>
+
+    <!-- Edit Details -->
+    <div class="profiledetails animate-overlay" id="edit_profile">
+        <div  class="dialog">
+            <div class="edit_profile_container">
+                <button class="close" onclick="closeEditProfileDetails()"><i class="fa-solid fa-xmark"></i></button>
+                <h2>Edit Profile Details</h2>
+                <form th:action="@{/editprofiledetails}" th:object="${userAboutForm}" method="post" class="form_edit_profile" id="form_edit_profile">
                     <!-- Các trường dữ liệu sẽ được thêm vào đây từ JavaScript -->
                 </form>
             </div>            
         </div>
     </div>
+
+
 
     <!-- Comments -->
     <div class="border-top pt-3 hide-comments" id="commentslist" data-id="" style="display: none;">
