@@ -107,36 +107,6 @@ document.addEventListener("DOMContentLoaded", function () {
         reader.readAsDataURL(event.target.files[0]);
     }
 
-        // Gắn sự kiện submit cho form 'setfrienduser'
-    document.getElementById('setfrienduser').addEventListener('submit', function(event) {
-        event.preventDefault(); // Ngăn chặn hành động mặc định của form
-
-        const form = event.target; // Lấy thẻ form được submit
-        const userId = form.querySelector('input[name="id"]').value;
-        const status = form.querySelector('.relationship-btn').getAttribute('data-status'); // Đổi button thành thẻ form
-
-        alert(status + " " + userId);
-
-        fetch('/relationship', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                userId: userId,
-                status: status
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                updateButtons(form, data.newStatus);
-            } else {
-                alert('Cập nhật trạng thái mối quan hệ thất bại');
-            }
-        })
-        .catch(error => console.error('Lỗi:', error));
-    });
 
 });
 
@@ -288,17 +258,17 @@ function openmessage(){
     }
 }
 
+// Hàm để xử lý sự kiện click của các button
 function handleRelationshipButtonClick(event) {
-    if (event.target.classList.contains('relationship-btn')) {
-        const button = event.target;
-        const form = button.closest('.relationship-form');
-        const userId = form.querySelector('input[name="id"]').value;
-        const status = button.getAttribute('data-status');
-        alert(status + " " + userId);
-        updateRelationshipStatus(userId, status, form);
-    }
+    const button = event.target;
+    const form = button.closest('.relationship-form');
+    const userId = form.querySelector('input[name="id"]').value;
+    const status = button.getAttribute('data-status');
+    alert(status + " " + userId); // Dùng cho mục đích gỡ lỗi
+    updateRelationshipStatus(userId, status, form);
 }
 
+// Hàm để cập nhật trạng thái mối quan hệ
 function updateRelationshipStatus(userId, status, form) {
     fetch('/relationship', {
         method: 'POST',
@@ -321,11 +291,12 @@ function updateRelationshipStatus(userId, status, form) {
     .catch(error => console.error('Lỗi:', error));
 }
 
-
+// Hàm để cập nhật nút button
 function updateButtons(form, newStatus) {
-    alert(newStatus);
     const buttons = form.querySelectorAll('.relationship-btn');
     buttons.forEach(button => {
+        button.removeEventListener('click', handleRelationshipButtonClick); // Xóa các sự kiện click cũ
+        button.addEventListener('click', handleRelationshipButtonClick); // Thêm lại sự kiện click mới
         switch (newStatus) {
             case 1:
                 if (button.getAttribute('data-status') == '1') {
@@ -335,6 +306,7 @@ function updateButtons(form, newStatus) {
                     recallButton.classList.add('btn', 'btn-follow', 'mr-3', 'relationship-btn');
                     recallButton.setAttribute('data-status', '4');
                     recallButton.innerHTML = "<i class='bx bx-plus'></i>Recall";
+                    recallButton.addEventListener('click', handleRelationshipButtonClick); // Gắn sự kiện click cho button mới
                     form.appendChild(recallButton);
                 } else {
                     button.remove();
@@ -361,3 +333,8 @@ function updateButtons(form, newStatus) {
         }
     });
 }
+document.addEventListener('click', function(event) {
+    if (event.target.closest('.relationship-form') && event.target.classList.contains('relationship-btn')) {
+        handleRelationshipButtonClick(event);
+    }
+});
