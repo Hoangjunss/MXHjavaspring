@@ -1633,3 +1633,19 @@ img.settings-icon {
 .weather-forecast .col-md-3:last-child {
     border-right: 0px;
 }
+.friend-request-icon {
+    position: relative; /* Ensure relative positioning for absolute child */
+    display: inline-block;
+}
+
+#friend-request-count {
+    position: absolute;
+    display: inline-block;
+    padding: 0.2em 0.4em;
+    color: red; 
+    font-weight: bold;
+    font-size: 0.8em; 
+    border-radius: 50%;
+    text-align: center;
+    line-height: 1; 
+}
