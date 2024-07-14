@@ -71,14 +71,15 @@ function fetchNotificationsList(dropContent) {
     fetch('/api/notifications', { method: 'GET' })
         .then(response => response.json())
         .then(data => {
+            console.log(data);
             dropContent.innerHTML = '';
             data.notifications.forEach(notification => {
                 const notificationElement = document.createElement('li');
                 notificationElement.innerHTML = `
-                    <a href="${notification.url}" class="notification-link">
+                    <a href="/profile?id=${notification.userSend.id}" class="notification-link">
                         <div class="col-md-2 col-sm-2 col-xs-2">
                             <div class="notify-img">
-                                <img src="#" alt="notification user image">
+                                <img src="${notification.userSend.image ? `${notification.userSend.image.urlImage}` : `/images/users/DefaultAvtUser.png`}" alt="notification user image">
                             </div>
                         </div>
                         <div class="col-md-10 col-sm-10 col-xs-10">

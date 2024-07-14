@@ -445,7 +445,9 @@
 
 #send-message {
     font-size: 1.5rem;
-    color: #007bff
+    color: #007bff;
+    background-color: white;
+    border: none
 }
 
 .message-search .search-input {
@@ -471,7 +473,12 @@
     color: #007bff;
     font-size: 1.4rem;
 }
-
+.messenger-icons
+{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
 .messenger-icons img {
     width: 28px;
 }
@@ -499,6 +506,7 @@
 #message-frame .content .message-input .wrap .messenger-input input,
 .messenger-input .search-button {
     border-radius: 30px;
+    width: 88%;
     background-color: transparent;
     border: 0;
 }
