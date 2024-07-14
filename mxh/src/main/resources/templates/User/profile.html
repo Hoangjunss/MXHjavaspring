@@ -354,6 +354,7 @@
     <!-- End Message -->
 
     <!-- Edit Details -->
+    <div class="overlay" id="overlay"></div>
     <div class="profiledetails animate-overlay" id="edit_profile_user">
         <div  class="dialog">
             <div class="edit_profile_container">
@@ -373,7 +374,7 @@
                 <button class="close" onclick="closeEditProfileDetails()"><i class="fa-solid fa-xmark"></i></button>
                 <h2>Edit Profile Details</h2>
                 <form th:action="@{/editprofiledetails}" th:object="${userAboutForm}" method="post" class="form_edit_profile" id="form_edit_profile">
-                    <!-- Các trường dữ liệu sẽ được thêm vào đây từ JavaScript -->
+
                 </form>
             </div>            
         </div>
