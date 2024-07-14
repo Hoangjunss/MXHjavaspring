@@ -270,7 +270,7 @@ public ResponseEntity<?> relationship(@RequestBody Map<String, Object> payload, 
 
         if (status == 1L) {
             String message = "Bạn nhận được lời mời kết bạn từ " + userOne.getFirstName() + " " + userOne.getLastName();
-            createNotification(userTwo, message);
+            createNotification(userTwo, userOne, message);
         }
 
         boolean success = true;
@@ -720,10 +720,11 @@ public ResponseEntity<?> relationship(@RequestBody Map<String, Object> payload, 
         }
     }
 
-    public void createNotification(User user, String message){
+    public void createNotification(User user, User userSend,String message){
         Notification notification = new Notification();
             notification.setMessage(message);
             notification.setUser(user);
+            notification.setUserSend(userSend);
             notification.setChecked(false);
             notification.setUrl("/listfriend");
             notificationService.saveNotification(notification);
