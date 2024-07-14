@@ -62,51 +62,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /* END API */
 
-    function previewImagePost(event) {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                const imagePreview = document.getElementById('imagePreview');
-                imagePreview.src = e.target.result;
-                imagePreview.style.display = 'block';
-            }
-            reader.readAsDataURL(file);
-        }
-    }
-    function previewImage(event) {
-        var reader = new FileReader();
-        reader.onload = function () {
-            const previewBox = document.getElementById('preview_box');
-            let showImage = document.createElement('img');
-            showImage.src = reader.result;
-            showImage.classList.add('preview');
-            let deleteButton = document.createElement('span');
-
-            let icon = document.createElement('i');
-            icon.className = "fa-solid fa-xmark";
-            deleteButton.appendChild(icon);
-            let imageBox = document.createElement('div');
-            imageBox.classList.add('imageBox');
-            imageBox.appendChild(showImage);
-            imageBox.appendChild(deleteButton);
-            previewBox.appendChild(imageBox);
-
-            document.getElementById('imageInput').style.display = 'none';
-            const ImageBox = document.getElementById('image_box_item');
-
-            removeMessage(ImageBox);
-
-            deleteButton.addEventListener('click', () => {
-                imageBox.remove();
-                document.getElementById('imageInput').value = '';
-                document.getElementById('imageInput').style.display = 'block';
-            });
-
-        };
-        reader.readAsDataURL(event.target.files[0]);
-    }
-
     document.getElementById('form_edit_account').addEventListener('submit', function(event) {
         event.preventDefault();
     
@@ -220,7 +175,6 @@ function displayEditProfile(user){
     overlay.style.display = "block";
 }
 
-// Hàm đóng modal
 function closeEditProfileDetails() {
     const overlayAdd = document.getElementById('edit_profile');
     overlayAdd.style.display = "none";
@@ -297,7 +251,7 @@ function updateUserAbouts(data) {
     if (data.userAbouts != null) {
         data.userAbouts.forEach(userAbout => {
             data.abouts.forEach(about => {
-                if (userAbout.about.id == about.id) {
+                if (userAbout.about.id == about.id && userAbout.description!= "") {
                     aboutUserUI.innerHTML += `
                     <div class="intro-item d-flex justify-content-between align-items-center">
                                         <p class="intro-title text-muted"><i class='bx bx-briefcase text-primary'></i> 

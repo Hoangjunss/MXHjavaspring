@@ -14,6 +14,12 @@ document.addEventListener("DOMContentLoaded", function () {
         var status = $('#StatusId').val();
         var content = $('#contentPost').val();
     var image = $('#imagePost')[0].files[0];
+    var contentt = content.trimStart().trimEnd();
+    // Kiểm tra nếu nội dung chỉ chứa khoảng trắng
+    if (contentt === '' && !image) {
+        alert('Please share your thoughts');
+        return;
+    }
 
     formData.append('StatusId', status);
     formData.append('content', content);
@@ -182,4 +188,17 @@ function createPostContent(post) {
         </ul>
     `;
     postDisplay.append(displayPost);
+}
+
+function previewImage(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const imagePreview = document.getElementById('imagePreview');
+            imagePreview.src = e.target.result;
+            imagePreview.style.display = 'block';
+        }
+        reader.readAsDataURL(file);
+    }
 }
