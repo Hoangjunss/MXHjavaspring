@@ -145,10 +145,13 @@ function displayEditProfileDetails() {
 
             const overlayAdd = document.getElementById('edit_profile');
             overlayAdd.style.display = "flex";
-            const overlay = document.getElementById('overlay');
+            const overlay = document.getElementById('overlay_details');
             overlay.style.display = "block";
         })
         .catch(error => console.error('Error fetching abouts:', error));
+
+    // Ngăn lướt trang khi lớp phủ hiện ra
+    document.body.style.overflow = "hidden";
 }
 
 function displayEditProfile(user){
@@ -171,21 +174,31 @@ function displayEditProfile(user){
     editProfile.innerHTML = editProfileHtml;
     const overlayAdd = document.getElementById('edit_profile_user');
     overlayAdd.style.display = "flex";
-    const overlay = document.getElementById('overlay');
+    const overlay = document.getElementById('overlay_user');
     overlay.style.display = "block";
+
+    // Ngăn lướt trang khi lớp phủ hiện ra
+    document.body.style.overflow = "hidden";
 }
 
 function closeEditProfileDetails() {
     const overlayAdd = document.getElementById('edit_profile');
     overlayAdd.style.display = "none";
-    const overlay = document.getElementById('overlay');
-            overlay.style.display = "none";
+
+    const overlay = document.getElementById('overlay_details');
+    overlay.style.display = "none";
+
+    // Cho phép lướt trang khi lớp phủ bị tắt
+    document.body.style.overflow = "auto";
 }
 function closeEditProfile() {
     const overlayAdd = document.getElementById('edit_profile_user');
     overlayAdd.style.display = "none";
-    const overlay = document.getElementById('overlay');
-            overlay.style.display = "none";
+    const overlay = document.getElementById('overlay_user');
+    overlay.style.display = "none";
+            
+    // Cho phép lướt trang khi lớp phủ bị tắt
+    document.body.style.overflow = "auto";
 }
 
 function updateProfile(data) {

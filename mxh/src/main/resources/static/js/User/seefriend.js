@@ -118,8 +118,9 @@ function fetchMutualFriendsCount(friendId) {
     return fetch(`/mutualFriend?friendId=${friendId}`)
         .then(response => response.json())
         .then(data => {
+            
             console.log('Mutual friends count:', data.count);
-            return data.count;
+            return data.count || 0; // Trả về số lượng bạn chung hoặc 0 nếu không có
         })
         .catch(error => {
             console.error('Error fetching mutual friends count:', error);

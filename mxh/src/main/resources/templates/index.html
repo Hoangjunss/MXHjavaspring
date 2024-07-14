@@ -141,7 +141,10 @@
                             <!-- Thêm bạn bè -->
                             <li class="nav-item s-nav dropdown friend-request">
                                 <a th:href="@{/listfriend}" class="nav-link nav-links rm-drop-mobile drop-w-tooltip" data-toggle="dropdown" data-placement="bottom" data-title="Friend Requests" role="button" aria-haspopup="true" aria-expanded="false" id="friend-request">
-                                    <img th:src="@{images/icons/navbar/group.png}" class="friend-request" alt="navbar icon"> <span class="badge-pill badge-primary"><p id="friend-request-count">Lời mời kết bạn (0)</p></span>
+                                    <span class="badge-pill badge-primary">
+                                        <img class="friend-request-icon" src="/images/icons/navbar/group.png" alt="Friend Request Icon">
+                                        <span id="friend-request-count">0</span>
+                                    </span>
                                 </a>
                             </li>
                             <!-- Thông báo -->

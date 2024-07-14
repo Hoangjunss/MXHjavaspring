@@ -46,10 +46,14 @@ document.addEventListener("DOMContentLoaded", function () {
             e.stopPropagation();
         });
 
-        // Fetch and display friend request count
-    fetchFriendRequestsCount().then(count => {
-        document.getElementById('friend-request-count').innerText = `Lời mời kết bạn (${count})`;
-    });
+        fetchFriendRequestsCount().then(count => {
+            const friendRequestCountElement = document.getElementById('friend-request-count');
+            if (count > 0) {
+                friendRequestCountElement.textContent = `(${count})`;
+            } else {
+                friendRequestCountElement.textContent = ''; // Hide count if zero
+            }
+        });
 });
 
 function updateNotificationsIsCheck(data) {
