@@ -271,6 +271,8 @@ public ResponseEntity<?> relationship(@RequestBody Map<String, Object> payload, 
         if (status == 1L) {
             String message = "Bạn nhận được lời mời kết bạn từ " + userOne.getFirstName() + " " + userOne.getLastName();
             createNotification(userTwo, message);
+
+
         }
 
         boolean success = true;
