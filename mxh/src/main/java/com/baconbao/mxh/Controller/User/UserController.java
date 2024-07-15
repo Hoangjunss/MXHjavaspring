@@ -340,30 +340,7 @@ public ResponseEntity<?> relationship(@RequestBody Map<String, Object> payload, 
         }
     }
 
-    /*
-     * @PostMapping("/uploaduserimg")
-     * public String uploadUserImg(@RequestParam("image") MultipartFile image,
-     * Principal principal) {
-     * try {
-     * UserDetails userDetails =
-     * userDetailsService.loadUserByUsername(principal.getName());
-     * User user = userService.findByEmail(userDetails.getUsername());
-     * 
-     * Image img = new Image();
-     * Map<String, Object> resultMap = cloudinaryService.upload(image);
-     * String imageUrl = (String) ""src/main/resources/static/images/users/default.png"";
-     * img.setUrlImage(imageUrl);
-     * imageService.saveImage(img);
-     * Image tmpImg = imageService.findByImage(img.getUrlImage());
-     * user.setImage(tmpImg);
-     * userService.saveUser(user);
-     * 
-     * } catch (Exception e) {
-     * e.printStackTrace();
-     * }
-     * return "redirect:/";
-     * }
-     */
+   
     @PostMapping("/uploaduserimg")
     public ResponseEntity<?> uploaduserimg(@RequestParam("image") MultipartFile image, Principal principal) {
         try {
@@ -544,24 +521,7 @@ public ResponseEntity<?> relationship(@RequestBody Map<String, Object> payload, 
         }
     }
 
-    /* //?
-    @GetMapping("/editaccount")
-    public ResponseEntity<?> editaccount(Principal principal) {
-        try {
-            // tim user theo id
-            UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
-            User user = userService.findByEmail(userDetails.getUsername());
-            // chuyen user ve userDTO
-            UserDTO userDTO = userService.getUserDTO(user);
-            return ResponseEntity.ok(userDTO);
-        }catch (CustomException e) {
-            return new ResponseEntity<>(new ApiResponse(false, e.getErrorCode().getMessage()), e.getErrorCode().getStatusCode());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(new ApiResponse(false, "An unexpected error occurred"), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    } */
-    
+
     // Lấy danh sách bạn bè
     @GetMapping("/friends")
     public ResponseEntity<?> friends(Principal principal) {
