@@ -74,6 +74,12 @@ function sendMessage() {
     var messageText = $('<p>').text(message.message.content);
     chatContent.append(messageText);
     $('#chatMessages').append(chatContent);
+    var contact = $('li.contact[data-user-id="' + message.message.id + '"]');
+    if (contact.length > 0) {
+        contact.remove();
+        contact.find('p.preview').text(message.message.content);
+        $('ul.conversations').prepend(contact);
+    }
     // Gửi tin nhắn tới `/app/chat.send` trên WebSocket
     stompClient.send("/app/chat.send", {}, JSON.stringify(message));
 }
@@ -158,6 +164,7 @@ function displayChatMessage(message) {
 
 // Cập nhật liên hệ trong danh sách liên hệ khi có tin nhắn mới
 function displayChatMessageFrame(message) {
+    alert("hi");
     const countMessageNotSeen = $('span.unread-messages[data-id="' + message.id + '"]');
     if (countMessageNotSeen.length > 0) {
         // Retrieve the current text content and try to parse it as an integer
@@ -185,8 +192,9 @@ function displayChatMessageFrame(message) {
             console.log(contact);
         }
     }
-    var contact = $('li.contact[data-user-id="' + message.id + '"]');
+    var contact = $('li.contact[data-user-id="' + message.userFrom.id+ '"]');
     if (contact.length > 0) {
+        alert("hii");
         contact.remove();
         contact.find('p.preview').text(message.content);
         $('ul.conversations').prepend(contact);

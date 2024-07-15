@@ -90,6 +90,9 @@ document.addEventListener("DOMContentLoaded", function () {
                                 </a>
                             </li>
             `)
+            if ($(window).width() >= 758) {
+                display.find('a').removeAttr('href');
+            }
                         frame.append(display);
                     }
                 })
