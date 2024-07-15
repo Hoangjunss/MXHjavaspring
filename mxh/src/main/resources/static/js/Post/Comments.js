@@ -1,5 +1,5 @@
 function showComment(id){
-    fetch('/comment?id='+id,{
+    fetch('/api/comment?id='+id,{
         method:'GET'
     })  .then(response => response.json()) 
     .then(data => {
@@ -106,7 +106,7 @@ function showComment(id){
         };
     
         $.ajax({
-            url: '/commenter',
+            url: '/api/commenter',
             method: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(data),

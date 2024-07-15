@@ -1,4 +1,4 @@
-package com.baconbao.mxh.Controller.Message;
+package com.baconbao.mxh.Controller.Api.Message;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.baconbao.mxh.DTO.ApiResponse;
 import com.baconbao.mxh.Exceptions.CustomException;
@@ -32,7 +33,7 @@ import com.baconbao.mxh.Services.Service.User.RelationshipService;
 import com.baconbao.mxh.Services.Service.User.StatusRelationshipService;
 import com.baconbao.mxh.Services.Service.User.UserService;
 
-@Controller
+@RestController
 public class MessageController {
     @Autowired
     private MessageService messageService;
@@ -45,145 +46,9 @@ public class MessageController {
     @Autowired
     private StatusRelationshipService statusRelationshipService;
 
-    @GetMapping("/messagesmobil")
-    public String getMessagePageMobile() {
-        return "/User/Message/Mobile/Message";
-    }
-
-    @GetMapping("/chatmobile")
-    public String getMessagePageChatMobile() {
-        return "/User/Message/Mobile/Chat";
-    }
-
-    @GetMapping("/messages")
-    public String getMessagePage(Model model, Principal principal) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());// Lấy ra email của người
-                                                                                            // dùng đang đăng nhập
-        User user = userService.findByEmail(userDetails.getUsername());
-        int countFriend = relationshipService.countfriend(user, statusRelationshipService.findById(1L));
-        model.addAttribute("countFriend", countFriend);
-        return "/User/Message/Web/Messager";
-    }
-
-    // Lấy đoạn tin nhắn của 2 user. CHUA RAO DIEU KIEN KHONG TIN NHAN
-    @GetMapping("/send")
-    public String getMessagePage(@RequestParam Long id, Model model, Principal principal) { // id là id của user cần
-                                                                                            // nhắn tin với user đang
-                                                                                            // login hiện tại
-        // Lấy user đang login
-        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
-        User user1 = userService.findByEmail(userDetails.getUsername());
-        // Tìm user theo id
-        User user2 = userService.findById(id);
-        List<Message> listMessage = messageService.messageFromUser(user1, user2);
-        model.addAttribute("listmessage", listMessage);
-        return "sendmessage";
-    }
-
-    // Ở giao diện mobile - hiển thị danh sách bạn bè nhắn tin. SUA DONG FOR
-    /*
-     * @GetMapping("/messagermobile")
-     * public String getMessagePageMobile(Model model, Principal principal) {
-     * // Lấy user đang login
-     * UserDetails userDetails =
-     * userDetailsService.loadUserByUsername(principal.getName());
-     * User user = userService.findByEmail(userDetails.getUsername());
-     * // Lấy tất cả mối quan hệ và tin nhắn
-     * List<RelationshipDTO> relationshipDTOs =
-     * relationshipService.findAllRelationshipsAndMessagesByUserId(user);
-     * // Sắp xếp danh sách theo ngày nhắn gần nhất
-     * relationshipDTOs = relationshipService.orderByCreateAt(relationshipDTOs);
-     * // Lưu vào model
-     * model.addAttribute("relationships", relationshipDTOs);
-     * return "/User/Message/Mobile/Message";
-     * }
-     */
-
-    // Ở giao diện mobile - lấy đoạn tin nhắn cụ thể của 2 user
-   /*  @GetMapping("/chatmobile")
-    public String getChatPageMobile(@RequestParam Long id, Model model, Principal principal) {
-        // Lấy user đang login
-        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
-        User userFrom = userService.findByEmail(userDetails.getUsername());
-        // Tìm user theo id
-        User userTo = userService.findById(id);
-        // Lấy Danh sách tin nhắn của 2 bên
-        List<Message> listMessage = messageService.messageFromUser(userFrom, userTo);
-        Relationship relationship = relationshipService.findRelationship(userFrom, userTo);
-        messageService.seenMessage(relationship, userFrom);
-        // Trả về html những thôngtin cần thiết để hiển thị
-        model.addAttribute("messages", listMessage);
-        model.addAttribute("relation", relationship);
-        model.addAttribute("userTo", userTo);
-        model.addAttribute("currentUser", userFrom); // Add the current user to the model
-        return "/User/Message/Mobile/Chat";
-    } */
-
-    // Ở giao diện website - lấy danh sách quan hệ và hiển thị đoạn chat của người
-    // gần nhấT. SỬA DÒNG FOR
-   /*  @GetMapping("/messager")
-    public String getMessagePage(Model model, Principal principal) {
-        // Lấy user đang login
-        UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
-        User user = userService.findByEmail(userDetails.getUsername());
-        // Tìm kiếm tất cả mối quan hệ của user
-        List<Relationship> relationships = relationshipService.findAllByUserOneId(user);
-        // Tạo đối tượng DTO để lưu những thông tin cần.
-        List<RelationshipDTO> relationshipDTOs = new ArrayList<>();
-        // Duyệt qua tất cả mối quan hệ
-        for (Relationship relationship : relationships) {
-            // Kiểm tra nếu có tin nhắn trong mối quan hệ thì lấy tin nhắn cuối cùng của mối
-            // quan hệ
-            if (relationship.getMessages() != null) {
-                int count;
-                // Nếu user đang login nằm ở userONE của mối quan hệ thì lấy tin nhắn gần với
-                // hiện tại nhất của mối quan hệ
-                if (relationship.getUserOne().getId() == user.getId()) {
-                    count = messageService.CountMessageBetweenTwoUserIsSeen(relationship.getUserTwo(),
-                            relationship.getUserOne());
-                    Message message = messageService.findLatestMessage(user, relationship.getUserTwo());
-                    RelationshipDTO dto = new RelationshipDTO(relationship.getId(), relationship.getUserTwo().getId(),
-                            relationship.getUserTwo().getLastName() + " " + relationship.getUserTwo().getFirstName(),
-                            message.getContent(), count, message.getCreateAt());
-                    relationshipDTOs.add(dto);
-                }
-                // Tương tự userTwo
-                else if (relationship.getUserTwo().getId() == user.getId()) {
-                    count = messageService.CountMessageBetweenTwoUserIsSeen(relationship.getUserOne(),
-                            relationship.getUserTwo());
-                    Message message = messageService.findLatestMessage(user, relationship.getUserOne());
-                    RelationshipDTO dto = new RelationshipDTO(relationship.getId(), relationship.getUserOne().getId(),
-                            relationship.getUserOne().getLastName() + " " + relationship.getUserOne().getFirstName(),
-                            message.getContent(), count, message.getCreateAt());
-                    relationshipDTOs.add(dto);
-                }
-            }
-
-        }
-        // Sắp xếp danh sách theo ngày nhắn gần nhất
-        relationshipDTOs = relationshipService.orderByCreateAt(relationshipDTOs);
-        // Từ danh sách đã sắp xếp lấy phần tử đầu tiên của danh sách để tìm quan hệ
-        Relationship relationship = relationshipService.findById(relationshipDTOs.get(0).getId());
-        // Từ quan hệ tìm tiếp đoạn tin nhắn của quan hệ đó
-        List<Message> listMessage = messageService.messageFromUser(relationship.getUserOne(),
-                relationship.getUserTwo());
-        // Trả về html những thôngtin cần thiết để hiển thị
-        model.addAttribute("listmessage", listMessage);
-        model.addAttribute("relationships", relationshipDTOs);
-        // Kiểm tra trong mối quan hệ userlogin ở vị trí one hay two để hiển thị thông
-        // tin của người đối diện đang chat
-        if (user.getId() == relationship.getUserOne().getId()) {
-            model.addAttribute("userTo", relationship.getUserTwo());
-        } else {
-            model.addAttribute("userTo", relationship.getUserOne());
-        }
-        model.addAttribute("relation", relationship);
-        model.addAttribute("currentUser", user); // Add the current user to the model
-        return "/User/Message/Web/Messager";
-    } */
 
     // Ở giao diện website - phản hồi dưới dạng JSON cho ajax
-    @PostMapping("/chat")
+    @PostMapping("//api/chat")
     public ResponseEntity<?> getChatMessages(@RequestParam("id") Long userId, Principal principal) {
         Map<String, Object> response = new HashMap<>();
         try {
@@ -264,22 +129,10 @@ public class MessageController {
         messageService.seenMessage(relationship, currentUser);
     }
 
-    @PostMapping("/searchmessage")
-    public ResponseEntity<?> searchMessage(@RequestBody String name) {
-        try {
-            List<Message> messages = new ArrayList<>();
-            messages = messageService.findByContent(name);
-            return ResponseEntity.ok(messages);
-        } catch (CustomException e) {
-            return new ResponseEntity<>(new ApiResponse(false, e.getErrorCode().getMessage()), e.getErrorCode().getStatusCode());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(new ApiResponse(false, "An unexpected error occurred"), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+   
 
  
-    @GetMapping("/messagermobile")
+    @GetMapping("/api/messagermobile")
     public ResponseEntity<?> mmobile( Principal principal) {
         Map<String, Object> response = new HashMap<>();
         try {
@@ -303,7 +156,7 @@ public class MessageController {
             return new ResponseEntity<>(new ApiResponse(false, "An unexpected error occurred"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @GetMapping("/chat")
+    @GetMapping("/api/chat")
     public ResponseEntity<?> mobile(@RequestParam("id") Long userId, Principal principal) {
         Map<String, Object> response = new HashMap<>();
         try {

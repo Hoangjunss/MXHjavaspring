@@ -1,4 +1,4 @@
-package com.baconbao.mxh.Controller.User;
+package com.baconbao.mxh.Controller.Api.User;
 
 import java.io.IOException;
 import java.security.Principal;
@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
@@ -58,7 +59,7 @@ import com.baconbao.mxh.Services.Service.User.StatusRelationshipService;
 import com.baconbao.mxh.Services.Service.User.UserAboutService;
 import com.baconbao.mxh.Services.Service.User.UserService;
 
-@Controller
+@RestController
 @RequestMapping("/")
 public class UserController {
     @Autowired
@@ -84,55 +85,9 @@ public class UserController {
     @Autowired
     private RelationshipService relationshipService;
 
-    //GET PAGE 
-    @GetMapping("/login") //Login
-    public String showLoginPage() {
-        return "/User/Login";
-    }
+  
 
-    @GetMapping("/register") //Register
-    public String showRegisterPage(Model model) {
-        UserDTO userDTO = new UserDTO();
-        model.addAttribute("userDTO", userDTO);
-        return "/User/Register";
-    }
-
-    @GetMapping("/hello") //Add friend
-    public String addFriendTest() {
-        return "addfriend";
-    }
-    
-    @GetMapping("/uploaduserimg") //Upload Image user
-    public String uploadUserImgPage() {
-        return "test";
-    }
-    
-    @GetMapping("/hellosearch") //Search User - test
-    public String searchUserPage() {
-        return "searchuser";
-    }
-    
-    @GetMapping("/search") //Search user 
-    public String showSearchResults() {
-        return "searchuser";
-    }
-    
-    @GetMapping("/listfriend") //List friend
-    public String getMethodName() {
-        return "seefriend";
-    }
-    
-    @GetMapping("/profile") //Profile
-    public String getProfilePage(){
-        return "User/profile";
-    }
-
-    @GetMapping("/Confirm") //Confirm
-    public String confirm() {
-        return "User/Confirm";
-    }
-
-    @GetMapping("/confirmUser")
+    @GetMapping("/api/confirmUser")
     public String confirmUser(@RequestParam long token, Model model) { // @RequestParam lấy giá trị từ url (lấy giá trị của token từ url
         try {
             VerifycationToken verifycationToken = verifycationTokenService.findById(token);
@@ -152,7 +107,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("/usercurrent")
+    @GetMapping("/api/usercurrent")
     public ResponseEntity<?> userCurrent(Principal principal) {
         try {
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());// lấy ra cái email
@@ -167,7 +122,7 @@ public class UserController {
         }
     }
 
-    @PostMapping("/register")
+    @PostMapping("/api/register")
     public ResponseEntity<?> register(@RequestBody UserDTO userDTO) {
         try {
             if (userService.isEmailExist(userDTO.getEmail())) {
@@ -185,7 +140,7 @@ public class UserController {
         }
     }
 
-    @PostMapping("/editaccount")
+    @PostMapping("/api/editaccount")
     public ResponseEntity<?> editaccount(@RequestBody UserDTO userDTO, Principal principal) {
         try {
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
@@ -214,7 +169,7 @@ public class UserController {
 
 
     // Lay duong dan anh de tai ve
-    @GetMapping("/download")
+    @GetMapping("/api/download")
     public ResponseEntity<Resource> downloadFile(@RequestParam("public_id") String publicId) throws IOException {
         try {
             // Lay url tren duong dan anh de tai ve
@@ -240,7 +195,7 @@ public class UserController {
         }
     }
 
-    @PostMapping("/relationship")
+    @PostMapping("/api/relationship")
 public ResponseEntity<?> relationship(@RequestBody Map<String, Object> payload, Principal principal) {
     try {
         Long userId = payload.get("userId") != null ? Long.parseLong(payload.get("userId").toString()) : null;
@@ -341,7 +296,7 @@ public ResponseEntity<?> relationship(@RequestBody Map<String, Object> payload, 
     }
 
    
-    @PostMapping("/uploaduserimg")
+    @PostMapping("/api/uploaduserimg")
     public ResponseEntity<?> uploaduserimg(@RequestParam("image") MultipartFile image, Principal principal) {
         try {
             // tim user dang thao tac
@@ -365,71 +320,12 @@ public ResponseEntity<?> relationship(@RequestBody Map<String, Object> payload, 
             return new ResponseEntity<>(new ApiResponse(false, "An unexpected error occurred"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    
-    @PostMapping("/editprofiledetails")
-    public String editProfile(@ModelAttribute("userAboutForm") UserAboutForm userAboutForm, Principal principal, Model model) {
-        try {
-            UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
-            User user = userService.findByEmail(userDetails.getUsername());
-            for (UserAboutDTO userAboutDTO : userAboutForm.getUserAboutDTOs()) {
-                About about = aboutService.findById(userAboutDTO.getAboutId());
-                UserAbout userAbout = new UserAbout();
-                userAbout.setUser(user);
-                userAbout.setAbout(about);
-                userAbout.setDescription(userAboutDTO.getDescription());
-                userAboutService.save(userAbout);
-            }
-            return "redirect:/profile?id="+user.getId();
-        } catch (CustomException e) {
-            model.addAttribute("errorEditProfile", e.getErrorCode().getMessage());
-            return "error";
-        } catch (Exception e) {
-            e.printStackTrace();
-            model.addAttribute("errorEditProfile", "An unexpected error occurred");
-            return "error";
-        }
-    }
+  
 
-    @PostMapping("/usersearch")
-    public String searchUser(@RequestParam("username") String username, RedirectAttributes redirectAttributes,
-            Model model, Principal principal) {
-        try {
-            UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
-            User user = userService.findByEmail(userDetails.getUsername());
-            List<User> users = userService.searchUser(username);
-            List<User> friends = new ArrayList<>();
-            List<User> notFriends = new ArrayList<>();
-            for (User u : users) {
-                if (u.getId() == user.getId()) {
-                    continue; // Bỏ qua user hiện tại
-                }
-                Relationship relationship = relationalService.findRelationship(user, u);
-                if (relationship != null) {
-                    if (relationship.getStatus().getId() == 4) {
-                        notFriends.add(u);
-                    } else {
-                        friends.add(u);
-                    }
-                } else {
-                    notFriends.add(u);
-                }
-            }
-            redirectAttributes.addFlashAttribute("friends", friends);
-            redirectAttributes.addFlashAttribute("notFriends", notFriends);
-            System.out.println("Not Friends : ");
-            return "redirect:/search";
-        } catch (CustomException e) {
-            model.addAttribute("errorSearchUser", e.getErrorCode().getMessage());
-            return "error";
-        } catch (Exception e) {
-            e.printStackTrace();
-            model.addAttribute("errorSearchUser", "An unexpected error occurred");
-            return "error";
-        }
-    }
+   
 
     //Lấy danh sách thông báo
-    @GetMapping("/api/notifications")
+    @GetMapping("//api/notifications")
     public ResponseEntity<?> getNotifications(Principal principal) {
         try {
             Map<String, Object> response = new HashMap<>();
@@ -447,7 +343,7 @@ public ResponseEntity<?> relationship(@RequestBody Map<String, Object> payload, 
     }
 
     // Chấp nhận yêu cầu kết bạn
-    @PostMapping("/acceptFriendRequest")
+    @PostMapping("/api/acceptFriendRequest")
     public ResponseEntity<?> acceptFriendRequest(@RequestBody Map<String, Object> payload, Principal principal) {
         try {
             Long userId = Long.parseLong(payload.get("userId").toString());
@@ -471,7 +367,7 @@ public ResponseEntity<?> relationship(@RequestBody Map<String, Object> payload, 
     }
 
     //Xóa bạn
-    @PostMapping("/deleteFriend")
+    @PostMapping("/api/deleteFriend")
     public ResponseEntity<?> deleteFriend(@RequestBody Map<String, Object> payload, Principal principal) {
         try {
             Long userId = Long.parseLong(payload.get("userId").toString());
@@ -494,7 +390,7 @@ public ResponseEntity<?> relationship(@RequestBody Map<String, Object> payload, 
     }
 
     //Kết bạn
-    @PostMapping("/addFriend")
+    @PostMapping("/api/addFriend")
     public ResponseEntity<?> addFriend(@RequestBody Map<String, Object> payload, Principal principal) {
         try {
             Long userId = Long.parseLong(payload.get("userId").toString());
@@ -523,7 +419,7 @@ public ResponseEntity<?> relationship(@RequestBody Map<String, Object> payload, 
 
 
     // Lấy danh sách bạn bè
-    @GetMapping("/friends")
+    @GetMapping("/api/friends")
     public ResponseEntity<?> friends(Principal principal) {
         Map<String, Object> response = new HashMap<>();
         try {
@@ -543,7 +439,7 @@ public ResponseEntity<?> relationship(@RequestBody Map<String, Object> payload, 
     }
 
     //Lấy danh sách không là bạn bè
-    @GetMapping("/notFriend")
+    @GetMapping("/api/notFriend")
     public ResponseEntity<?> notfriends(Principal principal) {
         try {
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
@@ -559,7 +455,7 @@ public ResponseEntity<?> relationship(@RequestBody Map<String, Object> payload, 
     }
 
     //Đếm số lượng bạn bè - LƯU Ý STATUS
-    @GetMapping("/mutualFriend")
+    @GetMapping("api/mutualFriend")
     public ResponseEntity<?> countFriend(@RequestParam Long friendId, Principal principal) {
         try {
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
@@ -600,7 +496,7 @@ public ResponseEntity<?> relationship(@RequestBody Map<String, Object> payload, 
         }
     }
 
-    @GetMapping("/countfriend")
+    @GetMapping("api/countfriend")
     public ResponseEntity<?> countFriend(Principal principal) {
         Map<String, Object> response = new HashMap<>();
         try {
@@ -621,7 +517,7 @@ public ResponseEntity<?> relationship(@RequestBody Map<String, Object> payload, 
     }
 
     //Lấy số lượng thông báo chưa xem
-    @GetMapping("/countNotificationsIsCheck")
+    @GetMapping("api/countNotificationsIsCheck")
     public ResponseEntity<Map<String, Object>> getNotificationsIsCheck(Principal principal) {
         try {
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());

@@ -1,4 +1,4 @@
-package com.baconbao.mxh.Controller.Posts;
+package com.baconbao.mxh.Controller.Api.Posts;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.baconbao.mxh.DTO.ApiResponse;
@@ -47,7 +48,7 @@ import com.baconbao.mxh.Services.Service.User.UserService;
 
 import lombok.AllArgsConstructor;
 
-@Controller
+@RestController
 @AllArgsConstructor
 public class PostsController {
     @Autowired
@@ -75,12 +76,9 @@ public class PostsController {
     @Autowired
     private NotificationService notificationService;
 
-   @GetMapping({" ", " /"})
-   public String getIndex(){
-    return "index";
-   }
+  
 
-    @PostMapping("/notificationsischecked")
+    @PostMapping("/api/notificationsischecked")
     public ResponseEntity<?> markNotificationsAsRead(Principal principal) {
         try {
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
@@ -96,7 +94,7 @@ public class PostsController {
     }
 
 
-    @PostMapping("/uploadpostuser")
+    @PostMapping("/api/uploadpostuser")
     public ResponseEntity<?> uploadpost(@RequestParam("content") String content, 
     @RequestParam("StatusId") Long status,
     @RequestParam(value = "image", required = false) MultipartFile image, Principal principal) {
@@ -135,7 +133,7 @@ public class PostsController {
         }
     }
  
-  @PostMapping("/hidepost")
+  @PostMapping("/api/hidepost")
     public ResponseEntity<?> markNotificationsAsRead( @RequestParam("id") long id) {
         try {
             Post post = postService.findById(id);
@@ -154,7 +152,7 @@ public class PostsController {
 
     
     
-    @PostMapping("/savepost")
+    @PostMapping("/api/savepost")
     public ResponseEntity<?> savepost( @RequestParam("id") long id, @RequestParam("content") String content) {
         try {
             Post post = postService.findById(id); // tìm post theo id
@@ -172,13 +170,9 @@ public class PostsController {
         }
     }
 
-    @GetMapping("/testpost")
-    public String test() {
-        return "editpost";
-    }
-
+  
     // Đăng comment của post
-    @PostMapping("/commenter")
+    @PostMapping("/api/commenter")
     public ResponseEntity<?> postComment(@RequestBody Map<String, Object> payload, Principal principal) {
         Map<String, Object> response = new HashMap<>();
         try {
@@ -223,7 +217,7 @@ public class PostsController {
 
   
     
-    @PostMapping("/postReplyComment")
+    @PostMapping("/api/postReplyComment")
     public ResponseEntity<?> postReplyComment(@RequestParam("id") Long id, @RequestParam("content") String content,
                                                         Principal principal) {
         try {
@@ -254,7 +248,7 @@ public class PostsController {
 
 
     // Lỗi truy vấn LIKE
-    @PostMapping("/interact")
+    @PostMapping("/api/interact")
     public ResponseEntity<?> handleInteraction(@RequestBody InteractionDTO interactionDTO, Principal principal) {
         try {
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
@@ -275,26 +269,10 @@ public class PostsController {
         }
     }
 
-    @GetMapping("/searchuser")
-    public String searchUser() {
-        return "searchuser";
-    }
 
-    @PostMapping("/searchuser")
-    public ResponseEntity<?> searchuser(@RequestBody String name) {
-        try {
-            List<com.baconbao.mxh.Models.test> id_users = testService.findByLastNameOrFirstName(name, name);
-            return ResponseEntity.ok(id_users);
-        } catch (CustomException e) {
-            return new ResponseEntity<>(new ApiResponse(false, e.getErrorCode().getMessage()), e.getErrorCode().getStatusCode());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(new ApiResponse(false, "An unexpected error occurred"), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
+    
     // Lấy ra tất cả bài viết
-    @GetMapping("/post")
+    @GetMapping("/api/post")
     public ResponseEntity<?> post(@RequestParam(required = false)  Long id) {
         Map<String, Object> response = new HashMap<>();
         List<Post> posts = new ArrayList<>();
@@ -315,14 +293,8 @@ public class PostsController {
         }
     }
 
-    @GetMapping("/testcountpost")
-    public String getCountQuantityComment(Model model){
-        List<Object[]> data = postService.findPostAndCommentAndReplyCount(postService.findById(7288845059375852L), true, statusService.findById(1L) );
-        model.addAttribute("data", data);
-        return "/testcountpost";
-    }
 
-    @GetMapping("/status") // Lấy ra tất cả trạng thái
+    @GetMapping("/api/status") // Lấy ra tất cả trạng thái
     public ResponseEntity<?> status() {
         Map<String, Object> response = new HashMap<>();
         try {
@@ -337,7 +309,7 @@ public class PostsController {
         }
     }
     
-    @GetMapping("/notifications") // Lấy ra tất cả thông báo
+    @GetMapping("/api/notifications") // Lấy ra tất cả thông báo
     public ResponseEntity<?> notifications(@RequestParam("id") Long userId, Principal principal) {
         try {
             Map<String, Object> response = new HashMap<>();
@@ -354,7 +326,7 @@ public class PostsController {
         }
     }
     
-    @GetMapping("/editpost")
+    @GetMapping("/api/editpost")
     public ResponseEntity<?> editpost(@RequestParam("id") Long id, Principal principal) {
         try {
             Post post = postService.findById(id);
@@ -366,7 +338,7 @@ public class PostsController {
             return new ResponseEntity<>(new ApiResponse(false, "An unexpected error occurred"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @GetMapping("/comment")
+    @GetMapping("/api/comment")
     public ResponseEntity<?> comment(@RequestParam Long id, Principal principal) {
         Map<String, Object> response = new HashMap<>();
         try {
