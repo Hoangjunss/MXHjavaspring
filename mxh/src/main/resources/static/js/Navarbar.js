@@ -46,10 +46,14 @@ document.addEventListener("DOMContentLoaded", function () {
             e.stopPropagation();
         });
 
-        // Fetch and display friend request count
-    fetchFriendRequestsCount().then(count => {
-        document.getElementById('friend-request-count').innerText = `Lời mời kết bạn (${count})`;
-    });
+        fetchFriendRequestsCount().then(count => {
+            const friendRequestCountElement = document.getElementById('friend-request-count');
+            if (count > 0) {
+                friendRequestCountElement.textContent = `(${count})`;
+            } else {
+                friendRequestCountElement.textContent = ''; // Hide count if zero
+            }
+        });
 });
 
 function updateNotificationsIsCheck(data) {
@@ -67,14 +71,15 @@ function fetchNotificationsList(dropContent) {
     fetch('/api/notifications', { method: 'GET' })
         .then(response => response.json())
         .then(data => {
+            console.log(data);
             dropContent.innerHTML = '';
             data.notifications.forEach(notification => {
                 const notificationElement = document.createElement('li');
                 notificationElement.innerHTML = `
-                    <a href="${notification.url}" class="notification-link">
+                    <a href="/profile?id=${notification.userSend.id}" class="notification-link">
                         <div class="col-md-2 col-sm-2 col-xs-2">
                             <div class="notify-img">
-                                <img src="#" alt="notification user image">
+                                <img src="${notification.userSend.image ? `${notification.userSend.image.urlImage}` : `/images/users/DefaultAvtUser.png`}" alt="notification user image">
                             </div>
                         </div>
                         <div class="col-md-10 col-sm-10 col-xs-10">
@@ -117,12 +122,15 @@ function fetchFriendRequestsCount() {
         .then(response => response.json())
         .then(data => {      
             // Tạo một biến để lưu số lượng lời mời kết bạn
-            let friendRequestsCount = 0;
+            let friendRequestsCount = data.countFriend;
             
             data.relationships.forEach(relationship => {
-                if (relationship.userTwo.id === data.loggedInUser.id) {
+
+                if (relationship.userOne.id === data.loggedInUser.id) {
+                    // nếu userOne là user hiện tại (user gửi lời mời kết bạn) thì giảm biến đếm lên 1
+                    
                     console.log('Friend requests count:', data.countFriend);
-                    friendRequestsCount = data.countFriend;
+                    friendRequestsCount--;
                 }
             });
 

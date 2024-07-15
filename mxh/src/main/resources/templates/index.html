@@ -5,14 +5,15 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="icon" type="image/png" href="assets/images/logo-16x16.png" />
+    <link rel="icon" type="image/png" href="images/image.png" />
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>Argon - Social Network</title>
+    <title>Facebook</title>
 
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Major+Mono+Display" rel="stylesheet">
     <link th:href="@{/css/post/boxicons.min.css}" rel="stylesheet">
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/nprogress@0.2.0/nprogress.css">
 
     <!-- Styles -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
@@ -30,6 +31,7 @@
     <script th:src="@{/js/Post/Posts.js}"></script>
     <script th:src="@{/js/Post/Comments.js}"></script>
     <script th:src="@{/js/interaction.js}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.js"></script>
 </head>
 
 <body class="newsfeed">
@@ -40,7 +42,7 @@
                 <nav id="navbar-main" class="navbar navbar-expand-lg shadow-sm sticky-top">
                     <div class="w-100 justify-content-md-center">
                         <ul class="navbar-nav mr-5 flex-row" id="main_menu">
-                            <a class="navbar-brand nav-item mr-lg-5" th:href="@{/}"><img th:src="@{/images/logo-64x64.png}" width="40" height="40" class="mr-3" alt="Logo"></a>
+                            <a class="navbar-brand nav-item mr-lg-5" th:href="@{/}"><img th:src="@{/images/image.png}" width="40" height="40" class="mr-3" alt="Logo" id="home"></a>
                             <!-- Collect the nav links, forms, and other content for toggling -->
                             <form class="w-30 mx-2 my-auto d-inline form-inline mr-5 dropdown search-form">
                                 <div class="input-group" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="searchDropdown">
@@ -96,7 +98,7 @@
                             </form>
                             <!-- Nhắn tin -->
                             <li class="nav-item s-nav dropdown message-drop-li">
-                                <a href="#" class="nav-link nav-links message-drop drop-w-tooltip" data-toggle="dropdown" data-placement="bottom" data-title="Messages" role="button" aria-haspopup="true" aria-expanded="false" onclick="redirectToMessagePage()">
+                                <a href="#" class="nav-link nav-links message-drop drop-w-tooltip" data-toggle="dropdown" data-placement="bottom" data-title="Messages" role="button" aria-haspopup="true" aria-expanded="false" onclick="redirectToMessagePage()" id="message">
                                     <img th:src="@{/images/icons/navbar/message.png}" class="message-dropdown" alt="navbar icon"> <span class="badge badge-pill badge-primary">1</span>
                                 </a>                                
                                 <ul class="dropdown-menu notify-drop dropdown-menu-right nav-drop shadow-sm">
@@ -138,13 +140,16 @@
                             </li>
                             <!-- Thêm bạn bè -->
                             <li class="nav-item s-nav dropdown friend-request">
-                                <a th:href="@{/listfriend}" class="nav-link nav-links rm-drop-mobile drop-w-tooltip" data-toggle="dropdown" data-placement="bottom" data-title="Friend Requests" role="button" aria-haspopup="true" aria-expanded="false">
-                                    <img th:src="@{images/icons/navbar/group.png}" class="friend-request" alt="navbar icon"> <span class="badge-pill badge-primary"><p id="friend-request-count">Lời mời kết bạn (0)</p></span>
+                                <a th:href="@{/listfriend}" class="nav-link nav-links rm-drop-mobile drop-w-tooltip" data-toggle="dropdown" data-placement="bottom" data-title="Friend Requests" role="button" aria-haspopup="true" aria-expanded="false" id="friend-request">
+                                    <span class="badge-pill badge-primary">
+                                        <img class="friend-request-icon" src="/images/icons/navbar/group.png" alt="Friend Request Icon">
+                                        <span id="friend-request-count">0</span>
+                                    </span>
                                 </a>
                             </li>
                             <!-- Thông báo -->
                             <li class="nav-item s-nav dropdown notification">
-                                <a href="#" class="nav-link nav-links rm-drop-mobile drop-w-tooltip" data-toggle="dropdown" data-placement="bottom" data-title="Notifications" role="button" aria-haspopup="true" aria-expanded="false">
+                                <a href="#" class="nav-link nav-links rm-drop-mobile drop-w-tooltip" data-toggle="dropdown" data-placement="bottom" data-title="Notifications" role="button" aria-haspopup="true" aria-expanded="false" id="notification">
                                     <img th:src="@{/images/icons/navbar/notification.png}" class="notification-bell" alt="navbar icon">
                                     <span id="quantityNotification" class="badge-pill badge-primary unread-messages" style="display: none;"></span>
                                 </a>
@@ -222,7 +227,7 @@
                                                             </li>
                                                         </ul>
                                                         <div id="image-preview-container">
-                                                            <img id="imagePreview" src="" alt="Image Preview" style="max-width: 300px; max-height: 300px;"/>
+                                                            <img id="imagePreview" src="images/icons/theme/post-image.png" alt="Image Preview" style="max-width: 300px; max-height: 300px;"/>
                                                     </div>
                                                     </div>
                                                 </form>
@@ -257,18 +262,33 @@
             $("#wrapper").toggleClass("toggled");
         });
 
-        function previewImage(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const imagePreview = document.getElementById('imagePreview');
-                    imagePreview.src = e.target.result;
-                    imagePreview.style.display = 'block';
-                }
-                reader.readAsDataURL(file);
-            }
-        }
+        NProgress.start();
+
+        // Bắt đầu thanh tiến trình khi người dùng nhấp vào logo
+        document.getElementById('home').addEventListener('click', function() {
+            NProgress.start();
+        });
+
+        // Bắt đầu thanh tiến trình khi người dùng nhấp vào biểu tượng nhắn tin
+        document.getElementById('message').addEventListener('click', function() {
+            NProgress.start();
+        });
+
+        // Bắt đầu thanh tiến trình khi người dùng nhấp vào biểu tượng bạn bè
+        document.getElementById('friend-request').addEventListener('click', function() {
+            NProgress.start();
+        });
+
+
+        // Bắt đầu thanh tiến trình khi người dùng nhấp vào biểu tượng profile
+        document.getElementById('profileLink').addEventListener('click', function() {
+            NProgress.start(); 
+        });
+
+        // Dừng thanh tiến trình khi trang đã tải xong
+        window.addEventListener('load', function() {
+            NProgress.done();
+        });
     </script>
 </body>
 

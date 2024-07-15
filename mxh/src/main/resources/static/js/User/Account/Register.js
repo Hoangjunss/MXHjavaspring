@@ -36,7 +36,7 @@ $(document).ready(function() {
             })
             .then(data => {
                 if (data.success) {
-                    window.location.href = "User/Confirm";
+                    window.location.href = "/Confirm";
                 } else {
                     alert(data.message);
                 }

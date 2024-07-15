@@ -47,6 +47,7 @@ $(document).ready(function () {
         });
     }
 
+<<<<<<< HEAD
     /* Image Preview Functions */
     $('#imageInput').on('change', function(event) {
         const file = event.target.files[0];
@@ -91,6 +92,76 @@ $(document).ready(function () {
             const formEditProfile = $('#form_edit_profile').empty();
             data.abouts.forEach((about, index) => {
                 const userAbout = data.userAbouts.find(ua => ua.about.id === about.id);
+=======
+    /* END API */
+
+    document.getElementById('form_edit_account').addEventListener('submit', function(event) {
+        event.preventDefault();
+    
+        const form = event.target;
+        const firstName = form.querySelector('input[name="firstName"]').value.trim();
+        const lastName = form.querySelector('input[name="lastName"]').value.trim();
+        const email = form.querySelector('input[name="email"]').value.trim();
+
+        // Kiểm tra nếu có bất kỳ trường nào bị bỏ trống
+        if (!firstName || !lastName || !email) {
+            alert('Vui lòng điền đầy đủ thông tin.');
+            return; // Dừng xử lý tiếp theo nếu có trường bị bỏ trống
+        }
+
+        const formData = {
+            firstName: firstName,
+            lastName: lastName,
+            email: email
+        };
+        // Ẩn thông báo lỗi trước khi gửi request
+        document.getElementById('email-error').style.display = 'none';
+    
+        fetch('/editaccount', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Edit account successful');
+                // Tải lại trang hiện tại
+                window.location.reload();
+            } else if (data.message === "Email already exists") {
+                document.getElementById('email-error').style.display = 'block';
+            } else {
+                alert(data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An unexpected error occurred');
+        });
+    });
+    
+});
+
+function displayEditProfileDetails() {
+    const overlayAdd = document.getElementById('edit_profile');
+    // Fetch dữ liệu từ endpoint
+    fetch('/api/getabouts')
+        .then(response => response.json())
+        .then(data => {
+            // Xử lý dữ liệu nhận được
+            const abouts = data.abouts;
+            const userAbouts = data.userAbouts;
+
+            // Tạo HTML cho form dựa trên dữ liệu nhận được
+            const formEditProfile = document.getElementById('form_edit_profile');
+            formEditProfile.innerHTML = ''; // Xóa bỏ các phần tử trong form trước khi thêm mới
+            let inputField = ''; // Sử dụng let thay vì const
+
+            abouts.forEach((about, index) => {
+                const userAbout = userAbouts.find(ua => ua.about.id === about.id);
+>>>>>>> b9345d18dcc023445d0caaf9101f3a9707df2df0
                 const description = userAbout ? userAbout.description : '';
                 formEditProfile.append(`
                     <div class="name_box">
@@ -100,13 +171,85 @@ $(document).ready(function () {
                     </div>
                 `);
             });
+<<<<<<< HEAD
             formEditProfile.append('<button type="submit" id="submitBtn">Save</button>');
             $('#edit_profile').css('display', 'flex');
         }).fail(function(error) {
             console.error('Error fetching abouts:', error);
         });
+=======
+
+            const submitButton = `<button type="submit" id="submitBtn">Save</button>`;
+            formEditProfile.insertAdjacentHTML('beforeend', submitButton);
+
+            const overlayAdd = document.getElementById('edit_profile');
+            overlayAdd.style.display = "flex";
+            const overlay = document.getElementById('overlay_details');
+            overlay.style.display = "block";
+        })
+        .catch(error => console.error('Error fetching abouts:', error));
+
+    // Ngăn lướt trang khi lớp phủ hiện ra
+    document.body.style.overflow = "hidden";
+}
+
+function displayEditProfile(user){
+    const editProfile = document.getElementById('form_edit_account');
+    const editProfileHtml = `<div class="name_box">
+        <label>First Name</label>
+        <input type="text" name="firstName" value="${user.firstName}">
+    </div>
+    <div class="name_box">
+        <label>Last Name</label>
+        <input type="text" name="lastName" value="${user.lastName}">
+    </div>
+    <div class="name_box">
+        <label>Email</label>
+        <input type="text" name="email" value="${user.email}">
+        <p id="email-error" style="color: red; display: none;">Email already exists</p>
+    </div>
+    <button type="submit" id="submitBtn">Save</button>
+    `;
+    editProfile.innerHTML = editProfileHtml;
+    const overlayAdd = document.getElementById('edit_profile_user');
+    overlayAdd.style.display = "flex";
+    const overlay = document.getElementById('overlay_user');
+    overlay.style.display = "block";
+
+    // Ngăn lướt trang khi lớp phủ hiện ra
+    document.body.style.overflow = "hidden";
+}
+
+function closeEditProfileDetails() {
+    const overlayAdd = document.getElementById('edit_profile');
+    overlayAdd.style.display = "none";
+
+    const overlay = document.getElementById('overlay_details');
+    overlay.style.display = "none";
+
+    // Cho phép lướt trang khi lớp phủ bị tắt
+    document.body.style.overflow = "auto";
+}
+function closeEditProfile() {
+    const overlayAdd = document.getElementById('edit_profile_user');
+    overlayAdd.style.display = "none";
+    const overlay = document.getElementById('overlay_user');
+    overlay.style.display = "none";
+            
+    // Cho phép lướt trang khi lớp phủ bị tắt
+    document.body.style.overflow = "auto";
+}
+
+function updateProfile(data) {
+    const avartaruser = $('#imageProfile');
+    if(data.user.image){
+        avartaruser.attr('src', data.user.image.urlImage);
+    }else{
+        avartaruser.attr('src', '/images/users/DefaultAvtUser.png');
+>>>>>>> b9345d18dcc023445d0caaf9101f3a9707df2df0
     }
 
+<<<<<<< HEAD
     function closeEditProfileDetails() {
         $('#edit_profile').hide();
     }
@@ -147,6 +290,50 @@ $(document).ready(function () {
                         buttonHtml += `<button type="button" class="btn btn-follow mr-3 relationship-btn" data-status="4"><i class='bx bx-plus'></i>UnFriend</button>`;
                         break;
                 }
+=======
+function updateRelationship(data) {
+    isUserLogged = data.isOwnUser;
+    const divsetfriend = document.getElementById('setfriend');
+    const fromSetFriend = document.getElementById('setfrienduser');
+    if (data.isOwnUser) {
+        fromSetFriend.remove();
+        const userString = JSON.stringify(data.user).replace(/'/g, "&apos;");
+        divsetfriend.insertAdjacentHTML('afterbegin', `
+            <button type="button" class="btn btn-follow mr-3" id="editProfile" onclick='displayEditProfile(${userString})'><i class='bx bx-plus'></i> Edit Profile</button>
+        `);
+    } else if (!data.isOwnUser) {
+        if (data.relationship == null) {
+            fromSetFriend.innerHTML += `
+                <input type="hidden" name="id" value="${data.user.id}">
+                <button type="button" class="btn btn-follow mr-3 relationship-btn" data-status="1"><i class='bx bx-plus'></i>Add Friend</button>
+            `;
+        } else if (data.relationship != null && data.relationship.status.id == 4) {
+            fromSetFriend.innerHTML += ` 
+                <input type="hidden" name="id" value="${data.user.id}">
+                <button type="button" class="btn btn-follow mr-3 relationship-btn" data-status="1"><i class='bx bx-plus'></i>Add Friend</button>
+                                           
+            `;
+        } else if (data.relationship != null && data.relationship.status.id != 4) {
+            if (data.relationship.status.id == 1 && data.relationship.userOne.id == data.user.id) {
+                fromSetFriend.innerHTML += `
+                <input type="hidden" name="id" value="${data.user.id}">
+                <button type="button" class="btn btn-follow mr-3 relationship-btn" data-status="2"><i class='bx bx-plus'></i>Accept</button>
+                <button type="button" class="btn btn-follow mr-3 relationship-btn" data-status="4"><i class='bx bx-plus'></i>Reject</button>
+                                           
+            `;
+            } else if (data.relationship.status.id == 1 && data.relationship.userOne.id != data.user.id) {
+                fromSetFriend.innerHTML += `
+                    <input type="hidden" name="id" value="${data.user.id}">
+                    <button type="button" class="btn btn-follow mr-3 relationship-btn"><i class='bx bx-plus'></i>Send to</button>
+                    <button type="button" class="btn btn-follow mr-3 relationship-btn" data-status="4"><i class='bx bx-plus'></i>Recall</button>                
+                `;
+            } else if (data.relationship.status.id == 2) {
+                fromSetFriend.innerHTML += `
+                    <input type="hidden" name="id" value="${data.user.id}">
+                    <button type="button" class="btn btn-follow mr-3 relationship-btn" data-status="4"><i class='bx bx-plus'></i>UnFriend</button>
+                                           
+                `;
+>>>>>>> b9345d18dcc023445d0caaf9101f3a9707df2df0
             }
 
             formSetFriend.append(buttonHtml);
@@ -157,6 +344,7 @@ $(document).ready(function () {
         const aboutUserUI = $('#aboutuser').empty();
         data.userAbouts.forEach(userAbout => {
             data.abouts.forEach(about => {
+<<<<<<< HEAD
                 if (userAbout.about.id == about.id) {
                     aboutUserUI.append(`
                         <div class="intro-item d-flex justify-content-between align-items-center">
@@ -165,6 +353,16 @@ $(document).ready(function () {
                             </p>
                         </div>
                     `);
+=======
+                if (userAbout.about.id == about.id && userAbout.description!= "") {
+                    aboutUserUI.innerHTML += `
+                    <div class="intro-item d-flex justify-content-between align-items-center">
+                                        <p class="intro-title text-muted"><i class='bx bx-briefcase text-primary'></i> 
+                                                <strong>${about.name}: ${userAbout.description}</strong> 
+                                            </p>
+                                    </div>
+                    `;
+>>>>>>> b9345d18dcc023445d0caaf9101f3a9707df2df0
                 }
             });
         });
@@ -260,6 +458,7 @@ function updateButtons(form, newStatus) {
         }
     });
 }
+
 document.addEventListener('click', function(event) {
     if (event.target.closest('.relationship-form') && event.target.classList.contains('relationship-btn')) {
         handleRelationshipButtonClick(event);

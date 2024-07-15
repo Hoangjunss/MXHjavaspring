@@ -4,14 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
+    <link rel="icon" type="image/png" href="images/image.png" />
     <!-- Css -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css">
     <link th:href="@{/css/User/Login.css}" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/nprogress@0.2.0/nprogress.css">
     <!-- JavaScript -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script th:inline="javascript" th:src="@{/js/User/Account/Register.js}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.js"></script>
     
 </head>
 <body>
@@ -44,13 +47,32 @@
                                 <div class="input-field"> <span class="fas fa-lock px-2"></span> <input id="inputRe-enterPassword" type="password"  placeholder="Re-enter Password"></div>
                                 <div class="error errorRe-Password" style="color:red;"></div>
                             </div>
-                            <button type="submit" class="btn btn-primary btn-block mt-3">Login</button>
-                            <div class="text-center pt-4 text-muted">You have an account?<a th:href="@{/login}">Sign in</a> </div>
+                            <button type="submit" class="btn btn-primary btn-block mt-3" id="loginBtn">Login</button>
+                            <div class="text-center pt-4 text-muted">You have an account?<a th:href="@{/login}" id="registerLink">Sign in</a> </div>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <script>
+
+        NProgress.start();
+
+        // Bắt đầu thanh tiến trình khi người dùng nhấp vào nút đăng ký
+        document.getElementById('loginBtn').addEventListener('click', function() {
+            NProgress.start();
+        });
+
+        // Bắt đầu thanh tiến trình khi người dùng nhấp vào liên kết đăng nhập
+        document.getElementById('registerLink').addEventListener('click', function() {
+            NProgress.start();
+        });
+
+        // Dừng thanh tiến trình khi trang đã tải xong
+        window.addEventListener('load', function() {
+            NProgress.done();
+        });
+    </script>
 </body>
 </html>

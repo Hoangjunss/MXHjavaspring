@@ -13,7 +13,17 @@ $(document).ready(function () {
         var formData = new FormData();
         var status = $('#StatusId').val();
         var content = $('#contentPost').val();
+<<<<<<< HEAD
         var image = $('#imagePost')[0].files[0];
+=======
+    var image = $('#imagePost')[0].files[0];
+    var contentt = content.trimStart().trimEnd();
+    // Kiểm tra nếu nội dung chỉ chứa khoảng trắng
+    if (contentt === '' && !image) {
+        alert('Please share your thoughts');
+        return;
+    }
+>>>>>>> b9345d18dcc023445d0caaf9101f3a9707df2df0
 
         formData.append('StatusId', status);
         formData.append('content', content);
@@ -99,8 +109,13 @@ function displayPosts(data) {
 
 function createPostContent(post) {
     const postDisplay = $('#displaycontent');
+<<<<<<< HEAD
     const imgUser = post.user.image ? post.user.image.urlImage : '/images/users/DefaultAvtUser.png';
     const imgPost = post.image ? post.image.urlImage : '#';
+=======
+    const imgUser = post.user.image!=null ?  post.user.image.urlImage : '/images/users/DefaultAvtUser.png';
+    const imgPost = post.image != null ? post.image.urlImage : null;
+>>>>>>> b9345d18dcc023445d0caaf9101f3a9707df2df0
     const countComment = post.comments ? post.comments.length : 0;
 
     const displayPost = `
@@ -122,9 +137,9 @@ function createPostContent(post) {
                 <div id="displaycontent">
                     <div class="mt-3 ">
                         <p>${post.content}</p>
-                        <div class="d-block mt-3">
-                            <img id="postImage" class="post-content" style="display: none;">
-                        </div>
+                        ${imgPost ? `<div class="d-block mt-3">
+                            <img id="postImage" class="post-content" src="${imgPost}">
+                        </div>` : ''}
                     </div>
                 </div>
                 <div class="mb-3">
@@ -188,9 +203,25 @@ function createPostContent(post) {
     `;
 
     postDisplay.append(displayPost);
+<<<<<<< HEAD
 
     const postImage = $('#postImage');
     if (imgPost && imgPost.trim() !== '') {
         postImage.attr('src', imgPost).show();
+    }
+=======
+>>>>>>> b9345d18dcc023445d0caaf9101f3a9707df2df0
+}
+
+function previewImage(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const imagePreview = document.getElementById('imagePreview');
+            imagePreview.src = e.target.result;
+            imagePreview.style.display = 'block';
+        }
+        reader.readAsDataURL(file);
     }
 }

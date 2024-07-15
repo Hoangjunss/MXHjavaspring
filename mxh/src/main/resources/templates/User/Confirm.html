@@ -26,14 +26,34 @@
             font-size: 24px;
             color: #333;
         }
-        .spinner {
-            border: 4px solid rgba(0, 0, 0, 0.1);
+        .spinner, .checkmark {
             width: 36px;
             height: 36px;
+            margin: 20px auto;
+        }
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
             border-radius: 50%;
             border-left-color: #09f;
             animation: spin 1s linear infinite;
-            margin: 20px auto;
+        }
+        .checkmark {
+            display: none;
+            border-radius: 50%;
+            background-color: #09f;
+            position: relative;
+        }
+        .checkmark::after {
+            content: '';
+            display: block;
+            width: 10px;
+            height: 18px;
+            border: solid #fff;
+            border-width: 0 4px 4px 0;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -70%) rotate(45deg);
         }
         @keyframes spin {
             0% {
@@ -52,8 +72,16 @@
 <body>
     <div class="container">
         <h1>Registration Successful!</h1>
-        <div class="spinner"></div>
+        <div class="spinner" id="spinner"></div>
+        <div class="checkmark" id="checkmark"></div>
         <p class="message">Please check your email to confirm your registration.</p>
     </div>
+
+    <script>
+        setTimeout(function() {
+            document.getElementById('spinner').style.display = 'none';
+            document.getElementById('checkmark').style.display = 'block';
+        }, 3000);
+    </script>
 </body>
 </html>

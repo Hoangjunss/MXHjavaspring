@@ -5,9 +5,9 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="icon" type="image/png" href="assets/images/logo-16x16.png" />
+    <link rel="icon" type="image/png" href="images/image.png" />
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>Argon - Social Network</title>
+    <title>Facebook</title>
 
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Major+Mono+Display" rel="stylesheet">
@@ -16,6 +16,7 @@
 
     <!-- Styles -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <link th:href="@{/css/post/style.css}" rel="stylesheet">
     <link th:href="@{/css/post/components.css}" rel="stylesheet">
     <link th:href="@{/css/User/profile.css}" rel="stylesheet">
@@ -42,7 +43,7 @@
                 <nav id="navbar-main" class="navbar navbar-expand-lg shadow-sm sticky-top">
                     <div class="w-100 justify-content-md-center">
                         <ul class="navbar-nav mr-5 flex-row" id="main_menu">
-                            <a class="navbar-brand nav-item mr-lg-5" th:href="@{/}"><img th:src="@{/images/logo-64x64.png}" width="40" height="40" class="mr-3" alt="Logo"></a>
+                            <a class="navbar-brand nav-item mr-lg-5" th:href="@{/}"><img th:src="@{/images/image.png}" width="40" height="40" class="mr-3" alt="Logo"></a>
                             <!-- Collect the nav links, forms, and other content for toggling -->
                             <form class="w-30 mx-2 my-auto d-inline form-inline mr-5 dropdown search-form">
                                 <div class="input-group" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="searchDropdown">
@@ -307,7 +308,7 @@
                                                                     </li>
                                                                 </ul>
                                                                 <div id="image-preview-container">
-                                                                    <img id="imagePreview" src="" alt="Image Preview" style="max-width: 300px; max-height: 300px;"/>
+                                                                    <img id="imagePreview" src="images/icons/theme/post-image.png"  alt="Image Preview" style="max-width: 300px; max-height: 300px;"/>
                                                             </div>
                                                             </div>
                                                         </form>
@@ -351,18 +352,37 @@
         </div>
     </div>
     <!-- End Message -->
+
     <!-- Edit Details -->
-    <div class="profiledetails animate-overlay" id="edit_profile">
+    
+    <div class="profiledetails animate-overlay" id="edit_profile_user">
         <div  class="dialog">
+            <div class="overlay" id="overlay_user"></div>
             <div class="edit_profile_container">
-                <button class="close" onclick="closeEditProfileDetails()"><i class="fa-solid fa-xmark"></i></button>
+                <button class="close" onclick="closeEditProfile()"><i class="fa-solid fa-xmark"></i></button>
                 <h2>Edit Profile Details</h2>
-                <form th:action="@{/editprofile}" th:object="${userAboutForm}" method="post" class="form_edit_profile" id="form_edit_profile">
-                    <!-- Các trường dữ liệu sẽ được thêm vào đây từ JavaScript -->
+                <form class="form_edit_profile"3 id="form_edit_account">
+                    
                 </form>
             </div>            
         </div>
     </div>
+
+    <!-- Edit profile Details -->
+    <div class="profiledetails animate-overlay" id="edit_profile">
+        <div  class="dialog">
+            <div class="overlay" id="overlay_details"></div>
+            <div class="edit_profile_container">
+                <button class="close" onclick="closeEditProfileDetails()"><i class="fa-solid fa-xmark"></i></button>
+                <h2>Edit Profile Details</h2>
+                <form th:action="@{/editprofiledetails}" th:object="${userAboutForm}" method="post" class="form_edit_profile" id="form_edit_profile">
+
+                </form>
+            </div>            
+        </div>
+    </div>
+
+
 
     <!-- Comments -->
     <div class="border-top pt-3 hide-comments" id="commentslist" data-id="" style="display: none;">

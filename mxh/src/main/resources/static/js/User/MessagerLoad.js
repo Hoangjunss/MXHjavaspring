@@ -81,7 +81,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                 <a href="/chatmobile?id=${user.id}" style="text-decoration: none;">
                                     <div class="wrap">
                                         <span class="contact-status online"></span>
-                                        <img th:src="@{/images/users/user-1.jpg}" alt="Conversation user" />
+                                        <img src="${user.image ? `${user.image.urlImage}` : `/images/users/DefaultAvtUser.png`}" alt="Conversation user" />
                                         <div class="meta">
                                             <p class="name" >${user.lastName} ${user.firstName}</p>
                                            <p class="preview">${unseenMessage[2]}</p>
@@ -117,8 +117,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 // Lấy thông tin người dùng chat từ dữ liệu phản hồi
                 const chatUser = data.chatUser;
                 // Tạo nội dung tiêu đề chat mới
+                const avtChatUser = chatUser.image ? chatUser.image.urlImage : '/images/users/DefaultAvtUser.png';
                 const chatheader = `
-                <img src="/images/users/user-1.jpg" class="messenger-user" alt="Conversation user image" />
+                <img src="${avtChatUser}" class="messenger-user" alt="Conversation user image" />
                 <a href="#" class="message-profile-name">${chatUser.firstName} ${chatUser.lastName}</a>
             `;
                 var inputElement = $('#id');
@@ -140,7 +141,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         messageElement.className = message.userFrom.id === data.currentUser.id ? 'message-reply' : 'message-receive';
                         // Tạo nội dung tin nhắn
                         messageElement.innerHTML = `
-                        <img src="/images/users/user-1.jpg" alt="Conversation user image" />
+                        <img src="${message.userFrom.image ? `${message.userFrom.image.urlImage}` : `/images/users/DefaultAvtUser.png`}" alt="Conversation user image" />
                         <p>${message.content}</p>
                     `;
                         // Thêm tin nhắn vào danh sách
@@ -181,8 +182,8 @@ document.addEventListener("DOMContentLoaded", function () {
                         <div class="col-md-12 messenger-top-section">
                             <div class="contact-profile d-flex align-items-center justify-content-between">
                                 <div class="messenger-top-luser df-aic">
-                                    <img src="/images/users/user-2.jpg" class="messenger-user" alt="Convarsation user image" />
-                                    <a href="#" class="message-profile-name" > ${data.userTo.lastName} ${data.userTo.firstName}</a>
+                                    <img src="${data.userTo.image ? `${data.userTo.image.urlImage}` : `/images/users/DefaultAvtUser.png`}" class="messenger-user" alt="Convarsation user image" />
+                                    <a href="/profile?id=${data.userTo.id}" class="message-profile-name" style="text-decoration: none;"> ${data.userTo.lastName} ${data.userTo.firstName}</a>
                                 </div>
                                 <div class="social-media messenger-top-ricon df-aic">
                                     <img src="/images/messenger/phone.png" data-toggle="modal" data-target="#callModal" class="msg-top-more-info" alt="Messenger icons">
@@ -232,7 +233,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     if (element.userFrom.id != data.currentUser.id) {
                         const img = $(`
                                   <img 
-                                    src="/images/users/user-1.jpg" 
+                                    src="${element.userFrom.image ? `${element.userFrom.image.urlImage}` : `/images/users/DefaultAvtUser.png`}" 
                                     alt="Conversation user image" 
                                   />
                                 `);
