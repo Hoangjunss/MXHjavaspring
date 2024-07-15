@@ -25,7 +25,7 @@ function fetchFriends() {
 // Hàm lấy danh sách bạn bè chưa kết bạn
 function fetchNotFriends() {
     NProgress.start();
-    fetch('/api/notFriend')
+    fetch('api/notFriend')
         .then(response => response.json())
         .then(data => {
             const notFriendList = document.getElementById('not-friend-list');
