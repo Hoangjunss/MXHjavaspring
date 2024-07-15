@@ -309,8 +309,8 @@ public class ApiPostsController {
         }
     }
 
-    /* @GetMapping("/api/notifications") // Lấy ra tất cả thông báo
-    public ResponseEntity<?> notifications(@RequestParam("id") Long userId, Principal principal) {
+    @GetMapping("/api/notifications") // Lấy ra tất cả thông báo
+    public ResponseEntity<?> notifications(Principal principal) {
         try {
             Map<String, Object> response = new HashMap<>();
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
@@ -327,7 +327,7 @@ public class ApiPostsController {
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
- */
+
     @GetMapping("/api/editpost")
     public ResponseEntity<?> editpost(@RequestParam("id") Long id, Principal principal) {
         try {
