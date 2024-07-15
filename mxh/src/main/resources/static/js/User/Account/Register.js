@@ -12,10 +12,10 @@ $(document).ready(function() {
 
         if (!isError) {
             let formData = {
-                lastName: document.getElementById("inputLastName").value,
-                firstName: document.getElementById("inputFirstName").value,
-                password: document.getElementById("inputPassword4").value,
-                email: document.getElementById("inputEmail4").value,
+                lastName: $("#inputLastName").val(),
+                firstName: $("#inputFirstName").val(),
+                password: $("#inputPassword4").val(),
+                email: $("#inputEmail4").val()
             };
             fetch("/register", {
                 method: "POST",

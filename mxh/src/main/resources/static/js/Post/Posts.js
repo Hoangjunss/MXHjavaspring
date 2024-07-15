@@ -1,81 +1,86 @@
-document.addEventListener("DOMContentLoaded", function () {
+$(document).ready(function () {
     const urlParams = new URLSearchParams(window.location.search);
     const userId = urlParams.get('id');
-    if(userId){
+    if (userId) {
         fetchPostUser(userId);
-    }else{
+    } else {
         fetchPosts();
     }
 
-    $('#uploadPostUser').submit(function(event){
+    $('#uploadPostUser').submit(function (event) {
         event.preventDefault();
-    
+
         var formData = new FormData();
         var status = $('#StatusId').val();
         var content = $('#contentPost').val();
-    var image = $('#imagePost')[0].files[0];
+        var image = $('#imagePost')[0].files[0];
 
-    formData.append('StatusId', status);
-    formData.append('content', content);
+        formData.append('StatusId', status);
+        formData.append('content', content);
 
-    if (image) {
-        formData.append('image', image);
-    }
-    console.log(image);
-    fetch('/uploadpostuser', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok.');
+        if (image) {
+            formData.append('image', image);
         }
-        return response.json();
-    })
-    .then(data => {
-        if (data.success) {
-            location.reload();
-        } else {
-            alert("Error: " + (data.message || "Unknown error occurred"));
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
+
+        console.log(image);
+
+        $.ajax({
+            url: '/uploadpostuser',
+            method: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert("Error: " + (data.message || "Unknown error occurred"));
+                }
+            },
+            error: function (error) {
+                console.error('Error:', error);
+            }
+        });
     });
-    })
 });
 
 function fetchPostUser(userId) {
-    fetch(`/post?id=${userId}`, {
-        method: 'GET'
-    })
-        .then(response => response.json())
-        .then(data => {
+    $.ajax({
+        url: `/post?id=${userId}`,
+        method: 'GET',
+        success: function (data) {
             console.log(data);
             updatePostPage(data);
-        })
-        .catch(error => console.error('Error fetching status post:', error));
+        },
+        error: function (error) {
+            console.error('Error fetching status post:', error);
+        }
+    });
 }
 
-function fetchPosts(){
-    fetch('/post',{
-        method:'GET'
-    })  .then(response => response.json()) // Chuyển đổi phản hồi thành JSON
-    .then(data => {
-        console.log(data);
-        displayPosts(data)
-    })
+function fetchPosts() {
+    $.ajax({
+        url: '/post',
+        method: 'GET',
+        success: function (data) {
+            console.log(data);
+            displayPosts(data);
+        },
+        error: function (error) {
+            console.error('Error fetching posts:', error);
+        }
+    });
 }
 
 function updatePostPage(data) {
-    const divContainerPost = document.getElementById('displaycontent');
+    const divContainerPost = $('#displaycontent');
 
     if (data.posts == null) {
-        divContainerPost.innerHTML += `
+        divContainerPost.append(`
             <h2 class="complex-effect-text">
                 There are currently no posts. Let's share wonderful moments together
             </h2>
-        `;
+        `);
     } else {
         data.posts.forEach(post => {
             createPostContent(post);
@@ -94,11 +99,11 @@ function displayPosts(data) {
 
 function createPostContent(post) {
     const postDisplay = $('#displaycontent');
-    const imgUser = post.user.image!=null ?  post.user.image.urlImage : '/images/users/DefaultAvtUser.png';
-    const imgPost = post.image != null ? post.image.urlImage : '#';
+    const imgUser = post.user.image ? post.user.image.urlImage : '/images/users/DefaultAvtUser.png';
+    const imgPost = post.image ? post.image.urlImage : '#';
     const countComment = post.comments ? post.comments.length : 0;
 
-    const displayPost= `
+    const displayPost = `
         <ul class="list-unstyled" id="postuserupload"> 
             <div class="post border-bottom p-3 bg-white w-shadow">
                 <div class="media text-muted pt-3">
@@ -181,10 +186,11 @@ function createPostContent(post) {
             </div>
         </ul>
     `;
+
     postDisplay.append(displayPost);
-    var postImage = document.getElementById('postImage');
+
+    const postImage = $('#postImage');
     if (imgPost && imgPost.trim() !== '') {
-        postImage.src = imgPost;
-        postImage.style.display = 'block'; // Hiển thị ảnh nếu imgPost có giá trị
+        postImage.attr('src', imgPost).show();
     }
 }
