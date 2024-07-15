@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-    fetch('/usercurrent', {
+    fetch('/api/usercurrent', {
         method: 'GET'
     }).then(response=> response.json())
     .then(data => {
@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
     })
     .catch(error => console.error('Error fetching status post:', error));
 
-    fetch(`/countNotificationsIsCheck`, {
+    fetch(`/api/countNotificationsIsCheck`, {
         method: 'GET'
     })
         .then(response => response.json())
@@ -118,7 +118,7 @@ function markNotificationsAsRead() {
 
 // Đếm số lượng lời mời kết bạn chưa xác nhận
 function fetchFriendRequestsCount() {
-    return fetch('/countfriend')
+    return fetch('/api/countfriend')
         .then(response => response.json())
         .then(data => {      
             // Tạo một biến để lưu số lượng lời mời kết bạn

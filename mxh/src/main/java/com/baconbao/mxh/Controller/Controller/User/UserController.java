@@ -1,67 +1,60 @@
 package com.baconbao.mxh.Controller.Controller.User;
 
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-
 import com.baconbao.mxh.DTO.UserDTO;
 
 @Controller
-@RequestMapping("/")
 public class UserController {
-  
 
-    //GET PAGE 
-    @GetMapping("/login") //Login
+    // GET PAGE
+    @GetMapping("/login") // Login
     public String showLoginPage() {
         return "/User/Login";
     }
 
-    @GetMapping("/register") //Register
+    @GetMapping("/register") // Register
     public String showRegisterPage(Model model) {
         UserDTO userDTO = new UserDTO();
         model.addAttribute("userDTO", userDTO);
         return "/User/Register";
     }
 
-    @GetMapping("/hello") //Add friend
+    @GetMapping("/hello") // Add friend
     public String addFriendTest() {
         return "addfriend";
     }
-    
-    @GetMapping("/uploaduserimg") //Upload Image user
+
+    @GetMapping("/uploaduserimg") // Upload Image user
     public String uploadUserImgPage() {
         return "test";
     }
-    
-    @GetMapping("/hellosearch") //Search User - test
+
+    @GetMapping("/hellosearch") // Search User - test
     public String searchUserPage() {
         return "searchuser";
     }
-    
-    @GetMapping("/search") //Search user 
+
+    @GetMapping("/search") // Search user
     public String showSearchResults() {
         return "searchuser";
     }
-    
-    @GetMapping("/listfriend") //List friend
+
+    @GetMapping("/listfriend") // List friend
     public String getMethodName() {
         return "seefriend";
     }
-    
-    @GetMapping("/profile") //Profile
-    public String getProfilePage(){
+
+    @GetMapping("/profile") // Profile
+    public String getProfilePage() {
         return "User/profile";
     }
 
-    @GetMapping("/Confirm") //Confirm
+    @GetMapping("/Confirm") // Confirm
     public String confirm() {
         return "User/Confirm";
     }
 
-   
 }
-

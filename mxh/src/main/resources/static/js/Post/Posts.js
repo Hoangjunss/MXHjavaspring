@@ -30,7 +30,7 @@ $(document).ready(function () {
         console.log(image);
 
         $.ajax({
-            url: '/uploadpostuser',
+            url: '/api/uploadpostuser',
             method: 'POST',
             data: formData,
             contentType: false,
@@ -51,7 +51,7 @@ $(document).ready(function () {
 
 function fetchPostUser(userId) {
     $.ajax({
-        url: `/post?id=${userId}`,
+        url: `/api/post?id=${userId}`,
         method: 'GET',
         success: function (data) {
             console.log(data);
@@ -65,7 +65,7 @@ function fetchPostUser(userId) {
 
 function fetchPosts() {
     $.ajax({
-        url: '/post',
+        url: '/api/post',
         method: 'GET',
         success: function (data) {
             console.log(data);

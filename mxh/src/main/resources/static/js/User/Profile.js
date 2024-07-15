@@ -107,7 +107,7 @@ function fetchUserAbouts(userId) {
 }
 
 function fetchStatusPost() {
-    $.get(`/status`, function(data) {
+    $.get(`/api/status`, function(data) {
         console.log(data);
         updateStatusPost(data);
     }).fail(function(error) {
