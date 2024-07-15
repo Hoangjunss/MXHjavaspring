@@ -324,24 +324,7 @@ public class ApiUserController {
     }
 
     // Lấy danh sách thông báo
-    @GetMapping("/api/notifications")
-    public ResponseEntity<?> getNotifications(Principal principal) {
-        try {
-            Map<String, Object> response = new HashMap<>();
-            UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
-            User user = userService.findByEmail(userDetails.getUsername());
-            List<Notification> notifications = notificationService.findByUser(user);
-            response.put("notifications", notifications);
-            return ResponseEntity.ok(response);
-        } catch (CustomException e) {
-            return new ResponseEntity<>(new ApiResponse(false, e.getErrorCode().getMessage()),
-                    e.getErrorCode().getStatusCode());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(new ApiResponse(false, "An unexpected error occurred"),
-                    HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+  
 
     // Chấp nhận yêu cầu kết bạn
     @PostMapping("/api/acceptFriendRequest")
