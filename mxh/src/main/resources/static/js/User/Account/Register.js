@@ -17,7 +17,7 @@ $(document).ready(function() {
                 password: $("#inputPassword4").val(),
                 email: $("#inputEmail4").val()
             };
-            fetch("/register", {
+            fetch("/api/register", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

@@ -7,14 +7,14 @@ document.addEventListener("DOMContentLoaded", function () {
     const messageFrame = $('#contact-list');
     const messageContent = $('.content');
     if (messageFrame.length > 0 && messageContent.length > 0) {
-        fetch('/messagermobile', {
+        fetch('/api/messagermobile', {
             method: 'GET'
         })
             .then(response => response.json()) // Chuyển đổi phản hồi thành JSON
             .then(data => {
                 loadMessagesFrame(data);
                 const idUser = $('#active').val();
-                fetch('/chat?id=' + idUser, {
+                fetch('/api/chat?id=' + idUser, {
                     method: "GET"
                 }).then(response => response.json()) // Chuyển đổi phản hồi thành JSON
                     .then(data => {
@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     } else if (messageFrame.length > 0) {
         console.log(2);
-        fetch('/messagermobile', {
+        fetch('/api/messagermobile', {
             method: 'GET'
         })
             .then(response => response.json()) // Chuyển đổi phản hồi thành JSON
@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // Lấy giá trị của tham số 'name'
         const id = urlParams.get('id');
         if (id != null) {
-            fetch('/chat?id=' + id, {
+            fetch('/api/chat?id=' + id, {
                 method: "GET"
             }).then(response => response.json()) // Chuyển đổi phản hồi thành JSON
                 .then(data => {
@@ -107,7 +107,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     // Hàm tải tin nhắn từ server
     function loadMessages(userId) {
-        fetch('/chat?id=' + userId, {
+        fetch('/api/chat?id=' + userId, {
             method: 'POST' // Gửi request POST đến server
         })
             .then(response => response.json()) // Chuyển đổi phản hồi thành JSON
@@ -177,75 +177,68 @@ document.addEventListener("DOMContentLoaded", function () {
         const message = $('.content');
         if (message.length > 0) {
             const display = $(`
-             
-                    <div class="row">
-                        <div class="col-md-12 messenger-top-section">
-                            <div class="contact-profile d-flex align-items-center justify-content-between">
-                                <div class="messenger-top-luser df-aic">
-                                    <img src="${data.userTo.image ? `${data.userTo.image.urlImage}` : `/images/users/DefaultAvtUser.png`}" class="messenger-user" alt="Convarsation user image" />
-                                    <a href="/profile?id=${data.userTo.id}" class="message-profile-name" style="text-decoration: none;"> ${data.userTo.lastName} ${data.userTo.firstName}</a>
-                                </div>
-                                <div class="social-media messenger-top-ricon df-aic">
-                                    <img src="/images/messenger/phone.png" data-toggle="modal" data-target="#callModal" class="msg-top-more-info" alt="Messenger icons">
-                                    <img src="/images/messenger/videocam.png" class="msg-top-more-info" alt="Messenger icons">
-                                    <img src="/images/messenger/info.png" class="msg-top-more-info" alt="Messenger icons">
-                                </div>
+                <div class="row">
+                    <div class="col-md-12 messenger-top-section">
+                        <div class="contact-profile d-flex align-items-center justify-content-between">
+                            <div class="messenger-top-luser df-aic">
+                                <img src="${data.userTo && data.userTo.image ? data.userTo.image.urlImage : '/images/users/DefaultAvtUser.png'}" class="messenger-user" alt="Conversation user image" />
+                                <a href="/profile?id=${data.userTo.id}" class="message-profile-name" style="text-decoration: none;">${data.userTo.lastName} ${data.userTo.firstName}</a>
                             </div>
-                        </div>
-                        <div class="col-md-12" style="max-height: 532px;">
-                            <input type="hidden" value="${data.userTo.id}" id="id" data-messages-user="${data.userTo.id}">
-                            <input type="hidden" id="idRelationship" value="${data.relation.id}" >
-                            <div class="messages">
-                                <ul class="messages-content" id="chatMessages">
-                                    
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="message-input">
-                                <div class="wrap">
-                                    <form class="d-inline form-inline">
-                                        <div class="d-flex align-items-center justify-content-between messenger-icons">
-                                            <div class="input-group messenger-input">
-                                                <input id="content" type="text" class="form-control search-input" placeholder="Type a message..." aria-label="Type a message..." aria-describedby="button-addon2">
-                                            </div>
-                                            <button onclick="sendMessage()" type="button" class="btn search-button" id="send-message">
-                                                <img src="/images/messenger/m-send.png" alt="Messenger icons">
-                                            </button>
-                                        </div>
-                                    </form>
-                                </div>
+                            <div class="social-media messenger-top-ricon df-aic">
+                                <img src="/images/messenger/phone.png" data-toggle="modal" data-target="#callModal" class="msg-top-more-info" alt="Messenger icons">
+                                <img src="/images/messenger/videocam.png" class="msg-top-more-info" alt="Messenger icons">
+                                <img src="/images/messenger/info.png" class="msg-top-more-info" alt="Messenger icons">
                             </div>
                         </div>
                     </div>
-                
-                `)
+                    <div class="col-md-12" style="max-height: 532px;">
+                        <input type="hidden" value="${data.userTo.id}" id="id" data-messages-user="${data.userTo.id}">
+                        <input type="hidden" id="idRelationship" value="${data.relation.id}">
+                        <div class="messages">
+                            <ul class="messages-content" id="chatMessages"></ul>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="message-input">
+                            <div class="wrap">
+                                <form class="d-inline form-inline">
+                                    <div class="d-flex align-items-center justify-content-between messenger-icons">
+                                        <div class="input-group messenger-input">
+                                            <input id="content" type="text" class="form-control search-input" placeholder="Type a message..." aria-label="Type a message..." aria-describedby="button-addon2">
+                                        </div>
+                                        <button onclick="sendMessage()" type="button" class="btn search-button" id="send-message">
+                                            <img src="/images/messenger/m-send.png" alt="Messenger icons">
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `);
+    
             message.append(display);
             const content = $('#chatMessages');
             if (content.length > 0) {
                 data.messages.forEach(element => {
                     const display = $(`
-                            <li class="contentmessage ${element.userFrom.id == data.currentUser.id ? 'message-reply' : 'message-receive'}" >
-                                            
-                                            <p >${element.content}</p>
-                                        </li>
-                            `)
-                    if (element.userFrom.id != data.currentUser.id) {
+                        <li class="contentmessage ${element.userFrom.id == data.currentUser.id ? 'message-reply' : 'message-receive'}">
+                            <p>${element.content}</p>
+                        </li>
+                    `);
+    
+                    if (element.userFrom.id != data.currentUser.id && element.userFrom.image) {
                         const img = $(`
-                                  <img 
-                                    src="${element.userFrom.image ? `${element.userFrom.image.urlImage}` : `/images/users/DefaultAvtUser.png`}" 
-                                    alt="Conversation user image" 
-                                  />
-                                `);
-
-                        // Thêm thẻ <img> vào phần tử <li>
+                            <img src="${element.userFrom.image.urlImage}" alt="Conversation user image" />
+                        `);
                         display.append(img);
                     }
+    
                     content.append(display);
-                })
-
+                });
             }
         }
     }
+    
 
 });

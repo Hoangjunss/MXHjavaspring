@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
     // Fetch and display status options
-    fetch('/status', {
+    fetch('/api/status', {
         method: 'GET'
     })
     .then(response => response.json()) // Chuyển đổi phản hồi thành JSON

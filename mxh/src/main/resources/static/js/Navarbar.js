@@ -101,7 +101,7 @@ function fetchNotificationsList(dropContent) {
 }
 
 function markNotificationsAsRead() {
-    fetch('/notificationsischecked', {
+    fetch('/api/notificationsischecked', {
         method: 'POST'
     })
         .then(response => {

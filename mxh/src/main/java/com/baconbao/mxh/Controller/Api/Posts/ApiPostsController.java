@@ -309,7 +309,7 @@ public class ApiPostsController {
         }
     }
 
-    @GetMapping("/api/notifications") // Lấy ra tất cả thông báo
+    /* @GetMapping("/api/notifications") // Lấy ra tất cả thông báo
     public ResponseEntity<?> notifications(@RequestParam("id") Long userId, Principal principal) {
         try {
             Map<String, Object> response = new HashMap<>();
@@ -327,7 +327,7 @@ public class ApiPostsController {
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+ */
     @GetMapping("/api/editpost")
     public ResponseEntity<?> editpost(@RequestParam("id") Long id, Principal principal) {
         try {
