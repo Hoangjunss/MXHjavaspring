@@ -47,25 +47,79 @@ $(document).ready(function () {
         }
     });
 
-    $(document).on('click', '.relationship-btn', function(event) {
-        const button = $(event.target);
-        const form = button.closest('.relationship-form');
-        const userId = form.find('input[name="id"]').val();
-        const status = button.data('status');
+    document.getElementById('form_edit_account').addEventListener('submit', function(event) {
+        event.preventDefault();
     
-        alert(status + " " + userId); // Debugging alert
+        const form = event.target;
+        const firstName = form.querySelector('input[name="firstName"]').value.trim();
+        const lastName = form.querySelector('input[name="lastName"]').value.trim();
+        const email = form.querySelector('input[name="email"]').value.trim();
+
+        // Kiểm tra nếu có bất kỳ trường nào bị bỏ trống
+        if (!firstName || !lastName || !email) {
+            alert('Vui lòng điền đầy đủ thông tin.');
+            return; // Dừng xử lý tiếp theo nếu có trường bị bỏ trống
+        }
+
+        const formData = {
+            firstName: firstName,
+            lastName: lastName,
+            email: email
+        };
+        // Ẩn thông báo lỗi trước khi gửi request
+        document.getElementById('email-error').style.display = 'none';
     
+        fetch('/api/editaccount', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Edit account successful');
+                // Tải lại trang hiện tại
+                window.location.reload();
+            } else if (data.message === "Email already exists") {
+                document.getElementById('email-error').style.display = 'block';
+            } else {
+                alert(data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An unexpected error occurred');
+        });
+    });
+
+    $('#form_edit_profile').on('submit', function(event) {
+        event.preventDefault(); // Ngăn chặn hành vi mặc định của form
+
+        // Lấy tất cả dữ liệu từ form
+        const formData = $(this).serializeArray();
+        const userAboutForm = {};
+        formData.forEach(field => {
+            const [_, index, fieldName] = field.name.match(/userAboutDTOs\[(\d+)\]\.(.*)/);
+            if (!userAboutForm.userAboutDTOs) userAboutForm.userAboutDTOs = [];
+            if (!userAboutForm.userAboutDTOs[index]) userAboutForm.userAboutDTOs[index] = {};
+            userAboutForm.userAboutDTOs[index][fieldName] = field.value;
+        });
+
+        // Gửi yêu cầu POST lên server
         $.ajax({
-            url: '/relationship', // Địa chỉ URL của API cần gọi
+            url: '/api/editprofiledetails',
             type: 'POST',
             contentType: 'application/json',
-            data: JSON.stringify({ userId: userId, status: status }),
+            data: JSON.stringify(userAboutForm),
             success: function(response) {
-                updateButtons(form, response.newStatus);
+                // Nếu yêu cầu thành công, load lại trang web
+                window.location.href = "/profile?id=" + response.userId;
             },
             error: function(xhr, status, error) {
+                // Xử lý lỗi nếu có
                 console.error('Error:', error);
-                alert('An unexpected error occurred');
             }
         });
     });
@@ -196,11 +250,6 @@ function updateStatusPost(data) {
     }
 }
 
-function openMessage() {
-    const url = window.innerWidth <= 768 ? '/messagesmobil' : '/messages';
-    window.location.href = url;
-}
-
 function handleRelationshipButtonClick(event) {
     const button = $(event.target);
     const form = button.closest('.relationship-form');
@@ -217,7 +266,7 @@ function updateRelationshipStatus(userId, status, form) {
     };
 
     $.ajax({
-        url: '/relationship', // Update with the new URL
+        url: '/api/relationship', // Update with the new URL
         type: 'POST',
         contentType: 'application/json',
         data: JSON.stringify(formData),
@@ -228,7 +277,7 @@ function updateRelationshipStatus(userId, status, form) {
                 alert(data.message);
             }
         },
-        error: function(error) {
+        error: function(xhr, status, error) {
             console.error('Error:', error);
             alert('An unexpected error occurred');
         }
@@ -265,7 +314,7 @@ function updateButtons(form, newStatus) {
             case 4:
                 if (button.data('status') == '4') {
                     button.text('Add Friend').data('status', '1');
-                    form.find('button[data-status="4"]').remove();
+                    /* form.find('button[data-status="4"]').remove(); */
                 } else {
                     button.remove();
                 }
@@ -332,4 +381,9 @@ function displayEditProfile(user) {
     $('#edit_profile_user').css('display', 'flex');
     $('#overlay_user').css('display', 'block');
     $('body').css('overflow', 'hidden');
+}
+
+function openMessage() {
+    const url = window.innerWidth <= 768 ? '/messagesmobil' : '/messages';
+    window.location.href = url;
 }

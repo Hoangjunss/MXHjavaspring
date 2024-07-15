@@ -78,6 +78,16 @@ public class NotificationServiceImpl implements NotificationService{
         return uuid.getMostSignificantBits() &0x1FFFFFFFFFFFFFL;
     }
 
+    public void createNotification(User user, User userSend, String message) {
+        Notification notification = new Notification();
+        notification.setMessage(message);
+        notification.setUser(user);
+        notification.setUserSend(userSend);
+        notification.setChecked(false);
+        notification.setUrl("/listfriend");
+        saveNotification(notification);
+    }
+
     @Override
     public int countUncheckedNotifications(User user) {
         return notificationRepository.countUncheckedNotification(user);

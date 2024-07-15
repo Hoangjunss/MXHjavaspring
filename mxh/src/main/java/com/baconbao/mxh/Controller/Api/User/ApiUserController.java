@@ -21,6 +21,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,6 +33,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.core.io.Resource;
 
 import com.baconbao.mxh.DTO.ApiResponse;
+import com.baconbao.mxh.DTO.UserAboutDTO;
+import com.baconbao.mxh.DTO.UserAboutForm;
 import com.baconbao.mxh.DTO.UserDTO;
 import com.baconbao.mxh.Exceptions.CustomException;
 import com.baconbao.mxh.Exceptions.ErrorCode;
@@ -227,8 +230,8 @@ public class ApiUserController {
             if (status == 1L) {
                 String message = "Bạn nhận được lời mời kết bạn từ " + userOne.getFirstName() + " "
                         + userOne.getLastName();
+                notificationService.createNotification(userTwo, userOne, message);
 
-                createNotification(userTwo, userOne, message);
             }
 
             boolean success = true;
@@ -465,7 +468,7 @@ public class ApiUserController {
     }
 
     // Đếm số lượng bạn bè - LƯU Ý STATUS
-    @GetMapping("api/mutualFriend")
+    @GetMapping("/api/mutualFriend")
     public ResponseEntity<?> countFriend(@RequestParam Long friendId, Principal principal) {
         try {
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
@@ -509,6 +512,33 @@ public class ApiUserController {
         }
     }
 
+    @PostMapping("/api/editprofiledetails")
+    public ResponseEntity<?> editProfile(@RequestBody UserAboutForm userAboutForm, Principal principal) {
+        try {
+            UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+            User user = userService.findByEmail(userDetails.getUsername());
+
+            for (UserAboutDTO userAboutDTO : userAboutForm.getUserAboutDTOs()) {
+                About about = aboutService.findById(userAboutDTO.getAboutId());
+                UserAbout userAbout = new UserAbout();
+                userAbout.setUser(user);
+                userAbout.setAbout(about);
+                userAbout.setDescription(userAboutDTO.getDescription());
+                userAboutService.save(userAbout);
+            }
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("userId", user.getId());
+            return ResponseEntity.ok(response);
+
+        } catch (CustomException e) {
+            return new ResponseEntity<>(new ApiResponse(false, e.getErrorCode().getMessage()), e.getErrorCode().getStatusCode());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new ApiResponse(false, "An unexpected error occurred"), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
     @GetMapping("/api/countfriend")
     public ResponseEntity<?> countFriend(Principal principal) {
         Map<String, Object> response = new HashMap<>();
@@ -596,13 +626,4 @@ public class ApiUserController {
         }
     }
 
-    public void createNotification(User user, User userSend, String message) {
-        Notification notification = new Notification();
-        notification.setMessage(message);
-        notification.setUser(user);
-        notification.setUserSend(userSend);
-        notification.setChecked(false);
-        notification.setUrl("/listfriend");
-        notificationService.saveNotification(notification);
-    }
 }

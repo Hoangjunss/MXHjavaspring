@@ -1,7 +1,7 @@
 // Hàm lấy danh sách bạn bè
 function fetchFriends() {
     NProgress.start();
-    fetch('/friends')
+    fetch('/api/friends')
         .then(response => response.json())
         .then(data => {
             const friendList = document.getElementById('friend-list');
@@ -25,7 +25,7 @@ function fetchFriends() {
 // Hàm lấy danh sách bạn bè chưa kết bạn
 function fetchNotFriends() {
     NProgress.start();
-    fetch('/notFriend')
+    fetch('/api/notFriend')
         .then(response => response.json())
         .then(data => {
             const notFriendList = document.getElementById('not-friend-list');
@@ -115,7 +115,7 @@ function createFriendItem(friend, confirmCallback, deleteCallback, isFriend, mut
 
 // Lấy số lượng bạn chung
 function fetchMutualFriendsCount(friendId) {
-    return fetch(`/mutualFriend?friendId=${friendId}`)
+    return fetch(`/api/mutualFriend?friendId=${friendId}`)
         .then(response => response.json())
         .then(data => {
             
@@ -138,7 +138,7 @@ document.addEventListener("DOMContentLoaded", function () {
 // Chấp nhận yêu cầu kết bạn
 function acceptFriendRequest(friendId, listItem) {
     NProgress.start();
-    fetch(`/relationship`, {
+    fetch(`/api/relationship`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -168,7 +168,7 @@ function acceptFriendRequest(friendId, listItem) {
 // Xóa bạn bè
 function deleteFriend(friendId, listItem) {
     NProgress.start();
-    fetch(`/relationship`, {
+    fetch(`/api/relationship`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -203,7 +203,7 @@ function deleteFriend(friendId, listItem) {
 // Thêm bạn bè
 function addFriend(friendId, listItem) {
     NProgress.start();
-    fetch(`/relationship`, {
+    fetch(`/api/relationship`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
