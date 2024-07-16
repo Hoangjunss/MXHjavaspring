@@ -48,9 +48,10 @@ function seenMessage(messages) {
     };
     alert(messages);
     stompClient.send("/app/chat.seen", {}, JSON.stringify(message))
-    const countMessageNotSeen = $('span.unread-messages[data-id="' + messages + '"]');
-    if (countMessageNotSeen.length > 0) {
-        countMessageNotSeen.remove();
+    var contact = $('li.contact[data-relantionships-id="' + messages + '"]');
+    if (contact.length > 0) {
+        var delete1=contact.find('.unread-messages');
+        delete1.remove();
     }
 }
 
@@ -164,7 +165,7 @@ function displayChatMessage(message) {
 // Cập nhật liên hệ trong danh sách liên hệ khi có tin nhắn mới
 function displayChatMessageFrame(message) {
     alert("hi");
-    const countMessageNotSeen = $('span.unread-messages[data-id="' + message.id + '"]');
+    const countMessageNotSeen = $('li.contact[data-relantionships-id="' + message.id + '"]').find('.unread-messages');
     if (countMessageNotSeen.length > 0) {
         // Retrieve the current text content and try to parse it as an integer
         let messageCount = parseInt(countMessageNotSeen.text(), 10);
@@ -182,9 +183,9 @@ function displayChatMessageFrame(message) {
         var inputElement = $('input[type="hidden"][data-messages-user="' + message.userFrom.id + '"]');
         if (inputElement.length == 0) {
             console.log('Element not found for message.id:', message.id);
-            var contact = $('li.contact[data-user-id="' + message.id + '"]').find('.wrap');
+            var contact = $('li.contact[data-relantionships-id="' + message.id + '"]').find('.wrap');
             console.log(contact);
-            var unreadMessageSpan = $('<span class="unread-messages" data-id="' + message.id + '">1</span>');
+            var unreadMessageSpan = $('<span class="unread-messages">1</span>');
 
             // Thêm span vào trong li.contact
             contact.append(unreadMessageSpan);
