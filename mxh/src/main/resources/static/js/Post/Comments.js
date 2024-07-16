@@ -12,6 +12,8 @@ function showComment(id){
             divContainerComment.removeClass('show-comments').addClass('hide-comments');
             return; // Không thực hiện các hành động khác nếu đã ẩn thẻ
         }
+
+        divContainerComment.empty();
     
         let commentsFrom = `
             <div class="row bootstrap snippets">
@@ -49,17 +51,18 @@ function showComment(id){
                 if(comment.userSend.image){
                     avtUserCmt = comment.userSend.image.urlImage;
                 }
+                const timeAgo = formatTimeAgo(comment.createAt);
                 displayComment += `
                     <li class="media">
                         <a href="/profile?id=${comment.userSend.id}" class="pull-left">
-                            <img src="${avtUserCmt}" alt="" class="img-circle">
+                            <img src="${avtUserCmt}" style="width: 30px;" alt="" class="img-circle">
                         </a>
                         <div class="media-body">
                             <div class="d-flex justify-content-between align-items-center w-100">
                                 <strong class="text-gray-dark"><a href="#" class="fs-8">${comment.userSend.firstName} ${comment.userSend.lastName}</a></strong>
                                 <a href="#"><i class='bx bx-dots-horizontal-rounded'></i></a>
                             </div>
-                            <span class="d-block comment-created-time">30 min ago</span>
+                            <span class="d-block comment-created-time">${timeAgo}</span>
                             <p class="fs-8 pt-2">${comment.content}</p>
                             <div class="commentLR">
                                 <button type="button" class="btn btn-link fs-8">Like</button>
@@ -138,7 +141,7 @@ function showComment(id){
                         <strong class="text-gray-dark"><a href="#" class="fs-8">${comment.userSend.firstName} ${comment.userSend.lastName}</a></strong>
                         <a href="#"><i class='bx bx-dots-horizontal-rounded'></i></a>
                     </div>
-                    <span class="d-block comment-created-time">${new Date(comment.createdTime).toLocaleTimeString()}</span>
+                    <span class="d-block comment-created-time">Now</span>
                     <p class="fs-8 pt-2">${comment.content}</p>
                     <div class="commentLR">
                         <button type="button" class="btn btn-link fs-8">Like</button>

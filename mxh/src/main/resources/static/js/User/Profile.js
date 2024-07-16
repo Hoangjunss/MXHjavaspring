@@ -265,6 +265,8 @@ function updateRelationshipStatus(userId, status, form) {
         status: status
     };
 
+    alert("CLICK RELATIONSHIP")
+
     $.ajax({
         url: '/api/relationship', // Update with the new URL
         type: 'POST',
@@ -287,7 +289,6 @@ function updateRelationshipStatus(userId, status, form) {
 // Hàm để cập nhật nút button
 function updateButtons(form, newStatus) {
     const buttons = form.find('.relationship-btn');
-    buttons.off('click'); // Xóa các sự kiện click cũ
     buttons.each(function() {
         const button = $(this);
         switch (newStatus) {
@@ -320,7 +321,7 @@ function updateButtons(form, newStatus) {
                 }
                 break;
         }
-    }).on('click', handleRelationshipButtonClick); // Thêm lại sự kiện click mới
+    }); // Thêm lại sự kiện click mới
 }
 
 function closeEditProfileDetails() {

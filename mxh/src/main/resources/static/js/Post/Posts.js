@@ -107,7 +107,7 @@ function createPostContent(post) {
     const imgUser = post.user.image!=null ?  post.user.image.urlImage : '/images/users/DefaultAvtUser.png';
     const imgPost = post.image != null ? post.image.urlImage : null;
     const countComment = post.comments ? post.comments.length : 0;
-
+    const timeAgo = formatTimeAgo(post.updateAt);
     const displayPost = `
         <ul class="list-unstyled" id="postuserupload"> 
             <div class="post border-bottom p-3 bg-white w-shadow">
@@ -121,7 +121,7 @@ function createPostContent(post) {
                         <div class="d-flex justify-content-between align-items-center w-100">
                             <a href="/profile?id=${post.user.id}" class="text-gray-dark post-user-name">${post.user.firstName} ${post.user.lastName}</a>
                         </div>
-                        <span class="d-block">3 hours ago <i class='bx bx-globe ml-3'></i></span>
+                        <span class="d-block">${timeAgo} <i class='bx bx-globe ml-3'></i></span>
                     </div>
                 </div>
                 <div id="displaycontent">
@@ -201,14 +201,28 @@ function createPostContent(post) {
 }
 
 function previewImage(event) {
-    const file = event.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const imagePreview = document.getElementById('imagePreview');
-            imagePreview.src = e.target.result;
-            imagePreview.style.display = 'block';
-        }
-        reader.readAsDataURL(file);
-    }
+    const imagePreview = document.getElementById('imagePreview');
+    const removeImage = document.getElementById('remove-image-span');
+    
+    const reader = new FileReader();
+    reader.onload = function() {
+        imagePreview.src = reader.result;
+        imagePreview.style.display = 'block';
+        removeImage.style.display = 'block';
+    };
+    reader.readAsDataURL(event.target.files[0]);
 }
+
+
+function removeImage() {
+    alert("CLICK");
+    const imagePreview = $('#imagePreview');
+    const imagePost = $('#imagePost');
+    const removeImage = $('#remove-image-span');
+    
+    imagePreview.attr('src', 'images/icons/theme/post-image.png');
+    imagePreview.hide();
+    imagePost.val('');  // Reset the file input
+    removeImage.hide();
+}
+

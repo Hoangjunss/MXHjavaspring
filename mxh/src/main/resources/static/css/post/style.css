@@ -383,7 +383,8 @@ body::-webkit-scrollbar-thumb:hover {
 }
 
 .post {
-    width: 100%
+    width: 100%;
+    margin-top: 15px;
 }
 
 .post-user-image {
@@ -753,6 +754,8 @@ body::-webkit-scrollbar-thumb:hover {
 .show-comments {
     max-height: 1000px;
     transform: max-height 0.5s ease-in;
+    overflow-y: auto;
+    overflow-x: hidden; 
 }
 
 /* Online users section */

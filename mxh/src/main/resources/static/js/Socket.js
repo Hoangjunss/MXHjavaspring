@@ -116,23 +116,22 @@ function displayAddFriendNotification(addFriendNotification){
     }
     // Create the new notification element
     const newNotification = `
-        <li>
-            <div class="col-md-2 col-sm-2 col-xs-2">
-                <div class="notify-img">
-                    <img src="/images/users/user-10.png" alt="notification user image">
-                </div>
-            </div>
-            <div class="col-md-10 col-sm-10 col-xs-10">
-                <a href="${addFriendNotification.url}" class="notification-user"></a>
-                <span class="notification-type">${addFriendNotification.message}</span>
-                <a href="#" class="notify-right-icon">
-                    <i class='bx bx-radio-circle-marked'></i>
-                </a>
-                <p class="time">
-                    <span class="badge badge-pill badge-primary"><i class='bx bxs-group'></i></span> 
-                </p>
-            </div>
-        </li>
+        <a href="/profile?id=${addFriendNotification.userSend.id}" class="notification-link">
+                        <div class="col-md-2 col-sm-2 col-xs-2">
+                            <div class="notify-img">
+                                <img src="${addFriendNotification.userSend.image ? `${addFriendNotification.userSend.image.urlImage}` : `/images/users/DefaultAvtUser.png`}" alt="notification user image" style="width: 40px;">
+                            </div>
+                        </div>
+                        <div class="col-md-10 col-sm-10 col-xs-10">
+                            <span class="notification-type">${addFriendNotification.message}</span>
+                            <span class="notify-right-icon">
+                                <i class='bx bx-radio-circle-marked'></i>
+                            </span>
+                            <p class="time">
+                                Now
+                            </p>
+                        </div>
+                    </a>
     `;
 
     // Prepend the new notification to the notification list

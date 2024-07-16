@@ -1,5 +1,6 @@
 package com.baconbao.mxh.Services.ServiceImpls.User;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -37,7 +38,7 @@ public class NotificationServiceImpl implements NotificationService{
     @Override
     public List<Notification> findByUser(User user) {
         try {
-            return notificationRepository.findByUser(user);
+            return notificationRepository.findByUserOrderByCreateAtDesc(user);
         } catch (DataAccessException e) {
             throw new CustomException(ErrorCode.DATABASE_ACCESS_ERROR);
         } catch (Exception e) {
@@ -83,6 +84,7 @@ public class NotificationServiceImpl implements NotificationService{
         notification.setMessage(message);
         notification.setUser(user);
         notification.setUserSend(userSend);
+        notification.setCreateAt(LocalDateTime.now());
         notification.setChecked(false);
         notification.setUrl("/listfriend");
         saveNotification(notification);
