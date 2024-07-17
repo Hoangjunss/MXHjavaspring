@@ -54,6 +54,8 @@ $(document).ready(function () {
         const firstName = form.querySelector('input[name="firstName"]').value.trim();
         const lastName = form.querySelector('input[name="lastName"]').value.trim();
         const email = form.querySelector('input[name="email"]').value.trim();
+        const imageInput = document.getElementById('imageInput');
+        const imageFile = imageInput.files[0];
 
         // Kiểm tra nếu có bất kỳ trường nào bị bỏ trống
         if (!firstName || !lastName || !email) {
@@ -362,7 +364,17 @@ function displayEditProfileDetails() {
 }
 
 function displayEditProfile(user) {
+    const userImage = user.image ? user.image.urlImage : '/images/users/DefaultAvtUser.png';
     const editProfileHtml = `
+        <div class="image_box">
+            <div class="item" id="image_box_item">
+                <label for="">Avatar User</label>
+                <input type="file" placeholder="Avatar" id="imageInput" onchange="previewImageAvartarUser(event)" name="image">
+            </div>
+            <div class="preview_box" id="preview_box">
+                <img id="currentImage" src="${userImage}" alt="User Image" style="max-width: 200px; max-height: 200px;"/>
+            </div>
+        </div>
         <div class="name_box">
             <label>First Name</label>
             <input type="text" name="firstName" value="${user.firstName}">
@@ -382,6 +394,21 @@ function displayEditProfile(user) {
     $('#edit_profile_user').css('display', 'flex');
     $('#overlay_user').css('display', 'block');
     $('body').css('overflow', 'hidden');
+}
+
+function previewImageAvartarUser(event) {
+    alert("Change");
+    const reader = new FileReader();
+    reader.onload = function () {
+        const currentImage = $('#currentImage');
+        currentImage.attr('src', reader.result);
+        currentImage.addClass('preview');
+
+        const deleteButton = $('<span>');
+        const icon = $('<i>').addClass('fa-solid fa-xmark');
+        deleteButton.append(icon);
+    };
+    reader.readAsDataURL(event.target.files[0]);
 }
 
 function openMessage() {

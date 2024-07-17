@@ -151,38 +151,6 @@ function createPostContent(post) {
                         <a href="#" class="post-card-buttons" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class='bx bx-share-alt mr-2'></i> Share
                         </a>
-                        <div class="dropdown-menu post-dropdown-menu">
-                            <a href="#" class="dropdown-item">
-                                <div class="row">
-                                    <div class="col-md-2">
-                                        <i class='bx bx-share-alt'></i>
-                                    </div>
-                                    <div class="col-md-10">
-                                        <span>Share Now (Public)</span>
-                                    </div>
-                                </div>
-                            </a>
-                            <a href="#" class="dropdown-item">
-                                <div class="row">
-                                    <div class="col-md-2">
-                                        <i class='bx bx-share-alt'></i>
-                                    </div>
-                                    <div class="col-md-10">
-                                        <span>Share...</span>
-                                    </div>
-                                </div>
-                            </a>
-                            <a href="#" class="dropdown-item">
-                                <div class="row">
-                                    <div class="col-md-2">
-                                        <i class='bx bx-message'></i>
-                                    </div>
-                                    <div class="col-md-10">
-                                        <span>Send as Message</span>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
                     </div>
                 </div>
                 <div class="hide-comments" id="commentslist-${post.id}" data-id="${post.id}">

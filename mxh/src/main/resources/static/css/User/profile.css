@@ -440,6 +440,7 @@ body .profiledetails{
     justify-content: center;
     background-color: transparent;
     z-index: 1000;
+    overflow: auto;
 }
 
 .edit_profile_container {

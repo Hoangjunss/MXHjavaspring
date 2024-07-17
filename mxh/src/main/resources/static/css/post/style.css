@@ -420,6 +420,10 @@ body::-webkit-scrollbar-thumb:hover {
     vertical-align: top
 }
 
+textarea{
+    width: 100%;
+}
+
 .profileCover {
     background-image: url(../images/covers/1/cover-1.jpg);
     background-position: center;
@@ -685,6 +689,11 @@ body::-webkit-scrollbar-thumb:hover {
 /* Posts */
 .share-dropup {
     display: inline-block;
+}
+
+.show-comments-btn{
+    border: none;
+    background-color: #fff;
 }
 
 .comment-wrapper .panel-body {
