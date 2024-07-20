@@ -101,7 +101,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 const span = $('li[data-user-id="' + element[0] + '"]').find('.wrap')
                 if (element[1] > 0) {
                     const display = $(`
-                     <span  class="unread-messages" >${element[1]}</span>
+                     <span  class="unread-messages" style="background-color: blue !important;">${element[1]}</span>
                     `)
                     span.append(display);
                 }
@@ -146,7 +146,7 @@ function loadMessage(data) {
                         <ul class="messages-content" id="chatMessages"></ul>
                     </div>
                 </div>
-                <div class="col-md-12">
+                <div class="col-md-12 messageContetFrame">
                     <div class="message-input">
                         <div class="wrap">
                             <form class="d-inline form-inline">

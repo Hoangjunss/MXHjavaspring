@@ -465,6 +465,13 @@
     z-index: 99;
     padding-bottom: 10px;
 }
+
+.messageContetFrame{
+    position: absolute;
+    bottom: 0px;
+    width: 100%;
+}
+
 .messenger-top-section {
     height: 60px;
 }

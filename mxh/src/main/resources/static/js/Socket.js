@@ -74,6 +74,7 @@ function sendMessage() {
     var chatContent = $('<li class="contentmessage message-reply">');
     var messageText = $('<p>').text(message.message.content);
     chatContent.append(messageText);
+    scrollToBottom(chatContent);
     $('#chatMessages').append(chatContent);
     var contact = $('li.contact[data-user-id="' + message.message.id + '"]');
     if (contact.length > 0) {
@@ -83,6 +84,11 @@ function sendMessage() {
     }
     // Gửi tin nhắn tới `/app/chat.send` trên WebSocket
     stompClient.send("/app/chat.send", {}, JSON.stringify(message));
+    content.value = '';
+}
+
+function scrollToBottom(element) {
+    element.scrollTop = element.scrollHeight;
 }
 
 function sendAddFriend(){
@@ -117,6 +123,7 @@ function displayAddFriendNotification(addFriendNotification){
     }
     // Create the new notification element
     const newNotification = `
+    <li>
         <a href="/profile?id=${addFriendNotification.userSend.id}" class="notification-link">
                         <div class="col-md-2 col-sm-2 col-xs-2">
                             <div class="notify-img">
@@ -129,10 +136,11 @@ function displayAddFriendNotification(addFriendNotification){
                                 <i class='bx bx-radio-circle-marked'></i>
                             </span>
                             <p class="time">
-                                Now
+                                Just Now
                             </p>
                         </div>
                     </a>
+    </li>
     `;
 
     // Prepend the new notification to the notification list

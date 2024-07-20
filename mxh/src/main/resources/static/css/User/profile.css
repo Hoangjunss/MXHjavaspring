@@ -364,7 +364,7 @@
 @media screen and (max-width: 768px) {
     .profile-info-right {
         position: relative;
-        top: -70px;
+        top: 10px;
     }
 
     .mv-hidden,
@@ -378,6 +378,11 @@
 
     .profile-center {
         padding: 0 2rem;
+    }
+
+    .edit_profile_container{
+        width: 25rem;
+        height: 32rem;
     }
 }
 

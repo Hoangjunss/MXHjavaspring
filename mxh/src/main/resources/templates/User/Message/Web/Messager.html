@@ -38,7 +38,7 @@
                 <nav id="navbar-main" class="navbar navbar-expand-lg shadow-sm sticky-top">
                     <div class="w-100 justify-content-md-center">
                         <ul class="navbar-nav mr-5 flex-row" id="main_menu">
-                            <a class="navbar-brand nav-item mr-lg-5" th:href="@{/}"><img th:src="@{/images/image.png}" width="40" height="40" class="mr-3" alt="Logo"></a>
+                            <a class="navbar-brand nav-item mr-lg-5" th:href="@{/}"><img th:src="@{/images/image.png}" width="40" height="40" class="mr-3" alt="Logo" id="home"></a>
                             <!-- Collect the nav links, forms, and other content for toggling -->
                             <form class="w-30 mx-2 my-auto d-inline form-inline mr-5 dropdown search-form">
                                 <div class="input-group" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="searchDropdown">
@@ -56,11 +56,11 @@
                                     <!-- end notify title -->
                                     <!-- notify content -->
                                     <div class="drop-content">
-                                        <h6 class="dropdown-header">Peoples</h6>
+                                        <h6 class="dropdown-header" >Peoples</h6>
                                         <li class="dropdown-item">
                                             <div class="col-md-2 col-sm-2 col-xs-2">
                                                 <div class="notify-img">
-                                                    <img th:src="@{/images/users/user-6.png}" alt="Search result">
+                                                    <img src="#" alt="Search result">
                                                 </div>
                                             </div>
                                             <div class="col-md-10 col-sm-10 col-xs-10">
@@ -75,6 +75,7 @@
                                         <li class="dropdown-item">
                                             <div class="col-md-2 col-sm-2 col-xs-2">
                                                 <div class="notify-img">
+                                                    <img src="#" alt="Search result">
                                                 </div>
                                             </div>
                                             <div class="col-md-10 col-sm-10 col-xs-10">
@@ -93,7 +94,7 @@
                             </form>
                             <!-- Nhắn tin -->
                             <li class="nav-item s-nav dropdown message-drop-li">
-                                <a href="#" class="nav-link nav-links message-drop drop-w-tooltip" data-toggle="dropdown" data-placement="bottom" data-title="Messages" role="button" aria-haspopup="true" aria-expanded="false" >
+                                <a href="#" class="nav-link nav-links message-drop drop-w-tooltip" data-toggle="dropdown" data-placement="bottom" data-title="Messages" role="button" aria-haspopup="true" aria-expanded="false" onclick="redirectToMessagePage()" id="message">
                                     <img th:src="@{/images/icons/navbar/message.png}" class="message-dropdown" alt="navbar icon"> <span class="badge badge-pill badge-primary">1</span>
                                 </a>                                
                                 <ul class="dropdown-menu notify-drop dropdown-menu-right nav-drop shadow-sm">
@@ -135,13 +136,16 @@
                             </li>
                             <!-- Thêm bạn bè -->
                             <li class="nav-item s-nav dropdown friend-request">
-                                <a th:href="@{/listfriend}" class="nav-link nav-links rm-drop-mobile drop-w-tooltip" data-toggle="dropdown" data-placement="bottom" data-title="Friend Requests" role="button" aria-haspopup="true" aria-expanded="false">
-                                    <img th:src="@{images/icons/navbar/group.png}" class="friend-request" alt="navbar icon"> <span class="badge-pill badge-primary"><p id="friend-request-count">Lời mời kết bạn (0)</p></span>
+                                <a th:href="@{/listfriend}" class="nav-link nav-links rm-drop-mobile drop-w-tooltip" data-toggle="dropdown" data-placement="bottom" data-title="Friend Requests" role="button" aria-haspopup="true" aria-expanded="false" id="friend-request">
+                                    <span class="badge-pill badge-primary">
+                                        <img class="friend-request-icon" src="/images/icons/navbar/group.png" alt="Friend Request Icon">
+                                        <span id="friend-request-count">0</span>
+                                    </span>
                                 </a>
                             </li>
                             <!-- Thông báo -->
                             <li class="nav-item s-nav dropdown notification">
-                                <a href="#" class="nav-link nav-links rm-drop-mobile drop-w-tooltip" data-toggle="dropdown" data-placement="bottom" data-title="Notifications" role="button" aria-haspopup="true" aria-expanded="false">
+                                <a href="#" class="nav-link nav-links rm-drop-mobile drop-w-tooltip" data-toggle="dropdown" data-placement="bottom" data-title="Notifications" role="button" aria-haspopup="true" aria-expanded="false" id="notification">
                                     <img th:src="@{/images/icons/navbar/notification.png}" class="notification-bell" alt="navbar icon">
                                     <span id="quantityNotification" class="badge-pill badge-primary unread-messages" style="display: none;"></span>
                                 </a>
@@ -189,7 +193,6 @@
                         </ul>
                     </div>
                 </nav>
-                
                 <div class="row message-right-side-content">
                     <div class="col-md-12">
                         <div id="message-frame">

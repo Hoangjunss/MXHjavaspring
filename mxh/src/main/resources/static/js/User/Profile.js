@@ -190,6 +190,8 @@ function updateRelationship(data) {
             <button type="button" class="btn btn-follow mr-3" id="editProfile" onclick='displayEditProfile(${userString})'><i class='bx bx-plus'></i> Edit Profile</button>
         `);
     } else {
+        $('.profile-img-caption').hide();
+        $('.cover-overlay').hide();
         let buttonHtml = `<input type="hidden" name="id" value="${data.user.id}">`;
 
         if (!data.relationship || data.relationship.status.id == 4) {
@@ -411,7 +413,7 @@ function previewImageAvartarUser(event) {
     reader.readAsDataURL(event.target.files[0]);
 }
 
-function openMessage() {
+function openmessage() {
     const url = window.innerWidth <= 768 ? '/messagesmobil' : '/messages';
     window.location.href = url;
 }

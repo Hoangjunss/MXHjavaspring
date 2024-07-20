@@ -84,7 +84,7 @@
     color: #fff;
     font-weight: 700;
     text-align: center;
-    background-color: #007bff !important;
+    background-color: #007bff;
     font-size: .6rem
 }
 
@@ -615,7 +615,13 @@
     height: 100%;
     overflow: hidden;
     position: relative;
-    background-color: #fff
+    background-color: #fff;
+    position: relative;
+}
+
+.messageContetFrame{
+    position: absolute;
+    bottom: 0px;
 }
 
 @media screen and (max-width:735px) {

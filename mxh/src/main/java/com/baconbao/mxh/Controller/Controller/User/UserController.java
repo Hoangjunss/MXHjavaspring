@@ -57,4 +57,9 @@ public class UserController {
         return "User/Confirm";
     }
 
+    @GetMapping("/404")
+    public String error404() {
+        return "404";
+    }
+
 }
