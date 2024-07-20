@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class MessageController {
 
-    @GetMapping("/messagesmobil")
+    @GetMapping("/messagesmobile")
     public String getMessagePageMobile() {
         return "/User/Message/Mobile/Message";
     }

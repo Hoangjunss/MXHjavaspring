@@ -1,9 +1,16 @@
 document.addEventListener("DOMContentLoaded", function () {
     fetch('/api/usercurrent', {
         method: 'GET'
-    }).then(response=> response.json())
+    }).then(response=>{
+            if (!response.ok) {
+                // Nếu response không OK, ném lỗi với message từ server
+                return response.json().then(errorData => {
+                    throw new Error(errorData.message || 'An unexpected error occurred');
+                });
+            }
+            return response.json();
+        })
     .then(data => {
-        console.log(data);
         const profileLink = document.getElementById('profileLink');
         const avatarImage = document.getElementById('avartaruser');
         profileLink.href = '/profile?id='+ data.id;
@@ -13,16 +20,30 @@ document.addEventListener("DOMContentLoaded", function () {
             avatarImage.src = '/images/users/DefaultAvtUser.png';
         }
     })
-    .catch(error => console.error('Error fetching status post:', error));
+    .catch(error => {
+        console.error('Error fetching chat messages:', error.message);
+        // Hiển thị lỗi cho người dùng, ví dụ như bằng cách cập nhật UI
+    });
 
     fetch(`/api/countNotificationsIsCheck`, {
         method: 'GET'
     })
-        .then(response => response.json())
+        .then(response =>{
+            if (!response.ok) {
+                // Nếu response không OK, ném lỗi với message từ server
+                return response.json().then(errorData => {
+                    throw new Error(errorData.message || 'An unexpected error occurred');
+                });
+            }
+            return response.json();
+        })
         .then(data => {
             updateNotificationsIsCheck(data);
         })
-        .catch(error => console.error('Error fetching notifications:', error));
+        .catch(error => {
+            console.error('Error fetching chat messages:', error.message);
+            // Hiển thị lỗi cho người dùng, ví dụ như bằng cách cập nhật UI
+        });
 
         const notificationItem = document.querySelector('.nav-item.s-nav.dropdown.notification');
         const dropdownMenu = notificationItem.querySelector('.dropdown-menu');
@@ -69,9 +90,16 @@ function updateNotificationsIsCheck(data) {
 
 function fetchNotificationsList(dropContent) {
     fetch('/api/notifications', { method: 'GET' })
-        .then(response => response.json())
+        .then(response =>{
+            if (!response.ok) {
+                // Nếu response không OK, ném lỗi với message từ server
+                return response.json().then(errorData => {
+                    throw new Error(errorData.message || 'An unexpected error occurred');
+                });
+            }
+            return response.json();
+        })
         .then(data => {
-            console.log(data);
             dropContent.innerHTML = '';
             data.notifications.forEach(notification => {
                 const timeAgo = formatTimeAgo(notification.createAt);
@@ -98,7 +126,10 @@ function fetchNotificationsList(dropContent) {
 
             });
         })
-        .catch(error => console.error('Error:', error));
+        .catch(error => {
+            console.error('Error fetching chat messages:', error.message);
+            // Hiển thị lỗi cho người dùng, ví dụ như bằng cách cập nhật UI
+        });
 }
 
 function markNotificationsAsRead() {
@@ -114,13 +145,24 @@ function markNotificationsAsRead() {
                 console.error('Failed to mark notifications as read.');
             }
         })
-        .catch(error => console.error('Error:', error));
+        .catch(error => {
+            console.error('Error fetching chat messages:', error.message);
+            // Hiển thị lỗi cho người dùng, ví dụ như bằng cách cập nhật UI
+        });
 }
 
 // Đếm số lượng lời mời kết bạn chưa xác nhận
 function fetchFriendRequestsCount() {
     return fetch('/api/countfriend')
-        .then(response => response.json())
+        .then(response =>{
+            if (!response.ok) {
+                // Nếu response không OK, ném lỗi với message từ server
+                return response.json().then(errorData => {
+                    throw new Error(errorData.message || 'An unexpected error occurred');
+                });
+            }
+            return response.json();
+        })
         .then(data => {      
             // Tạo một biến để lưu số lượng lời mời kết bạn
             let friendRequestsCount = data.countFriend;
@@ -130,7 +172,6 @@ function fetchFriendRequestsCount() {
                 if (relationship.userOne.id === data.loggedInUser.id) {
                     // nếu userOne là user hiện tại (user gửi lời mời kết bạn) thì giảm biến đếm lên 1
                     
-                    console.log('Friend requests count:', data.countFriend);
                     friendRequestsCount--;
                 }
             });
@@ -139,8 +180,8 @@ function fetchFriendRequestsCount() {
             return friendRequestsCount;
         })
         .catch(error => {
-            console.error('Error fetching friend requests count:', error);
-            return 0; // Trả về 0 trong trường hợp có lỗi
+            console.error('Error fetching chat messages:', error.message);
+            // Hiển thị lỗi cho người dùng, ví dụ như bằng cách cập nhật UI
         });
 }
 

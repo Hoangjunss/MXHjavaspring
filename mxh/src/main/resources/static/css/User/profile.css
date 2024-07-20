@@ -369,7 +369,7 @@
 
     .mv-hidden,
     .profile-links {
-        display: none !important;
+        display: block;
     }
 
     .btn-start-chat {
@@ -381,8 +381,8 @@
     }
 
     .edit_profile_container{
-        width: 25rem;
-        height: 32rem;
+        width: 22rem !important;
+        height: 30rem;
     }
 }
 
@@ -449,8 +449,8 @@ body .profiledetails{
 
 .edit_profile_container {
     box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
-    width: 35rem;
-    max-height: 80vh;
+    width: 30rem;
+    max-height: 75vh;
     overflow-y: auto;
     background-color: white;
     padding: 10px 20px;

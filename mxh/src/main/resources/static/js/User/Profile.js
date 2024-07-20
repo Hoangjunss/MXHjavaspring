@@ -78,7 +78,15 @@ $(document).ready(function () {
             },
             body: JSON.stringify(formData)
         })
-        .then(response => response.json())
+        .then(response =>  {
+            if (!response.ok) {
+                // Nếu response không OK, ném lỗi với message từ server
+                return response.json().then(errorData => {
+                    throw new Error(errorData.message || 'An unexpected error occurred');
+                });
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.success) {
                 alert('Edit account successful');
@@ -86,13 +94,11 @@ $(document).ready(function () {
                 window.location.reload();
             } else if (data.message === "Email already exists") {
                 document.getElementById('email-error').style.display = 'block';
-            } else {
-                alert(data.message);
             }
         })
         .catch(error => {
-            console.error('Error:', error);
-            alert('An unexpected error occurred');
+            console.error('Error fetching chat messages:', error.message);
+            // Hiển thị lỗi cho người dùng, ví dụ như bằng cách cập nhật UI
         });
     });
 
@@ -135,7 +141,6 @@ $(document).ready(function () {
 
 function fetchUser(userId) {
     $.get(`/api/getuser?id=${userId}`, function(data) {
-        console.log(data);
         updateProfile(data);
     }).fail(function(error) {
         console.error('Error fetching user:', error);
@@ -144,7 +149,6 @@ function fetchUser(userId) {
 
 function fetchRelationship(userId) {
     $.get(`/api/getrelationship?userId=${userId}`, function(data) {
-        console.log(data);
         updateRelationship(data);
         fetchStatusPost();
         fetchUserAbouts(userId);
@@ -155,7 +159,6 @@ function fetchRelationship(userId) {
 
 function fetchUserAbouts(userId) {
     $.get(`/api/getabouts?userId=${userId}`, function(data) {
-        console.log(data);
         updateUserAbouts(data);
     }).fail(function(error) {
         console.error('Error fetching user abouts:', error);
@@ -164,7 +167,6 @@ function fetchUserAbouts(userId) {
 
 function fetchStatusPost() {
     $.get(`/api/status`, function(data) {
-        console.log(data);
         updateStatusPost(data);
     }).fail(function(error) {
         console.error('Error fetching status post:', error);
@@ -259,7 +261,6 @@ function handleRelationshipButtonClick(event) {
     const form = button.closest('.relationship-form');
     const userId = form.find('input[name="id"]').val();
     const status = button.data('status');
-    alert(status + " " + userId); // Debugging alert
     updateRelationshipStatus(userId, status, form);
 }
 
@@ -268,9 +269,6 @@ function updateRelationshipStatus(userId, status, form) {
         userId: userId,
         status: status
     };
-
-    alert("CLICK RELATIONSHIP")
-
     $.ajax({
         url: '/api/relationship', // Update with the new URL
         type: 'POST',
@@ -279,13 +277,10 @@ function updateRelationshipStatus(userId, status, form) {
         success: function(data) {
             if (data.success) {
                 updateButtons(form, data.newStatus);
-            } else {
-                alert(data.message);
             }
         },
         error: function(xhr, status, error) {
             console.error('Error:', error);
-            alert('An unexpected error occurred');
         }
     });
 }
@@ -400,7 +395,6 @@ function displayEditProfile(user) {
 }
 
 function previewImageAvartarUser(event) {
-    alert("Change");
     const reader = new FileReader();
     reader.onload = function () {
         const currentImage = $('#currentImage');
@@ -415,6 +409,5 @@ function previewImageAvartarUser(event) {
 }
 
 function openmessage() {
-    const url = window.innerWidth <= 768 ? '/messagesmobil' : '/messages';
-    window.location.href = url;
+    window.location.href = '/messagesmobile';
 }

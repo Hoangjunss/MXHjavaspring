@@ -22,17 +22,25 @@ document.addEventListener("DOMContentLoaded", function() {
                 },
                 body: JSON.stringify(data)
             })
-            .then(response => response.json())
+            .then(response =>  {
+            if (!response.ok) {
+                // Nếu response không OK, ném lỗi với message từ server
+                return response.json().then(errorData => {
+                    throw new Error(errorData.message || 'An unexpected error occurred');
+                });
+            }
+            return response.json();
+        })
             .then(result => {
                 if (result.success) {
-                    console.log("Reaction saved successfully!");
                     // Cập nhật giao diện người dùng nếu cần
                 } else {
                     console.error("Failed to save reaction.");
                 }
             })
             .catch(error => {
-                console.error("Error:", error);
+                console.error('Error fetching chat messages:', error.message);
+                // Hiển thị lỗi cho người dùng, ví dụ như bằng cách cập nhật UI
             });
         });
     });
@@ -58,11 +66,9 @@ document.addEventListener("DOMContentLoaded", function() {
     document.querySelectorAll('.commentForm').forEach(form => {
         form.addEventListener('submit', function (event) {
             event.preventDefault();
-            alert("COMMENTER")
     
             const postId = this.querySelector('input[name="postId"]').value;
             const content = this.querySelector('input[name="content"]').value;
-            alert(content + " " + postId);
     
             // Gửi AJAX request đến server
             fetch('/commenter', {
@@ -72,7 +78,15 @@ document.addEventListener("DOMContentLoaded", function() {
                 },
                 body: JSON.stringify({ postId, content })
             })
-            .then(response => response.json())
+            .then(response =>  {
+            if (!response.ok) {
+                // Nếu response không OK, ném lỗi với message từ server
+                return response.json().then(errorData => {
+                    throw new Error(errorData.message || 'An unexpected error occurred');
+                });
+            }
+            return response.json();
+        })
             .then(data => {
                 if (data.success) {
                     // Tạo phần tử HTML mới cho comment
@@ -103,22 +117,16 @@ document.addEventListener("DOMContentLoaded", function() {
                     form.reset();
                 } else {
                     // Xử lý khi có lỗi
-                    alert('Đã xảy ra lỗi khi thêm bình luận. SEVER');
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
-                alert('Đã xảy ra lỗi khi thêm bình luận. CLIENT');
+                console.error('Error fetching chat messages:', error.message);
+                // Hiển thị lỗi cho người dùng, ví dụ như bằng cách cập nhật UI
             });
         });
     });       
 });
 
 function redirectToMessagePage() {
-    // Kiểm tra kích thước cửa sổ trình duyệt
-    if (window.innerWidth <= 768) {
-        window.location.href = '/messagesmobil'; // Chuyển hướng đến trang mobile nếu kích thước cửa sổ nhỏ hơn hoặc bằng điểm ngắt
-    } else {
-        window.location.href = '/messages'; // Chuyển hướng đến trang web nếu kích thước cửa sổ lớn hơn điểm ngắt
-    }
+    window.location.href = '/messagesmobile';
 }

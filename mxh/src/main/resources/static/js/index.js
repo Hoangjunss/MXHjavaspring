@@ -3,12 +3,22 @@ document.addEventListener("DOMContentLoaded", function () {
     fetch('/api/status', {
         method: 'GET'
     })
-    .then(response => response.json()) // Chuyển đổi phản hồi thành JSON
+    .then(response => {
+        if (!response.ok) {
+            // Nếu response không OK, ném lỗi với message từ server
+            return response.json().then(errorData => {
+                throw new Error(errorData.message || 'An unexpected error occurred');
+            });
+        }
+        return response.json();
+    }) // Chuyển đổi phản hồi thành JSON
     .then(data => {
-        console.log(data);
         displayStatus(data);
     })
-    .catch(error => console.error('Error fetching status post:', error));
+    .catch(error => {
+        console.error('Error fetching chat messages:', error.message);
+        // Hiển thị lỗi cho người dùng, ví dụ như bằng cách cập nhật UI
+    });
 
 });
 

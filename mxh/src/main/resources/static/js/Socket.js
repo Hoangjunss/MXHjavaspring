@@ -10,18 +10,13 @@ stompClient.connect({}, function (frame) {
     if (isConnect) {
         var input = $('#idRelationship');
         if (input.length > 0) {
-            alert(input.val());
             seenMessage(input.val());
         }
     }
-    console.log('Connected: ' + frame);
     // Đăng ký để nhận tin nhắn mới từ hàng đợi `/user/queue/messages`
     stompClient.subscribe('/user/queue/messages', function (message) {
         try {
-            console.log("Received message: ", message.body); // In toàn bộ thông điệp nhận được
             var chatMessage = JSON.parse(message.body);
-            console.log("Parsed message userFrom id: ", chatMessage.userFrom.id);
-            console.log("Message userFrom id: ", chatMessage.userFrom.id);// Parse dữ liệu JSON từ tin nhắn
             displayChatMessage(chatMessage); // Hiển thị tin nhắn trong khung chat
             displayChatMessageFrame(chatMessage);
         } catch (e) {
@@ -36,7 +31,6 @@ stompClient.connect({}, function (frame) {
     })
     stompClient.subscribe('/user/queue/addfriend', function(notification) {
         var addFriendNotification = JSON.parse(notification.body);
-        console.log("Parsed notification: ", addFriendNotification); // Log the parsed JSON object
         displayAddFriendNotification(addFriendNotification); // Call your display function with the parsed notification
     });
 });
@@ -46,7 +40,6 @@ function seenMessage(messages) {
             id: messages
         }
     };
-    alert(messages);
     stompClient.send("/app/chat.seen", {}, JSON.stringify(message))
     var contact = $('li.contact[data-relantionships-id="' + messages + '"]');
     if (contact.length > 0) {
@@ -74,7 +67,6 @@ function sendMessage() {
     var chatContent = $('<li class="contentmessage message-reply">');
     var messageText = $('<p>').text(message.message.content);
     chatContent.append(messageText);
-    scrollToBottom(chatContent);
     $('#chatMessages').append(chatContent);
     var contact = $('li.contact[data-user-id="' + message.message.id + '"]');
     if (contact.length > 0) {
@@ -87,9 +79,6 @@ function sendMessage() {
     content.value = '';
 }
 
-function scrollToBottom(element) {
-    element.scrollTop = element.scrollHeight;
-}
 
 function sendAddFriend(){
     var idUserValue = document.getElementById('idUser').value;
@@ -153,12 +142,8 @@ function displayChatMessage(message) {
     var inputElement = $('input[type="hidden"][data-messages-user="' + message.userFrom.id + '"]');
 
     $('input[type="hidden"]').each(function () {
-        console.log("Existing input element with data-messages-user: ", $(this).attr('data-messages-user'));
     });
-    console.log("Message userFrom id: ", message.userFrom.id);
-    console.log(inputElement);
     if (inputElement.length) {
-        console.log("11");
 
         seenMessage(message.id);
         var chatContent = $('<li class="contentmessage message-receive">');
@@ -172,12 +157,10 @@ function displayChatMessage(message) {
 
 // Cập nhật liên hệ trong danh sách liên hệ khi có tin nhắn mới
 function displayChatMessageFrame(message) {
-    alert("hi");
     const countMessageNotSeen = $('li.contact[data-relantionships-id="' + message.id + '"]').find('.unread-messages');
     if (countMessageNotSeen.length > 0) {
         // Retrieve the current text content and try to parse it as an integer
         let messageCount = parseInt(countMessageNotSeen.text(), 10);
-        console.log('hello');
         // Debugging: Log the initial value and the result of parseInt
         // Check if the parsing resulted in NaN
         if (isNaN(messageCount)) {
@@ -190,19 +173,15 @@ function displayChatMessageFrame(message) {
     } else {
         var inputElement = $('input[type="hidden"][data-messages-user="' + message.userFrom.id + '"]');
         if (inputElement.length == 0) {
-            console.log('Element not found for message.id:', message.id);
             var contact = $('li.contact[data-relantionships-id="' + message.id + '"]').find('.wrap');
-            console.log(contact);
             var unreadMessageSpan = $('<span class="unread-messages">1</span>');
 
             // Thêm span vào trong li.contact
             contact.append(unreadMessageSpan);
-            console.log(contact);
         }
     }
     var contact = $('li.contact[data-user-id="' + message.userFrom.id+ '"]');
     if (contact.length > 0) {
-        alert("hii");
         contact.remove();
         contact.find('p.preview').text(message.content);
         $('ul.conversations').prepend(contact);

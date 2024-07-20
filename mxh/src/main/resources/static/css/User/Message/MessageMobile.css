@@ -466,6 +466,10 @@
     padding-bottom: 10px;
 }
 
+.flex-row{
+    gap: 38px;
+}
+
 .messageContetFrame{
     position: absolute;
     bottom: 0px;

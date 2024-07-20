@@ -1,10 +1,22 @@
 function showComment(id){
     fetch('/api/comment?id='+id,{
         method:'GET'
-    })  .then(response => response.json()) 
+    })  .then(response =>  {
+        if (!response.ok) {
+            // Nếu response không OK, ném lỗi với message từ server
+            return response.json().then(errorData => {
+                throw new Error(errorData.message || 'An unexpected error occurred');
+            });
+        }
+        return response.json();
+    }) 
     .then(data => {
         displayComment(data, id)
     })
+    .catch(error => {
+        console.error('Error fetching chat messages:', error.message);
+        // Hiển thị lỗi cho người dùng, ví dụ như bằng cách cập nhật UI
+    });
 }
     function displayComment(data, postId) {
         const divContainerComment = $(`#commentslist-${postId}`);

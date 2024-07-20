@@ -10,32 +10,65 @@ document.addEventListener("DOMContentLoaded", function () {
         fetch('/api/messagermobile', {
             method: 'GET'
         })
-            .then(response => response.json()) // Chuyển đổi phản hồi thành JSON
+            .then(response => {
+                if (!response.ok) {
+                    // Nếu response không OK, ném lỗi với message từ server
+                    return response.json().then(errorData => {
+                        throw new Error(errorData.message || 'An unexpected error occurred');
+                    });
+                }
+                return response.json();
+            }) // Chuyển đổi phản hồi thành JSON
             .then(data => {
                 loadMessagesFrame(data);
                 const idUser = $('#active').val();
                 fetch('/api/chat?id=' + idUser, {
                     method: "GET"
-                }).then(response => response.json()) // Chuyển đổi phản hồi thành JSON
+                }).then(response => {
+                    if (!response.ok) {
+                        // Nếu response không OK, ném lỗi với message từ server
+                        return response.json().then(errorData => {
+                            throw new Error(errorData.message || 'An unexpected error occurred');
+                        });
+                    }
+                    return response.json();
+                }) // Chuyển đổi phản hồi thành JSON
                     .then(data => {
                         loadMessage(data);
                     })
+                    .catch(error => {
+                        console.error('Error fetching chat messages:', error.message);
+                        // Hiển thị lỗi cho người dùng, ví dụ như bằng cách cập nhật UI
+                    });    
             })
+            .catch(error => {
+                console.error('Error fetching chat messages:', error.message);
+                // Hiển thị lỗi cho người dùng, ví dụ như bằng cách cập nhật UI
+            });
 
-        console.log(1);
 
     } else if (messageFrame.length > 0) {
-        console.log(2);
         fetch('/api/messagermobile', {
             method: 'GET'
         })
-            .then(response => response.json()) // Chuyển đổi phản hồi thành JSON
+            .then(response => {
+                if (!response.ok) {
+                    // Nếu response không OK, ném lỗi với message từ server
+                    return response.json().then(errorData => {
+                        throw new Error(errorData.message || 'An unexpected error occurred');
+                    });
+                }
+                return response.json();
+            }) // Chuyển đổi phản hồi thành JSON
             .then(data => {
                 loadMessagesFrame(data);
             })
+            .catch(error => {
+                console.error('Error fetching chat messages:', error.message);
+                // Hiển thị lỗi cho người dùng, ví dụ như bằng cách cập nhật UI
+            });
 
     } else {
-        console.log(3);
         const currentUrl = window.location.href;
 
         // Tạo đối tượng URLSearchParams từ URL
@@ -46,10 +79,22 @@ document.addEventListener("DOMContentLoaded", function () {
         if (id != null) {
             fetch('/api/chat?id=' + id, {
                 method: "GET"
-            }).then(response => response.json()) // Chuyển đổi phản hồi thành JSON
+            }).then(response => {
+                if (!response.ok) {
+                    // Nếu response không OK, ném lỗi với message từ server
+                    return response.json().then(errorData => {
+                        throw new Error(errorData.message || 'An unexpected error occurred');
+                    });
+                }
+                return response.json();
+            }) // Chuyển đổi phản hồi thành JSON
                 .then(data => {
                     loadMessage(data);
                 })
+                .catch(error => {
+                    console.error('Error fetching chat messages:', error.message);
+                    // Hiển thị lỗi cho người dùng, ví dụ như bằng cách cập nhật UI
+                });
         }
     }
 
@@ -77,7 +122,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 data.unseenMessages.forEach(unseenMessage => {
                     if (unseenMessage[0] == user.id) {
                         const display = $(`
-            <li data-relantionships-id="${relantionships.id}" data-user-id="${user.id}" class="contact" onclick="showChat(${user.id})" >
+            <li data-relantionships-id="${relantionships.id}" data-user-id="${user.id}" class="contact">
                                 <a href="/chatmobile?id=${user.id}" style="text-decoration: none;">
                                     <div class="wrap">
                                         <span class="contact-status online"></span>
@@ -90,9 +135,6 @@ document.addEventListener("DOMContentLoaded", function () {
                                 </a>
                             </li>
             `)
-            if ($(window).width() >= 758) {
-                display.find('a').removeAttr('href');
-            }
                         frame.append(display);
                     }
                 })
@@ -109,15 +151,15 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
     // Hàm tải tin nhắn từ server
-   
+
     // Hàm hiển thị chat cho người dùng với ID cụ thể
-  
+
     // Thêm sự kiện click cho mỗi liên hệ để hiển thị chat
-  
 
 
-   
-    
+
+
+
 
 });
 function loadMessage(data) {
@@ -167,6 +209,7 @@ function loadMessage(data) {
         seenMessage(data.relation.id);
 
         message.append(display);
+        scrollToBottom(message);
         const content = $('#chatMessages');
         if (content.length > 0) {
             data.messages.forEach(element => {
@@ -188,18 +231,34 @@ function loadMessage(data) {
         }
     }
 }
+
+function scrollToBottom(element) {
+    element.scrollTop = element.scrollHeight;
+}
+
 function showChat(userId) {
-    console.log("Show chat for user with ID: " + userId);
     loadMessages(userId); // Gọi hàm loadMessages với ID người dùng
 }
 function loadMessages(userId) {
     fetch('/api/chat?id=' + userId, {
         method: 'GET' // Gửi request POST đến server
     })
-        .then(response => response.json()) // Chuyển đổi phản hồi thành JSON
+        .then(response => {
+            if (!response.ok) {
+                // Nếu response không OK, ném lỗi với message từ server
+                return response.json().then(errorData => {
+                    throw new Error(errorData.message || 'An unexpected error occurred');
+                });
+            }
+            return response.json();
+        }) // Chuyển đổi phản hồi thành JSON
         .then(data => {
             loadMessage(data);
         })
-       
+        .catch(error => {
+            console.error('Error fetching chat messages:', error.message);
+            // Hiển thị lỗi cho người dùng, ví dụ như bằng cách cập nhật UI
+        });
+
 }
 

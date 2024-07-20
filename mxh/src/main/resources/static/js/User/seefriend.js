@@ -2,7 +2,15 @@
 function fetchFriends() {
     NProgress.start();
     fetch('/api/friends')
-        .then(response => response.json())
+        .then(response =>  {
+            if (!response.ok) {
+                // Nếu response không OK, ném lỗi với message từ server
+                return response.json().then(errorData => {
+                    throw new Error(errorData.message || 'An unexpected error occurred');
+                });
+            }
+            return response.json();
+        })
         .then(data => {
             const friendList = document.getElementById('friend-list');
             friendList.innerHTML = ''; // Xóa nội dung cũ
@@ -17,8 +25,8 @@ function fetchFriends() {
             NProgress.done();
         })
         .catch(error => {
-            console.error('Error fetching friends:', error);
-            NProgress.done();
+            console.error('Error fetching chat messages:', error.message);
+            // Hiển thị lỗi cho người dùng, ví dụ như bằng cách cập nhật UI
         });
 }
 
@@ -26,7 +34,15 @@ function fetchFriends() {
 function fetchNotFriends() {
     NProgress.start();
     fetch('api/notFriend')
-        .then(response => response.json())
+        .then(response =>  {
+            if (!response.ok) {
+                // Nếu response không OK, ném lỗi với message từ server
+                return response.json().then(errorData => {
+                    throw new Error(errorData.message || 'An unexpected error occurred');
+                });
+            }
+            return response.json();
+        })
         .then(data => {
             const notFriendList = document.getElementById('not-friend-list');
             notFriendList.innerHTML = ''; // Xóa nội dung cũ
@@ -39,8 +55,8 @@ function fetchNotFriends() {
             NProgress.done();
         })
         .catch(error => {
-            console.error('Error fetching not friends:', error);
-            NProgress.done();
+            console.error('Error fetching chat messages:', error.message);
+            // Hiển thị lỗi cho người dùng, ví dụ như bằng cách cập nhật UI
         });
 }
 
@@ -116,15 +132,22 @@ function createFriendItem(friend, confirmCallback, deleteCallback, isFriend, mut
 // Lấy số lượng bạn chung
 function fetchMutualFriendsCount(friendId) {
     return fetch(`/api/mutualFriend?friendId=${friendId}`)
-        .then(response => response.json())
+        .then(response =>  {
+            if (!response.ok) {
+                // Nếu response không OK, ném lỗi với message từ server
+                return response.json().then(errorData => {
+                    throw new Error(errorData.message || 'An unexpected error occurred');
+                });
+            }
+            return response.json();
+        })
         .then(data => {
             
-            console.log('Mutual friends count:', data.count);
             return data.count || 0; // Trả về số lượng bạn chung hoặc 0 nếu không có
         })
         .catch(error => {
-            console.error('Error fetching mutual friends count:', error);
-            return 0; // Trả về 0 nếu có lỗi
+            console.error('Error fetching chat messages:', error.message);
+            // Hiển thị lỗi cho người dùng, ví dụ như bằng cách cập nhật UI
         });
 }
 
@@ -147,12 +170,14 @@ function acceptFriendRequest(friendId, listItem) {
     })
     .then(response => {
         if (!response.ok) {
-            throw new Error('Network response was not ok');
+            // Nếu response không OK, ném lỗi với message từ server
+            return response.json().then(errorData => {
+                throw new Error(errorData.message || 'An unexpected error occurred');
+            });
         }
         return response.json();
     })
     .then(data => {
-        console.log('Friend request accepted:', data);
         if(data.newStatus == 2){
             fetchFriends(); // Cập nhật lại danh sách bạn bè sau khi chấp nhận yêu cầu kết bạn
             fetchNotFriends(); // Cập nhật lại danh sách bạn bè chưa kết bạn sau khi chấp nhận yêu cầu kết bạn
@@ -160,8 +185,8 @@ function acceptFriendRequest(friendId, listItem) {
         NProgress.done();
     })
     .catch(error => {
-        console.error('Error accepting friend request:', error);
-        NProgress.done();
+        console.error('Error fetching chat messages:', error.message);
+        // Hiển thị lỗi cho người dùng, ví dụ như bằng cách cập nhật UI
     });
 }
 
@@ -175,14 +200,16 @@ function deleteFriend(friendId, listItem) {
         },
         body: JSON.stringify({ userId: friendId, status: 4 }) // Đảm bảo rằng status là null khi xóa bạn bè
     })
-    .then(response => {
+    .then(response =>  {
         if (!response.ok) {
-            throw new Error('Network response was not ok');
+            // Nếu response không OK, ném lỗi với message từ server
+            return response.json().then(errorData => {
+                throw new Error(errorData.message || 'An unexpected error occurred');
+            });
         }
         return response.json();
     })
     .then(data => {
-        console.log('Friend deleted:', data);
         if (data.success) {
             listItem.remove(); // Xóa item bạn bè khỏi danh sách
             fetchFriends(); // Tải lại danh sách bạn bè sau khi xóa thành công
@@ -194,9 +221,8 @@ function deleteFriend(friendId, listItem) {
         NProgress.done();
     })
     .catch(error => {
-        console.error('Error deleting friend:', error);
-        // Xử lý và hiển thị thông báo lỗi nếu cần
-        NProgress.done();
+        console.error('Error fetching chat messages:', error.message);
+        // Hiển thị lỗi cho người dùng, ví dụ như bằng cách cập nhật UI
     });
 }
 
@@ -210,15 +236,22 @@ function addFriend(friendId, listItem) {
         },
         body: JSON.stringify({ userId: friendId, status: 1 })
     })
-    .then(response => response.json())
+    .then(response =>  {
+        if (!response.ok) {
+            // Nếu response không OK, ném lỗi với message từ server
+            return response.json().then(errorData => {
+                throw new Error(errorData.message || 'An unexpected error occurred');
+            });
+        }
+        return response.json();
+    })
     .then(data => {
-        console.log('Friend added:', data);
         fetchFriends(); // Cập nhật lại danh sách bạn bè sau khi thêm bạn
         fetchNotFriends(); // Cập nhật lại danh sách bạn bè chưa kết bạn sau khi thêm bạn
         NProgress.done();
     })
     .catch(error => {
-        console.error('Error adding friend:', error);
-        NProgress.done();
+        console.error('Error fetching chat messages:', error.message);
+        // Hiển thị lỗi cho người dùng, ví dụ như bằng cách cập nhật UI
     });
 }

@@ -26,23 +26,21 @@ $(document).ready(function() {
             })
             .then(response => {
                 if (!response.ok) {
-                    if (response.status === 409) {
-                        throw new Error("Email already exists");
-                    } else {
-                        throw new Error("An unexpected error occurred");
-                    }
+                    // Nếu response không OK, ném lỗi với message từ server
+                    return response.json().then(errorData => {
+                        throw new Error(errorData.message || 'An unexpected error occurred');
+                    });
                 }
                 return response.json();
             })
             .then(data => {
                 if (data.success) {
                     window.location.href = "/Confirm";
-                } else {
-                    alert(data.message);
                 }
             })
             .catch(error => {
-                alert(error.message);
+                console.error('Error fetching chat messages:', error.message);
+                // Hiển thị lỗi cho người dùng, ví dụ như bằng cách cập nhật UI
             });
         }
     });

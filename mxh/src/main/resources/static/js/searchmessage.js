@@ -15,7 +15,15 @@ document.addEventListener("DOMContentLoaded", function() {
             },
             body: JSON.stringify(name)
         })
-        .then(response => response.json())
+        .then(response =>  {
+            if (!response.ok) {
+                // Nếu response không OK, ném lỗi với message từ server
+                return response.json().then(errorData => {
+                    throw new Error(errorData.message || 'An unexpected error occurred');
+                });
+            }
+            return response.json();
+        })
         .then(messages => {
             resultContainer.innerHTML = "";
             if (messages.length === 0) {
@@ -29,7 +37,8 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         })
         .catch(error => {
-            console.error("Error:", error);
+            console.error('Error fetching chat messages:', error.message);
+            // Hiển thị lỗi cho người dùng, ví dụ như bằng cách cập nhật UI
         });
     });
 });
