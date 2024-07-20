@@ -33,7 +33,7 @@
             <div class="col-md-12 newsfeed-right-side">
                 <nav id="navbar-main" class="navbar navbar-expand-lg shadow-sm sticky-top">
                     <div class="w-100 justify-content-md-center">
-                        <ul class="navbar-nav mr-5 flex-row" id="main_menu">
+                        <ul class="navbar-nav mr-5 navbar-nav mr-5 col justify-content-between" id="main_menu">
                             <a class="navbar-brand nav-item mr-lg-5" th:href="@{/}"><img th:src="@{/images/image.png}" width="40" height="40" class="mr-3" alt="Logo" id="home"></a>
                             <!-- Nhắn tin -->
                             <li class="nav-item s-nav dropdown message-drop-li">
@@ -117,7 +117,10 @@
                                 </a>
                             </li>
                             <li class="nav-item s-nav nav-icon dropdown">
-                                <a href="settings.html" data-toggle="dropdown" data-placement="bottom" data-title="Settings" class="nav-link settings-link rm-drop-mobile drop-w-tooltip" id="settings-dropdown"><img th:src="@{/images/icons/navbar/settings.png}" class="nav-settings" alt="navbar icon"></a>
+                                <a href="#" id="logout-link" class="nav-link logout-link" style="color: black;">
+                                    <i class="fa-solid fa-right-from-bracket"></i>
+                                </a>
+                                
                                 <div class="dropdown-menu dropdown-menu-right settings-dropdown shadow-sm" aria-labelledby="settings-dropdown">
                                     <a class="dropdown-item" href="#">
                                         <img th:src="@{/images/icons/navbar/help.png}" alt="Navbar icon"> Help Center</a>
@@ -127,9 +130,10 @@
                                             <div class="handle"></div>
                                         </button>
                                     </a>
-                                    <a href="#" id="logout-link" class="nav-link logout-link" style="color: black;">
-                                        <i class="fa-solid fa-right-from-bracket"></i>
-                                    </a>
+                                    <a class="dropdown-item" href="#">
+                                        <img th:src="@{/images/icons/navbar/gear-1.png}" alt="Navbar icon"> Settings</a>
+                                    <a class="dropdown-item logout-btn" href="#">
+                                        <img th:src="@{/images/icons/navbar/logout.png}" alt="Navbar icon"> Log Out</a>
                                 </div>
                             </li>
                         </ul>

@@ -3,6 +3,7 @@ package com.baconbao.mxh.Controller.Api.Posts;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -289,13 +290,11 @@ public class ApiPostsController {
     @GetMapping("/api/comment")
     public ResponseEntity<?> comment(@RequestParam Long id, Principal principal) {
         Map<String, Object> response = new HashMap<>();
-       
             Post post = postService.findById(id);
-            List<Comment> commet = post.getComments();
-            response.put("comments", commet);
-            System.out.println(commet.size());
+            List<Comment> comments = post.getComments();
+            comments.sort(Comparator.comparing(Comment::getCreateAt).reversed());
+            response.put("comments", comments);
             return ResponseEntity.ok(response);
-      
     }
 
 }
