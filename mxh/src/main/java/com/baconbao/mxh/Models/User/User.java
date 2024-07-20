@@ -43,8 +43,10 @@ public class User {
         @Column(name = "FirstName")
         private String firstName;
         @Column(name = "Password")
+        @JsonIgnore
         private String password;
         @Column(name = "Email")
+        @JsonIgnore
         private String email;
         @Column(name = "CreateAt")
         private LocalDateTime createAt;

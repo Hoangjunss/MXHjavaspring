@@ -3,6 +3,9 @@ package com.baconbao.mxh.Models.Post;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,9 +24,6 @@ public class Interact {
     private Long id;
     
     private String interactType;
-
-    @OneToMany(mappedBy = "interactionType", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Interaction> interactions=new ArrayList<>();
 }
     
 

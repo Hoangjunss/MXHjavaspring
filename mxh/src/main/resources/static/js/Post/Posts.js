@@ -135,14 +135,13 @@ function createPostContent(post) {
                 <div class="mb-3">
                     <div class="argon-reaction">
                         <span class="like-btn">
-                            <a href="#" class="post-card-buttons" id="reactions"><i class='bx bxs-like mr-2'></i></a>
+                            <a href="#" class="post-card-buttons" id="reactions"><i data-post-id="${post.id}" class='bx bxs-like mr-2'></i></a>
                             <ul class="reactions-box dropdown-shadow">
-                                <li class="reaction reaction-like" data-reaction="Like"><button class="reaction-button" data-reaction-id="1" data-post-id="${post.id}"></button></li>
-                                <li class="reaction reaction-love" data-reaction="Love"><button class="reaction-button" data-reaction-id="2" data-post-id="${post.id}"></button></li>
-                                <li class="reaction reaction-haha" data-reaction="HaHa"><button class="reaction-button" data-reaction-id="3" data-post-id="${post.id}"></button></li>
-                                <li class="reaction reaction-wow" data-reaction="Wow"><button class="reaction-button" data-reaction-id="4" data-post-id="${post.id}"></button></li>
-                                <li class="reaction reaction-sad" data-reaction="Sad"><button class="reaction-button" data-reaction-id="5" data-post-id="${post.id}"></button></li>
-                                <li class="reaction reaction-angry" data-reaction="Angry"><button class="reaction-button" data-reaction-id="6" data-post-id="${post.id}"></button></li>
+                                <li class="reaction reaction-like" data-reaction="Like"><button class="reaction-button" onclick="interaction(this)" data-reaction-id="1" data-post-id="${post.id}"></button></li>
+                                <li class="reaction reaction-love" data-reaction="Love"><button class="reaction-button" onclick="interaction(this)" data-reaction-id="2" data-post-id="${post.id}"></button></li>
+                                <li class="reaction reaction-haha" data-reaction="HaHa"><button class="reaction-button" onclick="interaction(this)" data-reaction-id="3" data-post-id="${post.id}"></button></li>
+                                <li class="reaction reaction-sad" data-reaction="Sad"><button class="reaction-button" onclick="interaction(this)" data-reaction-id="4" data-post-id="${post.id}"></button></li>
+                                <li class="reaction reaction-angry" data-reaction="Angry"><button class="reaction-button" onclick="interaction(this)" data-reaction-id="5" data-post-id="${post.id}"></button></li>
                             </ul>
                         </span>
                     </div>
@@ -161,11 +160,33 @@ function createPostContent(post) {
     `;
 
     postDisplay.append(displayPost);
+    if(post.interactions.id==null){
+        post.interactions.forEach(interact =>{
+            const userid = fetchCurrentUser();
+            if(interact.user.id ==userid){
+                fetchInteracion(interact.id, post.id);
+            }
+        })
+    }
 
     const postImage = $('#postImage');
     if (imgPost && imgPost.trim() !== '') {
         postImage.attr('src', imgPost).show();
     }
+}
+
+function fetchInteracion(idInteraction, idPost){
+    $.ajax({
+        url: `/api/interaction?id=${idInteraction}`,
+        method: 'GET',
+        success: function (data) {
+            console.log(data);
+            updateReactionUI(data.interac.id, idPost);
+        },
+        error: function (error) {
+            console.error('Error fetching interactions:', error);
+        }
+    });
 }
 
 function previewImage(event) {

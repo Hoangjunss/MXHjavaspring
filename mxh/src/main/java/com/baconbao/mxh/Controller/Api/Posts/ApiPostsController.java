@@ -212,18 +212,31 @@ public class ApiPostsController {
     // Lỗi truy vấn LIKE
     @PostMapping("/api/interact")
     public ResponseEntity<?> handleInteraction(@RequestBody InteractionDTO interactionDTO, Principal principal) {
-      
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
             User user = userService.findByEmail(userDetails.getUsername());
             Post post = postService.findById(interactionDTO.getPostId());
             Interact interact = interactService.findById(interactionDTO.getReactionId());
-            Interaction interaction = new Interaction();
-            interaction.setInteractionType(interact);
-            interaction.setPost(post);
-            interaction.setUser(user);
-            interactionService.saveInteraction(interaction);
-            return ResponseEntity.ok(new ApiResponse(true, "Reaction saved successfully"));
-  
+            Interaction interaction = interactionService.findByPostAndUser(post, user);
+            if(interaction!=null){
+                interaction.setInteractionType(interact);
+                interactionService.saveInteraction(interaction);
+                return ResponseEntity.ok(new ApiResponse(true, "Reaction updated successfully"));
+            }else{
+                interaction = new Interaction();
+                interaction.setInteractionType(interact);
+                interaction.setPost(post);
+                interaction.setUser(user);
+                interactionService.saveInteraction(interaction);
+                return ResponseEntity.ok(new ApiResponse(true, "Reaction saved successfully"));
+            }
+    }
+
+    @GetMapping("/api/interaction")
+    public ResponseEntity<?> getInteraction(@RequestParam Long id, Principal principal) {
+        Map<String, Object> response = new HashMap<>();
+        Interaction interaction = interactionService.findById(id);
+        response.put("interac", interaction.getInteractionType());
+        return ResponseEntity.ok(response);
     }
 
     // Lấy ra tất cả bài viết

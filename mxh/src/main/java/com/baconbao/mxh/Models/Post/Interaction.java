@@ -1,6 +1,9 @@
 package com.baconbao.mxh.Models.Post;
 
 import com.baconbao.mxh.Models.User.User;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -30,11 +33,12 @@ public class Interaction {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="IdPost")
+    @JsonIgnore
     private Post post;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="idInteract")
+    @JsonIgnore
     private Interact interactionType;
 
-    // Các phương thức getter, setter
 }

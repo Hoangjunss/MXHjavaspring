@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import com.baconbao.mxh.Exceptions.CustomException;
 import com.baconbao.mxh.Exceptions.ErrorCode;
 import com.baconbao.mxh.Models.Post.Interaction;
+import com.baconbao.mxh.Models.Post.Post;
+import com.baconbao.mxh.Models.User.User;
 import com.baconbao.mxh.Repository.Post.InteractionRepository;
 import com.baconbao.mxh.Services.Service.Post.InteractionService;
 
@@ -43,6 +45,11 @@ public class InteractionServiceImpl  implements InteractionService{
     public Long getGenerationId() {
         UUID uuid = UUID.randomUUID();
         return uuid.getMostSignificantBits() &0x1FFFFFFFFFFFFFL;
+    }
+
+    @Override
+    public Interaction findByPostAndUser(Post post, User user) {
+        return interactionRepository.findByPostAndUser(post, user);
     }
 
     
