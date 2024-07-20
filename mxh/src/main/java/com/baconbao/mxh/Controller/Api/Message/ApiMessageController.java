@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.baconbao.mxh.DTO.ApiResponse;
 import com.baconbao.mxh.Exceptions.CustomException;
+import com.baconbao.mxh.Exceptions.UserNotFoundException;
 import com.baconbao.mxh.Models.Message.Message;
 import com.baconbao.mxh.Models.User.Relationship;
 import com.baconbao.mxh.Models.User.User;
@@ -47,13 +48,17 @@ public class ApiMessageController {
     @PostMapping("/api/chat")
     public ResponseEntity<?> getChatMessages(@RequestParam("id") Long userId, Principal principal) {
         Map<String, Object> response = new HashMap<>();
-        try {
+       
             // Lấy thông tin chi tiết của người dùng hiện tại từ principal
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
             // Tìm người dùng hiện tại từ email của họ
             User currentUser = userService.findByEmail(userDetails.getUsername());
+            
+
+        User chatUser = userService.findById(userId);
+
             // Tìm người dùng chat từ userId đã được truyền vào request
-            User chatUser = userService.findById(userId);
+            
             // Lấy danh sách tin nhắn giữa người dùng hiện tại và người dùng chat
             List<Message> messages = messageService.messageFromUser(currentUser, chatUser);
             // Đặt danh sách tin nhắn, người dùng hiện tại và người dùng chat vào phản hồi
@@ -64,14 +69,7 @@ public class ApiMessageController {
             response.put("relationship", relationship);
             // Trả về phản hồi HTTP 200 với dữ liệu JSON
             return ResponseEntity.ok(response);
-        } catch (CustomException e) {
-            return new ResponseEntity<>(new ApiResponse(false, e.getErrorCode().getMessage()),
-                    e.getErrorCode().getStatusCode());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(new ApiResponse(false, "An unexpected error occurred"),
-                    HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+       
     }
 
     //
@@ -130,7 +128,7 @@ public class ApiMessageController {
     @GetMapping("/api/messagermobile")
     public ResponseEntity<?> mmobile(Principal principal) {
         Map<String, Object> response = new HashMap<>();
-        try {
+        
             // Lấy thông tin chi tiết của người dùng hiện tại từ principal
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
             // Tìm người dùng hiện tại từ email của họ
@@ -144,20 +142,13 @@ public class ApiMessageController {
             response.put("relantionships", relationships);
             response.put("unseenMessages", countUnseen);
             return ResponseEntity.ok(response);
-        } catch (CustomException e) {
-            return new ResponseEntity<>(new ApiResponse(false, e.getErrorCode().getMessage()),
-                    e.getErrorCode().getStatusCode());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(new ApiResponse(false, "An unexpected error occurred"),
-                    HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+       
     }
 
     @GetMapping("/api/chat")
     public ResponseEntity<?> mobile(@RequestParam("id") Long userId, Principal principal) {
         Map<String, Object> response = new HashMap<>();
-        try {
+       
             // Lấy thông tin chi tiết của người dùng hiện tại từ principal
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
             // Tìm người dùng hiện tại từ email của họ
@@ -175,14 +166,7 @@ public class ApiMessageController {
             response.put("currentUser", userFrom);
 
             return ResponseEntity.ok(response);
-        } catch (CustomException e) {
-            return new ResponseEntity<>(new ApiResponse(false, e.getErrorCode().getMessage()),
-                    e.getErrorCode().getStatusCode());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(new ApiResponse(false, "An unexpected error occurred"),
-                    HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+     
     }
 
 }

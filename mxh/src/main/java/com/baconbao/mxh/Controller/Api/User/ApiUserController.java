@@ -108,24 +108,17 @@ public class ApiUserController {
 
     @GetMapping("/api/usercurrent")
     public ResponseEntity<?> userCurrent(Principal principal) {
-        try {
+      
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());// lấy ra cái email
             User user = userService.findByEmail(userDetails.getUsername());
             Hibernate.initialize(user.getImage());
             return ResponseEntity.ok(user);
-        } catch (CustomException e) {
-            return new ResponseEntity<>(new ApiResponse(false, e.getErrorCode().getMessage()),
-                    e.getErrorCode().getStatusCode());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(new ApiResponse(false, "An unexpected error occurred"),
-                    HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+       
     }
 
     @PostMapping("/api/register")
     public ResponseEntity<?> register(@RequestBody UserDTO userDTO) {
-        try {
+    
             if (userService.isEmailExist(userDTO.getEmail())) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponse(false, "Email already exists"));
             }
@@ -133,19 +126,12 @@ public class ApiUserController {
             User user = userService.getUser(userDTO);
             verifycationTokenService.registerUser(user);
             return ResponseEntity.ok(new ApiResponse(true, "Register successful"));
-        } catch (CustomException e) {
-            return new ResponseEntity<>(new ApiResponse(false, e.getErrorCode().getMessage()),
-                    e.getErrorCode().getStatusCode());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(new ApiResponse(false, "An unexpected error occurred"),
-                    HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+      
     }
 
     @PostMapping("/api/editaccount")
     public ResponseEntity<?> editaccount(@RequestBody UserDTO userDTO, Principal principal) {
-        try {
+       
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
             User user = userService.findByEmail(userDetails.getUsername());
             if (user.getEmail().equals(userDTO.getEmail())) {
@@ -162,14 +148,7 @@ public class ApiUserController {
             user.setEmail(userDTO.getEmail());
             userService.saveUser(user);
             return ResponseEntity.ok(new ApiResponse(true, "Edit account successful"));
-        } catch (CustomException e) {
-            return new ResponseEntity<>(new ApiResponse(false, e.getErrorCode().getMessage()),
-                    e.getErrorCode().getStatusCode());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(new ApiResponse(false, "An unexpected error occurred"),
-                    HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+       
     }
 
     // Lay duong dan anh de tai ve
@@ -201,7 +180,7 @@ public class ApiUserController {
 
     @PostMapping("/api/relationship")
     public ResponseEntity<?> relationship(@RequestBody Map<String, Object> payload, Principal principal) {
-        try {
+      
             Long userId = payload.get("userId") != null ? Long.parseLong(payload.get("userId").toString()) : null;
             Long status = payload.get("status") != null ? Long.parseLong(payload.get("status").toString()) : null;
 
@@ -243,20 +222,13 @@ public class ApiUserController {
             response.put("relationship", relationship);
 
             return ResponseEntity.ok(response);
-        } catch (CustomException e) {
-            return new ResponseEntity<>(new ApiResponse(false, e.getErrorCode().getMessage()),
-                    e.getErrorCode().getStatusCode());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(new ApiResponse(false, "An unexpected error occurred"),
-                    HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+       
     }
 
     @MessageMapping("/friend.add")
     @SendTo("/queue/addfriend")
     public Notification notificationAddFriend(@Payload Map<String, String> idUserMap, Principal principal) {
-        try {
+       
             String idUser = idUserMap.get("idUser");
             Long userId = Long.valueOf(idUser);
 
@@ -289,14 +261,7 @@ public class ApiUserController {
             notification.setUrl("/friends");
             notificationService.saveNotification(notification);
             return notification;
-        } catch (CustomException e) {
-            // Log lỗi và ném lại
-            e.printStackTrace();
-            throw e;
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
-        }
+      
     }
 
     @PostMapping("/api/uploaduserimg")
@@ -332,7 +297,7 @@ public class ApiUserController {
     // Chấp nhận yêu cầu kết bạn
     @PostMapping("/api/acceptFriendRequest")
     public ResponseEntity<?> acceptFriendRequest(@RequestBody Map<String, Object> payload, Principal principal) {
-        try {
+       
             Long userId = Long.parseLong(payload.get("userId").toString());
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
             User userOne = userService.findByEmail(userDetails.getUsername()); // user dang dang nhap
@@ -345,20 +310,13 @@ public class ApiUserController {
             response.put("relationship", relationship);
             response.put("success", success);
             return ResponseEntity.ok(response);
-        } catch (CustomException e) {
-            return new ResponseEntity<>(new ApiResponse(false, e.getErrorCode().getMessage()),
-                    e.getErrorCode().getStatusCode());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(new ApiResponse(false, "An unexpected error occurred"),
-                    HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+      
     }
 
     // Xóa bạn
     @PostMapping("/api/deleteFriend")
     public ResponseEntity<?> deleteFriend(@RequestBody Map<String, Object> payload, Principal principal) {
-        try {
+        
             Long userId = Long.parseLong(payload.get("userId").toString());
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
             User userOne = userService.findByEmail(userDetails.getUsername());
@@ -370,20 +328,13 @@ public class ApiUserController {
             Map<String, Object> response = new HashMap<>();
             response.put("success", success);
             return ResponseEntity.ok(response);
-        } catch (CustomException e) {
-            return new ResponseEntity<>(new ApiResponse(false, e.getErrorCode().getMessage()),
-                    e.getErrorCode().getStatusCode());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(new ApiResponse(false, "An unexpected error occurred"),
-                    HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+       
     }
 
     // Kết bạn
     @PostMapping("/api/addFriend")
     public ResponseEntity<?> addFriend(@RequestBody Map<String, Object> payload, Principal principal) {
-        try {
+       
             Long userId = Long.parseLong(payload.get("userId").toString());
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
             User userOne = userService.findByEmail(userDetails.getUsername());
@@ -400,21 +351,14 @@ public class ApiUserController {
             Map<String, Object> response = new HashMap<>();
             response.put("success", success);
             return ResponseEntity.ok(response);
-        } catch (CustomException e) {
-            return new ResponseEntity<>(new ApiResponse(false, e.getErrorCode().getMessage()),
-                    e.getErrorCode().getStatusCode());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(new ApiResponse(false, "An unexpected error occurred"),
-                    HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+      
     }
 
     // Lấy danh sách bạn bè
     @GetMapping("/api/friends")
     public ResponseEntity<?> friends(Principal principal) {
         Map<String, Object> response = new HashMap<>();
-        try {
+       
             // tim user theo id
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
             User user = userService.findByEmail(userDetails.getUsername());
@@ -422,59 +366,38 @@ public class ApiUserController {
             response.put("relationships", relationships);
             response.put("user", user);
             return ResponseEntity.ok(response);
-        } catch (CustomException e) {
-            return new ResponseEntity<>(new ApiResponse(false, e.getErrorCode().getMessage()),
-                    e.getErrorCode().getStatusCode());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(new ApiResponse(false, "An unexpected error occurred"),
-                    HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+       
     }
 
     // Lấy danh sách không là bạn bè
     @GetMapping("/api/notFriend")
     public ResponseEntity<?> notfriends(Principal principal) {
-        try {
+       
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
             User user = userService.findByEmail(userDetails.getUsername());
             List<User> notFriends = relationalService.findNotFriends(user);
             return ResponseEntity.ok(notFriends);
-        } catch (CustomException e) {
-            return new ResponseEntity<>(new ApiResponse(false, e.getErrorCode().getMessage()),
-                    e.getErrorCode().getStatusCode());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(new ApiResponse(false, "An unexpected error occurred"),
-                    HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+       
     }
 
     // Đếm số lượng bạn bè - LƯU Ý STATUS
     @GetMapping("/api/mutualFriend")
     public ResponseEntity<?> countFriend(@RequestParam Long friendId, Principal principal) {
-        try {
+      
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
             User user = userService.findByEmail(userDetails.getUsername());
             int count = relationalService.countMutualFriends(user, friendId);
             Map<String, Integer> response = new HashMap<>();
             response.put("count", count);
             return ResponseEntity.ok(response);
-        } catch (CustomException e) {
-            return new ResponseEntity<>(new ApiResponse(false, e.getErrorCode().getMessage()),
-                    e.getErrorCode().getStatusCode());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(new ApiResponse(false, "An unexpected error occurred"),
-                    HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+      
     }
 
     // Lấy phần About (người dùng mô tả thêm về bản thân)
     @GetMapping("/api/getabouts")
     public ResponseEntity<?> editprofile(Principal principal) {
         Map<String, Object> response = new HashMap<>();
-        try {
+       
             // tim user theo id
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
             User user = userService.findByEmail(userDetails.getUsername());
@@ -485,19 +408,12 @@ public class ApiUserController {
             response.put("userAbouts", userAbouts);
             // Tạo một map để dễ dàng tra cứu mô tả theo idAbout
             return ResponseEntity.ok(response);
-        } catch (CustomException e) {
-            return new ResponseEntity<>(new ApiResponse(false, e.getErrorCode().getMessage()),
-                    e.getErrorCode().getStatusCode());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(new ApiResponse(false, "An unexpected error occurred"),
-                    HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+       
     }
 
     @PostMapping("/api/editprofiledetails")
     public ResponseEntity<?> editProfile(@RequestBody UserAboutForm userAboutForm, Principal principal) {
-        try {
+       
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
             User user = userService.findByEmail(userDetails.getUsername());
 
@@ -514,18 +430,13 @@ public class ApiUserController {
             response.put("userId", user.getId());
             return ResponseEntity.ok(response);
 
-        } catch (CustomException e) {
-            return new ResponseEntity<>(new ApiResponse(false, e.getErrorCode().getMessage()), e.getErrorCode().getStatusCode());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(new ApiResponse(false, "An unexpected error occurred"), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+      
     }
     
     @GetMapping("/api/countfriend")
     public ResponseEntity<?> countFriend(Principal principal) {
         Map<String, Object> response = new HashMap<>();
-        try {
+       
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
             User loggedInUser = userService.findByEmail(userDetails.getUsername());
             int countFriend = relationshipService.countfriend(loggedInUser, statusRelationshipService.findById(1L));
@@ -534,61 +445,38 @@ public class ApiUserController {
             response.put("relationships", relationships);
             response.put("countFriend", countFriend);
             return ResponseEntity.ok(response);
-        } catch (CustomException e) {
-            return new ResponseEntity<>(new ApiResponse(false, e.getErrorCode().getMessage()),
-                    e.getErrorCode().getStatusCode());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(new ApiResponse(false, "An unexpected error occurred"),
-                    HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+       
+        
     }
 
     // Lấy số lượng thông báo chưa xem
     @GetMapping("/api/countNotificationsIsCheck")
     public ResponseEntity<Map<String, Object>> getNotificationsIsCheck(Principal principal) {
-        try {
+      
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
             User loggedInUser = userService.findByEmail(userDetails.getUsername());
             int unreadCount = notificationService.countUncheckedNotifications(loggedInUser);
             Map<String, Object> response = new HashMap<>();
             response.put("unreadCount", unreadCount);
             return ResponseEntity.ok(response);
-        } catch (UsernameNotFoundException e) {
-            throw new CustomException(ErrorCode.USER_NOT_FOUND);
-        } catch (CustomException e) {
-            ApiResponse apiResponse = new ApiResponse(false, e.getErrorCode().getMessage());
-            Map<String, Object> response = new HashMap<>();
-            response.put("apiResponse", apiResponse);
-            return new ResponseEntity<>(response, e.getErrorCode().getStatusCode());
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
-        }
+       
     }
 
     // Lấy user
     @GetMapping("/api/getuser")
     public ResponseEntity<?> getUser(@RequestParam Long id) {
         Map<String, Object> response = new HashMap<>();
-        try {
+        
             User user = userService.findById(id);
             response.put("user", user);
             return ResponseEntity.ok(response);
-        } catch (CustomException e) {
-            return new ResponseEntity<>(new ApiResponse(false, e.getErrorCode().getMessage()),
-                    e.getErrorCode().getStatusCode());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(new ApiResponse(false, "An unexpected error occurred"),
-                    HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+       
     }
 
     // Lấy mối quan hệ - tín hiệu có phải user logged - user đối diện
     @GetMapping("/api/getrelationship")
     public ResponseEntity<?> getRelationship(@RequestParam Long userId, Principal principal) {
-        try {
+       
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
             User loggedInUser = userService.findByEmail(userDetails.getUsername());
             User user = userService.findById(userId);
@@ -599,14 +487,7 @@ public class ApiUserController {
             response.put("user", user);
             response.put("relationship", relationship);
             return ResponseEntity.ok(response);
-        } catch (CustomException e) {
-            return new ResponseEntity<>(new ApiResponse(false, e.getErrorCode().getMessage()),
-                    e.getErrorCode().getStatusCode());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(new ApiResponse(false, "An unexpected error occurred"),
-                    HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+      
     }
 
 }

@@ -72,19 +72,12 @@ public class ApiPostsController {
 
     @PostMapping("/api/notificationsischecked")
     public ResponseEntity<?> markNotificationsAsRead(Principal principal) {
-        try {
+      
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
             User user = userService.findByEmail(userDetails.getUsername());
             notificationService.markAllNotificationAsRead(user);
             return ResponseEntity.ok().build();
-        } catch (CustomException e) {
-            return new ResponseEntity<>(new ApiResponse(false, e.getErrorCode().getMessage()),
-                    e.getErrorCode().getStatusCode());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(new ApiResponse(false, "An unexpected error occurred"),
-                    HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+      
     }
 
     @PostMapping("/api/uploadpostuser")
@@ -130,26 +123,19 @@ public class ApiPostsController {
 
     @PostMapping("/api/hidepost")
     public ResponseEntity<?> markNotificationsAsRead(@RequestParam("id") long id) {
-        try {
+      
             Post post = postService.findById(id);
             post.setActive(false); // set active
             LocalDateTime localDateTime = LocalDateTime.now();
             post.setUpdateAt(localDateTime);
             postService.save(post);
             return ResponseEntity.ok().build();
-        } catch (CustomException e) {
-            return new ResponseEntity<>(new ApiResponse(false, e.getErrorCode().getMessage()),
-                    e.getErrorCode().getStatusCode());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(new ApiResponse(false, "An unexpected error occurred"),
-                    HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+       
     }
 
     @PostMapping("/api/savepost")
     public ResponseEntity<?> savepost(@RequestParam("id") long id, @RequestParam("content") String content) {
-        try {
+      
             Post post = postService.findById(id); // tìm post theo id
             post.setContent(content);// gán nội dung mới
             post.setActive(true); // gán trạng thái active
@@ -157,21 +143,14 @@ public class ApiPostsController {
             post.setUpdateAt(localDateTime);
             postService.save(post); // lưu post đã chỉnh sửa vào database
             return ResponseEntity.ok().build();
-        } catch (CustomException e) {
-            return new ResponseEntity<>(new ApiResponse(false, e.getErrorCode().getMessage()),
-                    e.getErrorCode().getStatusCode());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(new ApiResponse(false, "An unexpected error occurred"),
-                    HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+     
     }
 
     // Đăng comment của post
     @PostMapping("/api/commenter")
     public ResponseEntity<?> postComment(@RequestBody Map<String, Object> payload, Principal principal) {
         Map<String, Object> response = new HashMap<>();
-        try {
+      
             String content = (String) payload.get("content");
             Long idPost = Long.valueOf(payload.get("postId") + "");
 
@@ -203,20 +182,13 @@ public class ApiPostsController {
             response.put("success", true);
             response.put("comment", comment);
             return ResponseEntity.ok(response);
-        } catch (CustomException e) {
-            return new ResponseEntity<>(new ApiResponse(false, e.getErrorCode().getMessage()),
-                    e.getErrorCode().getStatusCode());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(new ApiResponse(false, "An unexpected error occurred"),
-                    HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+       
     }
 
     @PostMapping("/api/postReplyComment")
     public ResponseEntity<?> postReplyComment(@RequestParam("id") Long id, @RequestParam("content") String content,
             Principal principal) {
-        try {
+       
             Comment comment = commentService.findById(id);
             // Tạo đối tượng reply, lưu những thông tin cần thiết
             ReplyComment replyComment = new ReplyComment();
@@ -234,20 +206,13 @@ public class ApiPostsController {
             comment.setReplyComment(replyComments);
             commentService.save(comment);
             return ResponseEntity.ok().build();
-        } catch (CustomException e) {
-            return new ResponseEntity<>(new ApiResponse(false, e.getErrorCode().getMessage()),
-                    e.getErrorCode().getStatusCode());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(new ApiResponse(false, "An unexpected error occurred"),
-                    HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+      
     }
 
     // Lỗi truy vấn LIKE
     @PostMapping("/api/interact")
     public ResponseEntity<?> handleInteraction(@RequestBody InteractionDTO interactionDTO, Principal principal) {
-        try {
+      
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
             User user = userService.findByEmail(userDetails.getUsername());
             Post post = postService.findById(interactionDTO.getPostId());
@@ -258,14 +223,7 @@ public class ApiPostsController {
             interaction.setUser(user);
             interactionService.saveInteraction(interaction);
             return ResponseEntity.ok(new ApiResponse(true, "Reaction saved successfully"));
-        } catch (CustomException e) {
-            return new ResponseEntity<>(new ApiResponse(false, e.getErrorCode().getMessage()),
-                    e.getErrorCode().getStatusCode());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(new ApiResponse(false, "An unexpected error occurred"),
-                    HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+  
     }
 
     // Lấy ra tất cả bài viết
@@ -273,7 +231,7 @@ public class ApiPostsController {
     public ResponseEntity<?> post(@RequestParam(required = false) Long id) {
         Map<String, Object> response = new HashMap<>();
         List<Post> posts = new ArrayList<>();
-        try {
+      
             if (id == null) {
                 Status status1 = statusService.findById(1); // LUU Y TIM STATUS
                 posts = postService.findByActiveAndStatus(true, status1);
@@ -282,84 +240,49 @@ public class ApiPostsController {
             }
             response.put("posts", posts);
             return ResponseEntity.ok(response);
-        } catch (CustomException e) {
-            return new ResponseEntity<>(new ApiResponse(false, e.getErrorCode().getMessage()),
-                    e.getErrorCode().getStatusCode());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(new ApiResponse(false, "An unexpected error occurred"),
-                    HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+       
     }
 
     @GetMapping("/api/status") // Lấy ra tất cả trạng thái
     public ResponseEntity<?> status() {
         Map<String, Object> response = new HashMap<>();
-        try {
+      
             List<Status> status = statusService.findAll();
             response.put("status", status);
             return ResponseEntity.ok(response);
-        } catch (CustomException e) {
-            return new ResponseEntity<>(new ApiResponse(false, e.getErrorCode().getMessage()),
-                    e.getErrorCode().getStatusCode());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(new ApiResponse(false, "An unexpected error occurred"),
-                    HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+       
     }
 
     @GetMapping("/api/notifications") // Lấy ra tất cả thông báo
     public ResponseEntity<?> notifications(Principal principal) {
-        try {
+       
             Map<String, Object> response = new HashMap<>();
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
             User user = userService.findByEmail(userDetails.getUsername());
             List<Notification> notifications = notificationService.findByUser(user);
             response.put("notifications", notifications);
             return ResponseEntity.ok(response);
-        } catch (CustomException e) {
-            return new ResponseEntity<>(new ApiResponse(false, e.getErrorCode().getMessage()),
-                    e.getErrorCode().getStatusCode());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(new ApiResponse(false, "An unexpected error occurred"),
-                    HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+      
     }
 
     @GetMapping("/api/editpost")
     public ResponseEntity<?> editpost(@RequestParam("id") Long id, Principal principal) {
-        try {
+       
             Post post = postService.findById(id);
             return ResponseEntity.ok(post);
-        } catch (CustomException e) {
-            return new ResponseEntity<>(new ApiResponse(false, e.getErrorCode().getMessage()),
-                    e.getErrorCode().getStatusCode());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(new ApiResponse(false, "An unexpected error occurred"),
-                    HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        
     }
 
     @GetMapping("/api/comment")
     public ResponseEntity<?> comment(@RequestParam Long id, Principal principal) {
         Map<String, Object> response = new HashMap<>();
-        try {
+       
             Post post = postService.findById(id);
             List<Comment> commet = post.getComments();
             response.put("comments", commet);
             System.out.println(commet.size());
             return ResponseEntity.ok(response);
-        } catch (CustomException e) {
-            return new ResponseEntity<>(new ApiResponse(false, e.getErrorCode().getMessage()),
-                    e.getErrorCode().getStatusCode());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(new ApiResponse(false, "An unexpected error occurred"),
-                    HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+      
     }
 
 }
