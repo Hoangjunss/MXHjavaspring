@@ -272,6 +272,7 @@
 .btn-follow {
     border: 1px solid #007bff;
     color: #007bff;
+    width: 100%;
 }
 
 .btn-follow:hover {
@@ -282,6 +283,7 @@
 .btn-start-chat {
     background-color: #007bff;
     color: #fff;
+    margin-left: auto;
 }
 
 .btn-start-chat:hover {
@@ -643,5 +645,5 @@ body .profiledetails{
 
 .show-comments {
     max-height: 1000px;
-    transform: max-height 0.5s ease-in;
+    transition: max-height 0.5s ease-in;
 }

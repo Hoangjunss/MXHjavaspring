@@ -13,6 +13,8 @@
     <link href="https://fonts.googleapis.com/css?family=Major+Mono+Display" rel="stylesheet">
     <link th:href="@{/css/post/boxicons.min.css}" rel="stylesheet">
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
 
     <!-- Styles -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
@@ -176,7 +178,10 @@
                                 </a>
                             </li>
                             <li class="nav-item s-nav nav-icon dropdown">
-                                <a href="settings.html" data-toggle="dropdown" data-placement="bottom" data-title="Settings" class="nav-link settings-link rm-drop-mobile drop-w-tooltip" id="settings-dropdown"><img th:src="@{/images/icons/navbar/settings.png}" class="nav-settings" alt="navbar icon"></a>
+                                <a href="#" id="logout-link" class="nav-link logout-link" style="color: black;">
+                                    <i class="fa-solid fa-right-from-bracket"></i>
+                                </a>
+                                
                                 <div class="dropdown-menu dropdown-menu-right settings-dropdown shadow-sm" aria-labelledby="settings-dropdown">
                                     <a class="dropdown-item" href="#">
                                         <img th:src="@{/images/icons/navbar/help.png}" alt="Navbar icon"> Help Center</a>

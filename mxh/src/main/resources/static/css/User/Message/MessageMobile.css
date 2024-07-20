@@ -467,7 +467,7 @@
 }
 
 .flex-row{
-    gap: 38px;
+    gap: 222px;
 }
 
 .messageContetFrame{
@@ -537,3 +537,101 @@
     background-color: #007bff !important;
     font-size: .6rem
 }
+
+.navbar-nav {
+    flex-direction: row;
+}
+
+@media (min-width: 992px) {
+    .navbar-expand-lg .navbar-nav {
+        display: flex;
+        align-content: center;
+        justify-content: center;
+        align-items: center;
+    }
+    .flex-row
+    {
+        gap: 222px;
+    }
+}
+
+/* cho màn hình ipad */
+@media (max-width: 768px) {
+    .flex-row
+    {
+        gap: 72px;
+    }
+}
+
+/* cho màn hình mobile */
+@media (max-width: 576px) {
+    .flex-row
+    {
+        gap: 0px;
+    }
+    .messenger-top-section {
+        height: 60px;
+    }
+    .messenger-input .search-button {
+        color: #007bff;
+        font-size: 1.4rem;
+    }
+    .messenger-icons
+    {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .messenger-icons img {
+        width: 28px;
+    }
+
+    .messenger-top-ricon .msg-top-more-info {
+        width: 25px !important;
+    }
+
+    .df-aic {
+        display: flex;
+        align-items: center;
+    }
+
+    #message-frame .content .message-input .wrap {
+        position: relative
+    }
+
+    #message-frame .content .message-input .wrap .messenger-input {
+        background-color: #e8e8e8;
+        float: left;
+        width: calc(100% - 90px);
+        border-radius: 30px;
+    }
+
+    #message-frame .content .message-input .wrap .messenger-input input,
+    .messenger-input .search-button {
+        border-radius: 30px;
+        width: 88%;
+        background-color: transparent;
+        border: 0;
+    }
+
+    .unread-messages {
+        position: absolute;
+        left: 2rem !important;
+        top: 1.6rem;
+        margin: -2px 0 0 -2px;
+        width: 18px !important;
+        height: 18px !important;
+        border-radius: 50%;
+        border: 1.5px solid #fff;
+        color: #fff;
+        font-weight: 700;
+        text-align: center;
+        background-color: #007bff !important;
+        font-size: .6rem
+    }
+
+    .navbar-nav {
+        flex-direction: row;
+    }
+}
+

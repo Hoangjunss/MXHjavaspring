@@ -206,6 +206,25 @@ function fetchFriendRequestsCount() {
         });
 }
 
+$(document).ready(function() {
+    $('#logout-link').on('click', function(event) {
+        event.preventDefault(); // Ngăn chặn hành vi mặc định của thẻ <a>
+
+        $.ajax({
+            url: '/logout', // Đường dẫn xử lý logout
+            type: 'POST',
+            success: function() {
+                window.location.href = '/login'; // Chuyển hướng về trang đăng nhập sau khi logout thành công
+            },
+            error: function(error) {
+                console.error('Logout failed:', error);
+            }
+        });
+    });
+});
+
+
+
 function formatTimeAgo(date) {
     const now = new Date();
     const postDate = new Date(date);

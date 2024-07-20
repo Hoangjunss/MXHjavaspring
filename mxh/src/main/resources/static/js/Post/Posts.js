@@ -137,11 +137,11 @@ function createPostContent(post) {
                         <span class="like-btn">
                             <a href="#" class="post-card-buttons" id="reactions"><i data-post-id="${post.id}" class='bx bxs-like mr-2'></i></a>
                             <ul class="reactions-box dropdown-shadow">
-                                <li class="reaction reaction-like" data-reaction="Like"><button class="reaction-button" onclick="interaction(this)" data-reaction-id="1" data-post-id="${post.id}"></button></li>
-                                <li class="reaction reaction-love" data-reaction="Love"><button class="reaction-button" onclick="interaction(this)" data-reaction-id="2" data-post-id="${post.id}"></button></li>
-                                <li class="reaction reaction-haha" data-reaction="HaHa"><button class="reaction-button" onclick="interaction(this)" data-reaction-id="3" data-post-id="${post.id}"></button></li>
-                                <li class="reaction reaction-sad" data-reaction="Sad"><button class="reaction-button" onclick="interaction(this)" data-reaction-id="4" data-post-id="${post.id}"></button></li>
-                                <li class="reaction reaction-angry" data-reaction="Angry"><button class="reaction-button" onclick="interaction(this)" data-reaction-id="5" data-post-id="${post.id}"></button></li>
+                                <li class="reaction reaction-like" data-reaction="Like"><button class="reaction-button" onclick="interaction(this)" data-reaction-id="1" data-post-id="${post.id}" style="display:none;"></button></li>
+                                <li class="reaction reaction-love" data-reaction="Love"><button class="reaction-button" onclick="interaction(this)" data-reaction-id="2" data-post-id="${post.id}" style="display:none;"></button></li>
+                                <li class="reaction reaction-haha" data-reaction="HaHa"><button class="reaction-button" onclick="interaction(this)" data-reaction-id="3" data-post-id="${post.id}" style="display:none;"></button></li>
+                                <li class="reaction reaction-sad" data-reaction="Sad"><button class="reaction-button" onclick="interaction(this)" data-reaction-id="4" data-post-id="${post.id}" style="display:none;"></button></li>
+                                <li class="reaction reaction-angry" data-reaction="Angry"><button class="reaction-button" onclick="interaction(this)" data-reaction-id="5" data-post-id="${post.id}" style="display:none;"></button></li>
                             </ul>
                         </span>
                     </div>

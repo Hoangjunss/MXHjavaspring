@@ -24,6 +24,9 @@ function showComment(id){
             divContainerComment.removeClass('show-comments').addClass('hide-comments');
             return; // Không thực hiện các hành động khác nếu đã ẩn thẻ
         }
+        else {
+            divContainerComment.removeClass('hide-comments').addClass('show-comments');
+        }
 
         divContainerComment.empty();
     
@@ -105,7 +108,7 @@ function showComment(id){
         divContainerComment.append(commentsFrom);
         divContainerComment.append(displayComment);
 
-        divContainerComment.removeClass('hide-comments').addClass('show-comments');
+        // divContainerComment.removeClass('hide-comments').addClass('show-comments');
     }
     
     function submitComment(postId) {
@@ -167,9 +170,9 @@ function showComment(id){
         const commentsList = divContainerComment.find('.comments-list');
         const commentForm = commentsList.find('.comment-form');
     
-        // Thêm bình luận mới ngay sau thẻ form
+        // Thêm bình luận mới ngay sau thẻ form 
         commentForm.after(commentHTML);
-        divContainerComment.css('maxHeight', `${divContainerComment[0].scrollHeight}px`);
+        // divContainerComment.css('maxHeight', `${divContainerComment[0].scrollHeight}px`);
     
         const commentButton = $(`.show-comments-btn[data-id='${postId}']`);
         let countComment = parseInt(commentButton.text().trim().split(" ")[0]);
