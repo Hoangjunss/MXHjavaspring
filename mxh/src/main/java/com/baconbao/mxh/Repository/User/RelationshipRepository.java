@@ -26,7 +26,7 @@ public interface RelationshipRepository extends JpaRepository<Relationship, Long
         Relationship findRelationship(@Param("firstUser") User firstUser,
                         @Param("secondUser") User secondUser);
 
-        @Query("SELECT r FROM Relationship r WHERE (r.userOne = :firstUser OR r.userTwo = :firstUser) AND r.status = :status")
+        @Query("SELECT r FROM Relationship r LEFT JOIN r.messages m WHERE (r.userOne = :firstUser OR r.userTwo = :firstUser) AND r.status = :status ORDER BY m.createAt DESC")
         List<Relationship> findAllByUserOneId(@Param("firstUser") User firstUser, @Param("status") StatusRelationship status);
 
         Relationship findByMessages(List<Message> messages);
