@@ -357,9 +357,10 @@ function displayEditProfileDetails() {
         formEditProfile.append('<button type="submit" id="submitBtn">Save</button>');
         $('#edit_profile').css('display', 'flex');
         $('#overlay_details').css('display', 'block');
+        $('body').css('overflow', 'hidden');
     }).fail(function(error) {
         console.error('Error fetching abouts:', error);
-        document.body.style.overflow = "hidden";
+        document.body.style.overflow = "auto";
     });
 }
 

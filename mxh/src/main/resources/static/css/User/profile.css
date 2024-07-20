@@ -424,7 +424,6 @@
     backdrop-filter: blur(5px); /* Hiệu ứng làm mờ */
     z-index: 999;
     display: none; /* Mặc định ẩn */
-    overflow: hidden; /* Tắt thanh cuộn */
 }
 
 body .profiledetails{
@@ -446,7 +445,7 @@ body .profiledetails{
 .edit_profile_container {
     box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
     width: 35rem;
-    min-height: fit-content;
+    max-height: 80vh;
     overflow-y: auto;
     background-color: white;
     padding: 10px 20px;
