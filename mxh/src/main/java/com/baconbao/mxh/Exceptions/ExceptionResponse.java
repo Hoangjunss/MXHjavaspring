@@ -2,6 +2,10 @@ package com.baconbao.mxh.Exceptions;
 
 import java.util.Date;
 
+import lombok.Getter;
+import lombok.Setter;
+@Getter
+@Setter
 public class ExceptionResponse {
   private Date timestamp;
   private String message;
@@ -16,19 +20,5 @@ public class ExceptionResponse {
     this.success = success;
   }
 
-  public Date getTimestamp() {
-    return timestamp;
-  }
-
-  public String getMessage() {
-    return message;
-  }
-
-  public String getDetails() {
-    return details;
-  }
-
-  public boolean isSuccess() {
-    return this.success;
-  }
+ 
 }
