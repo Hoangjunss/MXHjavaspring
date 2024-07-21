@@ -62,13 +62,15 @@ $(document).ready(function () {
             alert('Vui lòng điền đầy đủ thông tin.');
             return; // Dừng xử lý tiếp theo nếu có trường bị bỏ trống
         }
-
+        
         const formData = {
             firstName: firstName,
             lastName: lastName,
             email: email,
-            imageFile: imageFile
         };
+        if(imageFile){
+            formData.append('imageFile',imageFile);
+         }
         // Ẩn thông báo lỗi trước khi gửi request
         document.getElementById('email-error').style.display = 'none';
     
