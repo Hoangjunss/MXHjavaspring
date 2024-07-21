@@ -208,8 +208,7 @@ public class ApiUserController {
             if (status == 1L) {
                 String message = "Bạn nhận được lời mời kết bạn từ " + userOne.getFirstName() + " "
                         + userOne.getLastName();
-                notificationService.createNotification(userTwo, userOne, message);
-
+                notificationService.createNotification(userTwo, userOne, message, "/listfriend");
             }
 
             boolean success = true;

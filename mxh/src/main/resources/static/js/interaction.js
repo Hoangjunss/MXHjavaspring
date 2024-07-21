@@ -1,6 +1,7 @@
 function interaction(event){
         const reactionId = event.getAttribute("data-reaction-id");
         const postId = event.getAttribute("data-post-id");
+        alert('hello');
         const data = {
             reactionId: reactionId,
             postId: postId

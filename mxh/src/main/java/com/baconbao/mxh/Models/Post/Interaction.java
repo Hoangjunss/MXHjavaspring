@@ -1,9 +1,7 @@
 package com.baconbao.mxh.Models.Post;
 
 import com.baconbao.mxh.Models.User.User;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

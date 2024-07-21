@@ -22,14 +22,17 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     List<Comment> findByCommentsOrderByCreateAtDesc(Post post);
 
-    @Query("SELECT p, COUNT(c), COUNT(r) " +
+    @Query("SELECT p, COUNT(c) " +
             "FROM Post p " +
             "LEFT JOIN p.comments c " +
-            "LEFT JOIN c.replyComment r " +
             "WHERE p = :post AND p.isActive = :active AND p.status = :status " +
             "GROUP BY p ")
     List<Object[]> findPostAndCommentAndReplyCount(
             @Param("post") Post post,
             @Param("active") boolean active,
             @Param("status") Status status);
+
+
+        @Query("SELECT count(i) FROM Post p LEFT JOIN interactions i WHERE p = :post ")
+        Long countInteraction(@Param("post") Post post);
 }

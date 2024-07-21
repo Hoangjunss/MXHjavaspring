@@ -165,24 +165,16 @@ public class ApiPostsController {
             List<Comment> comments = post.getComments();
             comments.add(comment);
             commentService.save(comment);
-
             post.setComments(comments);
             postService.save(post);
             if (user.getId() != post.getUser().getId()) {
-                Notification notification = new Notification();
-                notification.setChecked(false);
-                notification.setMessage(user.getFirstName() + " " + user.getLastName() + " commented on your post");
-                notification.setUser(post.getUser());
-                notification.setUrl("/postdetails");
-                notificationService.saveNotification(notification);
+                String message = user.getFirstName() + " " + user.getLastName() + " commented on your post";
+                notificationService.createNotification(post.getUser(), user, message, "/post?id="+post.getId());
             }
             response.put("success", true);
             response.put("comment", comment);
             return ResponseEntity.ok(response);
-       
     }
-
-   
 
     // Lỗi truy vấn LIKE
     @PostMapping("/api/interact")
@@ -195,6 +187,8 @@ public class ApiPostsController {
             if(interaction!=null){
                 interaction.setInteractionType(interact);
                 interactionService.saveInteraction(interaction);
+                String message = user.getFirstName()+" "+user.getLastName()+" has interaction on your post ";
+                notificationService.createNotification(post.getUser(), user, message, "/post?id="+post.getId());
                 return ResponseEntity.ok(new ApiResponse(true, "Reaction updated successfully"));
             }else{
                 interaction = new Interaction();
@@ -202,15 +196,20 @@ public class ApiPostsController {
                 interaction.setPost(post);
                 interaction.setUser(user);
                 interactionService.saveInteraction(interaction);
+                String message = user.getFirstName()+" "+user.getLastName()+" has interaction on your post ";
+                notificationService.createNotification(post.getUser(), user, message, "/post?id="+post.getId());
                 return ResponseEntity.ok(new ApiResponse(true, "Reaction saved successfully"));
             }
     }
+
+    
 
     @GetMapping("/api/interaction")
     public ResponseEntity<?> getInteraction(@RequestParam Long id, Principal principal) {
         Map<String, Object> response = new HashMap<>();
         Interaction interaction = interactionService.findById(id);
-        response.put("interac", interaction.getInteractionType());
+        InteractionDTO interactionDTO = new InteractionDTO(interaction.getInteractionType().getId(), null);
+        response.put("interac", interactionDTO);
         return ResponseEntity.ok(response);
     }
 
@@ -228,7 +227,12 @@ public class ApiPostsController {
             }
             response.put("posts", posts);
             return ResponseEntity.ok(response);
-       
+    }
+
+    @GetMapping("/api/postdetails")
+    public ResponseEntity<?> postDetails(@RequestParam Long id) {
+        Post posts = postService.findById(id);
+            return ResponseEntity.ok(posts);
     }
 
     @GetMapping("/api/status") // Lấy ra tất cả trạng thái
@@ -269,6 +273,15 @@ public class ApiPostsController {
             comments.sort(Comparator.comparing(Comment::getCreateAt).reversed());
             response.put("comments", comments);
             return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/api/countinteraction")
+    public ResponseEntity<?> countIneraction(@RequestParam Long id) {
+        Map<String, Object> response = new HashMap<>();
+        Post post = postService.findById(id);
+        Long countInteract = postService.countInteraction(post);
+        response.put("countInteract", countInteract);
+        return ResponseEntity.ok(response);
     }
 
 }

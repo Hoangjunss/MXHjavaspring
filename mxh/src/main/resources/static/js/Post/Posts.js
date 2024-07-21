@@ -27,7 +27,6 @@ $(document).ready(function () {
             formData.append('image', image);
         }
 
-        console.log(image);
 
         $.ajax({
             url: '/api/uploadpostuser',
@@ -54,7 +53,6 @@ function fetchPostUser(userId) {
         url: `/api/post?id=${userId}`,
         method: 'GET',
         success: function (data) {
-            console.log(data);
             updatePostPage(data);
         },
         error: function (error) {
@@ -68,7 +66,6 @@ function fetchPosts() {
         url: '/api/post',
         method: 'GET',
         success: function (data) {
-            console.log(data);
             displayPosts(data);
         },
         error: function (error) {
@@ -113,10 +110,6 @@ function createPostContent(post) {
             <div class="post border-bottom p-3 bg-white w-shadow">
                 <div class="media text-muted pt-3">
                     <img src="${imgUser}" alt="Online user" class="mr-3 post-user-image">
-                    <form th:action="@{/hidepost}" method="post">
-                        <input type="hidden" name="id" value="${post.id}">
-                        <button type="submit">Ẩn</button>
-                    </form>
                     <div class="media-body pb-3 mb-0 small lh-125">
                         <div class="d-flex justify-content-between align-items-center w-100">
                             <a href="/profile?id=${post.user.id}" class="text-gray-dark post-user-name">${post.user.firstName} ${post.user.lastName}</a>
@@ -137,20 +130,15 @@ function createPostContent(post) {
                         <span class="like-btn">
                             <a href="#" class="post-card-buttons" id="reactions"><i data-post-id="${post.id}" class='bx bxs-like mr-2'></i></a>
                             <ul class="reactions-box dropdown-shadow">
-                                <li class="reaction reaction-like" data-reaction="Like"><button class="reaction-button" onclick="interaction(this)" data-reaction-id="1" data-post-id="${post.id}" style="display:none;"></button></li>
-                                <li class="reaction reaction-love" data-reaction="Love"><button class="reaction-button" onclick="interaction(this)" data-reaction-id="2" data-post-id="${post.id}" style="display:none;"></button></li>
-                                <li class="reaction reaction-haha" data-reaction="HaHa"><button class="reaction-button" onclick="interaction(this)" data-reaction-id="3" data-post-id="${post.id}" style="display:none;"></button></li>
-                                <li class="reaction reaction-sad" data-reaction="Sad"><button class="reaction-button" onclick="interaction(this)" data-reaction-id="4" data-post-id="${post.id}" style="display:none;"></button></li>
-                                <li class="reaction reaction-angry" data-reaction="Angry"><button class="reaction-button" onclick="interaction(this)" data-reaction-id="5" data-post-id="${post.id}" style="display:none;"></button></li>
+                                <li onclick="interaction(this)" data-reaction-id="1" data-post-id="${post.id}" class="reaction reaction-like" data-reaction="Like"></li>
+                                <li onclick="interaction(this)" data-reaction-id="2" data-post-id="${post.id}" class="reaction reaction-love" data-reaction="Love"></li>
+                                <li onclick="interaction(this)" data-reaction-id="3" data-post-id="${post.id}" class="reaction reaction-haha" data-reaction="HaHa"></li>
+                                <li onclick="interaction(this)" data-reaction-id="4" data-post-id="${post.id}" class="reaction reaction-sad" data-reaction="Sad"></li>
+                                <li onclick="interaction(this)" data-reaction-id="5" data-post-id="${post.id}" class="reaction reaction-angry" data-reaction="Angry"></li>
                             </ul>
                         </span>
                     </div>
                     <button class="post-card-buttons show-comments-btn" onclick="showComment(${post.id})" data-id="${post.id}"><i class='bx bx-message-rounded mr-2'></i>${countComment}</button>
-                    <div class="dropdown dropup share-dropup">
-                        <a href="#" class="post-card-buttons" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class='bx bx-share-alt mr-2'></i> Share
-                        </a>
-                    </div>
                 </div>
                 <div class="hide-comments" id="commentslist-${post.id}" data-id="${post.id}">
                     <!-- Comments will be loaded here -->
@@ -160,13 +148,9 @@ function createPostContent(post) {
     `;
 
     postDisplay.append(displayPost);
-    if(post.interactions.id==null){
-        post.interactions.forEach(interact =>{
-            const userid = fetchCurrentUser();
-            if(interact.user.id ==userid){
-                fetchInteracion(interact.id, post.id);
-            }
-        })
+    fetchCountInteraction(post.id);
+    if(post.interactions!=null){
+        handleInteractions(post);
     }
 
     const postImage = $('#postImage');
@@ -180,13 +164,38 @@ function fetchInteracion(idInteraction, idPost){
         url: `/api/interaction?id=${idInteraction}`,
         method: 'GET',
         success: function (data) {
-            console.log(data);
-            updateReactionUI(data.interac.id, idPost);
+            updateReactionUI(data.interac.reactionId, idPost);
         },
         error: function (error) {
             console.error('Error fetching interactions:', error);
         }
     });
+}
+
+async function fetchCountInteraction(postId) {
+            try {
+                fetch('/api/countinteraction?id='+postId,{
+                    method:'GET'
+                })  .then(response =>  {
+                    if (!response.ok) {
+                        // Nếu response không OK, ném lỗi với message từ server
+                        return response.json().then(errorData => {
+                            throw new Error(errorData.message || 'An unexpected error occurred');
+                        });
+                    }
+                    return response.json();
+                }) 
+                .then(data => {
+                    $(`i[data-post-id="${postId}"]`).empty().append(`<span>${data.countInteract}</span>`);
+                })
+                .catch(error => {
+                    console.error('Error fetching chat messages:', error.message);
+                    // Hiển thị lỗi cho người dùng, ví dụ như bằng cách cập nhật UI
+                });
+            } catch (error) {
+                console.error('Đã xảy ra lỗi khi lấy ID người dùng:', error.message);
+                // Xử lý lỗi nếu cần
+            }
 }
 
 function previewImage(event) {
@@ -215,3 +224,105 @@ function removeImage() {
     removeImage.hide();
 }
 
+async function handleInteractions(post) {
+    if (post.interactions.id == null) {
+        for (const interact of post.interactions) {
+            try {
+                const userid = await fetchCurrentUser();
+                if(interact.user.id ==userid){
+                    fetchInteracion(interact.id, post.id);
+                }
+            } catch (error) {
+                console.error('Đã xảy ra lỗi khi lấy ID người dùng:', error.message);
+                // Xử lý lỗi nếu cần
+            }
+        }
+    }
+}
+
+function fetchCurrentUser() {
+    return fetch('/api/usercurrent', {
+        method: 'GET'
+    }).then(response => {
+        if (!response.ok) {
+            // Nếu response không OK, ném lỗi với message từ server
+            return response.json().then(errorData => {
+                throw new Error(errorData.message || 'An unexpected error occurred');
+            });
+        }
+        return response.json();
+    }).then(data => {
+        return data.id;
+    }).catch(error => {
+        console.error('Error fetching chat messages:', error.message);
+        // Hiển thị lỗi cho người dùng, ví dụ như bằng cách cập nhật UI
+        return null; // Trả về null hoặc một giá trị mặc định khác trong trường hợp lỗi
+    });
+}
+
+function interaction(event){
+    const reactionId = event.getAttribute("data-reaction-id");
+    const postId = event.getAttribute("data-post-id");
+    const data = {
+        reactionId: reactionId,
+        postId: postId
+    };
+    fetch('/api/interact', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response =>  {
+        if (!response.ok) {
+            return response.json().then(errorData => {
+                throw new Error(errorData.message || 'An unexpected error occurred');
+            });
+        }
+        return response.json();
+    })
+    .then(result => {
+        if (result.success) {
+            updateReactionUI(reactionId, postId);
+
+            fetchCountInteraction(postId);
+        } else {
+            console.error("Failed to save reaction.");
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching chat messages:', error.message);
+        alert("Có lỗi xảy ra khi lưu phản ứng. Vui lòng thử lại.");
+    });
+};
+
+function updateReactionUI(reactionId, postId) {
+const postElement = document.querySelector(`i[data-post-id="${postId}"]`);
+
+if (postElement) {
+    // Xóa tất cả các lớp CSS hiện tại
+    postElement.className = 'bx mr-2'; // Chỉ giữ lại lớp cơ bản 'bx'
+    switch(reactionId.toString()) {
+        case '1':
+            postElement.classList.add('bxs-like');
+            break;
+        case '2':
+            postElement.classList.add('bxs-heart');
+            break;
+        case '3':
+            postElement.classList.add('bxs-laugh');
+            break;
+        case '4':
+            postElement.classList.add('bxs-sad');
+            break;
+        case '5':
+            postElement.classList.add('bxs-angry');
+            break;
+    }
+}
+}
+
+function redirectToMessagePage() {
+    window.location.href = '/messagesmobile';
+}

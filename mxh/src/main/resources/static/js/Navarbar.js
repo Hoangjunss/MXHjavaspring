@@ -77,26 +77,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 });
 
-function fetchCurrentUser(){
-    fetch('/api/usercurrent', {
-        method: 'GET'
-    }).then(response=>{
-            if (!response.ok) {
-                // Nếu response không OK, ném lỗi với message từ server
-                return response.json().then(errorData => {
-                    throw new Error(errorData.message || 'An unexpected error occurred');
-                });
-            }
-            return response.json();
-        })
-    .then(data => {
-        return data.id;
-    })
-    .catch(error => {
-        console.error('Error fetching chat messages:', error.message);
-        // Hiển thị lỗi cho người dùng, ví dụ như bằng cách cập nhật UI
-    });
-}
+
 
 function updateNotificationsIsCheck(data) {
     const unreadCount = data.unreadCount;
@@ -126,7 +107,7 @@ function fetchNotificationsList(dropContent) {
                 const timeAgo = formatTimeAgo(notification.createAt);
                 const notificationElement = document.createElement('li');
                 notificationElement.innerHTML = `
-                    <a href="/profile?id=${notification.userSend.id}" class="notification-link">
+                    <a href="${notification.url}" class="notification-link">
                         <div class="col-md-2 col-sm-2 col-xs-2">
                             <div class="notify-img">
                                 <img src="${notification.userSend.image ? `${notification.userSend.image.urlImage}` : `/images/users/DefaultAvtUser.png`}" alt="notification user image">

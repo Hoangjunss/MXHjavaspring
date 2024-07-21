@@ -79,10 +79,6 @@ function showComment(id){
                             </div>
                             <span class="d-block comment-created-time">${timeAgo}</span>
                             <p class="fs-8 pt-2">${comment.content}</p>
-                            <div class="commentLR">
-                                <button type="button" class="btn btn-link fs-8">Like</button>
-                                <button type="button" class="btn btn-link fs-8">Reply</button>
-                            </div>
                         </div>
                     </li>
                 `;
@@ -158,10 +154,6 @@ function showComment(id){
                     </div>
                     <span class="d-block comment-created-time">Now</span>
                     <p class="fs-8 pt-2">${comment.content}</p>
-                    <div class="commentLR">
-                        <button type="button" class="btn btn-link fs-8">Like</button>
-                        <button type="button" class="btn btn-link fs-8">Reply</button>
-                    </div>
                 </div>
             </li>
         `;

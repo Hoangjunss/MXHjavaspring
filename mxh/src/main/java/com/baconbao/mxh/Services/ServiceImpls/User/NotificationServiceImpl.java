@@ -79,14 +79,11 @@ public class NotificationServiceImpl implements NotificationService{
         return uuid.getMostSignificantBits() &0x1FFFFFFFFFFFFFL;
     }
 
-    public void createNotification(User user, User userSend, String message) {
-        Notification notification = new Notification();
-        notification.setMessage(message);
-        notification.setUser(user);
-        notification.setUserSend(userSend);
-        notification.setCreateAt(LocalDateTime.now());
-        notification.setChecked(false);
-        notification.setUrl("/listfriend");
+    public void createNotification(User user, User userSend, String message, String url) {
+        if(user.getId() == userSend.getId()){
+            return;
+        }
+        Notification notification = new Notification(null, message, user, userSend, LocalDateTime.now(), false, url);
         saveNotification(notification);
     }
 

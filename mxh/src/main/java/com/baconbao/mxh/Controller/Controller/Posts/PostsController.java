@@ -3,6 +3,7 @@ package com.baconbao.mxh.Controller.Controller.Posts;
 import org.springframework.stereotype.Controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import lombok.AllArgsConstructor;
 
@@ -23,6 +24,11 @@ public class PostsController {
     @GetMapping("/searchuser")
     public String searchUser() {
         return "searchuser";
+    }
+
+    @GetMapping("/post")
+    public String post(@RequestParam Long id) {
+        return "postdetails";
     }
 
 }

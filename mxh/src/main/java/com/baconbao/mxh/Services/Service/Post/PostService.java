@@ -2,6 +2,7 @@ package com.baconbao.mxh.Services.Service.Post;
 
 import java.util.List;
 
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import com.baconbao.mxh.DTO.PostDTO;
@@ -22,4 +23,5 @@ public interface PostService {
     PostDTO getPostDTO(Post post);
     List<Comment> findByCommentsOrderByCreateAtDesc(Post post);
     List<Object[]> findPostAndCommentAndReplyCount(Post post, boolean active, Status status);
+    Long countInteraction(Post post);
 }

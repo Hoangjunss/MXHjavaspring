@@ -19,6 +19,8 @@ import com.baconbao.mxh.Models.User.User;
 import com.baconbao.mxh.Repository.Post.PostRepository;
 import com.baconbao.mxh.Services.Service.Post.PostService;
 
+import jakarta.persistence.EntityNotFoundException;
+
 
 @Service
 public class PostServiceImpl implements PostService {
@@ -129,6 +131,19 @@ public class PostServiceImpl implements PostService {
         try {
             return postRepository.findPostAndCommentAndReplyCount(post, active, status);
         } catch (DataAccessException e) {
+            throw new CustomException(ErrorCode.DATABASE_ACCESS_ERROR);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+        }
+    }
+
+    @Override
+    public Long countInteraction(Post post) {
+        try {
+            return postRepository.countInteraction(post);
+        } catch (EntityNotFoundException e) {
+            throw new CustomException(ErrorCode.POST_NOT_FOUND);
+        }catch (DataAccessException e) {
             throw new CustomException(ErrorCode.DATABASE_ACCESS_ERROR);
         } catch (Exception e) {
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
