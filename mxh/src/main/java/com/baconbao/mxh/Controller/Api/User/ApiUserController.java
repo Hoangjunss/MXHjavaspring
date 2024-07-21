@@ -121,25 +121,54 @@ public class ApiUserController {
 
     //ANH USER
     @PostMapping("/api/editaccount")
-    public ResponseEntity<?> editaccount(@RequestBody UserDTO userDTO, Principal principal) {
-       
+    public ResponseEntity<?> editaccount(@RequestParam("firstName") String firstName,
+    @RequestParam("lastName") String lastName,
+    @RequestParam("email") String email,
+    @RequestParam(value = "imageFile", required = false) MultipartFile imageFile, Principal principal) {
+       try{
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
             User user = userService.findByEmail(userDetails.getUsername());
-            if (user.getEmail().equals(userDTO.getEmail())) {
-                user.setFirstName(userDTO.getFirstName());
-                user.setLastName(userDTO.getLastName());
+            if (user.getEmail().equals(email)) {
+                user.setFirstName(firstName);
+                user.setLastName(lastName);
+               
+                if (imageFile != null) {
+                    Image img = new Image();
+                    Map<String, Object> resultMap = cloudinaryService.upload(imageFile);
+                    String imageUrl = (String) resultMap.get("url");
+                    img.setUrlImage(imageUrl);
+                    imageService.saveImage(img); // Lưu đối tượng Image
+                    Image tmpImg = imageService.findByImage(img.getUrlImage());
+                    user.setImage(tmpImg);
+                }
                 userService.saveUser(user);
                 return ResponseEntity.ok(new ApiResponse(true, "Edit account successful"));
             }
-            if (userService.isEmailExist(userDTO.getEmail())) {
+            if (userService.isEmailExist(email)) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponse(false, "Email already exists"));
             }
-            user.setFirstName(userDTO.getFirstName());
-            user.setLastName(userDTO.getLastName());
-            user.setEmail(userDTO.getEmail());
+            user.setFirstName(firstName);
+            user.setLastName(lastName);
+            user.setEmail(email);
+            if (imageFile != null) {
+                Image img = new Image();
+                Map<String, Object> resultMap = cloudinaryService.upload(imageFile);
+                String imageUrl = (String) resultMap.get("url");
+                img.setUrlImage(imageUrl);
+                imageService.saveImage(img); // Lưu đối tượng Image
+                Image tmpImg = imageService.findByImage(img.getUrlImage());
+                user.setImage(tmpImg);
+            }
             userService.saveUser(user);
             return ResponseEntity.ok(new ApiResponse(true, "Edit account successful"));
-       
+        } catch (CustomException e) {
+            return new ResponseEntity<>(new ApiResponse(false, e.getErrorCode().getMessage()),
+                    e.getErrorCode().getStatusCode());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new ApiResponse(false, "An unexpected error occurred"),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     // Lay duong dan anh de tai ve
