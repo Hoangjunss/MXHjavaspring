@@ -53,33 +53,26 @@ $(document).ready(function () {
         const form = event.target;
         const firstName = form.querySelector('input[name="firstName"]').value.trim();
         const lastName = form.querySelector('input[name="lastName"]').value.trim();
-        const email = form.querySelector('input[name="email"]').value.trim();
         const imageInput = document.getElementById('imageInput');
         const imageFile = imageInput.files[0];
 
         // Kiểm tra nếu có bất kỳ trường nào bị bỏ trống
-        if (!firstName || !lastName || !email) {
+        if (!firstName || !lastName) {
             alert('Vui lòng điền đầy đủ thông tin.');
             return; // Dừng xử lý tiếp theo nếu có trường bị bỏ trống
         }
         
-        const formData = {
-            firstName: firstName,
-            lastName: lastName,
-            email: email,
-        };
-        if(imageFile){
-            formData.append('imageFile',imageFile);
-         }
-        // Ẩn thông báo lỗi trước khi gửi request
-        document.getElementById('email-error').style.display = 'none';
+        const formData = new FormData();
+        formData.append('firstName', firstName);
+        formData.append('lastName', lastName);
+
+        if (imageFile) {
+            formData.append('imageFile', imageFile);
+        }
     
         fetch('/api/editaccount', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(formData)
+            body: formData
         })
         .then(response =>  {
             if (!response.ok) {
@@ -153,7 +146,6 @@ function fetchUser(userId) {
 function fetchRelationship(userId) {
     $.get(`/api/getrelationship?userId=${userId}`, function(data) {
         updateRelationship(data);
-        fetchStatusPost();
         fetchUserAbouts(userId);
     }).fail(function(error) {
         console.error('Error fetching relationship:', error);
@@ -165,14 +157,6 @@ function fetchUserAbouts(userId) {
         updateUserAbouts(data);
     }).fail(function(error) {
         console.error('Error fetching user abouts:', error);
-    });
-}
-
-function fetchStatusPost() {
-    $.get(`/api/status`, function(data) {
-        updateStatusPost(data);
-    }).fail(function(error) {
-        console.error('Error fetching status post:', error);
     });
 }
 
@@ -199,20 +183,20 @@ function updateRelationship(data) {
         $('.cover-overlay').hide();
         let buttonHtml = `<input type="hidden" name="id" value="${data.user.id}">`;
 
-        if (!data.relationship || data.relationship.status.id == 4) {
-            buttonHtml += `<button type="button" class="btn btn-follow mr-3 relationship-btn" data-status="1"><i class='bx bx-plus'></i>Add Friend</button>`;
+        if (!data.relationship || data.relationship.status.id == 1) {
+            buttonHtml += `<button type="button" class="btn btn-follow mr-3 relationship-btn" data-status="2"><i class='bx bx-plus'></i>Add Friend</button>`;
         } else {
             switch (data.relationship.status.id) {
-                case 1:
+                case 2:
                     if (data.relationship.userOne.id == data.user.id) {
-                        buttonHtml += `<button type="button" class="btn btn-follow mr-3 relationship-btn" data-status="2"><i class='bx bx-plus'></i>Accept</button>
-                                       <button type="button" class="btn btn-follow mr-3 relationship-btn" data-status="4"><i class='bx bx-plus'></i>Reject</button>`;
+                        buttonHtml += `<button type="button" class="btn btn-follow mr-3 relationship-btn" data-status="3"><i class='bx bx-plus'></i>Accept</button>
+                                       <button type="button" class="btn btn-follow mr-3 relationship-btn" data-status="1"><i class='bx bx-plus'></i>Reject</button>`;
                     } else {
-                        buttonHtml += `<button type="button" class="btn btn-follow mr-3 relationship-btn" data-status="4"><i class='bx bx-plus'></i>Recall</button>`;
+                        buttonHtml += `<button type="button" class="btn btn-follow mr-3 relationship-btn" data-status="1"><i class='bx bx-plus'></i>Recall</button>`;
                     }
                     break;
-                case 2:
-                    buttonHtml += `<button type="button" class="btn btn-follow mr-3 relationship-btn" data-status="4"><i class='bx bx-plus'></i>UnFriend</button>`;
+                case 3:
+                    buttonHtml += `<button type="button" class="btn btn-follow mr-3 relationship-btn" data-status="1"><i class='bx bx-plus'></i>UnFriend</button>`;
                     break;
             }
         }
@@ -279,51 +263,13 @@ function updateRelationshipStatus(userId, status, form) {
         data: JSON.stringify(formData),
         success: function(data) {
             if (data.success) {
-                updateButtons(form, data.newStatus);
+                window.location.reload();
             }
         },
         error: function(xhr, status, error) {
             console.error('Error:', error);
         }
     });
-}
-
-// Hàm để cập nhật nút button
-function updateButtons(form, newStatus) {
-    const buttons = form.find('.relationship-btn');
-    buttons.each(function() {
-        const button = $(this);
-        switch (newStatus) {
-            case 1:
-                if (button.data('status') == '1') {
-                    button.text('Send to');
-                    const recallButton = $('<button/>', {
-                        type: 'button',
-                        class: 'btn btn-follow mr-3 relationship-btn',
-                        'data-status': '4',
-                        html: "<i class='bx bx-plus'></i>Recall"
-                    }).appendTo(form);
-                } else {
-                    button.remove();
-                }
-                break;
-            case 2:
-                if (button.data('status') == '2') {
-                    button.text('UnFriend').data('status', '4');
-                } else {
-                    button.remove();
-                }
-                break;
-            case 4:
-                if (button.data('status') == '4') {
-                    button.text('Add Friend').data('status', '1');
-                    /* form.find('button[data-status="4"]').remove(); */
-                } else {
-                    button.remove();
-                }
-                break;
-        }
-    }); // Thêm lại sự kiện click mới
 }
 
 function closeEditProfileDetails() {
@@ -383,11 +329,6 @@ function displayEditProfile(user) {
         <div class="name_box">
             <label>Last Name</label>
             <input type="text" name="lastName" value="${user.lastName}">
-        </div>
-        <div class="name_box">
-            <label>Email</label>
-            <input type="text" name="email" value="${user.email}">
-            <p id="email-error" style="color: red; display: none;">Email already exists</p>
         </div>
         <button type="submit" id="submitBtn">Save</button>
     `;

@@ -8,12 +8,11 @@ import org.springframework.stereotype.Service;
 import com.baconbao.mxh.DTO.PostDTO;
 import com.baconbao.mxh.Models.Post.Comment;
 import com.baconbao.mxh.Models.Post.Post;
-import com.baconbao.mxh.Models.Post.Status;
 import com.baconbao.mxh.Models.User.User;
 
 @Service
 public interface PostService {
-    List<Post> findByActiveAndStatus(boolean active, Status status);
+    List<Post> findByActive(boolean active);
     List<Post> findByUserPosts(User user);
     Post findById(Long id);
     void save(Post post);
@@ -22,6 +21,6 @@ public interface PostService {
     Post getPost(PostDTO postDTO);
     PostDTO getPostDTO(Post post);
     List<Comment> findByCommentsOrderByCreateAtDesc(Post post);
-    List<Object[]> findPostAndCommentAndReplyCount(Post post, boolean active, Status status);
+    List<Object[]> findPostAndCommentAndReplyCount(Post post, boolean active);
     Long countInteraction(Post post);
 }

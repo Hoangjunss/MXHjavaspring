@@ -14,7 +14,6 @@ import com.baconbao.mxh.Exceptions.CustomException;
 import com.baconbao.mxh.Exceptions.ErrorCode;
 import com.baconbao.mxh.Models.Post.Comment;
 import com.baconbao.mxh.Models.Post.Post;
-import com.baconbao.mxh.Models.Post.Status;
 import com.baconbao.mxh.Models.User.User;
 import com.baconbao.mxh.Repository.Post.PostRepository;
 import com.baconbao.mxh.Services.Service.Post.PostService;
@@ -32,9 +31,9 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> findByActiveAndStatus(boolean active, Status idStatus) {
+    public List<Post> findByActive(boolean active) {
         try {
-            return postRepository.findByIsActiveAndStatusOrderByCreateAtDesc(active, idStatus);
+            return postRepository.findByIsActiveOrderByCreateAtDesc(active);
         } catch (DataAccessException e) {
             throw new CustomException(ErrorCode.DATABASE_ACCESS_ERROR);
         } catch (Exception e) {
@@ -89,7 +88,6 @@ public class PostServiceImpl implements PostService {
         post.setContent(postDTO.getContent());
         post.setCreateAt(postDTO.getCreateAt());
         post.setUpdateAt(postDTO.getUpdateAt());
-        post.setStatus(postDTO.getStatus());
         return post;
     }
 
@@ -100,7 +98,6 @@ public class PostServiceImpl implements PostService {
         postDTO.setContent(post.getContent());
         postDTO.setCreateAt(post.getCreateAt());
         postDTO.setUpdateAt(post.getUpdateAt());
-        postDTO.setStatus(post.getStatus());
         return postDTO;
     }
 
@@ -127,9 +124,9 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Object[]> findPostAndCommentAndReplyCount(Post post, boolean active, Status status) {
+    public List<Object[]> findPostAndCommentAndReplyCount(Post post, boolean active) {
         try {
-            return postRepository.findPostAndCommentAndReplyCount(post, active, status);
+            return postRepository.findPostAndCommentAndReplyCount(post, active);
         } catch (DataAccessException e) {
             throw new CustomException(ErrorCode.DATABASE_ACCESS_ERROR);
         } catch (Exception e) {

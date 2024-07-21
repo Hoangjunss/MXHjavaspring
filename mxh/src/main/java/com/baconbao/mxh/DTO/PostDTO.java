@@ -3,7 +3,6 @@ package com.baconbao.mxh.DTO;
 import java.time.LocalDateTime;
 
 import com.baconbao.mxh.Models.Post.Image;
-import com.baconbao.mxh.Models.Post.Status;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,7 +18,6 @@ public class PostDTO {
     private String content;
     private LocalDateTime createAt;
     private LocalDateTime updateAt;
-    private Status status;
 
     private Image image;
 }

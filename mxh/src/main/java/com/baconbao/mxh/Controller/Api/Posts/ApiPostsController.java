@@ -28,7 +28,6 @@ import com.baconbao.mxh.Models.Post.Image;
 import com.baconbao.mxh.Models.Post.Interact;
 import com.baconbao.mxh.Models.Post.Interaction;
 import com.baconbao.mxh.Models.Post.Post;
-import com.baconbao.mxh.Models.Post.Status;
 import com.baconbao.mxh.Models.User.Notification;
 import com.baconbao.mxh.Models.User.User;
 import com.baconbao.mxh.Services.CloudinaryService;
@@ -37,7 +36,6 @@ import com.baconbao.mxh.Services.Service.Post.ImageService;
 import com.baconbao.mxh.Services.Service.Post.InteractService;
 import com.baconbao.mxh.Services.Service.Post.InteractionService;
 import com.baconbao.mxh.Services.Service.Post.PostService;
-import com.baconbao.mxh.Services.Service.Post.StatusService;
 import com.baconbao.mxh.Services.Service.User.NotificationService;
 import com.baconbao.mxh.Services.Service.User.UserService;
 
@@ -52,8 +50,6 @@ public class ApiPostsController {
     private ImageService imageService;
     @Autowired
     private CloudinaryService cloudinaryService;
-    @Autowired
-    private StatusService statusService;
     @Autowired
     private UserDetailsService userDetailsService;
     @Autowired
@@ -83,9 +79,7 @@ public class ApiPostsController {
             @RequestParam(value = "image", required = false) MultipartFile image, Principal principal) {
         try {
             Post post = new Post();
-            Status statusPost = statusService.findById(status);
             post.setContent(content);
-            post.setStatus(statusPost);
             post.setActive(true);
             // dat ngay va gio tao post
             LocalDateTime localDateTime = LocalDateTime.now();
@@ -220,8 +214,7 @@ public class ApiPostsController {
         List<Post> posts = new ArrayList<>();
       
             if (id == null) {
-                Status status1 = statusService.findById(1); // LUU Y TIM STATUS
-                posts = postService.findByActiveAndStatus(true, status1);
+                posts = postService.findByActive(true);
             } else {
                 posts = postService.findByUserPosts(userService.findById(id));
             }
@@ -235,15 +228,6 @@ public class ApiPostsController {
             return ResponseEntity.ok(posts);
     }
 
-    @GetMapping("/api/status") // Lấy ra tất cả trạng thái
-    public ResponseEntity<?> status() {
-        Map<String, Object> response = new HashMap<>();
-      
-            List<Status> status = statusService.findAll();
-            response.put("status", status);
-            return ResponseEntity.ok(response);
-       
-    }
 
     @GetMapping("/api/notifications") // Lấy ra tất cả thông báo
     public ResponseEntity<?> notifications(Principal principal) {
