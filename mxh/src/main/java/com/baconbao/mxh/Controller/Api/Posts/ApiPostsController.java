@@ -28,7 +28,6 @@ import com.baconbao.mxh.Models.Post.Image;
 import com.baconbao.mxh.Models.Post.Interact;
 import com.baconbao.mxh.Models.Post.Interaction;
 import com.baconbao.mxh.Models.Post.Post;
-import com.baconbao.mxh.Models.Post.ReplyComment;
 import com.baconbao.mxh.Models.Post.Status;
 import com.baconbao.mxh.Models.User.Notification;
 import com.baconbao.mxh.Models.User.User;
@@ -38,7 +37,6 @@ import com.baconbao.mxh.Services.Service.Post.ImageService;
 import com.baconbao.mxh.Services.Service.Post.InteractService;
 import com.baconbao.mxh.Services.Service.Post.InteractionService;
 import com.baconbao.mxh.Services.Service.Post.PostService;
-import com.baconbao.mxh.Services.Service.Post.ReplyCommentService;
 import com.baconbao.mxh.Services.Service.Post.StatusService;
 import com.baconbao.mxh.Services.Service.User.NotificationService;
 import com.baconbao.mxh.Services.Service.User.UserService;
@@ -66,8 +64,6 @@ public class ApiPostsController {
     private InteractService interactService;
     @Autowired
     private InteractionService interactionService;
-    @Autowired
-    private ReplyCommentService replyCommentService;
     @Autowired
     private NotificationService notificationService;
 
@@ -186,29 +182,7 @@ public class ApiPostsController {
        
     }
 
-    @PostMapping("/api/postReplyComment")
-    public ResponseEntity<?> postReplyComment(@RequestParam("id") Long id, @RequestParam("content") String content,
-            Principal principal) {
-       
-            Comment comment = commentService.findById(id);
-            // Tạo đối tượng reply, lưu những thông tin cần thiết
-            ReplyComment replyComment = new ReplyComment();
-            replyComment.setId(replyCommentService.getGenerationId());
-            replyComment.setContent(content);
-            LocalDateTime localDateTime = LocalDateTime.now();
-            replyComment.setCreateAt(localDateTime);
-            UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
-            User user = userService.findByEmail(userDetails.getUsername());
-            replyComment.setUserSend(user);
-            // Lưu thông tin
-            List<ReplyComment> replyComments = comment.getReplyComment();
-            replyComments.add(replyComment);
-            replyCommentService.save(replyComment);
-            comment.setReplyComment(replyComments);
-            commentService.save(comment);
-            return ResponseEntity.ok().build();
-      
-    }
+   
 
     // Lỗi truy vấn LIKE
     @PostMapping("/api/interact")
