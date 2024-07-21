@@ -81,6 +81,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 method: "GET"
             }).then(response => {
                 if (!response.ok) {
+                    setRelationshipStatus(id);
                     // Nếu response không OK, ném lỗi với message từ server
                     return response.json().then(errorData => {
                         throw new Error(errorData.message || 'An unexpected error occurred');
@@ -261,4 +262,40 @@ function loadMessages(userId) {
         });
 
 }
-
+function setRelationshipStatus(userId) {
+    const formData = {
+        userId: userId,
+        status: 1
+    };
+    $.ajax({
+        url: '/api/relationship', // Update with the new URL
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(formData),
+        success: function(data) {
+            if (data.success) {
+                fetch('/api/chat?id=' + userId, {
+                    method: "GET"
+                }).then(response => {
+                    if (!response.ok) {
+                        // Nếu response không OK, ném lỗi với message từ server
+                        return response.json().then(errorData => {
+                            throw new Error(errorData.message || 'An unexpected error occurred');
+                        });
+                    }
+                    return response.json();
+                }) // Chuyển đổi phản hồi thành JSON
+                    .then(data => {
+                        loadMessage(data);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching chat messages:', error.message);
+                        // Hiển thị lỗi cho người dùng, ví dụ như bằng cách cập nhật UI
+                    });    
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('Error:', error);
+        }
+    });
+}
