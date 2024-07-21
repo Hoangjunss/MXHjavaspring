@@ -49,6 +49,7 @@ $(document).ready(function () {
 });
 
 function fetchPostUser(userId) {
+    console.log('fetchPostUser');
     $.ajax({
         url: `/api/post?id=${userId}`,
         method: 'GET',
@@ -62,6 +63,7 @@ function fetchPostUser(userId) {
 }
 
 function fetchPosts() {
+    console.log('fetchPosts');
     $.ajax({
         url: '/api/post',
         method: 'GET',
@@ -75,6 +77,7 @@ function fetchPosts() {
 }
 
 function updatePostPage(data) {
+    console.log('updatePostPage');
     const divContainerPost = $('#displaycontent');
 
     if (data.posts == null) {
@@ -91,6 +94,7 @@ function updatePostPage(data) {
 }
 
 function displayPosts(data) {
+    console.log('displayPosts');
     const postDisplay = $('#displaycontent');
     postDisplay.empty(); // Clear previous content
 
@@ -100,9 +104,15 @@ function displayPosts(data) {
 }
 
 function createPostContent(post) {
+    console.log('createPostContent');
     const postDisplay = $('#displaycontent');
     const imgUser = post.user.image!=null ?  post.user.image.urlImage : '/images/users/DefaultAvtUser.png';
     const imgPost = post.image != null ? post.image.urlImage : null;
+    let imagePostUrl;
+    if(post.image!=null){
+        imagePostUrl = post.image.urlImage
+        console.log(imagePostUrl);
+    }
     const countComment = post.comments ? post.comments.length : 0;
     const timeAgo = formatTimeAgo(post.updateAt);
     const displayPost = `
@@ -121,7 +131,7 @@ function createPostContent(post) {
                     <div class="mt-3 ">
                         <p>${post.content}</p>
                         ${imgPost ? `<div class="d-block mt-3">
-                            <img id="postImage" class="post-content" src="${imgPost}">
+                            <img id="postImageUrl" class="post-content" src="${post.image.urlImage}">
                         </div>` : ''}
                     </div>
                 </div>
@@ -160,6 +170,7 @@ function createPostContent(post) {
 }
 
 function fetchInteracion(idInteraction, idPost){
+    console.log('fetchInteracion');
     $.ajax({
         url: `/api/interaction?id=${idInteraction}`,
         method: 'GET',
@@ -173,6 +184,8 @@ function fetchInteracion(idInteraction, idPost){
 }
 
 async function fetchCountInteraction(postId) {
+    console.log('fetchCountInteraction');
+
             try {
                 fetch('/api/countinteraction?id='+postId,{
                     method:'GET'
@@ -199,6 +212,8 @@ async function fetchCountInteraction(postId) {
 }
 
 function previewImage(event) {
+    console.log('previewImage');
+
     const imagePreview = document.getElementById('imagePreview');
     const removeImage = document.getElementById('remove-image-span');
     
@@ -225,6 +240,7 @@ function removeImage() {
 }
 
 async function handleInteractions(post) {
+    console.log('handleInteractions');
     if (post.interactions.id == null) {
         for (const interact of post.interactions) {
             try {
@@ -241,6 +257,7 @@ async function handleInteractions(post) {
 }
 
 function fetchCurrentUser() {
+    console.log('fetchCurrentUser');
     return fetch('/api/usercurrent', {
         method: 'GET'
     }).then(response => {
@@ -261,6 +278,7 @@ function fetchCurrentUser() {
 }
 
 function interaction(event){
+    console.log('interaction');
     const reactionId = event.getAttribute("data-reaction-id");
     const postId = event.getAttribute("data-post-id");
     const data = {
@@ -298,6 +316,8 @@ function interaction(event){
 };
 
 function updateReactionUI(reactionId, postId) {
+    console.log('updateReactionUI');
+    
 const postElement = document.querySelector(`i[data-post-id="${postId}"]`);
 
 if (postElement) {

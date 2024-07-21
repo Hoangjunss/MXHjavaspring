@@ -11,39 +11,25 @@ $(document).ready(function() {
         isError |= validatePassword('#inputPassword4', '#inputRe-enterPassword', '.errorPassword', '.errorRe-Password');
 
         if (!isError) {
-            let formData = {
-                lastName: $("#inputLastName").val(),
-                firstName: $("#inputFirstName").val(),
-                password: $("#inputPassword4").val(),
-                email: $("#inputEmail4").val()
-            };
-            fetch("/api/register", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(formData)
-            })
-            .then(response => {
-                if (!response.ok) {
-                    // Nếu response không OK, ném lỗi với message từ server
-                    return response.json().then(errorData => {
-                        throw new Error(errorData.message || 'An unexpected error occurred');
-                    });
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.success) {
-                    window.location.href = "/Confirm";
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching chat messages:', error.message);
-                // Hiển thị lỗi cho người dùng, ví dụ như bằng cách cập nhật UI
-            });
-        }
-    });
+                lastName= $("#inputLastName").val();
+                firstName= $("#inputFirstName").val();
+                password= $("#inputPassword4").val();
+                email= $("#inputEmail4").val();
+                fetch('/api/register?lastName='+lastName+'&firsName='+firstName+'&password='+password+'&email='+email, {
+                    method: "POST"
+                })
+                .then(response => {
+                })
+                .then(data => {
+                    if (data==true) {
+                        console.log("Successfully registered");
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching chat messages:', error.message);
+                });
+    }
+});
 
     
 

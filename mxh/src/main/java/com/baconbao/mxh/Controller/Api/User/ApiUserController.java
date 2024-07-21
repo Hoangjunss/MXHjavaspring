@@ -85,24 +85,12 @@ public class ApiUserController {
     private RelationshipService relationshipService;
 
     @GetMapping("/api/confirmUser")
-    public String confirmUser(@RequestParam long token, Model model) { // @RequestParam lấy giá trị từ url (lấy giá trị
+    public ResponseEntity<?> confirmUser(@RequestParam("token") long token, Model model) { // @RequestParam lấy giá trị từ url (lấy giá trị
                                                                        // của token từ url
-        try {
             VerifycationToken verifycationToken = verifycationTokenService.findById(token);
-            // neu token het han thi khi an vo chuyen ve register
-            if (verifycationToken == null)
-                return "User/Register";
             // else xac nhan token va chuyen ve index
             verifycationTokenService.confirmUser(token);
-            return "User/Login";
-        } catch (CustomException e) {
-            model.addAttribute("errorConfirmUser", e.getErrorCode().getMessage());
-            return "error"; // trả về trang lỗi hoặc một thông báo lỗi
-        } catch (Exception e) {
-            e.printStackTrace();
-            model.addAttribute("errorConfirmUser", "An unexpected error occurred");
-            return "error"; // trả về trang lỗi hoặc một thông báo lỗi
-        }
+            return ResponseEntity.ok().build();
     }
 
     @GetMapping("/api/usercurrent")
@@ -116,18 +104,22 @@ public class ApiUserController {
     }
 
     @PostMapping("/api/register")
-    public ResponseEntity<?> register(@RequestBody UserDTO userDTO) {
-    
-            if (userService.isEmailExist(userDTO.getEmail())) {
+    public ResponseEntity<?> register(@RequestParam("lastName") String lastName,
+                            @RequestParam("firsName") String firstName,
+                            @RequestParam("password") String password,
+                            @RequestParam("email") String email) {
+        Map<String, Object> response = new HashMap<>();
+            if (userService.isEmailExist(email)) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponse(false, "Email already exists"));
             }
-            userDTO.setCreateAt(LocalDateTime.now());
-            User user = userService.getUser(userDTO);
+            User user = new User(null, lastName, firstName, password, email, LocalDateTime.now(), false, null, null, null, null, null, null, null, null, null, null);
+            System.out.println(user.getEmail()+" USEREMAIL");
             verifycationTokenService.registerUser(user);
-            return ResponseEntity.ok(new ApiResponse(true, "Register successful"));
-      
+            response.put("success", true);
+            return ResponseEntity.ok(true);
     }
 
+    //ANH USER
     @PostMapping("/api/editaccount")
     public ResponseEntity<?> editaccount(@RequestBody UserDTO userDTO, Principal principal) {
        
@@ -469,6 +461,15 @@ public class ApiUserController {
             response.put("user", user);
             return ResponseEntity.ok(response);
        
+    }
+
+    @GetMapping("/api/search")
+    public ResponseEntity<?> search(@RequestParam String name) {
+        Map<String, Object> response = new HashMap<>();
+        List<User> users = userService.searchUser(name);
+        response.put("users", users);
+        return ResponseEntity.ok(response);
+
     }
 
     // Lấy mối quan hệ - tín hiệu có phải user logged - user đối diện

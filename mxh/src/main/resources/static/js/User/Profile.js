@@ -2,7 +2,7 @@ $(document).ready(function () {
     
     const urlParams = new URLSearchParams(window.location.search);
     const userId = urlParams.get('id');
-    let isUserLogged;
+    var isUserLogged;
 
     if (userId) {
         fetchUser(userId);
@@ -66,7 +66,8 @@ $(document).ready(function () {
         const formData = {
             firstName: firstName,
             lastName: lastName,
-            email: email
+            email: email,
+            imageFile: imageFile
         };
         // Ẩn thông báo lỗi trước khi gửi request
         document.getElementById('email-error').style.display = 'none';
@@ -409,5 +410,11 @@ function previewImageAvartarUser(event) {
 }
 
 function openmessage() {
-    window.location.href = '/messagesmobile';
+    const urlParams = new URLSearchParams(window.location.search);
+    const userId = urlParams.get('id');
+    if(isUserLogged){
+        window.location.href = '/messagesmobile';
+    }else{
+        window.location.href = '/chatmobile?id='+userId;
+    }
 }

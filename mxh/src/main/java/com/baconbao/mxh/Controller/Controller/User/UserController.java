@@ -52,7 +52,7 @@ public class UserController {
         return "User/profile";
     }
 
-    @GetMapping("/Confirm") // Confirm
+    @GetMapping("/confirmUser") // Confirm
     public String confirm() {
         return "User/Confirm";
     }

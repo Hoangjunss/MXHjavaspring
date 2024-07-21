@@ -80,6 +80,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 function updateNotificationsIsCheck(data) {
+    console.log('updateNotificationsIsCheck');
     const unreadCount = data.unreadCount;
     const quantityNotification = document.getElementById('quantityNotification');
     if (unreadCount > 0) {
@@ -91,6 +92,7 @@ function updateNotificationsIsCheck(data) {
 }
 
 function fetchNotificationsList(dropContent) {
+    console.log('fetchNotificationsList');
     fetch('/api/notifications', { method: 'GET' })
         .then(response =>{
             if (!response.ok) {
@@ -135,6 +137,7 @@ function fetchNotificationsList(dropContent) {
 }
 
 function markNotificationsAsRead() {
+    console.log('markNotificationsAsRead');
     fetch('/api/notificationsischecked', {
         method: 'POST'
     })
@@ -155,6 +158,7 @@ function markNotificationsAsRead() {
 
 // Đếm số lượng lời mời kết bạn chưa xác nhận
 function fetchFriendRequestsCount() {
+    console.log('fetchFriendRequestsCount');
     return fetch('/api/countfriend')
         .then(response =>{
             if (!response.ok) {
@@ -204,9 +208,8 @@ $(document).ready(function() {
     });
 });
 
-
-
 function formatTimeAgo(date) {
+    console.log('formatTimeAgo');
     const now = new Date();
     const postDate = new Date(date);
     const seconds = Math.floor((now - postDate) / 1000);

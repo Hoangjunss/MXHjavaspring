@@ -136,10 +136,21 @@ h3 {
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.4.0/dist/sockjs.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
     <script src="https://unpkg.com/nprogress@0.2.0/nprogress.js"></script>
+
+    <script src="/js/user/seefriend.js"></script>
+    <script src="/js/searchuser.js"></script>
     
     
 </head>
 <body>
+    <div class="container">
+        <h3>Search user</h3>
+        <input type="text" id="search-input" placeholder="Tìm kiếm tên bạn bè...">
+        <button id="search-btn">Tìm kiếm</button>
+        <div id="search-user">
+
+        </div>
+    </div>
     <div class="container">
         <h3>Lời mời kết bạn</h3>
         <ul id="friend-list" class="friend-list">
@@ -155,6 +166,4 @@ h3 {
         <ul id="not-friend-list" class="friend-list"></ul>
         <a href="#" class="view-all">Xem tất cả</a>
     </div>
-
-    <script src="/js/user/seefriend.js"></script>
 </body>
