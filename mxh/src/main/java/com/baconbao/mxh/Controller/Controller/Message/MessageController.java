@@ -21,5 +21,6 @@ public class MessageController {
 
         return "/User/Message/Web/Messager";
     }
+    
 
 }

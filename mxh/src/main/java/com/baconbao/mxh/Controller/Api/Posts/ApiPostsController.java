@@ -16,10 +16,12 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.baconbao.mxh.Config.Web.AppConstants;
 import com.baconbao.mxh.DTO.ApiResponse;
 import com.baconbao.mxh.DTO.InteractionDTO;
 import com.baconbao.mxh.Exceptions.CustomException;
@@ -44,6 +46,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping(AppConstants.API_BASE_PATH)
 public class ApiPostsController {
     @Autowired
     private PostService postService;
@@ -64,7 +67,7 @@ public class ApiPostsController {
     @Autowired
     private NotificationService notificationService;
 
-    @PostMapping("/api/notificationsischecked")
+    @PostMapping("/notificationsischecked")
     public ResponseEntity<?> markNotificationsAsRead(Principal principal) {
       
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
@@ -74,7 +77,7 @@ public class ApiPostsController {
       
     }
 
-    @PostMapping("/api/uploadpostuser")
+    @PostMapping("/uploadpostuser")
     public ResponseEntity<?> uploadpost(@RequestParam("content") String content,
             @RequestParam(value = "image", required = false) MultipartFile image, Principal principal) {
         try {
@@ -111,7 +114,7 @@ public class ApiPostsController {
         }
     }
 
-    @PostMapping("/api/hidepost")
+    @PostMapping("/hidepost")
     public ResponseEntity<?> markNotificationsAsRead(@RequestParam("id") long id) {
       
             Post post = postService.findById(id);
@@ -123,7 +126,7 @@ public class ApiPostsController {
        
     }
 
-    @PostMapping("/api/savepost")
+    @PostMapping("/savepost")
     public ResponseEntity<?> savepost(@RequestParam("id") long id, @RequestParam("content") String content) {
       
             Post post = postService.findById(id); // tìm post theo id
@@ -137,7 +140,7 @@ public class ApiPostsController {
     }
 
     // Đăng comment của post
-    @PostMapping("/api/commenter")
+    @PostMapping("/commenter")
     public ResponseEntity<?> postComment(@RequestBody Map<String, Object> payload, Principal principal) {
         Map<String, Object> response = new HashMap<>();
       
@@ -171,7 +174,7 @@ public class ApiPostsController {
     }
 
     // Lỗi truy vấn LIKE
-    @PostMapping("/api/interact")
+    @PostMapping("/interact")
     public ResponseEntity<?> handleInteraction(@RequestBody InteractionDTO interactionDTO, Principal principal) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
             User user = userService.findByEmail(userDetails.getUsername());
@@ -199,7 +202,7 @@ public class ApiPostsController {
 
     
 
-    @GetMapping("/api/interaction")
+    @GetMapping("/interaction")
     public ResponseEntity<?> getInteraction(@RequestParam Long id, Principal principal) {
         Map<String, Object> response = new HashMap<>();
         Interaction interaction = interactionService.findById(id);
@@ -209,7 +212,7 @@ public class ApiPostsController {
     }
 
     // Lấy ra tất cả bài viết
-    @GetMapping("/api/post")
+    @GetMapping("/post")
     public ResponseEntity<?> post(@RequestParam(required = false) Long id) {
         Map<String, Object> response = new HashMap<>();
         List<Post> posts = new ArrayList<>();
@@ -223,14 +226,14 @@ public class ApiPostsController {
             return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/api/postdetails")
+    @GetMapping("/postdetails")
     public ResponseEntity<?> postDetails(@RequestParam Long id) {
         Post posts = postService.findById(id);
             return ResponseEntity.ok(posts);
     }
 
 
-    @GetMapping("/api/notifications") // Lấy ra tất cả thông báo
+    @GetMapping("/notifications") // Lấy ra tất cả thông báo
     public ResponseEntity<?> notifications(Principal principal) {
        
             Map<String, Object> response = new HashMap<>();
@@ -242,7 +245,7 @@ public class ApiPostsController {
       
     }
 
-    @GetMapping("/api/editpost")
+    @GetMapping("/editpost")
     public ResponseEntity<?> editpost(@RequestParam("id") Long id, Principal principal) {
        
             Post post = postService.findById(id);
@@ -250,7 +253,7 @@ public class ApiPostsController {
         
     }
 
-    @GetMapping("/api/comment")
+    @GetMapping("/comment")
     public ResponseEntity<?> comment(@RequestParam Long id, Principal principal) {
         Map<String, Object> response = new HashMap<>();
             Post post = postService.findById(id);
@@ -260,7 +263,7 @@ public class ApiPostsController {
             return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/api/countinteraction")
+    @GetMapping("/countinteraction")
     public ResponseEntity<?> countIneraction(@RequestParam Long id) {
         Map<String, Object> response = new HashMap<>();
         Post post = postService.findById(id);
