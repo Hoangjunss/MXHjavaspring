@@ -39,13 +39,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 
 public class ApiMessageController {
-    @Autowired
     private MessageService messageService;
-    @Autowired
     private UserService userService;
-    @Autowired
     private UserDetailsService userDetailsService;
-    @Autowired
     private RelationshipService relationshipService;
 
     // Ở giao diện website - phản hồi dưới dạng JSON cho ajax

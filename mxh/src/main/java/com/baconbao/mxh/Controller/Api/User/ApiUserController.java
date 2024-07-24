@@ -62,27 +62,16 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/")
 public class ApiUserController {
-    @Autowired
     private UserService userService;
-    @Autowired
     private VerifycationTokenService verifycationTokenService;
-    @Autowired
     private ImageService imageService;
-    @Autowired
     private CloudinaryService cloudinaryService;
-    @Autowired
     private UserDetailsService userDetailsService;
-    @Autowired
     private RelationshipService relationalService;
-    @Autowired
     private StatusRelationshipService statusRelationshipService;
-    @Autowired
     private AboutService aboutService;
-    @Autowired
     private UserAboutService userAboutService;
-    @Autowired
     private NotificationService notificationService;
-    @Autowired
     private RelationshipService relationshipService;
 
     @GetMapping("/api/confirmUser")
