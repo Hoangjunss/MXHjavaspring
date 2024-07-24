@@ -38,17 +38,12 @@ public class WebConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        // cho phep nhung duong dan khong can dang nhap
-        http.csrf((csrf) -> csrf.disable())
-                .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers("register", "js/User/Account/**", "js/**", "css/**", "confirmUser", "Confirm",
-                                "api/register", "api/confirmUser")
-                        .permitAll()
-                        // cac duong dan con lai can phai dang nhap
-                        .anyRequest().authenticated())
-                // phuong thuc login
-                .formLogin(login -> login.loginPage("/login").loginProcessingUrl("/login")
-                        .successHandler(authenticationSuccessHandler)
+        //cho phep nhung duong dan khong can dang nhap
+        http.csrf((csrf) -> csrf.disable()).authorizeHttpRequests((authorize) -> authorize.requestMatchers("register", "js/User/Account/**", "js/**","css/**", "confirmUser", "Confirm", "api/register", "api/confirmUser").permitAll()
+        //cac duong dan con lai can phai dang nhap
+        .anyRequest().authenticated())
+        //phuong thuc login
+                .formLogin(login -> login.loginPage("/login").loginProcessingUrl("/login").successHandler(authenticationSuccessHandler)
                         .permitAll())
                 // phuong thuc logout
                 .logout(logout -> logout
