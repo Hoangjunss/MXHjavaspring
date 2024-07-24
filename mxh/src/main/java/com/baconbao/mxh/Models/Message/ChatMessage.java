@@ -1,5 +1,8 @@
 package com.baconbao.mxh.Models.Message;
 
+import lombok.Builder;
+
+@Builder
 public class ChatMessage {
     private Long id;
     private String content;

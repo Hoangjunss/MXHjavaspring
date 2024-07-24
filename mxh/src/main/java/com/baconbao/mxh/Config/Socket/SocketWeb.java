@@ -21,20 +21,22 @@ public class SocketWeb {
     private RelationshipService relationshipService;
 
     public void sendMessage(Message message) {
-        MessageDTO messageDTO = new MessageDTO();
         UserMessageDTO userMessageDTO = new UserMessageDTO(message.getUserFrom());
         Relationship relationship = relationshipService.findRelationship(message.getUserFrom(), message.getUserTo());
-        messageDTO.setId(relationship.getId());
-        messageDTO.setContent(message.getContent());
-        messageDTO.setCreateAt(message.getCreateAt());
-        messageDTO.setUserFrom(userMessageDTO);
+        MessageDTO messageDTO = MessageDTO.builder()
+                                          .id(relationship.getId())
+                                          .content(message.getContent())
+                                          .createAt(message.getCreateAt())
+                                          .userFrom(userMessageDTO)
+                                          .build();
         simpMessagingTemplate.convertAndSendToUser(message.getUserTo().getEmail(), "/queue/messages", messageDTO);//Gửi tin nhắn đến userTo
     }
 
     public void setActive(User user) {
-        UserDTO userDTO = new UserDTO();
-        userDTO.setId(user.getId());
-        userDTO.setIsActive(true);
+        UserDTO userDTO =UserDTO.builder()
+                                .id(user.getId())
+                                .isActive(true)
+                                .build();
         simpMessagingTemplate.convertAndSend("/queue/active", userDTO); //Gửi thông báo active đến tất cả user
     }
 

@@ -36,10 +36,12 @@ public class MailServiceImpl implements MailService {
 	//Tao doi tuong Mail
 	@Override
 	public Mail getMail( String mailTo, String content, String subject) {
-		Mail mail = new Mail();
-        mail.setMailTo(mailTo);
-        mail.setMailSubject(subject);
-        mail.setMailContent(content);
-        return mail;
+		
+        
+        return Mail.builder()
+		    	       .mailTo(mailTo)
+					   .mailSubject(subject)
+					   .mailContent(content)
+					   .build();
 	}
 }

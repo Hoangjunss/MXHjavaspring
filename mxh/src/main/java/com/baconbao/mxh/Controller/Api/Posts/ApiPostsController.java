@@ -40,9 +40,10 @@ import com.baconbao.mxh.Services.Service.User.NotificationService;
 import com.baconbao.mxh.Services.Service.User.UserService;
 
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ApiPostsController {
     @Autowired
     private PostService postService;
@@ -77,17 +78,16 @@ public class ApiPostsController {
     public ResponseEntity<?> uploadpost(@RequestParam("content") String content,
             @RequestParam(value = "image", required = false) MultipartFile image, Principal principal) {
         try {
-            Post post = new Post();
-            post.setContent(content);
-            post.setActive(true);
-            // dat ngay va gio tao post
             LocalDateTime localDateTime = LocalDateTime.now();
-            post.setCreateAt(localDateTime);
-            post.setUpdateAt(localDateTime);
             UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
             User user = userService.findByEmail(userDetails.getUsername());
-            post.setUser(user);
-
+            Post post = Post.builder()
+                            .content(content)
+                            .isActive(true)
+                            .createAt(localDateTime)
+                            .updateAt(localDateTime)
+                            .user(user)
+                            .build();
             // Tạo đối tượng Image và lưu URL ảnh
             // Kiểm tra xem tệp tin ảnh có rỗng không
             if (image != null) {
@@ -151,10 +151,11 @@ public class ApiPostsController {
             if (post == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Post not found");
             }
-            Comment comment = new Comment();
-            comment.setContent(content);
-            comment.setUserSend(user);
-            comment.setCreateAt(LocalDateTime.now());
+            Comment comment = Comment.builder()
+                                     .content(content)
+                                     .userSend(user)
+                                     .createAt(LocalDateTime.now())
+                                     .build();
             List<Comment> comments = post.getComments();
             comments.add(comment);
             commentService.save(comment);
@@ -184,10 +185,11 @@ public class ApiPostsController {
                 notificationService.createNotification(post.getUser(), user, message, "/post?id="+post.getId());
                 return ResponseEntity.ok(new ApiResponse(true, "Reaction updated successfully"));
             }else{
-                interaction = new Interaction();
-                interaction.setInteractionType(interact);
-                interaction.setPost(post);
-                interaction.setUser(user);
+                interaction = Interaction.builder()
+                                         .interactionType(interact)
+                                         .post(post)
+                                         .user(user)
+                                         .build();
                 interactionService.saveInteraction(interaction);
                 String message = user.getFirstName()+" "+user.getLastName()+" has interaction on your post ";
                 notificationService.createNotification(post.getUser(), user, message, "/post?id="+post.getId());

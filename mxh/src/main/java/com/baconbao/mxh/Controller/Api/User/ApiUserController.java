@@ -55,10 +55,11 @@ import com.baconbao.mxh.Services.Service.User.StatusRelationshipService;
 import com.baconbao.mxh.Services.Service.User.UserAboutService;
 import com.baconbao.mxh.Services.Service.User.UserService;
 
-import lombok.AllArgsConstructor;
+
+import lombok.RequiredArgsConstructor;
 
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("/")
 public class ApiUserController {
     @Autowired
@@ -252,11 +253,12 @@ public class ApiUserController {
             relationshipUser.setUserOne(user);
             relationshipUser.setUserTwo(userTwo);
             relationalService.addUser(relationshipUser);
-            Notification notification = new Notification();
-            notification.setMessage("You have a friend request from " + user.getFirstName() + " " + user.getLastName());
-            notification.setUser(userTwo);
-            notification.setChecked(false);
-            notification.setUrl("/friends");
+            Notification notification = Notification.builder()
+                                                    .message("You have a friend request from " + user.getFirstName() + " " + user.getLastName())
+                                                    .user(userTwo)
+                                                    .isChecked(false)
+                                                    .url("/friends")
+                                                    .build();
             notificationService.saveNotification(notification);
             return notification;
       
@@ -417,10 +419,10 @@ public class ApiUserController {
 
             for (UserAboutDTO userAboutDTO : userAboutForm.getUserAboutDTOs()) {
                 About about = aboutService.findById(userAboutDTO.getAboutId());
-                UserAbout userAbout = new UserAbout();
-                userAbout.setUser(user);
-                userAbout.setAbout(about);
-                userAbout.setDescription(userAboutDTO.getDescription());
+                UserAbout userAbout = UserAbout.builder()
+                                               .about(about)
+                                               .description(userAboutDTO.getDescription())
+                                               .build();
                 userAboutService.save(userAbout);
             }
 

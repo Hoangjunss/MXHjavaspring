@@ -8,6 +8,7 @@ import com.baconbao.mxh.Models.User.User;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,6 +19,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Table(name = "Post")
+@Builder
 public class Post {
         @Id
         @Column(name = "IdPost")

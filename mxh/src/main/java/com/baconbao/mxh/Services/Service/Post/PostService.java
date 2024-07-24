@@ -18,8 +18,6 @@ public interface PostService {
     void save(Post post);
     void delete(Long id);
     Long getGenerationId();
-    Post getPost(PostDTO postDTO);
-    PostDTO getPostDTO(Post post);
     List<Comment> findByCommentsOrderByCreateAtDesc(Post post);
     List<Object[]> findPostAndCommentAndReplyCount(Post post, boolean active);
     Long countInteraction(Post post);

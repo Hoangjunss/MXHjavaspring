@@ -43,8 +43,10 @@ public class WebConfig {
         //cac duong dan con lai can phai dang nhap
         .anyRequest().authenticated())
         //phuong thuc login
-                .formLogin(login -> login.loginPage("/login").loginProcessingUrl("/login").successHandler(authenticationSuccessHandler)
-                        .permitAll())
+                .formLogin(login -> login.loginPage("/login")
+                                         .loginProcessingUrl("/login")
+                                         .successHandler(authenticationSuccessHandler)
+                                         .permitAll())
                 // phuong thuc logout
                 .logout(logout -> logout
                         .logoutRequestMatcher(

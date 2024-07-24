@@ -12,6 +12,7 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
 public class Comment {
     @Id
     @Column(name = "idComment")

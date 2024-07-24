@@ -31,9 +31,10 @@ import com.baconbao.mxh.Services.Service.User.RelationshipService;
 import com.baconbao.mxh.Services.Service.User.UserService;
 
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ApiMessageController {
     @Autowired
     private MessageService messageService;
@@ -86,22 +87,16 @@ public class ApiMessageController {
         if (innerMessage.get("id") != null) {
             id = String.valueOf(innerMessage.get("id"));
         }
-
-        Message messages = new Message();
-        messages.setContent(content);
-
-        // Chuyển đổi recipient thành Long
         User user = userService.findById(Long.parseLong(id));
         User userFrom = userService.findByEmail(principal.getName());
-
-        messages.setUserFrom(userFrom);
-        messages.setUserTo(user);
-        messages.setCreateAt(LocalDateTime.now());
-
-        // Giả sử relationshipService.findById trả về một đối tượng Relationship
         Relationship relationship = relationshipService.findRelationship(user, userFrom);
-        messages.setRelationship(relationship);
-
+        Message messages = Message.builder()
+                                  .content(content)
+                                  .userFrom(userFrom)
+                                  .userTo(user)
+                                  .createAt(LocalDateTime.now())
+                                  .relationship(relationship)
+                                  .build();
         List<Message> messagesList = new ArrayList<>();
         messagesList.add(messages);
         messageService.sendMessage(messages);

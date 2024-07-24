@@ -25,23 +25,6 @@ public class AboutServiceImpl implements AboutService {
     private UserAboutRepository userAboutRepository;
 
     @Override
-    public About getAbout(AboutDTO aboutDTO) {
-        About about = new About();
-        about.setId(aboutDTO.getId());
-        about.setName(aboutDTO.getName());
-        return about;
-    }
-
-    @Override
-    public AboutDTO getAboutDTO(About about) {
-        AboutDTO aboutDTO = new AboutDTO();
-        aboutDTO.setId(about.getId());
-        aboutDTO.setName(about.getName());
-        return aboutDTO;
-
-    }
-
-    @Override
     public void save(About about) {
         aboutRepository.save(about);
     }

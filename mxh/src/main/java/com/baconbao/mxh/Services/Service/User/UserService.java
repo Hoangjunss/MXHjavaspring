@@ -11,8 +11,6 @@ public interface UserService {
     User findByUserWithUserAbouts(Long id);
     void saveUser(User user);
     User findByEmail(String email);
-    User getUser(UserDTO userDTO);
-    UserDTO getUserDTO(User user);
     boolean isEmailExist(String email);
     void setIsOnline(User user);
     void setIsOffline(User user);

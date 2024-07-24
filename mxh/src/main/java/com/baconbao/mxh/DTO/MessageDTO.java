@@ -2,6 +2,8 @@ package com.baconbao.mxh.DTO;
 
 import java.time.LocalDateTime;
 
+import lombok.Builder;
+@Builder
 public class MessageDTO {
     private Long id;
     private String content;

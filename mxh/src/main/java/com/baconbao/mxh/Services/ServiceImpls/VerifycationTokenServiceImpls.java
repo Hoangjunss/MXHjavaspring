@@ -40,15 +40,20 @@ public class VerifycationTokenServiceImpls implements VerifycationTokenService {
     public void registerUser(User user) {
         try {
             Long id = generateToken();
-            VerifycationToken verifycationToken = new VerifycationToken();
-            verifycationToken.setId(id);
-            verifycationToken.setEmail(user.getEmail());
-            verifycationToken.setFirstName(user.getFirstName());
-            verifycationToken.setLastName(user.getLastName());
-            verifycationToken.setPassword(user.getPassword());
+
+           
             LocalDateTime localDateTime = LocalDateTime.now().plusMinutes(5);
-            verifycationToken.setSetExpiryDate(localDateTime);
+          
             //Tao doi tuong mail chua link xac nhan
+            
+            VerifycationToken verifycationToken =VerifycationToken.builder()
+                                                                  .id(id)
+                                                                  .email(user.getEmail())
+                                                                  .firstName(user.getFirstName())
+                                                                  .lastName(user.getLastName())
+                                                                  .password(user.getPassword())
+                                                                  .setExpiryDate(localDateTime)
+                                                                  .build();
             Mail mail = mailService.getMail(user.getEmail(),
                     "http://localhost:8080/confirmUser?token=" + verifycationToken.getId(), "Xác nhận tài khoản");
             mailService.sendMail(mail);
@@ -65,11 +70,13 @@ public class VerifycationTokenServiceImpls implements VerifycationTokenService {
     public void confirmUser(Long token) {
         try {
             VerifycationToken verifycationToken = findById(token);
-            User user = new User();
-            user.setFirstName(verifycationToken.getFirstName());
-            user.setLastName(verifycationToken.getLastName());
-            user.setEmail(verifycationToken.getEmail());
-            user.setPassword(verifycationToken.getPassword());
+            User user =User.builder()
+                           .firstName(verifycationToken.getFirstName())
+                           .lastName(verifycationToken.getLastName())
+                           .email(verifycationToken.getEmail())
+                           .password(verifycationToken.getPassword())
+                           .build();
+
             //neu xac nhan duoc thi luu user va xoa token
             userService.saveUser(user);
             verifycationTokenRepository.delete(verifycationToken);

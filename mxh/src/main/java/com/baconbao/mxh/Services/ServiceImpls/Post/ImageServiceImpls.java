@@ -18,13 +18,14 @@ import com.baconbao.mxh.Services.Service.Post.ImageService;
 public class ImageServiceImpls implements ImageService {
    @Autowired
    private ImageRepository imageRepository;
-   
+
    @Override
    public void saveImage(Image image) {
       try {
-         Image img = new Image();
-         img.setId(getGenerationId());
-         img.setUrlImage(image.getUrlImage());
+         Image img = Image.builder()
+                          .id(getGenerationId())
+                          .urlImage(image.getUrlImage())
+                          .build();
          imageRepository.save(img);
       } catch (DataIntegrityViolationException e) {
          throw new CustomException(ErrorCode.IMAGE_UNABLE_TO_SAVE);
@@ -36,8 +37,8 @@ public class ImageServiceImpls implements ImageService {
    @Override
    public Long getGenerationId() {
       UUID uuid = UUID.randomUUID();
-      return uuid.getMostSignificantBits() &0x1FFFFFFFFFFFFFL;
-  }
+      return uuid.getMostSignificantBits() & 0x1FFFFFFFFFFFFFL;
+   }
 
    @Override
    public Image findById(long id) {

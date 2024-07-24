@@ -81,25 +81,6 @@ public class PostServiceImpl implements PostService {
         return uuid.getMostSignificantBits() &0x1FFFFFFFFFFFFFL;
     }
 
-    @Override
-    public Post getPost(PostDTO postDTO) {
-        Post post = new Post();
-        post.setId(postDTO.getId());
-        post.setContent(postDTO.getContent());
-        post.setCreateAt(postDTO.getCreateAt());
-        post.setUpdateAt(postDTO.getUpdateAt());
-        return post;
-    }
-
-    @Override
-    public PostDTO getPostDTO(Post post) {
-        PostDTO postDTO = new PostDTO();
-        postDTO.setId(post.getId());
-        postDTO.setContent(post.getContent());
-        postDTO.setCreateAt(post.getCreateAt());
-        postDTO.setUpdateAt(post.getUpdateAt());
-        return postDTO;
-    }
 
     @Override
     public List<Post> findByUserPosts(User user) {

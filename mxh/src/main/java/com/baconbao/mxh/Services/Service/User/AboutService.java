@@ -14,8 +14,6 @@ public interface AboutService {
 
     List<About> fillAll();
     About findById(long aboutId);
-    About getAbout(AboutDTO aboutDTO);
-    AboutDTO getAboutDTO(About about);
     void save(About about);
     List<UserAbout> findByUser(User user);
 

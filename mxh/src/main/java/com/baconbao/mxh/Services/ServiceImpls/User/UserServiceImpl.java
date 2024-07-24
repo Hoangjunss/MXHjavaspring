@@ -89,30 +89,7 @@ public class UserServiceImpl implements UserService {
     }
 
     // Chuyen userDTO ve user
-    @Override
-    public User getUser(UserDTO userDTO) {
-        User user = new User();
-        user.setId(userDTO.getId());
-        user.setFirstName(userDTO.getFirstName());
-        user.setLastName(userDTO.getLastName());
-        user.setPassword(userDTO.getPassword());
-        user.setEmail(userDTO.getEmail());
-        user.setCreateAt(userDTO.getCreateAt());
-        return user;
-    }
-
-    // Chuyen user ve userDTO
-    @Override
-    public UserDTO getUserDTO(User user) {
-        UserDTO userDTO = new UserDTO();
-        userDTO.setId(user.getId());
-        userDTO.setFirstName(user.getFirstName());
-        userDTO.setLastName(user.getLastName());
-        userDTO.setPassword(user.getPassword());
-        userDTO.setEmail(user.getEmail());
-        userDTO.setCreateAt(user.getCreateAt());
-        return userDTO;
-    }
+ 
 
     // Lay danh sach user
     @Override
