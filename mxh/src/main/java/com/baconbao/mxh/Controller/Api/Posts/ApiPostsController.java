@@ -75,7 +75,6 @@ public class ApiPostsController {
 
     @PostMapping("/api/uploadpostuser")
     public ResponseEntity<?> uploadpost(@RequestParam("content") String content,
-            @RequestParam("StatusId") Long status,
             @RequestParam(value = "image", required = false) MultipartFile image, Principal principal) {
         try {
             Post post = new Post();

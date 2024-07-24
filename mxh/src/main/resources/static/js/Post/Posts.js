@@ -11,7 +11,6 @@ $(document).ready(function () {
         event.preventDefault();
 
         var formData = new FormData();
-        var status = $('#StatusId').val();
         var content = $('#contentPost').val();
     var image = $('#imagePost')[0].files[0];
     var contentt = content.trimStart().trimEnd();
@@ -20,7 +19,6 @@ $(document).ready(function () {
         alert('Please share your thoughts');
         return;
     }
-        formData.append('StatusId', status);
         formData.append('content', content);
 
         if (image) {

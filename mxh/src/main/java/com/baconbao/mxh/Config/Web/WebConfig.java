@@ -17,16 +17,12 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
-//config security
-
 public class WebConfig {
     @Autowired
     private UserDetailsService userDetailsService;
-     private final AuthenticationSuccessHandler authenticationSuccessHandler;
-     private final LogoutSuccessHandler logoutSuccessHandler;
+    private final AuthenticationSuccessHandler authenticationSuccessHandler;
+    private final LogoutSuccessHandler logoutSuccessHandler;
 
-    
-     
     public WebConfig(UserDetailsService userDetailsService, AuthenticationSuccessHandler authenticationSuccessHandler,
             LogoutSuccessHandler logoutSuccessHandler) {
         this.userDetailsService = userDetailsService;
@@ -34,7 +30,7 @@ public class WebConfig {
         this.logoutSuccessHandler = logoutSuccessHandler;
     }
 
-    //mã hóa password
+    // mã hóa password
     @Bean
     public static PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -42,30 +38,34 @@ public class WebConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        //cho phep nhung duong dan khong can dang nhap
-        http.csrf((csrf) -> csrf.disable()).authorizeHttpRequests((authorize) -> authorize.requestMatchers("/register", "/js/User/Account/**", "/js/**","/css/**", "/confirmUser", "/Confirm", "/api/register", "/api/confirmUser").permitAll()
-        //cac duong dan con lai can phai dang nhap
-        .anyRequest().authenticated())
-        //phuong thuc login
-                .formLogin(login -> login.loginPage("/login").loginProcessingUrl("/login").successHandler(authenticationSuccessHandler)
+        // cho phep nhung duong dan khong can dang nhap
+        http.csrf((csrf) -> csrf.disable())
+                .authorizeHttpRequests((authorize) -> authorize
+                        .requestMatchers("register", "js/User/Account/**", "js/**", "css/**", "confirmUser", "Confirm",
+                                "api/register", "api/confirmUser")
+                        .permitAll()
+                        // cac duong dan con lai can phai dang nhap
+                        .anyRequest().authenticated())
+                // phuong thuc login
+                .formLogin(login -> login.loginPage("/login").loginProcessingUrl("/login")
+                        .successHandler(authenticationSuccessHandler)
                         .permitAll())
-                        //phuong thuc logout
-                        .logout( logout -> logout
+                // phuong thuc logout
+                .logout(logout -> logout
                         .logoutRequestMatcher(
-                                        new AntPathRequestMatcher("/logout","POST"))
-                                        .logoutSuccessHandler(logoutSuccessHandler)
+                                new AntPathRequestMatcher("/logout", "POST"))
+                        .logoutSuccessHandler(logoutSuccessHandler)
                         .permitAll().deleteCookies("auth_code", "JSESSIONID")
                         .invalidateHttpSession(true));
-                        return http.build();
+        return http.build();
     }
-    //luu thong tin dang nhap
-         @Autowired
-        public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-                auth
-                                .userDetailsService(userDetailsService)
-                                .passwordEncoder(passwordEncoder());
-                                System.out.println(userDetailsService.toString()+" auth");
-        }
 
-
+    // luu thong tin dang nhap
+    @Autowired
+    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+        auth
+                .userDetailsService(userDetailsService)
+                .passwordEncoder(passwordEncoder());
+        System.out.println(userDetailsService.toString() + " auth");
+    }
 }
