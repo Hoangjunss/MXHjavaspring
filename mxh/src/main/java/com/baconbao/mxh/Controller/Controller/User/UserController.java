@@ -12,54 +12,54 @@ public class UserController {
     // GET PAGE
     @GetMapping("/login") // Login
     public String showLoginPage() {
-        return "User/Login";
+        return "/User/Login";
     }
 
     @GetMapping("/register") // Register
     public String showRegisterPage(Model model) {
         UserDTO userDTO = new UserDTO();
         model.addAttribute("userDTO", userDTO);
-        return "User/Register";
+        return "/User/Register";
     }
 
     @GetMapping("/hello") // Add friend
     public String addFriendTest() {
-        return "addfriend";
+        return "/addfriend";
     }
 
     @GetMapping("/uploaduserimg") // Upload Image user
     public String uploadUserImgPage() {
-        return "test";
+        return "/test";
     }
 
     @GetMapping("/hellosearch") // Search User - test
     public String searchUserPage() {
-        return "searchuser";
+        return "/searchuser";
     }
 
     @GetMapping("/search") // Search user
     public String showSearchResults() {
-        return "searchuser";
+        return "/searchuser";
     }
 
     @GetMapping("/listfriend") // List friend
     public String getMethodName() {
-        return "seefriend";
+        return "/seefriend";
     }
 
     @GetMapping("/profile") // Profile
     public String getProfilePage() {
-        return "User/profile";
+        return "/User/profile";
     }
 
     @GetMapping("/confirmUser") // Confirm
     public String confirm() {
-        return "User/Confirm";
+        return "/User/Confirm";
     }
 
     @GetMapping("/404")
     public String error404() {
-        return "404";
+        return "/404";
     }
 
 }

@@ -13,22 +13,22 @@ public class PostsController {
 
     @GetMapping({ " ", " /" })
     public String getIndex() {
-        return "index";
+        return "/index";
     }
 
     @GetMapping("/testpost")
     public String test() {
-        return "editpost";
+        return "/editpost";
     }
 
     @GetMapping("/searchuser")
     public String searchUser() {
-        return "searchuser";
+        return "/searchuser";
     }
 
     @GetMapping("/post")
     public String post(@RequestParam Long id) {
-        return "postdetails";
+        return "/postdetails";
     }
 
 }
