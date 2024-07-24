@@ -12,14 +12,14 @@ public class UserController {
     // GET PAGE
     @GetMapping("/login") // Login
     public String showLoginPage() {
-        return "/User/Login";
+        return "User/Login";
     }
 
     @GetMapping("/register") // Register
     public String showRegisterPage(Model model) {
         UserDTO userDTO = new UserDTO();
         model.addAttribute("userDTO", userDTO);
-        return "/User/Register";
+        return "User/Register";
     }
 
     @GetMapping("/hello") // Add friend
