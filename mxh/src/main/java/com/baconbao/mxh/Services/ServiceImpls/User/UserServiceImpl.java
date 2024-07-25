@@ -12,7 +12,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.baconbao.mxh.Config.Socket.SocketWeb;
-import com.baconbao.mxh.DTO.UserDTO;
 import com.baconbao.mxh.Exceptions.CustomException;
 import com.baconbao.mxh.Exceptions.ErrorCode;
 import com.baconbao.mxh.Models.User.User;
@@ -23,8 +22,10 @@ import jakarta.annotation.PostConstruct;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.NonUniqueResultException;
 import jakarta.persistence.QueryTimeoutException;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
@@ -37,18 +38,16 @@ public class UserServiceImpl implements UserService {
         this.socketWeb = socketWeb;
     }
 
-    // Định dạng email
     private static final String EMAIL_PATTERN = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
 
-    // Kiểm tra email
     public static boolean isEmailValid(String email) {
-        return email.matches(EMAIL_PATTERN); // kiểm tra email
+        return email.matches(EMAIL_PATTERN);
     }
 
-    // Luu user
     @Override
     public void saveUser(User username) {
         try {
+            log.info("Save user {}", username.getEmail());
             if (username.getId() == null) {
                 username.setId(getGenerationId());
                 username.setPassword(passwordEncoder.encode(username.getPassword())); // mã hóa mật khẩu
@@ -56,6 +55,7 @@ public class UserServiceImpl implements UserService {
             }
             userRepository.save(username); // lưu user vào database
         } catch (DataIntegrityViolationException e) {
+            log.error("User unable to save with Email {}", username.getEmail());
             throw new CustomException(ErrorCode.USER_UNABLE_TO_SAVE);
         } catch (DataAccessException e) {
             throw new CustomException(ErrorCode.DATABASE_ACCESS_ERROR);
@@ -64,8 +64,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findByEmail(String email) {
+        log.info("Finding user for email: {}", email);
         User user = userRepository.findByEmail(email);
         if (user == null) {
+            log.error("User not found for email: {}", email);
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         } else {
             return userRepository.findByEmail(email); // tìm kiếm user theo email
@@ -74,13 +76,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean isEmailExist(String email) {
+        log.info("Check email is exist: {}", email);
         User user = userRepository.findByEmail(email); // tìm kiếm user theo email
         return user != null ? true : false;
     }
 
-    // Tim user bang id
     @Override
     public User findById(long userId) {
+        log.info("Finding user for id: {}", userId);
         Optional<User> user = userRepository.findById(userId);
         if (user.isPresent()) {
             return user.get();
@@ -88,12 +91,9 @@ public class UserServiceImpl implements UserService {
         throw new CustomException(ErrorCode.USER_NOT_FOUND);
     }
 
-    // Chuyen userDTO ve user
- 
-
-    // Lay danh sach user
     @Override
     public List<User> fillAll() {
+        log.info("Finding all users");
         try {
             return userRepository.findAll();
         } catch (DataAccessException e) {
@@ -101,7 +101,6 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    // Kiem tra email co ton tai
     public boolean isEmailExists(String email) {
         User user = userRepository.findByEmail(email);
         return user != null;
@@ -110,10 +109,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public void setIsOnline(User user) {
         try {
+            log.info("Set user {} isOnline", user.getEmail());
             user.setIsActive(true);
             userRepository.save(user);
             socketWeb.setActive(user);
-        }catch (DataIntegrityViolationException e) {
+        } catch (DataIntegrityViolationException e) {
+            log.error("Error setting user is online with email {}", user.getEmail());
             throw new CustomException(ErrorCode.USER_UNABLE_TO_SAVE);
         } catch (DataAccessException e) {
             throw new CustomException(ErrorCode.DATABASE_ACCESS_ERROR);
@@ -123,10 +124,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public void setIsOffline(User user) {
         try {
+            log.info("Set user {} is offline", user.getEmail());
             user.setIsActive(false);
             userRepository.save(user);
             socketWeb.setActive(user);
-        }catch (DataIntegrityViolationException e) {
+        } catch (DataIntegrityViolationException e) {
+            log.error("Error setting user is offline with email {}", user.getEmail());
             throw new CustomException(ErrorCode.USER_UNABLE_TO_SAVE);
         } catch (DataAccessException e) {
             throw new CustomException(ErrorCode.DATABASE_ACCESS_ERROR);
@@ -136,10 +139,12 @@ public class UserServiceImpl implements UserService {
     @PostConstruct
     public void setActiveUserToFalse() {
         try {
+            log.info("Set is active user to false");
             if (userRepository.count() > 0) {
                 userRepository.updateActiveUserToFalse();
             }
-        }catch (DataIntegrityViolationException e) {
+        } catch (DataIntegrityViolationException e) {
+            log.error("Error setting is active user to false");
             throw new CustomException(ErrorCode.USER_UNABLE_TO_SAVE);
         } catch (DataAccessException e) {
             throw new CustomException(ErrorCode.DATABASE_ACCESS_ERROR);
@@ -148,16 +153,16 @@ public class UserServiceImpl implements UserService {
 
     public Long getGenerationId() {
         UUID uuid = UUID.randomUUID();
-        return uuid.getMostSignificantBits() &0x1FFFFFFFFFFFFFL;
+        return uuid.getMostSignificantBits() & 0x1FFFFFFFFFFFFFL;
     }
 
-
-    //Lỗi truy vấn like
+    // Lỗi truy vấn like
     @Override
     public List<User> findAllByFirstNameOrLastName(String name) {
         try {
+            log.info("Finding by name user: {}", name);
             return userRepository.findByLastNameOrFirstName(name, name);
-        }catch (QueryTimeoutException e) {
+        } catch (QueryTimeoutException e) {
             throw new CustomException(ErrorCode.QUERY_TIMEOUT);
         } catch (DataAccessException e) {
             throw new CustomException(ErrorCode.DATABASE_ACCESS_ERROR);
@@ -167,8 +172,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> searchUser(String username) {
         try {
+            log.info("Searching user by username: {}", username);
             return userRepository.searchUser(username);
-        }catch (QueryTimeoutException e) {
+        } catch (QueryTimeoutException e) {
             throw new CustomException(ErrorCode.QUERY_TIMEOUT);
         } catch (DataAccessException e) {
             throw new CustomException(ErrorCode.DATABASE_ACCESS_ERROR);
@@ -178,10 +184,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findByUserWithUserAbouts(Long id) {
         try {
+            log.info("Finding user by id with user abouts: {}", id);
             return userRepository.findByUserWithUserAbouts(id);
-        }catch (QueryTimeoutException e) {
+        } catch (QueryTimeoutException e) {
             throw new CustomException(ErrorCode.QUERY_TIMEOUT);
-        }  catch (NoResultException e) {
+        } catch (NoResultException e) {
             throw new CustomException(ErrorCode.EMPTY_RESULT);
         } catch (NonUniqueResultException e) {
             throw new CustomException(ErrorCode.NON_UNIQUE_RESULT);

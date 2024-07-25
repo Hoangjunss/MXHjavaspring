@@ -15,8 +15,10 @@ import com.baconbao.mxh.Repository.Post.CommentRepository;
 import com.baconbao.mxh.Services.Service.Post.CommentService;
 
 import jakarta.persistence.EntityNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class CommentServiceImpl implements CommentService {
     @Autowired
     private CommentRepository commentRepository;
@@ -24,11 +26,13 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public void save(Comment comment) {
         try {
+            log.info("Save comment");
             if (comment.getId() == null) {
                 comment.setId(getGenerationId());
             }
             commentRepository.save(comment);
         } catch (DataIntegrityViolationException e) {
+            log.error("Error saving comment");
             throw new CustomException(ErrorCode.COMMENT_UNABLE_TO_SAVE);
         } catch (DataAccessException e) {
             throw new CustomException(ErrorCode.DATABASE_ACCESS_ERROR);
@@ -43,9 +47,11 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public Comment findById(Long id) {
         try {
+            log.info("Finding comment by id: {}", id);
             Optional<Comment> comment = commentRepository.findById(id);
             return comment.isPresent() ? comment.get() : null;
         } catch (EntityNotFoundException e) {
+            log.error("Couldn't find comment by id: {}", id);
             throw new CustomException(ErrorCode.COMMENT_NOT_FOUND);
         } catch (DataAccessException e) {
             throw new CustomException(ErrorCode.DATABASE_ACCESS_ERROR);

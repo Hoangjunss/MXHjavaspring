@@ -2,6 +2,9 @@ package com.baconbao.mxh.Services;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,6 +18,7 @@ import java.util.Objects;
 
 //tao cloud luu anh
 @Service
+@Slf4j
 public class CloudinaryService {
     public Cloudinary cloudinary;
 
@@ -29,16 +33,19 @@ public class CloudinaryService {
 
     // tai hinh anh len cloud
     public Map upload(MultipartFile multipartFile) throws IOException {
+        log.info("Uploading photo to clound: {}", multipartFile.getOriginalFilename());
         File file = convert(multipartFile);
         Map result = cloudinary.uploader().upload(file, ObjectUtils.emptyMap());
         if (!Files.deleteIfExists(file.toPath())) {
-            throw new IOException("Failed to delete temporary file: " + file.getAbsolutePath());
+            log.error("Unable to upload file: {}", file.getAbsolutePath());
+            throw new IOException("Unable to upload temporary file: " + file.getAbsolutePath());
         }
         return result;
     }
 
     // xoa anh tren cloud
     public Map delete(String id) throws IOException {
+        log.info("Deleting photo from cloud: {}", id);
         return cloudinary.uploader().destroy(id, ObjectUtils.emptyMap());
     }
 

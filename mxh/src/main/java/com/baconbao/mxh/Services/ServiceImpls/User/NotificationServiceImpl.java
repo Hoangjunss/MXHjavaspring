@@ -18,8 +18,11 @@ import com.baconbao.mxh.Models.User.User;
 import com.baconbao.mxh.Repository.User.NotificationReponsitory;
 import com.baconbao.mxh.Services.Service.User.NotificationService;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
-public class NotificationServiceImpl implements NotificationService{
+@Slf4j
+public class NotificationServiceImpl implements NotificationService {
     @Autowired
     private NotificationReponsitory notificationRepository;
     @Autowired
@@ -27,10 +30,12 @@ public class NotificationServiceImpl implements NotificationService{
 
     @Override
     public Notification findById(Long id) {
+        log.info("Find notification by id: {}", id);
         Optional<Notification> notification = notificationRepository.findById(id);
         if (notification.isPresent()) {
             return notification.get();
-        }else{
+        } else {
+            log.error("Failed to find notifica by id: {} is not found", id);
             throw new CustomException(ErrorCode.NOTIFICATION_NOT_FOUND);
         }
     }
@@ -38,6 +43,7 @@ public class NotificationServiceImpl implements NotificationService{
     @Override
     public List<Notification> findByUser(User user) {
         try {
+            log.info("Finding notifica with user by user id: ", user.getId());
             return notificationRepository.findByUserOrderByCreateAtDesc(user);
         } catch (DataAccessException e) {
             throw new CustomException(ErrorCode.DATABASE_ACCESS_ERROR);
@@ -49,6 +55,8 @@ public class NotificationServiceImpl implements NotificationService{
     @Override
     public List<Notification> findByUserAndChecked(User user, boolean isChecked) {
         try {
+            log.info("Finding notifica with user and checked by user id: {}, checked status: {}", user.getId(),
+                    isChecked);
             return notificationRepository.findByUserAndIsChecked(user, isChecked);
         } catch (DataAccessException e) {
             throw new CustomException(ErrorCode.DATABASE_ACCESS_ERROR);
@@ -60,15 +68,17 @@ public class NotificationServiceImpl implements NotificationService{
     @Override
     public void saveNotification(Notification notification) {
         try {
-            if (notification.getId()==null) {
+            log.info("Saveing notification");
+            if (notification.getId() == null) {
                 notification.setId(getGenerationId());
                 notificationRepository.save(notification);
                 socketWeb.sendFriendRequestNotification(notification);
-            }else{
+            } else {
                 notificationRepository.save(notification);
             }
         } catch (DataIntegrityViolationException e) {
-            throw new CustomException(ErrorCode.USER_UNABLE_TO_SAVE);
+            log.error("failed to save notification");
+            throw new CustomException(ErrorCode.NOTIFICATION_UNABLE_TO_SAVE);
         } catch (DataAccessException e) {
             throw new CustomException(ErrorCode.DATABASE_ACCESS_ERROR);
         }
@@ -76,11 +86,11 @@ public class NotificationServiceImpl implements NotificationService{
 
     public Long getGenerationId() {
         UUID uuid = UUID.randomUUID();
-        return uuid.getMostSignificantBits() &0x1FFFFFFFFFFFFFL;
+        return uuid.getMostSignificantBits() & 0x1FFFFFFFFFFFFFL;
     }
 
     public void createNotification(User user, User userSend, String message, String url) {
-        if(user.getId() == userSend.getId()){
+        if (user.getId() == userSend.getId()) {
             return;
         }
         Notification notification = new Notification(null, message, user, userSend, LocalDateTime.now(), false, url);
@@ -89,13 +99,14 @@ public class NotificationServiceImpl implements NotificationService{
 
     @Override
     public int countUncheckedNotifications(User user) {
+        log.info("Counting unchecked notification for user: {}", user.getId());
         return notificationRepository.countUncheckedNotification(user);
     }
 
     @Override
     public void markAllNotificationAsRead(User user) {
+        log.info("Marking all notification as read for user: {}", user.getId());
         notificationRepository.markAllNotificationAsRead(user);
     }
-
 
 }

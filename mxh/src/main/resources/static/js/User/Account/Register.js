@@ -16,7 +16,7 @@ $(document).ready(function() {
                 password= $("#inputPassword4").val();
                 email= $("#inputEmail4").val();
                 fetch('/api/register?lastName='+lastName+'&firsName='+firstName+'&password='+password+'&email='+email, {
-                    method: "POST"
+                    method: 'POST'
                 })
                 .then(response => {
                 })

@@ -26,8 +26,10 @@ import com.baconbao.mxh.Services.Service.User.UserService;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.NonUniqueResultException;
 import jakarta.persistence.QueryTimeoutException;
-@Service
+import lombok.extern.slf4j.Slf4j;
 
+@Service
+@Slf4j
 public class RelationshipServiceImpl implements RelationshipService {
     @Autowired
     private RelationshipRepository relationshipRepository;
@@ -39,11 +41,13 @@ public class RelationshipServiceImpl implements RelationshipService {
     @Override
     public void addUser(Relationship relationship) {
         try {
+            log.info("Create relationship betwwen two user");
             if (relationship.getId() == null) {
                 relationship.setId(getGenerationId());
             }
             relationshipRepository.save(relationship);
         } catch (DataIntegrityViolationException e) {
+            log.error("Fail to created relationship betwwen to user");
             throw new CustomException(ErrorCode.RELATIONSHIP_UNABLE_TO_SAVE);
         } catch (DataAccessException e) {
             throw new CustomException(ErrorCode.DATABASE_ACCESS_ERROR);
@@ -54,7 +58,7 @@ public class RelationshipServiceImpl implements RelationshipService {
     public List<Relationship> findAllByUserOne(User user1) {
         try {
             return relationshipRepository.findAllByUserOneId(user1);
-        }catch (QueryTimeoutException e) {
+        } catch (QueryTimeoutException e) {
             throw new CustomException(ErrorCode.QUERY_TIMEOUT);
         } catch (DataAccessException e) {
             throw new CustomException(ErrorCode.DATABASE_ACCESS_ERROR);
@@ -138,12 +142,10 @@ public class RelationshipServiceImpl implements RelationshipService {
         }
     }
 
-    
-
     @Override
     public int countfriend(User user, StatusRelationship status) {
         try {
-            return relationshipRepository.findRelationshipPending(user , status).size();
+            return relationshipRepository.findRelationshipPending(user, status).size();
         } catch (Exception e) {
             throw new CustomException(ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
@@ -184,5 +186,3 @@ public class RelationshipServiceImpl implements RelationshipService {
         }
     }
 }
-
-   
